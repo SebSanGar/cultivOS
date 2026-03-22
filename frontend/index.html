@@ -277,6 +277,28 @@
             font-size: 0.8rem; color: var(--text-muted);
         }
         footer a { color: var(--green); text-decoration: none; }
+
+        /* ── FINANCE TABLES ── */
+        .finance-table {
+            width: 100%; border-collapse: collapse; font-size: 0.85rem;
+            background: var(--surface); border-radius: 8px; overflow: hidden;
+        }
+        .finance-table th {
+            text-align: left; padding: 12px 16px; font-weight: 600; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);
+            border-bottom: 2px solid var(--border); background: #f9fafb;
+        }
+        .finance-table td { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+        .finance-table .total-row td { border-top: 2px solid var(--border); background: #f9fafb; }
+        .finance-table .total-row.highlight td { background: var(--green-light); }
+        .finance-table .savings { color: var(--green); font-weight: 700; }
+        .finance-table.compact { font-size: 0.8rem; }
+        .finance-table.compact td, .finance-table.compact th { padding: 8px 12px; }
+
+        @media (max-width: 768px) {
+            #inversion > div > div { grid-template-columns: 1fr !important; }
+            #precios > div > div { grid-template-columns: 1fr !important; }
+        }
     </style>
 </head>
 <body>
@@ -291,8 +313,10 @@
             <li><a href="#plataforma">Plataforma</a></li>
             <li><a href="#drones">Drones</a></li>
             <li><a href="#ruta">Hoja de Ruta</a></li>
+            <li><a href="#inversion">Inversion</a></li>
+            <li><a href="#finanzas">Finanzas</a></li>
         </ul>
-        <a href="mailto:seb@cultivOS.com" class="nav-cta">Contacto</a>
+        <a href="mailto:seb@cultivosagro.com" class="nav-cta">Contacto</a>
     </div>
 </nav>
 
@@ -302,7 +326,7 @@
     <h1>Transformando la <em>Agricultura</em> de Jalisco</h1>
     <p>Implementando agricultura inteligente basada en drones y fumigacion organica de precision para ayudar a las pequenas y medianas granjas a conservar agua, reducir costos y maximizar rendimientos.</p>
     <div class="hero-ctas">
-        <a href="mailto:seb@cultivOS.com" class="btn-primary">Agendar una Demo</a>
+        <a href="mailto:seb@cultivosagro.com" class="btn-primary">Agendar una Demo</a>
         <a href="#plataforma" class="btn-secondary">Ver la Plataforma</a>
     </div>
 </section>
@@ -596,17 +620,230 @@
     </div>
 </section>
 
+<!-- COST COMPARISON -->
+<section id="costos">
+    <div class="section-inner">
+        <span class="section-tag">Comparacion de Costos</span>
+        <h2 class="section-title">El Costo de No Modernizarse</h2>
+        <p class="section-subtitle">Granja tipica: 40 hectareas, Jalisco. Riego de temporal/convencional.</p>
+        <div style="overflow-x:auto">
+            <table class="finance-table">
+                <thead>
+                    <tr><th>Concepto</th><th>Convencional</th><th>CultivOS</th><th>Ahorro</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Mano de Obra</td><td>$5,000 MXN/ha</td><td>$1,500 MXN/ha</td><td class="savings">-70%</td></tr>
+                    <tr><td>Fertilizante</td><td>$4,500 MXN/ha</td><td>$3,150 MXN/ha</td><td class="savings">-30%</td></tr>
+                    <tr><td>Pesticida / Herbicida</td><td>$3,500 MXN/ha</td><td>$2,100 MXN/ha</td><td class="savings">-40%</td></tr>
+                    <tr><td>Agua</td><td>$3,000 MXN/ha</td><td>$2,100 MXN/ha</td><td class="savings">-30%</td></tr>
+                    <tr><td>Perdida de Cultivo</td><td>$4,000 MXN/ha</td><td>$800 MXN/ha</td><td class="savings">-80%</td></tr>
+                    <tr class="total-row"><td><strong>TOTAL por hectarea</strong></td><td><strong>$20,000 MXN</strong></td><td><strong>$9,650 MXN</strong></td><td class="savings"><strong>-52%</strong></td></tr>
+                    <tr class="total-row highlight"><td><strong>TOTAL para 40 ha</strong></td><td><strong>$800,000 MXN</strong></td><td><strong>$386,000 MXN</strong></td><td class="savings"><strong>$414,000 MXN</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="text-align:center;margin-top:16px;color:var(--green-dark);font-weight:700;font-size:1.1rem">
+            40 ha → $414,000 MXN/ano en ahorros + 10-15% mayor rendimiento
+        </p>
+    </div>
+</section>
+
+<!-- OPPORTUNITY -->
+<section style="background:#f0f0ff" id="oportunidad">
+    <div class="section-inner">
+        <span class="section-tag" style="background:#e0e7ff;color:#3730a3">La Oportunidad</span>
+        <h2 class="section-title">La Ventana de Oportunidad</h2>
+        <p class="section-subtitle">Jalisco tiene una ventana unica para liderar la agricultura de precision en Mexico.</p>
+        <div class="solution-grid">
+            <div class="solution-card" style="border-color:#c7d2fe">
+                <div class="solution-icon" style="background:#e0e7ff">🏟</div>
+                <h3>Copa Mundial 2026</h3>
+                <p>Guadalajara como ciudad anfitriona impulsa la inversion estatal en infraestructura e innovacion. Jalisco quiere mostrar tecnologia al mundo.</p>
+            </div>
+            <div class="solution-card" style="border-color:#c7d2fe">
+                <div class="solution-icon" style="background:#e0e7ff">💧</div>
+                <h3>Crisis Hidrica Historica</h3>
+                <p>84% de municipios en sequia. CONAGUA exige eficiencia hidrica — los agricultores necesitan soluciones ahora.</p>
+            </div>
+            <div class="solution-card" style="border-color:#c7d2fe">
+                <div class="solution-icon" style="background:#e0e7ff">💰</div>
+                <h3>Financiacion de COECYTJAL</h3>
+                <p>Convocatorias abiertas para innovacion agricola. Impulsora de Innovacion Mexico — hasta $8M MXN en capital semilla.</p>
+            </div>
+            <div class="solution-card" style="border-color:#c7d2fe">
+                <div class="solution-icon" style="background:#e0e7ff">📱</div>
+                <h3>Meta Nacional de Digitalizacion</h3>
+                <p>Plan Mexico 2030 prioriza la digitalizacion agricola como meta estrategica. Menos del 5% tiene acceso hoy.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INVESTMENT -->
+<section id="inversion">
+    <div class="section-inner">
+        <span class="section-tag">Inversion</span>
+        <h2 class="section-title">Inversion Total: $2.9M MXN</h2>
+        <p class="section-subtitle">Equipo $1.66M MXN (56%) + Operaciones Ano 1 $1.28M MXN (44%)</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+            <div>
+                <h3 style="font-size:1.1rem;margin-bottom:16px;color:var(--green-dark)">Equipo (CAPEX) — $1.66M MXN</h3>
+                <table class="finance-table compact">
+                    <tbody>
+                        <tr><td>Agras T100 Pulverizador</td><td style="text-align:right">$771,000</td></tr>
+                        <tr><td>Vehiculo</td><td style="text-align:right">$268,000</td></tr>
+                        <tr><td>Baterias (3)</td><td style="text-align:right">$135,000</td></tr>
+                        <tr><td>Cargador + Generador</td><td style="text-align:right">$96,000</td></tr>
+                        <tr><td>Mavic 3 Multispectral</td><td style="text-align:right">$106,000</td></tr>
+                        <tr><td>Mavic 3 Thermal</td><td style="text-align:right">$130,000</td></tr>
+                        <tr><td>Capacitacion</td><td style="text-align:right">$90,000</td></tr>
+                        <tr><td>Sensores IoT</td><td style="text-align:right">$58,000</td></tr>
+                        <tr class="total-row"><td><strong>CAPEX TOTAL</strong></td><td style="text-align:right"><strong>$1,658,000</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3 style="font-size:1.1rem;margin-bottom:16px;color:var(--green-dark)">Operaciones Ano 1 (OPEX) — $1.28M MXN</h3>
+                <table class="finance-table compact">
+                    <tbody>
+                        <tr><td>Salarios (2 operadores)</td><td style="text-align:right">$642,000</td></tr>
+                        <tr><td>Transporte</td><td style="text-align:right">$148,000</td></tr>
+                        <tr><td>Reparaciones/Refacciones</td><td style="text-align:right">$135,000</td></tr>
+                        <tr><td>Contingencias</td><td style="text-align:right">$112,000</td></tr>
+                        <tr><td>Seguro</td><td style="text-align:right">$78,000</td></tr>
+                        <tr><td>Marketing</td><td style="text-align:right">$67,000</td></tr>
+                        <tr><td>Administracion</td><td style="text-align:right">$54,000</td></tr>
+                        <tr><td>Software</td><td style="text-align:right">$40,000</td></tr>
+                        <tr class="total-row"><td><strong>OPEX TOTAL</strong></td><td style="text-align:right"><strong>$1,282,000</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FINANCIAL PROJECTIONS -->
+<section style="background:var(--green-dark);color:#fff" id="finanzas">
+    <div class="section-inner">
+        <span class="section-tag" style="background:rgba(255,255,255,0.15);color:#a7f3d0">Finanzas</span>
+        <h2 class="section-title">Proyeccion Financiera a 3 Anos</h2>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:40px">
+            <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)">
+                <div style="font-size:0.75rem;color:#a7f3d0;margin-bottom:8px">Ano 1 — Lanzamiento</div>
+                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">20 Granjas</div>
+                <div style="font-size:0.85rem;color:#a7f3d0">Ingresos: $2.6M MXN</div>
+                <div style="font-size:0.85rem;color:#fca5a5">Beneficio Neto: -$1.2M MXN*</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)">
+                <div style="font-size:0.75rem;color:#a7f3d0;margin-bottom:8px">Ano 2 — Crecimiento</div>
+                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">45 Granjas</div>
+                <div style="font-size:0.85rem;color:#a7f3d0">Ingresos: $6.0M MXN</div>
+                <div style="font-size:0.85rem;color:#86efac">Beneficio Neto: $1.8M MXN</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:24px;border:1px solid rgba(167,243,208,0.3)">
+                <div style="font-size:0.75rem;color:#a7f3d0;margin-bottom:8px">Ano 3 — Escalado</div>
+                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">75 Granjas</div>
+                <div style="font-size:0.85rem;color:#a7f3d0">Ingresos: $10.1M MXN</div>
+                <div style="font-size:0.85rem;color:#86efac">Beneficio Neto: $4.5M MXN</div>
+            </div>
+        </div>
+
+        <div class="stats" style="margin:0 auto;padding:0">
+            <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
+                <div class="stat-value" style="color:#86efac">$18.7M</div>
+                <div class="stat-label" style="color:#a7f3d0">Ingresos Acumulados</div>
+            </div>
+            <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
+                <div class="stat-value" style="color:#86efac">$5.1M</div>
+                <div class="stat-label" style="color:#a7f3d0">Beneficio Acumulado</div>
+            </div>
+            <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
+                <div class="stat-value" style="color:#86efac">5.8x</div>
+                <div class="stat-label" style="color:#a7f3d0">Multiplicador de la Inversion</div>
+            </div>
+        </div>
+
+        <p style="text-align:center;margin-top:24px;font-size:0.85rem;color:#a7f3d0">
+            Autosuficiente en 28-30 meses. Escenario conservador: 14 granjas Ano 1, punto de equilibrio en 30 meses.<br>
+            *La perdida del Ano 1 se cubre con capital de la ronda.
+        </p>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section id="precios">
+    <div class="section-inner">
+        <span class="section-tag">Modelo de Ingresos</span>
+        <h2 class="section-title">Precios de Servicios</h2>
+        <p class="section-subtitle">Servicios flexibles a la carta y paquetes de temporada. Margenes entre 45% y 70%.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:16px">Servicios a la Carta</h3>
+                <table class="finance-table compact">
+                    <thead><tr><th>Servicio</th><th>Precio/ha</th><th>Margen</th></tr></thead>
+                    <tbody>
+                        <tr><td>Escaneo NDVI</td><td>$400 MXN</td><td>70%</td></tr>
+                        <tr><td>Analisis Termico</td><td>$450 MXN</td><td>70%</td></tr>
+                        <tr><td>Deteccion de Plagas</td><td>$340 MXN</td><td>70%</td></tr>
+                        <tr><td>Fertilizacion</td><td>$1,000 MXN</td><td>50%</td></tr>
+                        <tr><td>Fumigacion</td><td>$950 MXN</td><td>45%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:16px">Paquetes de Temporada</h3>
+                <table class="finance-table compact">
+                    <thead><tr><th>Paquete</th><th>Precio/ha</th><th>Margen</th><th>Incluye</th></tr></thead>
+                    <tbody>
+                        <tr><td>Basico</td><td>$2,800</td><td>65%</td><td>Solo Monitoreo</td></tr>
+                        <tr><td>Estandar</td><td>$5,100</td><td>55%</td><td>Monitoreo + 2 Aplicaciones</td></tr>
+                        <tr><td>Premium</td><td>$7,900</td><td>50%</td><td>Monitoreo + 4 Aplicaciones</td></tr>
+                        <tr><td>Empresarial</td><td>$11,200</td><td>45%</td><td>Ilimitado Anual</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p style="text-align:center;margin-top:16px;font-size:0.85rem;color:var(--text-muted)">
+            Ingreso promedio por granja: ~$135,000 MXN/ano (25 ha, mezcla Estandar-Premium)
+        </p>
+    </div>
+</section>
+
+<!-- RISKS -->
+<section style="background:#fafaf9" id="riesgos">
+    <div class="section-inner">
+        <span class="section-tag">Gestion de Riesgos</span>
+        <h2 class="section-title">Riesgos Clave y Medidas de Mitigacion</h2>
+        <div style="overflow-x:auto">
+            <table class="finance-table">
+                <thead><tr><th>Riesgo</th><th>Impacto</th><th>Medidas de Mitigacion</th></tr></thead>
+                <tbody>
+                    <tr><td>Cadena de suministro DJI</td><td>Retrasos en equipo</td><td>2+ distribuidores; repuestos pre-almacenados</td></tr>
+                    <tr><td>Resistencia del agricultor</td><td>Adopcion mas lenta</td><td>Piloto gratuito ITESO; ROI en la primera cosecha</td></tr>
+                    <tr><td>Cambios regulatorios</td><td>Interrupciones operativas</td><td>Cumplimiento DGAC; cobertura institucional ITESO</td></tr>
+                    <tr><td>Inestabilidad climatica</td><td>Interrupciones de ingresos</td><td>Calendario de 40 semanas; cultivos diversificados</td></tr>
+                    <tr><td>Ejecucion con equipo limitado</td><td>Adopcion mas lenta</td><td>Region de lanzamiento agrupada; estudiantes ITESO</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section">
     <h2>Jalisco: Agricultura de Precision para el Mundo</h2>
-    <p>Comience con un vuelo de diagnostico gratuito para su granja.</p>
-    <a href="mailto:seb@cultivOS.com" class="btn-primary">Agendar Vuelo de Diagnostico</a>
+    <p>CultivOS llega en el momento justo — cuando la necesidad es urgente, la financiacion esta disponible y la atencion global esta puesta en Jalisco.</p>
+    <a href="mailto:seb@cultivosagro.com" class="btn-primary">Solicitar Reunion de Inversion</a>
+    <p style="margin-top:16px;font-size:0.85rem;color:#a7f3d0">cultivosagro.com</p>
 </section>
 
 <!-- FOOTER -->
 <footer>
-    <p>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, Mexico.<br>
-    <a href="mailto:seb@cultivOS.com">seb@cultivOS.com</a></p>
+    <p>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, Mexico &middot; Ontario, Canada<br>
+    <a href="mailto:seb@cultivosagro.com">seb@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a></p>
 </footer>
 
 </body>
