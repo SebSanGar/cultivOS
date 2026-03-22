@@ -907,45 +907,52 @@ const T = {
     ctaTitle: 'Jalisco: Agricultura de Precisión para el Mundo',
     ctaSub: 'CultivOS llega en el momento justo — cuando la necesidad es urgente, la financiación esta disponible y la atención global esta puesta en Jalisco.',
     ctaBtn: 'Solicitar Reunión de Inversión',
+    // Nav links
+    navProb: 'Problema', navSol: 'Solución', navPlat: 'Plataforma',
+    navDrone: 'Drones', navRoad: 'Hoja de Ruta', navInv: 'Inversión', navFin: 'Finanzas',
   },
   en: {
-    title: 'cultivOS — Smart Farming for Ontario',
-    heroTag: 'Coming to Ontario, Canada — 2027',
-    heroTitle: 'Your Farm Deserves <em>Better Data</em>',
-    heroSub: 'We fly drones over your fields so you know exactly where to water, what to spray, and when to act — before problems become crop losses. Already proven on 20+ farms in Mexico.',
-    heroCta1: 'Book a Free Assessment',
-    heroCta2: 'See How It Works',
+  en: {
+    title: 'cultivOS — Precision Agriculture for Ontario',
+    heroTag: 'Pilot Program — Ontario Expansion 2026',
+    heroTitle: 'Bringing <em>Precision Agriculture</em> to Ontario',
+    heroSub: 'We help small and mid-size farms save water, lower costs, and protect their harvests — using drone intelligence and organic precision spraying, tailored to your land.',
+    heroCta1: 'Book a Demo',
+    heroCta2: 'See the Platform',
     statVal1: '$52K', statLbl1: 'CAD saved per farm, per year',
-    statVal2: '30', statLbl2: 'Ontario farms targeted by Year 3',
-    statVal3: '5,000+', statLbl3: 'Hectares under smart management',
-    probTag: 'The Problem',
-    probTitle: 'Ontario Farmers Are Flying Blind',
-    probSub: 'Ontario grows $17.5B in crops every year — but most small operations still rely on guesswork for irrigation, spraying, and pest detection.',
-    probNum1: '40%', probLbl1: 'of input costs wasted on blanket spraying and over-watering (OMAFRA)',
-    probNum2: '68%', probLbl2: 'of Ontario farms hit by unpredicted weather losses in 2024',
-    probNum3: '<8%', probLbl3: 'of small farms have access to any drone-based crop intelligence',
-    solTag: 'What We Do',
-    solTitle: 'We\'re Not a Drone Company — We\'re Your Farm\'s Brain',
-    solSub: 'Anyone can buy a drone. We built the AI that turns flight data into decisions that save you money.',
-    costTitle: 'What Guesswork Actually Costs You',
-    costSub: 'Typical 100-acre (40 ha) Ontario cash crop operation. Real numbers.',
+    statVal2: '30', statLbl2: 'Farms reached by Year 3',
+    statVal3: '5,000+', statLbl3: 'Hectares under precision agriculture',
+    probTag: 'The Challenge',
+    probTitle: 'Ontario\'s Agricultural Efficiency Gap',
+    probSub: 'Ontario is Canada\'s top agricultural province ($17.5B CAD), but most small farms still lack access to precision tools that larger operations take for granted.',
+    probNum1: '40%', probLbl1: 'of farm input costs lost to blanket application and over-watering (OMAFRA)',
+    probNum2: '68%', probLbl2: 'of Ontario farms reported climate-related yield losses in 2024',
+    probNum3: '<8%', probLbl3: 'of small farms have any access to drone-based agriculture',
+    solTag: 'The Solution',
+    solTitle: 'CultivOS: The Brain Behind Precision Agriculture',
+    solSub: 'We don\'t just fly drones — we build the intelligence that tells you what your fields need, before it\'s too late.',
+    costTitle: 'The Real Cost of Not Knowing',
+    costSub: 'Typical 100-acre (40 ha) Ontario operation using conventional methods.',
     costRows: [
       ['Labour','$320 CAD/ha','$95 CAD/ha','-70%'],
       ['Fertilizer','$280 CAD/ha','$195 CAD/ha','-30%'],
       ['Crop Protection','$210 CAD/ha','$125 CAD/ha','-40%'],
       ['Irrigation','$180 CAD/ha','$125 CAD/ha','-30%'],
-      ['Preventable Crop Loss','$240 CAD/ha','$48 CAD/ha','-80%'],
+      ['Crop Loss','$240 CAD/ha','$48 CAD/ha','-80%'],
     ],
     costTotal: ['TOTAL per hectare','$1,230 CAD','$588 CAD','-52%'],
     costGrand: ['TOTAL for 100 acres','$49,200 CAD','$23,520 CAD','$25,680 CAD'],
-    costNote: 'That\'s $52,000 back in your pocket every year — plus 10-15% higher yields',
-    invTitle: 'What It Takes: $380K CAD',
-    finVal1: '$2.4M', finLbl1: 'Projected Revenue (3 yr, CAD)',
-    finVal2: '$650K', finLbl2: 'Net Profit (3 yr, CAD)',
-    finVal3: '5.2x', finLbl3: 'Return on Every Dollar Invested',
-    ctaTitle: 'Ready to Farm Smarter?',
-    ctaSub: 'We\'ll fly your fields for free and show you exactly what your crops are telling you. No commitment, no pressure — just data.',
-    ctaBtn: 'Book Your Free Flight',
+    costNote: '100 acres → $52,000 CAD/year in savings + 10-15% higher yields',
+    invTitle: 'Total Investment: $380K CAD',
+    finVal1: '$2.4M', finLbl1: 'Cumulative Revenue (CAD)',
+    finVal2: '$650K', finLbl2: 'Cumulative Profit (CAD)',
+    finVal3: '5.2x', finLbl3: 'Return on Investment',
+    ctaTitle: 'Ontario: Precision Agriculture for the Future',
+    ctaSub: 'CultivOS is expanding to Ontario — bringing the same proven technology that\'s already helping farms across Jalisco save water, cut waste, and grow more.',
+    ctaBtn: 'Request a Meeting',
+    // Nav links
+    navProb: 'Challenge', navSol: 'Solution', navPlat: 'Platform',
+    navDrone: 'Drones', navRoad: 'Roadmap', navInv: 'Investment', navFin: 'Financials',
   }
 };
 
@@ -1051,6 +1058,11 @@ function setLang(lang) {
     cta.querySelector('p').textContent = t.ctaSub;
     cta.querySelector('.btn-primary').textContent = t.ctaBtn;
   }
+
+  // Nav links
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const navKeys = ['navProb','navSol','navPlat','navDrone','navRoad','navInv','navFin'];
+  navLinks.forEach((a, i) => { if (navKeys[i] && t[navKeys[i]]) a.textContent = t[navKeys[i]]; });
 
   // Nav CTA
   const navCta = document.querySelector('.nav-cta');
