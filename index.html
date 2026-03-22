@@ -295,10 +295,22 @@
         .finance-table.compact { font-size: 0.8rem; }
         .finance-table.compact td, .finance-table.compact th { padding: 8px 12px; }
 
-        @medía (max-width: 768px) {
+        @media (max-width: 768px) {
             #inversión > div > div { grid-template-columns: 1fr !important; }
             #precios > div > div { grid-template-columns: 1fr !important; }
         }
+
+        /* Language toggle */
+        .lang-toggle {
+            display: flex; gap: 2px; background: #f3f4f6; border-radius: 6px;
+            padding: 2px; margin-right: 12px;
+        }
+        .lang-btn {
+            padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer;
+            font-size: 0.8rem; font-weight: 600; background: transparent;
+            color: var(--text-muted); transition: all 0.2s;
+        }
+        .lang-btn.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -316,7 +328,11 @@
             <li><a href="#inversión">Inversión</a></li>
             <li><a href="#finanzas">Finanzas</a></li>
         </ul>
-        <a href="mailto:hola@cultivosagro.com" class="nav-cta">Contacto</a>
+        <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('es')">MX</button>
+            <button class="lang-btn" onclick="setLang('en')">CA</button>
+        </div>
+        <a href="mailto:hola@cultivosagro.com" class="nav-cta" data-es="Contacto" data-en="Contact">Contacto</a>
     </div>
 </nav>
 
@@ -846,5 +862,200 @@
     <a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a></p>
 </footer>
 
+<script>
+// ── BILINGUAL TOGGLE (MX/CA) ──────────────────────────────────────────
+// Instead of data attributes on every element, we store full translations
+// and swap innerHTML of key sections. Canadian costs researched from:
+// Ontario OMAFRA 2025 Field Crop Budgets, StatsCan, SalaryExpert, Farmonaut
+
+const T = {
+  es: {
+    title: 'cultivOS — Agricultura de Precisión para Jalisco',
+    heroTag: 'Piloto 2026 — Centro de Innovación ITESO',
+    heroTitle: 'Transformando la <em>Agricultura</em> de Jalisco',
+    heroSub: 'Implementando agricultura inteligente basada en drones y fumigación orgánica de precisión para ayudar a las pequeñas y medianas granjas a conservar agua, reducir costos y maximizar rendimientos.',
+    heroCta1: 'Agendar una Demo',
+    heroCta2: 'Ver la Plataforma',
+    statVal1: '$414K', statLbl1: 'MXN ahorrados por granja al año',
+    statVal2: '85', statLbl2: 'Granjas alcanzadas para el Año 3',
+    statVal3: '8,000+', statLbl3: 'Hectáreas bajo agricultura de precisión',
+    probTag: 'El Reto',
+    probTitle: 'Crisis Hídrica Agrícola de México',
+    probSub: 'Jalisco ocupa el puesto #1 en producción agrícola ($116,800M MXN), pero enfrenta una crisis hídrica severa.',
+    probNum1: '57%', probLbl1: 'del agua agrícola se pierde por ineficiencia (CONAGUA)',
+    probNum2: '84%', probLbl2: 'de los municipios de Jalisco enfrentaron sequía en 2024',
+    probNum3: '<5%', probLbl3: 'de las pequeñas fincas tienen acceso a agricultura de precisión',
+    solTag: 'La Solución',
+    solTitle: 'CultivOS: El Cerebro de la Agricultura de Precisión',
+    solSub: 'No somos una empresa de drones. Construimos la inteligencia que los dirige.',
+    costTitle: 'El Costo de No Modernizarse',
+    costSub: 'Granja típica: 40 hectáreas, Jalisco. Riego de temporal/convencional.',
+    costRows: [
+      ['Mano de Obra','$5,000 MXN/ha','$1,500 MXN/ha','-70%'],
+      ['Fertilizante','$4,500 MXN/ha','$3,150 MXN/ha','-30%'],
+      ['Pesticida / Herbicida','$3,500 MXN/ha','$2,100 MXN/ha','-40%'],
+      ['Agua','$3,000 MXN/ha','$2,100 MXN/ha','-30%'],
+      ['Pérdida de Cultivo','$4,000 MXN/ha','$800 MXN/ha','-80%'],
+    ],
+    costTotal: ['TOTAL por hectárea','$20,000 MXN','$9,650 MXN','-52%'],
+    costGrand: ['TOTAL para 40 ha','$800,000 MXN','$386,000 MXN','$414,000 MXN'],
+    costNote: '40 ha → $414,000 MXN/año en ahorros + 10-15% mayor rendimiento',
+    invTitle: 'Inversión Total: $2.9M MXN',
+    finVal1: '$18.7M', finLbl1: 'Ingresos Acumulados',
+    finVal2: '$5.1M', finLbl2: 'Beneficio Acumulado',
+    finVal3: '5.8x', finLbl3: 'Multiplicador de la Inversión',
+    ctaTitle: 'Jalisco: Agricultura de Precisión para el Mundo',
+    ctaSub: 'CultivOS llega en el momento justo — cuando la necesidad es urgente, la financiación esta disponible y la atención global esta puesta en Jalisco.',
+    ctaBtn: 'Solicitar Reunión de Inversión',
+  },
+  en: {
+    title: 'cultivOS — Precision Agriculture for Ontario',
+    heroTag: 'Expanding to Ontario, Canada — 2027',
+    heroTitle: 'Transforming <em>Agriculture</em> in Ontario',
+    heroSub: 'Deploying intelligent drone-based agriculture and precision organic spraying to help small and mid-size farms conserve water, cut costs, and maximize yields.',
+    heroCta1: 'Book a Demo',
+    heroCta2: 'See the Platform',
+    statVal1: '$52K', statLbl1: 'CAD saved per farm per year',
+    statVal2: '30', statLbl2: 'Farms reached by Year 3',
+    statVal3: '5,000+', statLbl3: 'Hectares under precision agriculture',
+    probTag: 'The Challenge',
+    probTitle: 'Ontario\'s Agricultural Efficiency Gap',
+    probSub: 'Ontario is Canada\'s #1 agricultural province ($17.5B CAD), but most small farms lack access to precision technology.',
+    probNum1: '40%', probLbl1: 'of farm input costs wasted due to blanket application (OMAFRA)',
+    probNum2: '68%', probLbl2: 'of Ontario farms reported climate-related yield losses in 2024',
+    probNum3: '<8%', probLbl3: 'of small farms use drone-based precision agriculture',
+    solTag: 'The Solution',
+    solTitle: 'CultivOS: The Brain of Precision Agriculture',
+    solSub: 'We\'re not a drone company. We build the intelligence that directs them.',
+    costTitle: 'The Cost of Not Modernizing',
+    costSub: 'Typical farm: 100 acres (40 ha), Ontario. Conventional practices.',
+    costRows: [
+      ['Labour','$320 CAD/ha','$95 CAD/ha','-70%'],
+      ['Fertilizer','$280 CAD/ha','$195 CAD/ha','-30%'],
+      ['Pesticide / Herbicide','$210 CAD/ha','$125 CAD/ha','-40%'],
+      ['Water / Irrigation','$180 CAD/ha','$125 CAD/ha','-30%'],
+      ['Crop Loss','$240 CAD/ha','$48 CAD/ha','-80%'],
+    ],
+    costTotal: ['TOTAL per hectare','$1,230 CAD','$588 CAD','-52%'],
+    costGrand: ['TOTAL for 40 ha','$49,200 CAD','$23,520 CAD','$25,680 CAD'],
+    costNote: '40 ha → $52,000 CAD/year in savings + 10-15% yield increase',
+    invTitle: 'Total Investment: $380K CAD',
+    finVal1: '$2.4M', finLbl1: 'Cumulative Revenue (CAD)',
+    finVal2: '$650K', finLbl2: 'Cumulative Profit (CAD)',
+    finVal3: '5.2x', finLbl3: 'Investment Multiplier',
+    ctaTitle: 'Ontario: Precision Agriculture for the World',
+    ctaSub: 'CultivOS arrives at the right time — when the need is urgent, funding is available, and Canadian agriculture is ready to modernize.',
+    ctaBtn: 'Request Investment Meeting',
+  }
+};
+
+function setLang(lang) {
+  const t = T[lang];
+  if (!t) return;
+
+  // Toggle buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`)?.classList.add('active');
+
+  // HTML lang
+  document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+  document.title = t.title;
+
+  // Hero
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    hero.querySelector('.hero-badge').textContent = t.heroTag;
+    hero.querySelector('h1').innerHTML = t.heroTitle;
+    hero.querySelector('p').textContent = t.heroSub;
+    const btns = hero.querySelectorAll('.hero-ctas a');
+    if (btns[0]) btns[0].textContent = t.heroCta1;
+    if (btns[1]) btns[1].textContent = t.heroCta2;
+  }
+
+  // Stats
+  const stats = document.querySelectorAll('.stats .stat-card');
+  if (stats.length >= 3) {
+    stats[0].querySelector('.stat-value').textContent = t.statVal1;
+    stats[0].querySelector('.stat-label').textContent = t.statLbl1;
+    stats[1].querySelector('.stat-value').textContent = t.statVal2;
+    stats[1].querySelector('.stat-label').textContent = t.statLbl2;
+    stats[2].querySelector('.stat-value').textContent = t.statVal3;
+    stats[2].querySelector('.stat-label').textContent = t.statLbl3;
+  }
+
+  // Problem
+  const prob = document.getElementById('problema');
+  if (prob) {
+    prob.querySelector('.section-tag').textContent = t.probTag;
+    prob.querySelector('.section-title').textContent = t.probTitle;
+    prob.querySelector('.section-subtitle').textContent = t.probSub;
+    const cards = prob.querySelectorAll('.problem-card');
+    if (cards[0]) { cards[0].querySelector('.problem-number').innerHTML = t.probNum1; cards[0].querySelector('.problem-label').textContent = t.probLbl1; }
+    if (cards[1]) { cards[1].querySelector('.problem-number').textContent = t.probNum2; cards[1].querySelector('.problem-label').textContent = t.probLbl2; }
+    if (cards[2]) { cards[2].querySelector('.problem-number').innerHTML = t.probNum3; cards[2].querySelector('.problem-label').textContent = t.probLbl3; }
+  }
+
+  // Solution
+  const sol = document.getElementById('solución');
+  if (sol) {
+    sol.querySelector('.section-tag').textContent = t.solTag;
+    sol.querySelector('.section-title').textContent = t.solTitle;
+    sol.querySelector('.section-subtitle').textContent = t.solSub;
+  }
+
+  // Cost comparison
+  const cost = document.getElementById('costos');
+  if (cost) {
+    cost.querySelector('.section-title').textContent = t.costTitle;
+    cost.querySelector('.section-subtitle').textContent = t.costSub;
+    const rows = cost.querySelectorAll('tbody tr');
+    t.costRows.forEach((r, i) => {
+      if (rows[i]) {
+        const cells = rows[i].querySelectorAll('td');
+        r.forEach((val, j) => { if (cells[j]) cells[j].innerHTML = j === 3 ? `<span class="savings">${val}</span>` : val; });
+      }
+    });
+    // Total rows
+    const totalRows = cost.querySelectorAll('.total-row');
+    if (totalRows[0]) {
+      const c = totalRows[0].querySelectorAll('td');
+      t.costTotal.forEach((v, i) => { if (c[i]) c[i].innerHTML = i === 3 ? `<strong class="savings">${v}</strong>` : `<strong>${v}</strong>`; });
+    }
+    if (totalRows[1]) {
+      const c = totalRows[1].querySelectorAll('td');
+      t.costGrand.forEach((v, i) => { if (c[i]) c[i].innerHTML = i === 3 ? `<strong class="savings">${v}</strong>` : `<strong>${v}</strong>`; });
+    }
+    const note = cost.querySelector('p[style]');
+    if (note) note.textContent = t.costNote;
+  }
+
+  // Investment title
+  const inv = document.getElementById('inversión');
+  if (inv) inv.querySelector('.section-title').textContent = t.invTitle;
+
+  // Financial projections stats
+  const finStats = document.querySelectorAll('#finanzas .stat-card');
+  if (finStats.length >= 3) {
+    finStats[0].querySelector('.stat-value').textContent = t.finVal1;
+    finStats[0].querySelector('.stat-label').textContent = t.finLbl1;
+    finStats[1].querySelector('.stat-value').textContent = t.finVal2;
+    finStats[1].querySelector('.stat-label').textContent = t.finLbl2;
+    finStats[2].querySelector('.stat-value').textContent = t.finVal3;
+    finStats[2].querySelector('.stat-label').textContent = t.finLbl3;
+  }
+
+  // CTA
+  const cta = document.querySelector('.cta-section');
+  if (cta) {
+    cta.querySelector('h2').textContent = t.ctaTitle;
+    cta.querySelector('p').textContent = t.ctaSub;
+    cta.querySelector('.btn-primary').textContent = t.ctaBtn;
+  }
+
+  // Nav CTA
+  const navCta = document.querySelector('.nav-cta');
+  if (navCta) navCta.textContent = lang === 'es' ? 'Contacto' : 'Contact';
+}
+</script>
 </body>
 </html>
