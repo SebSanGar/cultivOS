@@ -674,8 +674,8 @@
         <div class="solution-grid">
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">🏟</div>
-                <h3 data-es="Copa Mundial 2026" data-en="OMAFRA Grant Programs">Copa Mundial 2026</h3>
-                <p data-es="Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo." data-en="Ontario's Ministry of Agriculture funds precision agriculture adoption through cost-share programs — reducing the barrier for small farms to get started.">Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo.</p>
+                <h3 data-es="Copa Mundial 2026" data-en="Provincial Grant Programs">Copa Mundial 2026</h3>
+                <p data-es="Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo." data-en="Ontario offers cost-share programs for agricultural technology adoption — reducing the barrier for small farms to get started with precision agriculture.">Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo.</p>
             </div>
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">💧</div>
@@ -868,7 +868,7 @@
 // Hybrid approach: data-es/data-en attributes on elements for most content,
 // plus a T object for sections that need innerHTML or structured data swaps.
 // Canadian costs researched from:
-// Ontario OMAFRA 2025 Field Crop Budgets, StatsCan, SalaryExpert, Farmonaut
+// Ontario field crop cost estimates, StatsCan, SalaryExpert, Farmonaut
 
 const T = {
   es: {
@@ -917,28 +917,28 @@ const T = {
     heroSub: 'We help small and mid-size farms cut input waste, lower costs, and protect their harvests — using drone intelligence and precision spraying, tailored to your land.',
     heroCta1: 'Book a Demo',
     heroCta2: 'See the Platform',
-    statVal1: '$52K', statLbl1: 'CAD saved per farm, per year',
+    statVal1: '$16K', statLbl1: 'CAD saved per farm, per year',
     statVal2: '30', statLbl2: 'Farms reached by Year 3',
-    statVal3: '5,000+', statLbl3: 'Hectares under precision agriculture',
+    statVal3: '12,000+', statLbl3: 'Acres under precision agriculture',
     probTag: 'The Challenge',
     probTitle: 'Ontario\'s Agricultural Efficiency Gap',
-    probSub: 'Ontario is Canada\'s top agricultural province ($17.5B CAD), but most small farms still lack access to precision tools that larger operations take for granted.',
-    probNum1: '40%', probLbl1: 'of farm input costs lost to blanket application and over-watering (OMAFRA)',
+    probSub: 'Ontario is one of Canada\'s leading agricultural provinces ($17.5B CAD), but most small farms still lack access to precision tools that larger operations take for granted.',
+    probNum1: '40%', probLbl1: 'of farm input costs lost to blanket application and over-watering',
     probNum2: '68%', probLbl2: 'of Ontario farms reported climate-related yield losses in 2024',
     probNum3: '<8%', probLbl3: 'of small farms have any access to drone-based agriculture',
     costTitle: 'The Real Cost of Not Knowing',
     costSub: 'Typical 100-acre (40 ha) Ontario operation using conventional methods.',
     costHead: ['Item','Conventional','CultivOS','Savings'],
     costRows: [
-      ['Labour','$320 CAD/ha','$95 CAD/ha','-70%'],
-      ['Fertilizer','$280 CAD/ha','$195 CAD/ha','-30%'],
-      ['Crop Protection','$210 CAD/ha','$125 CAD/ha','-40%'],
-      ['Irrigation','$180 CAD/ha','$125 CAD/ha','-30%'],
-      ['Crop Loss','$240 CAD/ha','$48 CAD/ha','-80%'],
+      ['Labour','$320 CAD/ha','$210 CAD/ha','-34%'],
+      ['Fertilizer','$280 CAD/ha','$220 CAD/ha','-21%'],
+      ['Crop Protection','$210 CAD/ha','$145 CAD/ha','-31%'],
+      ['Irrigation','$180 CAD/ha','$140 CAD/ha','-22%'],
+      ['Crop Loss','$240 CAD/ha','$110 CAD/ha','-54%'],
     ],
-    costTotal: ['TOTAL per hectare','$1,230 CAD','$588 CAD','-52%'],
-    costGrand: ['TOTAL for 100 acres','$49,200 CAD','$23,520 CAD','$25,680 CAD'],
-    costNote: '100 acres → $52,000 CAD/year in savings + 10-15% higher yields',
+    costTotal: ['TOTAL per hectare','$1,230 CAD','$825 CAD','-33%'],
+    costGrand: ['TOTAL for 100 acres','$49,200 CAD','$33,000 CAD','$16,200 CAD'],
+    costNote: '100 acres → ~$16,200 CAD/year in savings + potential yield improvements',
     invTitle: 'Total Investment: $183K CAD',
     finVal1: '$2.4M', finLbl1: 'Cumulative Revenue (CAD)',
     finVal2: '$650K', finLbl2: 'Cumulative Profit (CAD)',
