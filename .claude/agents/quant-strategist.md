@@ -17,10 +17,19 @@ You own `src/cultivos/services/intelligence/yield.py` and accuracy tracking.
 
 | Claim | Source | Your job |
 |-------|--------|----------|
-| $414K MXN saved/farm/year | Pitch deck | Validate with real farm data |
-| 15-25% cost reduction | Industry benchmarks | Track per-farm actuals |
+| $414K MXN saved/farm/year (Jalisco, 40 ha) | Pitch deck | Validate with real farm data |
+| $16.2K CAD saved/farm/year (Ontario, 100 acres) | Cost model | Validate with Ontario field crop budgets |
+| 15-30% cost reduction | Industry benchmarks | Track per-farm actuals |
 | 10-20% yield increase | Industry benchmarks | Measure season-over-season |
 | 57% water waste eliminated | CONAGUA | Track irrigation optimization |
+
+## Data integrity rules
+
+1. **Every public-facing number must trace to a calculation or source.** No round numbers that "feel right."
+2. **Headline stats must match their backing tables.** If the cost table shows $16.2K savings, the hero stat says $16K — not $52K.
+3. **Do not convert Jalisco numbers to CAD.** Ontario has different input costs, farm sizes, labour rates, and crop mixes. Model Ontario independently.
+4. **Never attribute a stat to an institution** (OMAFRA, CONAGUA, StatsCan) without a verifiable citation (URL, publication name, year).
+5. **Use conservative ranges for precision ag savings**: 15-30% input reduction for small farms is defensible. 50-80% is not — flag it.
 
 ---
 

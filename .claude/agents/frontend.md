@@ -30,3 +30,11 @@ You own `frontend/` — `index.html`, `styles.css`, `app.js`.
 - Maps: Leaflet.js for field overlays (free, lightweight)
 - Charts: Chart.js for health trends (free, lightweight)
 - No emojis except flag toggles (MX/CA market switch)
+
+## Bilingual content rules
+
+When editing the `T` object (translation strings) or `data-es`/`data-en` attributes:
+1. **Verify math consistency** — headline stat, cost table rows, total row, and cost note must all agree. Multiply per-hectare savings × farm size and confirm it matches the grand total.
+2. **Ontario uses acres** as the primary unit, not hectares. Show hectares in parentheses only where helpful.
+3. **Never attribute claims to organizations** without a verified source. Generic phrasing is better than a false citation.
+4. **Both HTML files must stay in sync** — `index.html` (root) and `frontend/index.html` share the same `T` object. Update both.

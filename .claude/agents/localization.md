@@ -41,12 +41,12 @@ Neither is a translation of the other. They are two original pieces, tailored to
 
 - **Register**: Professional but approachable. Think farm equipment trade show, not academic paper.
 - **Vocabulary**: Canadian farming terms (acreage, quarter section, cash crop, input costs)
-- **Currency**: CAD, with $ sign ($52,000 CAD)
-- **Units**: Acres AND hectares (farmers use both), litres (not liters), Celsius
+- **Currency**: CAD, with $ sign ($16,200 CAD)
+- **Units**: Acres as primary (farmers use acres), hectares in parentheses where helpful, litres (not liters), Celsius
 - **Dates**: YYYY-MM-DD (ISO standard, common in Canadian government docs)
 - **Numbers**: 1,000.00 (same as US/MX)
 - **Spelling**: Canadian English (colour, centre, programme, licence)
-- **References**: OMAFRA, Statistics Canada, Transport Canada — not CONAGUA, SAGARPA
+- **References**: Statistics Canada, Transport Canada — not CONAGUA, SAGARPA. Do NOT attribute claims to OMAFRA unless you can link to the specific publication.
 
 ## Tone differences
 
@@ -54,7 +54,7 @@ Neither is a translation of the other. They are two original pieces, tailored to
 |--------|----------------|-----------------|
 | Urgency | "La sequía no espera" (drought won't wait) | "Every season you delay costs you money" |
 | Trust | Lead with institutional backing (ITESO, CONAGUA data) | Lead with ROI and farmer testimonials |
-| Savings | Frame as survival ("conservar agua, proteger su cosecha") | Frame as efficiency ("reduce input waste by 52%") |
+| Savings | Frame as survival ("conservar agua, proteger su cosecha") | Frame as efficiency ("reduce input waste by 30%") |
 | Technology | Demystify ("cámaras especiales que ven lo que el ojo no ve") | Assume tech comfort ("multispectral NDVI imaging") |
 | CTA | Personal ("Agende su vuelo de diagnóstico") | Business ("Book a free assessment flight") |
 
@@ -67,3 +67,14 @@ Before any content ships in either language:
 4. Are all numbers, dates, and units in the correct local format?
 5. Does the CTA make sense for that market?
 6. Grammar and spelling — perfect. No exceptions. This is an investor-facing product.
+
+## Data accuracy rules
+
+**Every number on the site must be defensible.** Before publishing any claim:
+
+1. **Verify the math adds up** — if a cost table shows $X savings per hectare, multiply by farm size and confirm it matches the headline number. Never let a headline ($52K) contradict the table it's derived from ($25K).
+2. **Never attribute stats to an organization** (OMAFRA, CONAGUA, StatsCan) unless you can point to the specific publication. Unattributed stats are better than falsely attributed ones.
+3. **Use conservative estimates** — precision agriculture typically saves 15-30% on inputs for small farms, not 50-80%. Overpromising destroys credibility with farmers who know their numbers.
+4. **Ontario ≠ Mexico at a different exchange rate** — do not convert MXN figures to CAD. Ontario has different cost structures, crop types, and farm sizes. Research Ontario-specific numbers independently.
+5. **Units must match the audience** — Ontario farmers think in acres and CAD. Jalisco farmers think in hectares and MXN. Never show hectares as the primary unit for Ontario content.
+6. **Cross-check headline vs detail** — the hero stat, the cost table, and the cost note must all show the same savings number.

@@ -22,7 +22,7 @@ Keep cultivOS at the cutting edge. Agriculture tech moves fast — new drones, n
 2. Scan agricultural drone subreddits, LinkedIn groups, and Twitter/X
 3. Check CONAGUA and Environment Canada for water/climate updates
 4. Review arXiv and Google Scholar for new crop AI papers
-5. Check COECYTJAL and Ontario OMAFRA for funding opportunities
+5. Check COECYTJAL and Ontario provincial programs for funding opportunities
 
 ### Monthly deep dive
 Pick one topic and produce a 1-page brief:
@@ -48,3 +48,11 @@ Action: [investigate/adopt/monitor/ignore]
 Impact: [which agent should act on this]
 Timeline: [immediate/this quarter/next year]
 ```
+
+## Fact-check duty
+
+When any agent publishes a stat or claim attributed to an external source, you are responsible for verifying it. Flag anything that:
+- Attributes a number to an organization without a specific publication link
+- Uses savings percentages above 30% for precision ag on small farms (industry norm is 15-30%)
+- Converts Jalisco MXN figures to CAD instead of using Ontario-specific data
+- Shows a headline number that doesn't match the table it came from
