@@ -28,6 +28,8 @@
             --accent: #16a34a;
         }
 
+        html { scroll-behavior: smooth; }
+
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
@@ -35,6 +37,29 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
+
+        /* ── SCROLL REVEAL ── */
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1; transform: translateY(0);
+        }
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+        /* Stagger children */
+        .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+        .stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+        .stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+        .stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+        .stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
+        .stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
+        .stagger.visible > * { opacity: 1; transform: translateY(0); }
 
         /* ── NAV ── */
         nav {
@@ -63,15 +88,63 @@
         }
         .nav-cta:hover { background: #15803d; }
 
+        nav.scrolled { box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+        .nav-links a.active { color: var(--green); }
+
+        /* Mobile hamburger */
+        .nav-hamburger {
+            display: none; background: none; border: none; cursor: pointer;
+            width: 32px; height: 32px; position: relative; padding: 0;
+        }
+        .nav-hamburger span {
+            display: block; width: 20px; height: 2px; background: var(--text);
+            position: absolute; left: 6px; transition: all 0.3s ease;
+        }
+        .nav-hamburger span:nth-child(1) { top: 9px; }
+        .nav-hamburger span:nth-child(2) { top: 15px; }
+        .nav-hamburger span:nth-child(3) { top: 21px; }
+        .nav-hamburger.open span:nth-child(1) { top: 15px; transform: rotate(45deg); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { top: 15px; transform: rotate(-45deg); }
+
+        .mobile-menu {
+            display: none; position: fixed; top: 64px; left: 0; right: 0;
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
+            padding: 16px 24px; border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08); z-index: 99;
+        }
+        .mobile-menu.open { display: block; }
+        .mobile-menu a {
+            display: block; padding: 12px 0; color: var(--text); text-decoration: none;
+            font-weight: 500; font-size: 1rem; border-bottom: 1px solid var(--border);
+        }
+        .mobile-menu a:last-child { border-bottom: none; }
+
         @media (max-width: 768px) {
             .nav-links { display: none; }
+            .nav-hamburger { display: block; }
         }
 
         /* ── HERO ── */
         .hero {
             padding: 140px 24px 80px; text-align: center;
             background: linear-gradient(180deg, #f0fdf4 0%, var(--bg) 100%);
+            position: relative; overflow: hidden;
         }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(22,163,74,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(37,99,235,0.04) 0%, transparent 50%);
+            animation: heroFloat 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, -1%) rotate(1deg); }
+            66% { transform: translate(-1%, 2%) rotate(-1deg); }
+        }
+        .hero > * { position: relative; z-index: 1; }
         .hero-badge {
             display: inline-block; background: var(--green-light); color: var(--green-dark);
             padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
@@ -93,7 +166,8 @@
             border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer;
             text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,0.3); }
+        .btn-primary:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,0.3); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(22,163,74,0.2); }
         .btn-secondary {
             background: var(--surface); color: var(--text); border: 1px solid var(--border);
             padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 1rem;
@@ -110,7 +184,9 @@
         .stat-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
             padding: 24px; text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
         .stat-value { font-size: 2rem; font-weight: 800; color: var(--green-dark); }
         .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
 
@@ -142,9 +218,9 @@
         .solution-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
         .solution-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-            padding: 28px; transition: border-color 0.2s;
+            padding: 28px; transition: all 0.3s ease;
         }
-        .solution-card:hover { border-color: var(--green); }
+        .solution-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(22,163,74,0.08); }
         .solution-icon {
             width: 48px; height: 48px; border-radius: 10px; display: flex;
             align-items: center; justify-content: center; font-size: 1.5rem;
@@ -201,6 +277,22 @@
         .mock-ndvi-map {
             height: 200px; border-radius: 8px; position: relative; overflow: hidden;
             background: linear-gradient(135deg, #166534 0%, #22c55e 25%, #eab308 50%, #22c55e 75%, #166534 100%);
+            background-size: 200% 200%;
+            animation: ndviShift 8s ease-in-out infinite;
+        }
+        @keyframes ndviShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .mock-ndvi-map::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 65% 40%, rgba(234,179,8,0.4) 0%, transparent 30%),
+                        radial-gradient(circle at 30% 70%, rgba(239,68,68,0.2) 0%, transparent 20%);
+            animation: ndviPulse 4s ease-in-out infinite;
+        }
+        @keyframes ndviPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
         .mock-ndvi-legend {
             display: flex; gap: 8px; margin-top: 12px; justify-content: center;
@@ -230,13 +322,49 @@
             position: relative;
         }
         .mock-wa-time { font-size: 0.6rem; color: #6b7280; text-align: right; margin-top: 4px; }
+        .mock-wa-typing {
+            display: flex; gap: 4px; padding: 12px 16px;
+            background: #fff; border-radius: 8px 8px 8px 0; width: fit-content;
+        }
+        .mock-wa-typing span {
+            width: 6px; height: 6px; border-radius: 50%; background: #9ca3af;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+        .mock-wa-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .mock-wa-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        /* Mock screen glow */
+        .mock-screen { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .mock-screen:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+
+        /* Live indicator */
+        .mock-live {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.6rem; color: #22c55e; margin-left: auto; font-weight: 600;
+        }
+        .mock-live::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+        }
 
         /* ── DRONES ── */
         .drone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
         .drone-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
             padding: 28px; text-align: center;
+            transition: all 0.3s ease;
         }
+        .drone-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); border-color: var(--green); }
+        .drone-img { transition: transform 0.4s ease; }
+        .drone-card:hover .drone-img { transform: scale(1.03); }
         .drone-emoji { font-size: 3rem; margin-bottom: 12px; }
         .drone-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 16px; }
         .drone-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
@@ -253,7 +381,9 @@
         .roadmap-item {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 12px; padding: 20px; position: relative;
+            transition: all 0.3s ease;
         }
+        .roadmap-item:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: var(--green); }
         .roadmap-year {
             font-size: 0.7rem; font-weight: 700; color: var(--green);
             text-transform: uppercase; margin-bottom: 8px;
@@ -333,9 +463,21 @@
             <button class="lang-btn active" onclick="setLang('es')">MX</button>
             <button class="lang-btn" onclick="setLang('en')">CA</button>
         </div>
+        <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
         <a href="mailto:hola@cultivosagro.com" class="nav-cta" data-es="Contacto" data-en="Contact">Contacto</a>
     </div>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#problema" onclick="closeMobile()">Problema</a>
+    <a href="#solución" onclick="closeMobile()">Solución</a>
+    <a href="#plataforma" onclick="closeMobile()">Plataforma</a>
+    <a href="#drones" onclick="closeMobile()">Drones</a>
+    <a href="#ruta" onclick="closeMobile()">Hoja de Ruta</a>
+    <a href="#inversión" onclick="closeMobile()">Inversión</a>
+    <a href="#finanzas" onclick="closeMobile()">Finanzas</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -349,7 +491,7 @@
 </section>
 
 <!-- STATS -->
-<div class="stats">
+<div class="stats stagger">
     <div class="stat-card">
         <div class="stat-value">$414K</div>
         <div class="stat-label">MXN ahorrados por granja al año</div>
@@ -364,13 +506,14 @@
     </div>
 </div>
 
+<svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block;width:100%;height:40px;margin-bottom:-1px" fill="#fef2f2"><path d="M0,40 C360,0 1080,80 1440,20 L1440,60 L0,60 Z"/></svg>
 <!-- PROBLEM -->
-<section class="problem" id="problema">
+<section class="problem" id="problema" style="padding-top:40px">
     <div class="section-inner">
         <span class="section-tag">El Reto</span>
         <h2 class="section-title">Crisis Hídrica Agrícola de México</h2>
         <p class="section-subtitle">Jalisco ocupa el puesto #1 en producción agrícola ($116,800M MXN), pero enfrenta una crisis hídrica severa.</p>
-        <div class="problem-grid">
+        <div class="problem-grid stagger">
             <div class="problem-card">
                 <div class="problem-number">57%</div>
                 <div class="problem-label">del agua agrícola se pierde por ineficiencia (CONAGUA)</div>
@@ -387,13 +530,14 @@
     </div>
 </section>
 
+<svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block;width:100%;height:40px;background:#fef2f2;margin-bottom:-1px" fill="#fafaf9"><path d="M0,20 C480,70 960,0 1440,40 L1440,60 L0,60 Z"/></svg>
 <!-- SOLUTION -->
 <section id="solución">
     <div class="section-inner">
         <span class="section-tag" data-es="La Solución" data-en="The Solution">La Solución</span>
         <h2 class="section-title" data-es="CultivOS: El Cerebro de la Agricultura de Precisión" data-en="CultivOS: The Brain Behind Precision Agriculture">CultivOS: El Cerebro de la Agricultura de Precisión</h2>
         <p class="section-subtitle" data-es="No somos una empresa de drones. Construimos la inteligencia que los dirige." data-en="We don't just fly drones — we build the intelligence that tells you what your fields need, before it's too late.">No somos una empresa de drones. Construimos la inteligencia que los dirige.</p>
-        <div class="solution-grid">
+        <div class="solution-grid stagger">
             <div class="solution-card">
                 <div class="solution-icon" style="background:#dcfce7">🛰</div>
                 <h3 data-es="Mapeo NDVI" data-en="NDVI Mapping">Mapeo NDVI</h3>
@@ -428,14 +572,15 @@
     </div>
 </section>
 
+<svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block;width:100%;height:40px;margin-bottom:-1px" fill="#14532d"><path d="M0,40 C240,0 720,60 1440,10 L1440,60 L0,60 Z"/></svg>
 <!-- MOCK SCREENS -->
-<section class="screens" id="plataforma">
+<section class="screens" id="plataforma" style="padding-top:40px">
     <div class="section-inner">
         <span class="section-tag" data-es="Plataforma" data-en="Platform">Plataforma</span>
         <h2 class="section-title" data-es="Inteligencia de Campo en Tiempo Real" data-en="Real-Time Field Intelligence">Inteligencia de Campo en Tiempo Real</h2>
         <p class="section-subtitle" data-es="Cada vuelo genera datos. Cada dato se convierte en una decisión." data-en="Every flight generates data. Every data point becomes a decision.">Cada vuelo genera datos. Cada dato se convierte en una decisión.</p>
 
-        <div class="mock-container">
+        <div class="mock-container stagger">
             <!-- Dashboard -->
             <div class="mock-screen">
                 <div class="mock-header">
@@ -443,6 +588,7 @@
                     <div class="mock-dot y"></div>
                     <div class="mock-dot g"></div>
                     <span class="mock-title" data-es="cultivOS — Dashboard de Granja" data-en="cultivOS — Farm Dashboard">cultivOS — Dashboard de Granja</span>
+                    <span class="mock-live" data-es="EN VIVO" data-en="LIVE">EN VIVO</span>
                 </div>
                 <div class="mock-body">
                     <div class="mock-farm-grid">
@@ -545,6 +691,9 @@
                             - Maíz: 28/100 (alerta plaga)
                             <div class="mock-wa-time">08:00</div>
                         </div>
+                        <div class="mock-wa-typing">
+                            <span></span><span></span><span></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -552,13 +701,14 @@
     </div>
 </section>
 
+<svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block;width:100%;height:40px;background:#14532d;margin-bottom:-1px" fill="#fafaf9"><path d="M0,20 C600,70 900,0 1440,30 L1440,60 L0,60 Z"/></svg>
 <!-- DRONES -->
 <section id="drones">
     <div class="section-inner">
         <span class="section-tag">Hardware</span>
         <h2 class="section-title" data-es="Flota de Drones DJI" data-en="DJI Drone Fleet">Flota de Drones DJI</h2>
         <p class="section-subtitle" data-es="Tres drones cubren todas las necesidades — desde imágenes hasta fumigación." data-en="Three drones cover every need — from imaging to precision spraying.">Tres drones cubren todas las necesidades — desde imágenes hasta fumigación.</p>
-        <div class="drone-grid">
+        <div class="drone-grid stagger">
             <div class="drone-card">
                 <img src="images/mavic-multispectral.jpg" alt="DJI Mavic 3 Multispectral" class="drone-img">
                 <div class="drone-name">Mavic 3 Multispectral</div>
@@ -602,7 +752,7 @@
         <span class="section-tag" data-es="Escalabilidad" data-en="Scalability">Escalabilidad</span>
         <h2 class="section-title" data-es="Hoja de Ruta a Cinco Años" data-en="Five-Year Roadmap">Hoja de Ruta a Cinco Años</h2>
         <p class="section-subtitle" data-es="De un equipo de dos personas al liderazgo del mercado regional." data-en="From a two-person team to regional market leadership.">De un equipo de dos personas al liderazgo del mercado regional.</p>
-        <div class="roadmap-timeline">
+        <div class="roadmap-timeline stagger">
             <div class="roadmap-item">
                 <div class="roadmap-year" data-es="Año 1" data-en="Year 1">Año 1</div>
                 <div class="roadmap-stage" data-es="Lanzamiento" data-en="Launch">Lanzamiento</div>
@@ -671,7 +821,7 @@
         <span class="section-tag" style="background:#e0e7ff;color:#3730a3" data-es="La Oportunidad" data-en="The Opportunity">La Oportunidad</span>
         <h2 class="section-title" data-es="La Ventana de Oportunidad" data-en="Why Now">La Ventana de Oportunidad</h2>
         <p class="section-subtitle" data-es="Jalisco tiene una ventana única para liderar la agricultura de precisión en México." data-en="Ontario has a unique window to bring precision agriculture to every farm, not just the large operations.">Jalisco tiene una ventana única para liderar la agricultura de precisión en México.</p>
-        <div class="solution-grid">
+        <div class="solution-grid stagger">
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">🏟</div>
                 <h3 data-es="Copa Mundial 2026" data-en="OMAFRA Grant Programs">Copa Mundial 2026</h3>
@@ -1078,6 +1228,113 @@ function setLang(lang) {
   // ── Footer ──
   const footer = document.getElementById('footer-text');
   if (footer) footer.innerHTML = footer.getAttribute(htmlKey);
+
+  // ── Mobile menu links ──
+  const mobileLinks = document.querySelectorAll('.mobile-menu a');
+  const mobileNavKeys = ['navProb','navSol','navPlat','navDrone','navRoad','navInv','navFin'];
+  mobileLinks.forEach((a, i) => { if (mobileNavKeys[i] && t[mobileNavKeys[i]]) a.textContent = t[mobileNavKeys[i]]; });
+}
+
+// ── SCROLL REVEAL (IntersectionObserver) ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .stagger').forEach(el => {
+  revealObserver.observe(el);
+});
+
+// ── ANIMATED COUNTERS ──
+function animateCounter(el, target, prefix, suffix, duration) {
+  const start = performance.now();
+  const isFloat = target % 1 !== 0;
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    const val = isFloat ? (target * ease).toFixed(1) : Math.round(target * ease);
+    el.textContent = prefix + val.toLocaleString() + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const text = el.textContent.trim();
+      // Parse: $414K, 85, 8,000+, 5.8x, $18.7M etc
+      const match = text.match(/^([^0-9]*)([0-9,.]+)(.*)$/);
+      if (match) {
+        const prefix = match[1];
+        const num = parseFloat(match[2].replace(/,/g, ''));
+        const suffix = match[3];
+        animateCounter(el, num, prefix, suffix, 1500);
+      }
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-value').forEach(el => counterObserver.observe(el));
+
+// ── BAR FILL ANIMATION ──
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const fill = e.target.querySelector('.mock-field-bar-fill');
+      if (fill) {
+        const w = fill.style.width;
+        fill.style.width = '0%';
+        fill.style.transition = 'width 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        requestAnimationFrame(() => { fill.style.width = w; });
+      }
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.mock-field-bar').forEach(el => barObserver.observe(el));
+
+// ── NAV SCROLL EFFECT ──
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 20) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ── NAV ACTIVE STATE ──
+const sections = document.querySelectorAll('section[id]');
+const navAnchors = document.querySelectorAll('.nav-links a');
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navAnchors.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-64px 0px -50% 0px' });
+
+sections.forEach(s => sectionObserver.observe(s));
+
+// ── MOBILE MENU ──
+function toggleMobile() {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.querySelector('.nav-hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.querySelector('.nav-hamburger').classList.remove('open');
 }
 </script>
 </body>
