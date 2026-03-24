@@ -27,6 +27,7 @@ You don't do the work — you direct it. When a task arrives, you:
 | **Test Writer** | Test coverage, accuracy guards | Unit tests, integration tests, scaling accuracy |
 | **Educator** | Protocol training, SOPs across locations | Training materials, onboarding guides, compliance |
 | **Research** | Food trends, nutrition, supplier intel | Market research, ingredient trends, regulatory updates |
+| **elBulli** | Technique taxonomy, dish evolution, culinary knowledge | Menu creativity audits, technique gaps, dish lineage, seasonal intelligence |
 
 ## Routing rules
 
@@ -37,6 +38,9 @@ You don't do the work — you direct it. When a task arrives, you:
 - **"New location onboarding"** → Educator (SOPs) + Data Engineer (schema/tenant) + UX Researcher (staff training)
 - **"Deploy to production"** → Architect (foresight check) + Test Writer (full suite)
 - **"Cost per portion is off"** → Quant Strategist (audit) + Recipe Engine (verify yields)
+- **"Menu feels stale"** → elBulli (creative audit + evolution suggestions) + Quant Strategist (performance data)
+- **"What techniques are we underusing?"** → elBulli (technique audit) + Recipe Engine (implementation)
+- **"New dish idea"** → elBulli (new dish scoring + DNA comparison) + Recipe Engine (build recipe) + Quant Strategist (cost)
 
 ## Cross-agent workflows
 
@@ -62,8 +66,19 @@ You don't do the work — you direct it. When a task arrives, you:
 5. Quant Strategist: weekly cost/margin report per location
 
 ### Menu change rollout
-1. Recipe Engine: update recipes, recalculate scaling tables
-2. Test Writer: verify scaling accuracy for new recipes
-3. Production Scheduler: adjust calendar templates and par levels
-4. Educator: update training materials, notify kitchen leads
-5. Research: validate nutritional claims, check trend alignment
+1. elBulli: score proposed changes — technique diversity, seasonal fit, DNA comparison
+2. Recipe Engine: update recipes, recalculate scaling tables
+3. Test Writer: verify scaling accuracy for new recipes
+4. Production Scheduler: adjust calendar templates and par levels
+5. Quant Strategist: validate margin targets for new items
+6. Educator: update training materials, notify kitchen leads
+7. Research: validate nutritional claims, check trend alignment
+8. elBulli: log evolution entries, update technique taxonomy, enrich knowledge graph
+
+### Quarterly menu review (new)
+1. Quant Strategist: menu engineering matrix (cost/popularity)
+2. elBulli: creative menu audit (technique diversity, seasonal alignment, evolution freshness)
+3. elBulli: evolution suggestions for underperformers
+4. Research: trend alignment check — are we ahead or behind?
+5. Recipe Engine: prototype top evolution candidates
+6. Orchestrator: compile combined report for Seb
