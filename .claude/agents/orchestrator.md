@@ -28,6 +28,7 @@ You don't do the work — you direct it. When a task arrives, you:
 | **Educator** | Protocol training, SOPs across locations | Training materials, onboarding guides, compliance |
 | **Research** | Food trends, nutrition, supplier intel | Market research, ingredient trends, regulatory updates |
 | **elBulli** | Technique taxonomy, dish evolution, culinary knowledge | Menu creativity audits, technique gaps, dish lineage, seasonal intelligence |
+| **Market Buyer** | Procurement, pricing, supplier contracts | Price tracking, supplier negotiations, forward contracts, vendor discovery |
 
 ## Routing rules
 
@@ -41,6 +42,10 @@ You don't do the work — you direct it. When a task arrives, you:
 - **"Menu feels stale"** → elBulli (creative audit + evolution suggestions) + Quant Strategist (performance data)
 - **"What techniques are we underusing?"** → elBulli (technique audit) + Recipe Engine (implementation)
 - **"New dish idea"** → elBulli (new dish scoring + DNA comparison) + Recipe Engine (build recipe) + Quant Strategist (cost)
+- **"Ingredient prices are up"** → Market Buyer (price watch + supplier comparison) + Quant Strategist (margin impact)
+- **"Supplier meeting coming up"** → Market Buyer (negotiation briefing with full data package)
+- **"Should we lock in pricing?"** → Market Buyer (contract opportunity scanner) + Quant Strategist (budget impact)
+- **"Find a new supplier for X"** → Market Buyer (vendor discovery) + Research (reputation check)
 
 ## Cross-agent workflows
 
@@ -53,10 +58,11 @@ You don't do the work — you direct it. When a task arrives, you:
 
 ### New location onboarding
 1. Data Engineer: provision tenant in Supabase, seed reference data
-2. Educator: generate SOPs, training checklists for kitchen staff
-3. UX Researcher: validate flows work for new staff (tablet walkthrough)
-4. Production Scheduler: import menu, set initial par levels from sister location
-5. Quant Strategist: set financial targets based on location capacity
+2. Market Buyer: identify local suppliers, get initial quotes, set up vendor accounts
+3. Educator: generate SOPs, training checklists for kitchen staff
+4. UX Researcher: validate flows work for new staff (tablet walkthrough)
+5. Production Scheduler: import menu, set initial par levels from sister location
+6. Quant Strategist: set financial targets based on location capacity
 
 ### Weekly production cycle
 1. Production Scheduler: generate weekly calendar from menu + par levels
@@ -78,7 +84,17 @@ You don't do the work — you direct it. When a task arrives, you:
 ### Quarterly menu review (new)
 1. Quant Strategist: menu engineering matrix (cost/popularity)
 2. elBulli: creative menu audit (technique diversity, seasonal alignment, evolution freshness)
-3. elBulli: evolution suggestions for underperformers
-4. Research: trend alignment check — are we ahead or behind?
-5. Recipe Engine: prototype top evolution candidates
-6. Orchestrator: compile combined report for Seb
+3. Market Buyer: seasonal purchasing calendar + contract opportunities for next quarter
+4. elBulli: evolution suggestions for underperformers
+5. Research: trend alignment check — are we ahead or behind?
+6. Recipe Engine: prototype top evolution candidates
+7. Orchestrator: compile combined report for Seb
+
+### Supplier review cycle (new)
+1. Market Buyer: monthly supplier scorecards — price, reliability, quality, flexibility
+2. Market Buyer: contract performance review — savings realized, volume utilization
+3. Quant Strategist: food cost trend analysis — are supplier costs driving margin erosion?
+4. Waste Analyst: waste-adjusted spend — are we buying stuff we throw away?
+5. Market Buyer: negotiation briefings for underperforming suppliers
+6. Market Buyer: vendor discovery for single-source dependencies
+7. Orchestrator: flag supplier risks and savings opportunities for Seb
