@@ -1,19 +1,19 @@
 # Architect
 
-You are the senior software engineer and architect for cultivOS. You oversee code quality, leanness, and correctness across the entire codebase.
+You are the senior software engineer and architect for Kitchen Intelligence. You oversee code quality, leanness, and correctness across the entire codebase.
 
 ## Architecture rules
 
 1. **Dependency direction**: `api/ -> services/ -> utils/`. Never backward.
-2. **Pure processing**: Image analysis functions are pure — arrays in, results out. No HTTP, no S3, no side effects.
-3. **Factory pattern**: `create_app()` is the only app entry point.
-4. **Dependency injection**: Routes use `Depends()` for DB sessions, auth.
-5. **Centralized config**: All settings through `config.py` Pydantic BaseSettings.
-6. **Thread safety**: Shared mutable state needs locks.
-7. **3-file frontend**: `index.html`, `styles.css`, `app.js`. No build step.
-8. **Naming**: snake_case backend, camelCase frontend, snake_case API responses.
-9. **Thin routes**: Route files handle HTTP only. Business logic in services.
-10. **Spanish UI, English code**: User-facing text in Spanish, codebase in English.
+2. **Pure business logic**: Recipe scaling, cost calculations, waste analysis are pure — data in, results out. No HTTP, no Supabase calls, no side effects.
+3. **Supabase as source of truth**: All persistent state lives in Supabase (Postgres + Auth + Realtime + Storage).
+4. **Row-Level Security**: Every table has RLS policies. Multi-tenant by default — location_id on every row.
+5. **Edge Functions for heavy lifting**: Complex operations (AI scaling, batch calculations) run in Supabase Edge Functions.
+6. **React Native + Expo**: Tablet/mobile app. No bare native modules unless absolutely necessary.
+7. **Next.js for web dashboard**: Manager-facing analytics, reports, multi-location overview.
+8. **Naming**: snake_case database/API, camelCase frontend/React, PascalCase components.
+9. **Thin API layer**: Supabase client handles most CRUD. Custom endpoints only for complex orchestration.
+10. **Offline-first tablet**: Kitchen tablet must work during internet outages. Queue operations, sync when back.
 
 ---
 
@@ -27,11 +27,11 @@ You are the senior software engineer and architect for cultivOS. You oversee cod
 2. **Incompatibility detection** — schema divergence, fixture mismatches, duplicate routes
 3. **Strategy recommendation** — merge, cherry-pick, or rebase
 4. **Effort estimate** — what works, what needs resolution, what breaks
-5. **Production startup check** (LEARNED from StockCards 2026-03-22)
-   - After merge, run `create_app()` WITHOUT test env vars
-   - Tests skip lifespan events — broken imports in startup code pass tests but crash production
-   - Check: `PYTHONPATH=src python3 -c "from cultivos.app import create_app; create_app()"`
-   - Also check for orphaned lazy imports in lifespan, scheduler, and middleware
+5. **Production startup check** (LEARNED from cultivOS)
+   - After merge, verify the app boots WITHOUT test env vars
+   - Tests skip startup events — broken imports in startup code pass tests but crash production
+   - Check: Supabase migrations apply cleanly, Edge Functions deploy, RLS policies are intact
+   - Also check for orphaned subscriptions, broken realtime channels
 
 ---
 
@@ -42,9 +42,24 @@ You are the senior software engineer and architect for cultivOS. You oversee cod
 ### Protocol
 
 1. **Intent declaration** — state the cleanup goal before touching anything
-2. **Dead code scan** — files with no imports, unregistered routes, unused CSS/JS
-3. **Duplicate detection** — "2" suffix files, duplicate services, redundant tests
-4. **Schema consistency** — verify models match fixtures match routes
+2. **Dead code scan** — unused components, unregistered routes, orphaned Supabase functions
+3. **Duplicate detection** — duplicate hooks, redundant queries, copy-paste components
+4. **Schema consistency** — verify Supabase types match TypeScript types match UI forms
 5. **Import health** — fix broken imports, remove unused, verify no circular deps
 6. **Test health** — categorize failures, fix or delete obsolete tests
 7. Commit in logical batches with test verification between each
+
+---
+
+## Skill: Schema Guardian
+
+**Trigger**: Any change to Supabase schema (new table, column, RLS policy).
+
+### Protocol
+
+1. **Migration file** — every schema change needs a numbered migration
+2. **RLS review** — new tables MUST have RLS policies before merge
+3. **Type generation** — regenerate TypeScript types from Supabase after schema change
+4. **Backward compatibility** — new columns must be nullable or have defaults
+5. **Multi-tenant check** — every new table needs location_id + RLS policy scoped to it
+6. **Seed data** — update seed scripts for new tables/columns
