@@ -38,28 +38,28 @@
             overflow-x: hidden;
         }
 
-        /* ── SCROLL REVEAL ── */
-        .reveal {
+        /* ── SCROLL REVEAL (JS-only — content visible without JS) ── */
+        .js .reveal {
             opacity: 0; transform: translateY(30px);
             transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .reveal.visible {
+        .js .reveal.visible {
             opacity: 1; transform: translateY(0);
         }
-        .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal-left.visible { opacity: 1; transform: translateX(0); }
-        .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .js .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .js .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .js .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .js .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
         /* Stagger children */
-        .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
-        .stagger.visible > *:nth-child(1) { transition-delay: 0s; }
-        .stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
-        .stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
-        .stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
-        .stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
-        .stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
-        .stagger.visible > * { opacity: 1; transform: translateY(0); }
+        .js .stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .js .stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+        .js .stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+        .js .stagger.visible > *:nth-child(3) { transition-delay: 0.2s; }
+        .js .stagger.visible > *:nth-child(4) { transition-delay: 0.3s; }
+        .js .stagger.visible > *:nth-child(5) { transition-delay: 0.4s; }
+        .js .stagger.visible > *:nth-child(6) { transition-delay: 0.5s; }
+        .js .stagger.visible > * { opacity: 1; transform: translateY(0); }
 
         /* ── NAV ── */
         nav {
@@ -442,9 +442,26 @@
             color: var(--text-muted); transition: all 0.2s;
         }
         .lang-btn.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* ── ACCESSIBILITY ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        .sr-only:focus { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; background: var(--green); color: #fff; padding: 8px 16px; z-index: 200; }
+
+        /* no-js fallback — content visible without JS */
+        .stagger > *, .reveal, .reveal-left, .reveal-right { }
     </style>
+    <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
+<a href="#problema" class="sr-only" data-es="Saltar al contenido" data-en="Skip to content">Saltar al contenido</a>
 
 <!-- NAV -->
 <nav>
@@ -463,7 +480,7 @@
             <button class="lang-btn active" onclick="setLang('es')">MX</button>
             <button class="lang-btn" onclick="setLang('en')">CA</button>
         </div>
-        <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu">
+        <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
             <span></span><span></span><span></span>
         </button>
         <a href="mailto:hola@cultivosagro.com" class="nav-cta" data-es="Contacto" data-en="Contact">Contacto</a>
@@ -485,7 +502,7 @@
     <h1>Transformando la <em>Agricultura</em> de Jalisco</h1>
     <p>Llevamos tecnología de drones e inteligencia artificial a las granjas que más lo necesitan — para que usted cuide su agua, baje sus costos y saque más de cada hectárea.</p>
     <div class="hero-ctas">
-        <a href="mailto:hola@cultivosagro.com" class="btn-primary">Agendar una Demo</a>
+        <a href="https://wa.me/523310000000?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20CultivOS" class="btn-primary" id="heroCta">Agendar una Demo</a>
         <a href="#plataforma" class="btn-secondary">Ver la Plataforma</a>
     </div>
 </section>
@@ -493,12 +510,12 @@
 <!-- STATS -->
 <div class="stats stagger">
     <div class="stat-card">
-        <div class="stat-value">$414K</div>
-        <div class="stat-label">MXN ahorrados por granja al año</div>
+        <div class="stat-value">52%</div>
+        <div class="stat-label">menos costo por hectárea</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">85</div>
-        <div class="stat-label">Granjas alcanzadas para el Año 3</div>
+        <div class="stat-value">75</div>
+        <div class="stat-label">Granjas para el Año 3</div>
     </div>
     <div class="stat-card">
         <div class="stat-value">8,000+</div>
@@ -605,7 +622,7 @@
                             <div class="mock-field-bar"><div class="mock-field-bar-fill" style="width:52%;background:#eab308"></div></div>
                         </div>
                         <div class="mock-field">
-                            <div class="mock-field-name" data-es="Aguacate Este" data-en="East Orchard">Aguacate Este</div>
+                            <div class="mock-field-name" data-es="Aguacate Este" data-en="East Orchard (Apple)">Aguacate Este</div>
                             <div class="mock-field-score good">91</div>
                             <div class="mock-field-trend" data-es="Estable" data-en="Stable">Estable</div>
                             <div class="mock-field-bar"><div class="mock-field-bar-fill" style="width:91%;background:#22c55e"></div></div>
@@ -650,7 +667,7 @@
                 <div class="mock-body">
                     <div class="mock-alert critical">
                         <div class="mock-alert-title" data-es="Plaga detectada — Maíz Poniente" data-en="Pest detected — West Corn">Plaga detectada — Maíz Poniente</div>
-                        <div class="mock-alert-body" data-es="Patrón compatible con gusano cogollero. Tratamiento orgánico recomendado: Bacillus thuringiensis." data-en="Pattern consistent with fall armyworm. Recommended organic treatment: Bacillus thuringiensis.">Patrón compatible con gusano cogollero. Tratamiento orgánico recomendado: Bacillus thuringiensis.</div>
+                        <div class="mock-alert-body" data-es="Patrón compatible con gusano cogollero. Tratamiento orgánico recomendado: Bacillus thuringiensis." data-en="Pattern consistent with European corn borer. Recommended treatment: Bacillus thuringiensis.">Patrón compatible con gusano cogollero. Tratamiento orgánico recomendado: Bacillus thuringiensis.</div>
                         <div class="mock-alert-time" data-es="Hace 2 horas" data-en="2 hours ago">Hace 2 horas</div>
                     </div>
                     <div class="mock-alert warning">
@@ -790,7 +807,7 @@
 <!-- COST COMPARISON -->
 <section id="costos">
     <div class="section-inner">
-        <span class="section-tag">Comparación de Costos</span>
+        <span class="section-tag" data-es="Comparación de Costos" data-en="Cost Comparison">Comparación de Costos</span>
         <h2 class="section-title">El Costo de No Modernizarse</h2>
         <p class="section-subtitle">Granja típica: 40 hectáreas, Jalisco. Riego de temporal/convencional.</p>
         <div style="overflow-x:auto">
@@ -850,23 +867,23 @@
 <section id="inversión">
     <div class="section-inner">
         <span class="section-tag" data-es="Inversión" data-en="Investment">Inversión</span>
-        <h2 class="section-title">Inversión Total: $2.9M MXN</h2>
-        <p class="section-subtitle" data-es="Equipo $1.66M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)" data-en="Equipment $92K CAD (35%) + Year 1 Operations $174K CAD (65%)">Equipo $1.66M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)</p>
+        <h2 class="section-title">Inversión Total: $2.93M MXN</h2>
+        <p class="section-subtitle" data-es="Equipo $1.65M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)" data-en="Equipment $105K CAD (38%) + Year 1 Operations $174K CAD (62%)">Equipo $1.65M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)</p>
 
         <div id="inv-tables" style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
             <div>
-                <h3 style="font-size:1.1rem;margin-bottom:16px;color:var(--green-dark)" data-es="Equipo (CAPEX) — $1.66M MXN" data-en="Equipment (CAPEX) — $92K CAD">Equipo (CAPEX) — $1.66M MXN</h3>
+                <h3 style="font-size:1.1rem;margin-bottom:16px;color:var(--green-dark)" data-es="Equipo (CAPEX) — $1.66M MXN" data-en="Equipment (CAPEX) — $105K CAD">Equipo (CAPEX) — $1.65M MXN</h3>
                 <table class="finance-table compact">
                     <tbody>
                         <tr><td data-es="Agras T100 Pulverizador" data-en="Agras T100 Sprayer (full set)">Agras T100 Pulverizador</td><td style="text-align:right" data-es="$771,000" data-en="$40,000">$771,000</td></tr>
                         <tr><td data-es="Vehículo" data-en="Vehicle">Vehículo</td><td style="text-align:right" data-es="$268,000" data-en="$28,000">$268,000</td></tr>
-                        <tr><td data-es="Baterías (3)" data-en="Battery Kits">Baterías (3)</td><td style="text-align:right" data-es="$135,000" data-en="$815">$135,000</td></tr>
+                        <tr><td data-es="Baterías (3)" data-en="Batteries (3 DB2160)">Baterías (3)</td><td style="text-align:right" data-es="$135,000" data-en="$14,000">$135,000</td></tr>
                         <tr><td data-es="Cargador + Generador" data-en="Generator (Honda EU3200i)">Cargador + Generador</td><td style="text-align:right" data-es="$96,000" data-en="$3,500">$96,000</td></tr>
                         <tr><td>Mavic 3 Multispectral</td><td style="text-align:right" data-es="$106,000" data-en="$5,945">$106,000</td></tr>
                         <tr><td>Mavic 3 Thermal</td><td style="text-align:right" data-es="$130,000" data-en="$7,365">$130,000</td></tr>
                         <tr><td data-es="Capacitación" data-en="Training + RPAS Cert">Capacitación</td><td style="text-align:right" data-es="$90,000" data-en="$3,000">$90,000</td></tr>
                         <tr><td data-es="Sensores IoT" data-en="IoT Sensors">Sensores IoT</td><td style="text-align:right" data-es="$58,000" data-en="$3,375">$58,000</td></tr>
-                        <tr class="total-row"><td><strong data-es="CAPEX TOTAL" data-en="TOTAL CAPEX">CAPEX TOTAL</strong></td><td style="text-align:right"><strong data-es="$1,658,000" data-en="$92,000">$1,658,000</strong></td></tr>
+                        <tr class="total-row"><td><strong data-es="CAPEX TOTAL" data-en="TOTAL CAPEX">CAPEX TOTAL</strong></td><td style="text-align:right"><strong data-es="$1,654,000" data-en="$105,185">$1,658,000</strong></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -877,12 +894,12 @@
                         <tr><td data-es="Salarios (2 operadores)" data-en="Salaries (2 operators)">Salarios (2 operadores)</td><td style="text-align:right" data-es="$642,000" data-en="$120,000">$642,000</td></tr>
                         <tr><td data-es="Transporte" data-en="Transportation + Fuel">Transporte</td><td style="text-align:right" data-es="$148,000" data-en="$8,000">$148,000</td></tr>
                         <tr><td data-es="Reparaciones/Refacciones" data-en="Repairs/Parts">Reparaciones/Refacciones</td><td style="text-align:right" data-es="$135,000" data-en="$10,000">$135,000</td></tr>
-                        <tr><td data-es="Contingencias" data-en="Contingency">Contingencias</td><td style="text-align:right" data-es="$112,000" data-en="$7,000">$112,000$112,000</td></tr>
+                        <tr><td data-es="Contingencias" data-en="Contingency">Contingencias</td><td style="text-align:right" data-es="$112,000" data-en="$7,000">$112,000</td></tr>
                         <tr><td data-es="Seguro" data-en="Insurance (drone + vehicle)">Seguro</td><td style="text-align:right" data-es="$78,000" data-en="$8,000">$78,000</td></tr>
                         <tr><td>Marketing</td><td style="text-align:right" data-es="$67,000" data-en="$10,000">$67,000</td></tr>
                         <tr><td data-es="Administración" data-en="Administration">Administración</td><td style="text-align:right" data-es="$54,000" data-en="$7,000">$54,000</td></tr>
                         <tr><td>Software</td><td style="text-align:right" data-es="$40,000" data-en="$4,000">$40,000</td></tr>
-                        <tr class="total-row"><td><strong data-es="OPEX TOTAL" data-en="TOTAL OPEX">OPEX TOTAL</strong></td><td style="text-align:right"><strong data-es="$1,282,000" data-en="$174,000">$1,282,000</strong></td></tr>
+                        <tr class="total-row"><td><strong data-es="OPEX TOTAL" data-en="TOTAL OPEX">OPEX TOTAL</strong></td><td style="text-align:right"><strong data-es="$1,276,000" data-en="$174,000">$1,282,000</strong></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -952,7 +969,7 @@
                 <table class="finance-table compact">
                     <thead><tr><th data-es="Servicio" data-en="Service">Servicio</th><th data-es="Precio/ha" data-en="Price/ha">Precio/ha</th><th data-es="Margen" data-en="Margin">Margen</th></tr></thead>
                     <tbody>
-                        <tr><td data-es="Escaneo NDVI" data-en="NDVI Scan">Escaneo NDVI</td><td data-es="$400 MXN" data-en="$37 CAD">$400 MXN</td><td>70%</td></tr>
+                        <tr><td data-es="Escaneo NDVI" data-en="NDVI Crop Scan">Escaneo NDVI</td><td data-es="$400 MXN" data-en="$37 CAD">$400 MXN</td><td>70%</td></tr>
                         <tr><td data-es="Análisis Térmico" data-en="Thermal Analysis">Análisis Térmico</td><td data-es="$450 MXN" data-en="$42 CAD">$450 MXN</td><td>70%</td></tr>
                         <tr><td data-es="Detección de Plagas" data-en="Pest Detection">Detección de Plagas</td><td data-es="$340 MXN" data-en="$30 CAD">$340 MXN</td><td>70%</td></tr>
                         <tr><td data-es="Fertilización" data-en="Fertilization">Fertilización</td><td data-es="$1,000 MXN" data-en="$50 CAD">$1,000 MXN</td><td>50%</td></tr>
@@ -963,7 +980,7 @@
             <div>
                 <h3 style="font-size:1rem;margin-bottom:16px" data-es="Paquetes de Temporada" data-en="Seasonal Packages">Paquetes de Temporada</h3>
                 <table class="finance-table compact">
-                    <thead><tr><th data-es="Paquete" data-en="Package">Paquete</th><th data-es="Precio/ha" data-en="Price/ha">Precio/ha</th><th data-es="Margen" data-en="Margin">Margen</th><th data-es="Incluye" data-en="Includes">Incluye</th></tr></thead>
+                    <thead><tr><th data-es="Paquete" data-en="Package">Paquete</th><th data-es="Precio/ha/temporada" data-en="Price/ha/season">Precio/ha</th><th data-es="Margen" data-en="Margin">Margen</th><th data-es="Incluye" data-en="Includes">Incluye</th></tr></thead>
                     <tbody>
                         <tr><td data-es="Básico" data-en="Basic">Básico</td><td data-es="$2,800" data-en="$175">$2,800</td><td>65%</td><td data-es="Solo Monitoreo" data-en="Monitoring Only">Solo Monitoreo</td></tr>
                         <tr><td data-es="Estándar" data-en="Standard">Estándar</td><td data-es="$5,100" data-en="$320">$5,100</td><td>55%</td><td data-es="Monitoreo + 2 Aplicaciones" data-en="Monitoring + 2 Applications">Monitoreo + 2 Aplicaciones</td></tr>
@@ -989,10 +1006,10 @@
                 <thead><tr><th data-es="Riesgo" data-en="Risk">Riesgo</th><th data-es="Impacto" data-en="Impact">Impacto</th><th data-es="Medidas de Mitigación" data-en="Mitigation">Medidas de Mitigación</th></tr></thead>
                 <tbody>
                     <tr><td data-es="Cadena de suministro DJI" data-en="DJI supply chain">Cadena de suministro DJI</td><td data-es="Retrasos en equipo" data-en="Equipment delays">Retrasos en equipo</td><td data-es="2+ distribuidores; repuestos pre-almacenados" data-en="2+ distributors; pre-stocked spare parts">2+ distribuidores; repuestos pre-almacenados</td></tr>
-                    <tr><td data-es="Resistencia del agricultor" data-en="Farmer resistance">Resistencia del agricultor</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Piloto gratuito con ITESO; ROI en la primera cosecha" data-en="Free pilot with ITESO; ROI in the first harvest">Piloto gratuito con ITESO; ROI en la primera cosecha</td></tr>
-                    <tr><td data-es="Cambios regulatorios" data-en="Regulatory changes">Cambios regulatorios</td><td data-es="Interrupciones operativas" data-en="Operational disruptions">Interrupciones operativas</td><td data-es="Cumplimiento DGAC; respaldo vía alianza académica ITESO" data-en="Transport Canada compliance; backing via ITESO academic partnership">Cumplimiento DGAC; respaldo vía alianza académica ITESO</td></tr>
+                    <tr><td data-es="Resistencia del agricultor" data-en="Farmer resistance">Resistencia del agricultor</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Piloto gratuito con ITESO; ROI en la primera cosecha" data-en="Free pilot program; payback within one growing season">Piloto gratuito con ITESO; ROI en la primera cosecha</td></tr>
+                    <tr><td data-es="Cambios regulatorios" data-en="Regulatory changes">Cambios regulatorios</td><td data-es="Interrupciones operativas" data-en="Operational disruptions">Interrupciones operativas</td><td data-es="Cumplimiento DGAC; respaldo vía alianza académica ITESO" data-en="Transport Canada compliance; university research partnership">Cumplimiento DGAC; respaldo vía alianza académica ITESO</td></tr>
                     <tr><td data-es="Inestabilidad climática" data-en="Climate instability">Inestabilidad climática</td><td data-es="Interrupciones de ingresos" data-en="Revenue disruptions">Interrupciones de ingresos</td><td data-es="Calendario de 40 semanas; cultivos diversificados" data-en="40-week calendar; diversified crop mix">Calendario de 40 semanas; cultivos diversificados</td></tr>
-                    <tr><td data-es="Ejecución con equipo limitado" data-en="Execution with small team">Ejecución con equipo limitado</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Región de lanzamiento agrupada; talento vía alianza académica ITESO" data-en="Clustered launch region; talent via ITESO academic partnership">Región de lanzamiento agrupada; talento vía alianza académica ITESO</td></tr>
+                    <tr><td data-es="Ejecución con equipo limitado" data-en="Execution with small team">Ejecución con equipo limitado</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Región de lanzamiento agrupada; talento vía alianza académica ITESO" data-en="Clustered launch region; talent via local agricultural college">Región de lanzamiento agrupada; talento vía alianza académica ITESO</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1003,7 +1020,7 @@
 <section class="cta-section">
     <h2>Jalisco: Agricultura de Precisión para el Mundo</h2>
     <p>CultivOS llega en el momento justo — la sequía golpea, COECYTJAL tiene convocatorias abiertas y la Copa Mundial pone los ojos del mundo en Jalisco.</p>
-    <a href="mailto:hola@cultivosagro.com" class="btn-primary">Solicitar Reunión de Inversión</a>
+    <a href="https://wa.me/523310000000?text=Hola%2C%20me%20interesa%20invertir%20en%20CultivOS" class="btn-primary" id="ctaBtn">Solicitar Reunión de Inversión</a>
     <p style="margin-top:16px;font-size:0.85rem;color:#a7f3d0">cultivosagro.com</p>
 </section>
 
@@ -1028,8 +1045,8 @@ const T = {
     heroSub: 'Llevamos tecnología de drones e inteligencia artificial a las granjas que más lo necesitan — para que usted cuide su agua, baje sus costos y saque más de cada hectárea.',
     heroCta1: 'Agendar una Demo',
     heroCta2: 'Ver la Plataforma',
-    statVal1: '$414K', statLbl1: 'MXN ahorrados por granja al año',
-    statVal2: '85', statLbl2: 'Granjas alcanzadas para el Año 3',
+    statVal1: '52%', statLbl1: 'menos costo por hectárea',
+    statVal2: '75', statLbl2: 'Granjas para el Año 3',
     statVal3: '8,000+', statLbl3: 'Hectáreas bajo agricultura de precisión',
     probTag: 'El Reto',
     probTitle: 'Crisis Hídrica Agrícola de México',
@@ -1050,10 +1067,10 @@ const T = {
     costTotal: ['TOTAL por hectárea','$20,000 MXN','$9,650 MXN','-52%'],
     costGrand: ['TOTAL para 40 ha','$800,000 MXN','$386,000 MXN','$414,000 MXN'],
     costNote: '40 ha → $414,000 MXN/año en ahorros + 10-15% mayor rendimiento',
-    invTitle: 'Inversión Total: $2.9M MXN',
+    invTitle: 'Inversión Total: $2.93M MXN',
     finVal1: '$18.7M', finLbl1: 'Ingresos Acumulados',
     finVal2: '$5.1M', finLbl2: 'Beneficio Acumulado',
-    finVal3: '5.8x', finLbl3: 'Multiplicador de la Inversión',
+    finVal3: '6.4x', finLbl3: 'Ingresos / Inversión (3 años)',
     ctaTitle: 'Jalisco: Agricultura de Precisión para el Mundo',
     ctaSub: 'CultivOS llega en el momento justo — la sequía golpea, COECYTJAL tiene convocatorias abiertas y la Copa Mundial pone los ojos del mundo en Jalisco.',
     ctaBtn: 'Solicitar Reunión de Inversión',
@@ -1064,11 +1081,11 @@ const T = {
     title: 'cultivOS — Precision Agriculture for Ontario',
     heroTag: 'Pilot Program — Ontario Expansion 2026',
     heroTitle: 'Bringing <em>Precision Agriculture</em> to Ontario',
-    heroSub: 'We help small and mid-size farms cut input waste, lower costs, and protect their harvests — using drone intelligence and precision spraying, tailored to your land.',
+    heroSub: 'We help small and mid-size farms cut waste, lower input costs, and protect yields — using drone scouting and precision spraying built around your operation.',
     heroCta1: 'Book a Demo',
     heroCta2: 'See the Platform',
-    statVal1: '$26K', statLbl1: 'CAD saved per farm, per year',
-    statVal2: '30', statLbl2: 'Farms reached by Year 3',
+    statVal1: '48%', statLbl1: 'lower cost per hectare',
+    statVal2: '30', statLbl2: 'Farms serviced by Year 3',
     statVal3: '1,800+', statLbl3: 'Hectares under precision agriculture',
     probTag: 'The Challenge',
     probTitle: 'Ontario\'s Agricultural Efficiency Gap',
@@ -1089,12 +1106,12 @@ const T = {
     costTotal: ['TOTAL per hectare','$905 CAD','$469 CAD','-48%'],
     costGrand: ['TOTAL for 60 ha (150 ac)','$54,300 CAD','$28,140 CAD','$26,160 CAD'],
     costNote: '150 acres → ~$26,000 CAD/year in savings + 10-15% higher yields (OMAFRA Pub. 60)',
-    invTitle: 'Total Investment: $266K CAD',
+    invTitle: 'Total Investment: $279K CAD',
     finVal1: '$1.1M', finLbl1: 'Cumulative Revenue (CAD)',
     finVal2: '$314K', finLbl2: 'Cumulative Profit (CAD)',
-    finVal3: '4.2x', finLbl3: 'Return on Investment',
+    finVal3: '4.1x', finLbl3: 'Revenue / Investment (3 yr)',
     ctaTitle: 'Ontario: Precision Agriculture for the Future',
-    ctaSub: 'CultivOS is expanding to Ontario — bringing the same proven technology that\'s already helping farms across Jalisco cut waste and grow more.',
+    ctaSub: 'CultivOS is expanding to Ontario — bringing proven drone scouting and precision spraying technology to help local farms cut waste and grow more.',
     ctaBtn: 'Request a Meeting',
     navProb: 'Challenge', navSol: 'Solution', navPlat: 'Platform',
     navDrone: 'Drones', navRoad: 'Roadmap', navInv: 'Investment', navFin: 'Financials',
@@ -1331,10 +1348,13 @@ function toggleMobile() {
   const btn = document.querySelector('.nav-hamburger');
   menu.classList.toggle('open');
   btn.classList.toggle('open');
+  btn.setAttribute('aria-expanded', menu.classList.contains('open'));
 }
 function closeMobile() {
   document.getElementById('mobileMenu').classList.remove('open');
-  document.querySelector('.nav-hamburger').classList.remove('open');
+  const btn = document.querySelector('.nav-hamburger');
+  btn.classList.remove('open');
+  btn.setAttribute('aria-expanded', 'false');
 }
 </script>
 </body>
