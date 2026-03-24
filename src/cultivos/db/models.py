@@ -308,3 +308,115 @@ class ShelfLifeTracker(Base):
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     recipe = relationship("Recipe")
+
+
+# ---------------------------------------------------------------------------
+# Culinary intelligence domain (elBulli)
+# ---------------------------------------------------------------------------
+
+class Technique(Base):
+    __tablename__ = "techniques"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    category = Column(String(30), nullable=False)  # Heat, Cold, Texture, Flavor, Preservation, Assembly, Preparation
+    subcategory = Column(String(50))
+    description = Column(Text)
+    difficulty_level = Column(Integer, default=1)  # 1-5
+    equipment_required_json = Column(Text, default="[]")
+    time_profile = Column(String(20))  # quick, medium, long
+    best_for_json = Column(Text, default="[]")  # proteins, vegetables, grains, etc.
+    season_affinity_json = Column(Text, default="[]")  # summer, winter, year-round
+    flavor_impact = Column(String(200))
+    texture_impact = Column(String(200))
+    related_techniques_json = Column(Text, default="[]")
+    in_use = Column(Boolean, default=True)
+    location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
+    created_at = Column(DateTime, default=_utcnow)
+    deleted_at = Column(DateTime)
+
+
+class RecipeTechnique(Base):
+    __tablename__ = "recipe_techniques"
+
+    id = Column(Integer, primary_key=True)
+    recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False)
+    technique_id = Column(Integer, ForeignKey("techniques.id"), nullable=False)
+    step_order = Column(Integer)
+    created_at = Column(DateTime, default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("recipe_id", "technique_id", name="uq_recipe_technique"),
+    )
+
+    recipe = relationship("Recipe")
+    technique = relationship("Technique")
+
+
+class DishDNA(Base):
+    __tablename__ = "dish_dna"
+
+    id = Column(Integer, primary_key=True)
+    recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False, unique=True)
+    technique_fingerprint_json = Column(Text, default="[]")  # ordered list of technique IDs
+    flavor_profile_json = Column(Text, default="{}")  # {savory, sweet, acid, bitter, umami} 0-10
+    texture_profile_json = Column(Text, default="{}")  # {crispy, creamy, chewy, tender} 0-10
+    cuisine_influences_json = Column(Text, default="[]")
+    seasonal_peak = Column(String(20))  # spring, summer, fall, winter
+    complexity_score = Column(Integer, default=1)  # 1-10
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+
+    recipe = relationship("Recipe")
+
+
+class DishEvolution(Base):
+    __tablename__ = "dish_evolutions"
+
+    id = Column(Integer, primary_key=True)
+    recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False)
+    parent_recipe_id = Column(Integer, ForeignKey("recipes.id"))
+    generation = Column(Integer, default=1)
+    evolution_type = Column(String(30))  # refinement, seasonal_swap, cost_optimization, technique_change, fusion, customer_feedback
+    evolution_date = Column(DateTime, default=_utcnow)
+    changelog_json = Column(Text, default="[]")
+    techniques_added_json = Column(Text, default="[]")
+    techniques_removed_json = Column(Text, default="[]")
+    ingredients_swapped_json = Column(Text, default="[]")  # [{old, new, reason}]
+    performance_delta_json = Column(Text, default="{}")  # {margin_change, popularity_change, waste_change}
+    evolved_by = Column(String(100))
+    created_at = Column(DateTime, default=_utcnow)
+
+    recipe = relationship("Recipe", foreign_keys=[recipe_id])
+    parent_recipe = relationship("Recipe", foreign_keys=[parent_recipe_id])
+
+
+class IngredientAffinity(Base):
+    __tablename__ = "ingredient_affinities"
+
+    id = Column(Integer, primary_key=True)
+    ingredient_a_id = Column(Integer, ForeignKey("ingredients.id"), nullable=False)
+    ingredient_b_id = Column(Integer, ForeignKey("ingredients.id"), nullable=False)
+    strength_score = Column(Numeric(3, 1), nullable=False)  # 0-10
+    notes = Column(Text)
+    created_at = Column(DateTime, default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("ingredient_a_id", "ingredient_b_id", name="uq_ingredient_affinity"),
+    )
+
+    ingredient_a = relationship("Ingredient", foreign_keys=[ingredient_a_id])
+    ingredient_b = relationship("Ingredient", foreign_keys=[ingredient_b_id])
+
+
+class IngredientSeason(Base):
+    __tablename__ = "ingredient_seasons"
+
+    id = Column(Integer, primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), nullable=False)
+    season = Column(String(20), nullable=False)  # spring, summer, fall, winter
+    is_peak = Column(Boolean, default=False)
+    months_json = Column(Text, default="[]")  # array of month numbers
+    created_at = Column(DateTime, default=_utcnow)
+
+    ingredient = relationship("Ingredient")

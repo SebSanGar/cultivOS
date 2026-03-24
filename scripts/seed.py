@@ -27,16 +27,22 @@ from sqlalchemy.orm import sessionmaker
 
 from cultivos.db.models import (
     Base,
+    DishDNA,
+    DishEvolution,
     Ingredient,
+    IngredientAffinity,
     IngredientPrice,
+    IngredientSeason,
     Location,
     ParLevel,
     Recipe,
     RecipeIngredient,
     RecipeStep,
+    RecipeTechnique,
     ScalingRule,
     ShelfLifeTracker,
     Supplier,
+    Technique,
     WasteLog,
 )
 
@@ -228,6 +234,155 @@ def seed():
         WasteLog(location_id=loc.id, logged_at=now - timedelta(hours=1), ingredient_id=ingredients["lemon"].id, category="trim", quantity=Decimal("0.3"), unit="kg", cost_estimate=Decimal("2.25")),
     ]
     db.add_all(waste)
+    db.flush()
+
+    # -----------------------------------------------------------------------
+    # Culinary Intelligence: Techniques (18 across 7 categories)
+    # -----------------------------------------------------------------------
+    techniques = {
+        # Heat (6)
+        "grill": Technique(name="Grill", category="Heat", subcategory="Direct heat", description="Cook over direct flame or heat source", difficulty_level=2, equipment_required_json='["grill"]', time_profile="medium", best_for_json='["proteins","vegetables"]', season_affinity_json='["summer","year-round"]', flavor_impact="Smoky char, Maillard reaction", texture_impact="Crispy exterior, tender interior", location_id=loc.id),
+        "sear": Technique(name="Sear", category="Heat", subcategory="Pan heat", description="High-heat browning in a pan", difficulty_level=2, equipment_required_json='["saute pan"]', time_profile="quick", best_for_json='["proteins","seafood"]', season_affinity_json='["year-round"]', flavor_impact="Deep Maillard crust, caramelized", texture_impact="Crispy crust, juicy interior", location_id=loc.id),
+        "roast": Technique(name="Roast", category="Heat", subcategory="Oven heat", description="Dry heat cooking in oven", difficulty_level=1, equipment_required_json='["oven"]', time_profile="long", best_for_json='["proteins","vegetables","grains"]', season_affinity_json='["fall","winter"]', flavor_impact="Deep caramelization, concentrated flavors", texture_impact="Crispy exterior, tender throughout", location_id=loc.id),
+        "saute": Technique(name="Saute", category="Heat", subcategory="Pan heat", description="Quick cooking in small amount of fat", difficulty_level=1, equipment_required_json='["saute pan"]', time_profile="quick", best_for_json='["vegetables","proteins"]', season_affinity_json='["year-round"]', flavor_impact="Light browning, fresh flavor retained", texture_impact="Tender-crisp", location_id=loc.id),
+        "braise": Technique(name="Braise", category="Heat", subcategory="Wet-dry heat", description="Sear then slow cook in liquid", difficulty_level=3, equipment_required_json='["dutch oven"]', time_profile="long", best_for_json='["proteins","vegetables"]', season_affinity_json='["fall","winter"]', flavor_impact="Deep, complex, concentrated", texture_impact="Fork-tender, falling apart", location_id=loc.id),
+        "sous_vide": Technique(name="Sous Vide", category="Heat", subcategory="Precision heat", description="Vacuum-sealed precision cooking in water bath", difficulty_level=3, equipment_required_json='["immersion circulator","vacuum sealer"]', time_profile="long", best_for_json='["proteins","eggs"]', season_affinity_json='["year-round"]', flavor_impact="Pure, concentrated ingredient flavor", texture_impact="Perfectly uniform doneness", location_id=loc.id),
+        # Cold (3)
+        "ceviche": Technique(name="Ceviche Cure", category="Cold", subcategory="Acid cure", description="Denature proteins with citrus acid", difficulty_level=2, equipment_required_json='[]', time_profile="medium", best_for_json='["seafood"]', season_affinity_json='["summer"]', flavor_impact="Bright, acidic, fresh", texture_impact="Firm exterior, silky interior", location_id=loc.id),
+        "cold_smoke": Technique(name="Cold Smoke", category="Cold", subcategory="Smoke", description="Smoke without cooking", difficulty_level=4, equipment_required_json='["cold smoker"]', time_profile="long", best_for_json='["proteins","seafood","dairy"]', season_affinity_json='["fall","winter"]', flavor_impact="Delicate smoke, complex", texture_impact="Unchanged original texture", location_id=loc.id),
+        "crudo": Technique(name="Crudo", category="Cold", subcategory="Raw preparation", description="Serve raw with minimal dressing", difficulty_level=2, equipment_required_json='[]', time_profile="quick", best_for_json='["seafood"]', season_affinity_json='["summer"]', flavor_impact="Pure, clean, bright", texture_impact="Buttery, silky", location_id=loc.id),
+        # Texture (3)
+        "emulsify": Technique(name="Emulsify", category="Texture", subcategory="Binding", description="Combine immiscible liquids into stable mixture", difficulty_level=3, equipment_required_json='["whisk","blender"]', time_profile="quick", best_for_json='["sauces","dressings"]', season_affinity_json='["year-round"]', flavor_impact="Rounded, balanced mouthfeel", texture_impact="Creamy, smooth, cohesive", location_id=loc.id),
+        "crisp": Technique(name="Crisp", category="Texture", subcategory="Dehydration", description="Remove moisture for crunch", difficulty_level=2, equipment_required_json='["oven","fryer"]', time_profile="medium", best_for_json='["vegetables","grains","proteins"]', season_affinity_json='["year-round"]', flavor_impact="Concentrated, toasted", texture_impact="Crunchy, shattering", location_id=loc.id),
+        "puree": Technique(name="Puree", category="Texture", subcategory="Blending", description="Blend to smooth consistency", difficulty_level=1, equipment_required_json='["blender"]', time_profile="quick", best_for_json='["vegetables","fruits"]', season_affinity_json='["year-round"]', flavor_impact="Concentrated, smooth", texture_impact="Velvety, smooth", location_id=loc.id),
+        # Flavor (3)
+        "marinate": Technique(name="Marinate", category="Flavor", subcategory="Infusion", description="Soak in seasoned liquid to infuse flavor", difficulty_level=1, equipment_required_json='[]', time_profile="long", best_for_json='["proteins","vegetables"]', season_affinity_json='["year-round"]', flavor_impact="Layered, penetrating seasoning", texture_impact="Tenderized surface", location_id=loc.id),
+        "deglaze": Technique(name="Deglaze", category="Flavor", subcategory="Extraction", description="Dissolve caramelized fond with liquid", difficulty_level=2, equipment_required_json='["saute pan"]', time_profile="quick", best_for_json='["sauces"]', season_affinity_json='["year-round"]', flavor_impact="Rich, concentrated pan sauce", texture_impact="Liquid, silky", location_id=loc.id),
+        "caramelize": Technique(name="Caramelize", category="Flavor", subcategory="Sugar browning", description="Brown sugars through controlled heat", difficulty_level=2, equipment_required_json='["saute pan"]', time_profile="medium", best_for_json='["vegetables","fruits"]', season_affinity_json='["fall","winter"]', flavor_impact="Sweet, nutty, complex", texture_impact="Soft, jammy", location_id=loc.id),
+        # Preservation (2)
+        "pickle": Technique(name="Pickle", category="Preservation", subcategory="Acid preservation", description="Preserve in vinegar brine", difficulty_level=1, equipment_required_json='["jars"]', time_profile="long", best_for_json='["vegetables"]', season_affinity_json='["summer","fall"]', flavor_impact="Sharp acid, tangy, bright", texture_impact="Firm, crisp-tender", location_id=loc.id),
+        "confit": Technique(name="Confit", category="Preservation", subcategory="Fat preservation", description="Slow cook submerged in fat", difficulty_level=3, equipment_required_json='["dutch oven"]', time_profile="long", best_for_json='["proteins","vegetables"]', season_affinity_json='["fall","winter"]', flavor_impact="Rich, luscious, deep", texture_impact="Silky, melt-in-mouth, tender", location_id=loc.id),
+        # Assembly (1)
+        "compose": Technique(name="Compose/Plate", category="Assembly", subcategory="Plating", description="Arrange components for visual and textural balance", difficulty_level=2, equipment_required_json='[]', time_profile="quick", best_for_json='["all"]', season_affinity_json='["year-round"]', flavor_impact="Balanced bite combinations", texture_impact="Varied textures per bite", location_id=loc.id),
+    }
+    db.add_all(techniques.values())
+    db.flush()
+    print(f"  Techniques: {len(techniques)} across 7 categories")
+
+    # -----------------------------------------------------------------------
+    # Recipe-Technique links
+    # -----------------------------------------------------------------------
+    recipe_techniques = [
+        # Grilled Chicken Salad: grill, compose
+        RecipeTechnique(recipe_id=r1.id, technique_id=techniques["grill"].id, step_order=1),
+        RecipeTechnique(recipe_id=r1.id, technique_id=techniques["compose"].id, step_order=2),
+        # Pan-Seared Salmon: sear, deglaze, compose
+        RecipeTechnique(recipe_id=r2.id, technique_id=techniques["sear"].id, step_order=1),
+        RecipeTechnique(recipe_id=r2.id, technique_id=techniques["deglaze"].id, step_order=2),
+        RecipeTechnique(recipe_id=r2.id, technique_id=techniques["compose"].id, step_order=3),
+        # House Focaccia: emulsify, roast
+        RecipeTechnique(recipe_id=r3.id, technique_id=techniques["emulsify"].id, step_order=1),
+        RecipeTechnique(recipe_id=r3.id, technique_id=techniques["roast"].id, step_order=2),
+    ]
+    db.add_all(recipe_techniques)
+    db.flush()
+    print(f"  Recipe-technique links: {len(recipe_techniques)}")
+
+    # -----------------------------------------------------------------------
+    # DishDNA for each recipe
+    # -----------------------------------------------------------------------
+    dna_entries = [
+        DishDNA(
+            recipe_id=r1.id,
+            technique_fingerprint_json=json.dumps([techniques["grill"].id, techniques["compose"].id]),
+            flavor_profile_json=json.dumps({"savory": 6, "sweet": 0, "acid": 3, "bitter": 3, "umami": 3}),
+            texture_profile_json=json.dumps({"crispy": 6, "creamy": 0, "chewy": 0, "tender": 3}),
+            cuisine_influences_json=json.dumps(["Mediterranean", "North American"]),
+            seasonal_peak="summer",
+            complexity_score=6,
+        ),
+        DishDNA(
+            recipe_id=r2.id,
+            technique_fingerprint_json=json.dumps([techniques["sear"].id, techniques["deglaze"].id, techniques["compose"].id]),
+            flavor_profile_json=json.dumps({"savory": 8, "sweet": 0, "acid": 3, "bitter": 0, "umami": 6}),
+            texture_profile_json=json.dumps({"crispy": 6, "creamy": 3, "chewy": 0, "tender": 3}),
+            cuisine_influences_json=json.dumps(["French", "North American"]),
+            seasonal_peak="fall",
+            complexity_score=7,
+        ),
+        DishDNA(
+            recipe_id=r3.id,
+            technique_fingerprint_json=json.dumps([techniques["emulsify"].id, techniques["roast"].id]),
+            flavor_profile_json=json.dumps({"savory": 3, "sweet": 3, "acid": 0, "bitter": 0, "umami": 3}),
+            texture_profile_json=json.dumps({"crispy": 6, "creamy": 3, "chewy": 3, "tender": 0}),
+            cuisine_influences_json=json.dumps(["Italian"]),
+            seasonal_peak="year-round",
+            complexity_score=5,
+        ),
+    ]
+    db.add_all(dna_entries)
+    db.flush()
+    print(f"  DishDNA: generated for all 3 recipes")
+
+    # -----------------------------------------------------------------------
+    # Dish Evolution: Chicken Salad evolved from Basic Chicken Plate
+    # -----------------------------------------------------------------------
+    evo = DishEvolution(
+        recipe_id=r1.id,
+        parent_recipe_id=None,
+        generation=2,
+        evolution_type="seasonal_swap",
+        changelog_json=json.dumps([
+            "Swapped iceberg lettuce for seasonal mixed greens",
+            "Added grilled lemon half as garnish",
+            "Upgraded to herb-marinated chicken breast",
+        ]),
+        techniques_added_json=json.dumps([techniques["grill"].id]),
+        techniques_removed_json=json.dumps([]),
+        ingredients_swapped_json=json.dumps([
+            {"old": "Iceberg lettuce", "new": "Mixed greens", "reason": "Seasonal availability, better nutrition"},
+        ]),
+        performance_delta_json=json.dumps({"margin_change": 1.20, "popularity_change": 15, "waste_change": -8}),
+        evolved_by="Chef Maria",
+    )
+    db.add(evo)
+    db.flush()
+    print(f"  Evolution: Chicken Salad lineage (gen 2)")
+
+    # -----------------------------------------------------------------------
+    # Ingredient Affinities (pairings)
+    # -----------------------------------------------------------------------
+    affinities = [
+        IngredientAffinity(ingredient_a_id=ingredients["chicken_breast"].id, ingredient_b_id=ingredients["lemon"].id, strength_score=Decimal("9.0"), notes="Classic Mediterranean pairing"),
+        IngredientAffinity(ingredient_a_id=ingredients["chicken_breast"].id, ingredient_b_id=ingredients["olive_oil"].id, strength_score=Decimal("8.0")),
+        IngredientAffinity(ingredient_a_id=ingredients["chicken_breast"].id, ingredient_b_id=ingredients["mixed_greens"].id, strength_score=Decimal("7.0")),
+        IngredientAffinity(ingredient_a_id=ingredients["salmon"].id, ingredient_b_id=ingredients["lemon"].id, strength_score=Decimal("9.0"), notes="Essential fish pairing"),
+        IngredientAffinity(ingredient_a_id=ingredients["salmon"].id, ingredient_b_id=ingredients["olive_oil"].id, strength_score=Decimal("8.0")),
+        IngredientAffinity(ingredient_a_id=ingredients["flour"].id, ingredient_b_id=ingredients["eggs"].id, strength_score=Decimal("9.0"), notes="Foundational baking bond"),
+        IngredientAffinity(ingredient_a_id=ingredients["flour"].id, ingredient_b_id=ingredients["olive_oil"].id, strength_score=Decimal("7.0")),
+        IngredientAffinity(ingredient_a_id=ingredients["lemon"].id, ingredient_b_id=ingredients["olive_oil"].id, strength_score=Decimal("8.5"), notes="Classic vinaigrette base"),
+    ]
+    db.add_all(affinities)
+    db.flush()
+    print(f"  Affinities: {len(affinities)} ingredient pairings")
+
+    # -----------------------------------------------------------------------
+    # Seasonal availability (Ontario calendar)
+    # -----------------------------------------------------------------------
+    seasons = [
+        IngredientSeason(ingredient_id=ingredients["chicken_breast"].id, season="year-round", is_peak=False, months_json=json.dumps([1,2,3,4,5,6,7,8,9,10,11,12])),
+        IngredientSeason(ingredient_id=ingredients["salmon"].id, season="summer", is_peak=True, months_json=json.dumps([6,7,8,9])),
+        IngredientSeason(ingredient_id=ingredients["salmon"].id, season="fall", is_peak=False, months_json=json.dumps([10,11])),
+        IngredientSeason(ingredient_id=ingredients["mixed_greens"].id, season="spring", is_peak=True, months_json=json.dumps([4,5,6])),
+        IngredientSeason(ingredient_id=ingredients["mixed_greens"].id, season="summer", is_peak=True, months_json=json.dumps([7,8,9])),
+        IngredientSeason(ingredient_id=ingredients["mixed_greens"].id, season="fall", is_peak=False, months_json=json.dumps([10])),
+        IngredientSeason(ingredient_id=ingredients["lemon"].id, season="winter", is_peak=True, months_json=json.dumps([12,1,2,3])),
+        IngredientSeason(ingredient_id=ingredients["eggs"].id, season="spring", is_peak=True, months_json=json.dumps([3,4,5])),
+        IngredientSeason(ingredient_id=ingredients["eggs"].id, season="year-round", is_peak=False, months_json=json.dumps([1,2,3,4,5,6,7,8,9,10,11,12])),
+    ]
+    db.add_all(seasons)
+    db.flush()
+    print(f"  Seasonal data: {len(seasons)} entries (Ontario calendar)")
 
     db.commit()
     print("\nSeed complete. Explore at http://localhost:8000/docs")
@@ -237,6 +392,11 @@ def seed():
     print(f"\nTry:")
     print(f"  GET /api/recipes/{r1.id}/scale?target_yield=100")
     print(f"  GET /api/recipes/{r1.id}/cost")
+    print(f"  GET /api/recipes/{r1.id}/dna")
+    print(f"  GET /api/recipes/{r1.id}/lineage")
+    print(f"  GET /api/techniques/audit?location_id={loc.id}")
+    print(f"  GET /api/menu/dna-comparison?location_id={loc.id}")
+    print(f"  GET /api/ingredients/{ingredients['chicken_breast'].id}/affinities")
     print(f"  GET /api/production/needs?location_id={loc.id}")
     print(f"  GET /api/menu-engineering?location_id={loc.id}")
     db.close()
