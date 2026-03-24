@@ -53,9 +53,9 @@ def create_app() -> FastAPI:
     )
 
     app = FastAPI(
-        title="cultivOS API",
+        title="Kitchen Intelligence API",
         version="0.1.0",
-        description="Agricultural Intelligence — precision farming platform",
+        description="Hungry-Cooks.com — Kitchen operations intelligence platform",
         lifespan=_lifespan,
     )
 
@@ -72,6 +72,23 @@ def create_app() -> FastAPI:
     @app.get("/api/health")
     async def health():
         return {"status": "ok", "version": "0.1.0"}
+
+    # API routers
+    from cultivos.api.recipes import router as recipes_router
+    from cultivos.api.ingredients import router as ingredients_router
+    from cultivos.api.suppliers import router as suppliers_router
+    from cultivos.api.production import router as production_router
+    from cultivos.api.waste import router as waste_router
+    from cultivos.api.financial import router as financial_router
+    from cultivos.api.locations import router as locations_router
+
+    app.include_router(recipes_router, prefix="/api", tags=["recipes"])
+    app.include_router(ingredients_router, prefix="/api", tags=["ingredients"])
+    app.include_router(suppliers_router, prefix="/api", tags=["suppliers"])
+    app.include_router(production_router, prefix="/api", tags=["production"])
+    app.include_router(waste_router, prefix="/api", tags=["waste"])
+    app.include_router(financial_router, prefix="/api", tags=["financial"])
+    app.include_router(locations_router, prefix="/api", tags=["locations"])
 
     # Serve frontend
     frontend_dir = Path(__file__).parent.parent.parent / "frontend"
