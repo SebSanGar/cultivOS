@@ -43,8 +43,10 @@ from cultivos.db.models import (
     ShelfLifeTracker,
     Supplier,
     Technique,
+    User,
     WasteLog,
 )
+from cultivos.services.auth_service import hash_pin
 
 DB_URL = "sqlite:///cultivos.db"
 
@@ -64,6 +66,19 @@ def seed():
     db.add(loc)
     db.flush()
     print(f"  Location: {loc.name} (id={loc.id})")
+
+    # -----------------------------------------------------------------------
+    # Users (demo PINs — change in production!)
+    # -----------------------------------------------------------------------
+    users = {
+        "admin": User(name="Admin Seb", email="seb@hungry-cooks.com", role="admin", pin_hash=hash_pin("0000"), location_id=loc.id),
+        "manager": User(name="Manager Maria", email="maria@hungry-cooks.com", role="manager", pin_hash=hash_pin("1111"), location_id=loc.id),
+        "lead": User(name="Lead Chef Carlos", role="lead", pin_hash=hash_pin("2222"), location_id=loc.id),
+        "staff": User(name="Cook Ana", role="staff", pin_hash=hash_pin("3333"), location_id=loc.id),
+    }
+    db.add_all(users.values())
+    db.flush()
+    print(f"  Users: {len(users)} (admin=0000, manager=1111, lead=2222, staff=3333)")
 
     # -----------------------------------------------------------------------
     # Suppliers
@@ -389,7 +404,9 @@ def seed():
     print(f"\nKey IDs:")
     print(f"  location_id = {loc.id}")
     print(f"  recipe_ids  = {r1.id} (Chicken Salad), {r2.id} (Salmon), {r3.id} (Focaccia)")
+    print(f"  user_ids    = {users['admin'].id} (Admin/0000), {users['manager'].id} (Manager/1111), {users['lead'].id} (Lead/2222), {users['staff'].id} (Staff/3333)")
     print(f"\nTry:")
+    print(f"  POST /api/auth/login  {{\"user_id\": {users['admin'].id}, \"pin\": \"0000\"}}")
     print(f"  GET /api/recipes/{r1.id}/scale?target_yield=100")
     print(f"  GET /api/recipes/{r1.id}/cost")
     print(f"  GET /api/recipes/{r1.id}/dna")

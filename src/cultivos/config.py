@@ -21,6 +21,7 @@ class Settings(BaseSettings):
 
     # Auth
     jwt_secret_key: str = "change-me-in-production-use-a-random-32-char-string"
+    jwt_expiry_minutes: int = 480  # 8-hour kitchen shift
 
     # Server
     log_level: str = "INFO"

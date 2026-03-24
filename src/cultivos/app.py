@@ -82,6 +82,7 @@ def create_app() -> FastAPI:
     from cultivos.api.financial import router as financial_router
     from cultivos.api.locations import router as locations_router
     from cultivos.api.culinary import router as culinary_router
+    from cultivos.api.auth import router as auth_router
 
     app.include_router(recipes_router, prefix="/api", tags=["recipes"])
     app.include_router(ingredients_router, prefix="/api", tags=["ingredients"])
@@ -91,6 +92,7 @@ def create_app() -> FastAPI:
     app.include_router(financial_router, prefix="/api", tags=["financial"])
     app.include_router(locations_router, prefix="/api", tags=["locations"])
     app.include_router(culinary_router, prefix="/api", tags=["culinary"])
+    app.include_router(auth_router, prefix="/api", tags=["auth"])
 
     # Serve frontend
     frontend_dir = Path(__file__).parent.parent.parent / "frontend"
