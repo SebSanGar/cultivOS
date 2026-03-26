@@ -17,6 +17,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from cultivos.api.dashboard import router as dashboard_router
 from cultivos.api.farms import router as farms_router
 from cultivos.api.health import router as health_router
+from cultivos.api.irrigation import router as irrigation_router
 from cultivos.api.knowledge import router as knowledge_router
 from cultivos.api.ndvi import router as ndvi_router
 from cultivos.api.rotation import router as rotation_router
@@ -91,6 +92,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(farms_router)
     app.include_router(health_router)
+    app.include_router(irrigation_router)
     app.include_router(knowledge_router)
     app.include_router(ndvi_router)
     app.include_router(rotation_router)
