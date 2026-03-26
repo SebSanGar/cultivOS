@@ -26,6 +26,7 @@ class Farm(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     fields = relationship("Field", back_populates="farm", cascade="all, delete-orphan")
+    weather_records = relationship("WeatherRecord", back_populates="farm", cascade="all, delete-orphan")
 
 
 class Field(Base):
@@ -127,3 +128,19 @@ class NDVIResult(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="ndvi_results")
+
+
+class WeatherRecord(Base):
+    __tablename__ = "weather_records"
+
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False)
+    temp_c = Column(Float, nullable=False)
+    humidity_pct = Column(Float, nullable=False)
+    wind_kmh = Column(Float, nullable=False)
+    description = Column(String(200), nullable=False)
+    forecast_3day = Column(JSON, nullable=False, default=list)
+    recorded_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    farm = relationship("Farm", back_populates="weather_records")
