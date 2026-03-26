@@ -77,8 +77,13 @@ class HealthScore(Base):
     thermal_max = Column(Float)
     thermal_min = Column(Float)
     stress_pct = Column(Float)  # % of field under stress
-    trend = Column(String(20))  # improving, stable, declining, critical
+    soil_ph = Column(Float)
+    soil_organic_matter_pct = Column(Float)
+    trend = Column(String(20))  # improving, stable, declining
+    sources = Column(JSON, nullable=False, default=list)  # ["ndvi", "soil"]
+    breakdown = Column(JSON, nullable=False, default=dict)  # component → sub-score
     scored_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="health_scores")
 

@@ -1,0 +1,149 @@
+"""Health scoring endpoints — nested under /api/farms/{farm_id}/fields/{field_id}/health."""
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis
+from cultivos.db.session import get_db
+from cultivos.models.health import HealthScoreOut
+from cultivos.services.crop.health import NDVIInput, SoilInput, compute_health_score
+
+router = APIRouter(
+    prefix="/api/farms/{farm_id}/fields/{field_id}/health",
+    tags=["health"],
+)
+
+
+def _get_field(farm_id: int, field_id: int, db: Session) -> Field:
+    """Validate farm and field exist and are linked."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return field
+
+
+@router.post("", response_model=HealthScoreOut, status_code=201)
+def compute_field_health(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Compute health score from latest NDVI and soil data for this field.
+
+    Automatically fetches the most recent NDVI result and soil analysis.
+    Returns a partial score if only one data source is available.
+    Returns 422 if neither NDVI nor soil data exists for the field.
+    """
+    _get_field(farm_id, field_id, db)
+
+    # Fetch latest NDVI result
+    latest_ndvi = (
+        db.query(NDVIResult)
+        .filter(NDVIResult.field_id == field_id)
+        .order_by(NDVIResult.analyzed_at.desc())
+        .first()
+    )
+
+    # Fetch latest soil analysis
+    latest_soil = (
+        db.query(SoilAnalysis)
+        .filter(SoilAnalysis.field_id == field_id)
+        .order_by(SoilAnalysis.sampled_at.desc())
+        .first()
+    )
+
+    if not latest_ndvi and not latest_soil:
+        raise HTTPException(
+            status_code=422,
+            detail="No NDVI or soil data available for this field. Submit at least one before computing health.",
+        )
+
+    # Build inputs
+    ndvi_input: NDVIInput | None = None
+    if latest_ndvi:
+        ndvi_input = NDVIInput(
+            ndvi_mean=latest_ndvi.ndvi_mean,
+            ndvi_std=latest_ndvi.ndvi_std,
+            stress_pct=latest_ndvi.stress_pct,
+        )
+
+    soil_input: SoilInput | None = None
+    if latest_soil:
+        soil_input = SoilInput(
+            ph=latest_soil.ph,
+            organic_matter_pct=latest_soil.organic_matter_pct,
+            nitrogen_ppm=latest_soil.nitrogen_ppm,
+            phosphorus_ppm=latest_soil.phosphorus_ppm,
+            potassium_ppm=latest_soil.potassium_ppm,
+            moisture_pct=latest_soil.moisture_pct,
+        )
+
+    # Get previous score for trend
+    previous = (
+        db.query(HealthScore)
+        .filter(HealthScore.field_id == field_id)
+        .order_by(HealthScore.scored_at.desc())
+        .first()
+    )
+    previous_score = previous.score if previous else None
+
+    result = compute_health_score(
+        ndvi=ndvi_input,
+        soil=soil_input,
+        previous_score=previous_score,
+    )
+
+    record = HealthScore(
+        field_id=field_id,
+        score=result["score"],
+        ndvi_mean=latest_ndvi.ndvi_mean if latest_ndvi else None,
+        ndvi_std=latest_ndvi.ndvi_std if latest_ndvi else None,
+        stress_pct=latest_ndvi.stress_pct if latest_ndvi else None,
+        soil_ph=latest_soil.ph if latest_soil else None,
+        soil_organic_matter_pct=latest_soil.organic_matter_pct if latest_soil else None,
+        trend=result["trend"],
+        sources=result["sources"],
+        breakdown=result["breakdown"],
+    )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    return record
+
+
+@router.get("", response_model=list[HealthScoreOut])
+def list_health_scores(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """List all health scores for this field, most recent first."""
+    _get_field(farm_id, field_id, db)
+    return (
+        db.query(HealthScore)
+        .filter(HealthScore.field_id == field_id)
+        .order_by(HealthScore.scored_at.desc())
+        .all()
+    )
+
+
+@router.get("/{score_id}", response_model=HealthScoreOut)
+def get_health_score(
+    farm_id: int,
+    field_id: int,
+    score_id: int,
+    db: Session = Depends(get_db),
+):
+    """Get a specific health score by ID."""
+    _get_field(farm_id, field_id, db)
+    score = (
+        db.query(HealthScore)
+        .filter(HealthScore.id == score_id, HealthScore.field_id == field_id)
+        .first()
+    )
+    if not score:
+        raise HTTPException(status_code=404, detail="Health score not found")
+    return score

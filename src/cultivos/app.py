@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from cultivos.api.farms import router as farms_router
+from cultivos.api.health import router as health_router
 from cultivos.api.ndvi import router as ndvi_router
 from cultivos.api.soil import router as soil_router
 from cultivos.config import get_settings
@@ -73,6 +74,7 @@ def create_app() -> FastAPI:
 
     # Routers
     app.include_router(farms_router)
+    app.include_router(health_router)
     app.include_router(ndvi_router)
     app.include_router(soil_router)
 
