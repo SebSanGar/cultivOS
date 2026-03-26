@@ -169,6 +169,18 @@ class ThermalResult(Base):
     field = relationship("Field", back_populates="thermal_results")
 
 
+class Fertilizer(Base):
+    __tablename__ = "fertilizers"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False, unique=True)
+    description_es = Column(Text, nullable=False)
+    application_method = Column(Text, nullable=False)
+    cost_per_ha_mxn = Column(Integer, nullable=False, default=0)
+    nutrient_profile = Column(String(200), nullable=False)
+    suitable_crops = Column(JSON, nullable=False, default=list)  # ["maiz", "agave", ...]
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 

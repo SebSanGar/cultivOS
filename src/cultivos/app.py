@@ -17,6 +17,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from cultivos.api.dashboard import router as dashboard_router
 from cultivos.api.farms import router as farms_router
 from cultivos.api.health import router as health_router
+from cultivos.api.knowledge import router as knowledge_router
 from cultivos.api.ndvi import router as ndvi_router
 from cultivos.api.soil import router as soil_router
 from cultivos.api.thermal import router as thermal_router
@@ -33,9 +34,18 @@ async def _lifespan(app: FastAPI):
     """FastAPI lifespan: initialize database."""
     is_testing = os.environ.get("DB_URL", "").startswith("sqlite:///:memory:")
     if not is_testing:
-        from cultivos.db.session import get_engine
+        from cultivos.db.session import get_engine, get_session_factory
         get_engine()  # creates tables
         logger.info("Database initialized")
+        # Seed knowledge base data
+        from cultivos.db.seeds import seed_fertilizers
+        db_session = get_session_factory()()
+        try:
+            count = seed_fertilizers(db_session)
+            if count:
+                logger.info("Seeded %d fertilizer methods", count)
+        finally:
+            db_session.close()
     yield
 
 
@@ -80,6 +90,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(farms_router)
     app.include_router(health_router)
+    app.include_router(knowledge_router)
     app.include_router(ndvi_router)
     app.include_router(soil_router)
     app.include_router(thermal_router)
