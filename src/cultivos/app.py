@@ -14,6 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from cultivos.api.farms import router as farms_router
 from cultivos.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -67,6 +68,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Routers
+    app.include_router(farms_router)
 
     # Health check
     @app.get("/api/health")
