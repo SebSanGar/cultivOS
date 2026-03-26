@@ -42,6 +42,7 @@ class Field(Base):
     farm = relationship("Farm", back_populates="fields")
     flights = relationship("FlightLog", back_populates="field", cascade="all, delete-orphan")
     health_scores = relationship("HealthScore", back_populates="field", cascade="all, delete-orphan")
+    soil_analyses = relationship("SoilAnalysis", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -79,3 +80,25 @@ class HealthScore(Base):
     scored_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="health_scores")
+
+
+class SoilAnalysis(Base):
+    __tablename__ = "soil_analyses"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    ph = Column(Float)  # 0-14 scale
+    organic_matter_pct = Column(Float)  # percentage
+    nitrogen_ppm = Column(Float)  # parts per million
+    phosphorus_ppm = Column(Float)
+    potassium_ppm = Column(Float)
+    texture = Column(String(50))  # clay, loam, sand, silt, etc.
+    moisture_pct = Column(Float)  # percentage
+    electrical_conductivity = Column(Float)  # dS/m (salinity indicator)
+    depth_cm = Column(Float)  # sampling depth
+    notes = Column(Text)
+    recommendations = Column(Text)  # regenerative treatment suggestions
+    sampled_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="soil_analyses")
