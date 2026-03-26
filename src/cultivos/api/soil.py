@@ -1,6 +1,6 @@
 """Soil Analysis CRUD endpoints — nested under /api/farms/{farm_id}/fields/{field_id}/soil."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field, SoilAnalysis
@@ -93,3 +93,23 @@ def update_soil_analysis(
     db.commit()
     db.refresh(analysis)
     return analysis
+
+
+@router.delete("/{soil_id}", status_code=204)
+def delete_soil_analysis(
+    farm_id: int,
+    field_id: int,
+    soil_id: int,
+    db: Session = Depends(get_db),
+):
+    _get_field(farm_id, field_id, db)
+    analysis = (
+        db.query(SoilAnalysis)
+        .filter(SoilAnalysis.id == soil_id, SoilAnalysis.field_id == field_id)
+        .first()
+    )
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Soil analysis not found")
+    db.delete(analysis)
+    db.commit()
+    return Response(status_code=204)

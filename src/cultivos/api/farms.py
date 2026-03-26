@@ -1,6 +1,6 @@
 """Farm and Field CRUD endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field
@@ -49,6 +49,16 @@ def update_farm(farm_id: int, body: FarmUpdate, db: Session = Depends(get_db)):
     return farm
 
 
+@router.delete("/{farm_id}", status_code=204)
+def delete_farm(farm_id: int, db: Session = Depends(get_db)):
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    db.delete(farm)
+    db.commit()
+    return Response(status_code=204)
+
+
 # ── Field CRUD (nested under farm) ───────────────────────────────────
 
 @router.post("/{farm_id}/fields", response_model=FieldOut, status_code=201)
@@ -89,3 +99,13 @@ def update_field(farm_id: int, field_id: int, body: FieldUpdate, db: Session = D
     db.commit()
     db.refresh(field)
     return field
+
+
+@router.delete("/{farm_id}/fields/{field_id}", status_code=204)
+def delete_field(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    db.delete(field)
+    db.commit()
+    return Response(status_code=204)
