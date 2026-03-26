@@ -19,6 +19,7 @@ from cultivos.api.farms import router as farms_router
 from cultivos.api.health import router as health_router
 from cultivos.api.knowledge import router as knowledge_router
 from cultivos.api.ndvi import router as ndvi_router
+from cultivos.api.rotation import router as rotation_router
 from cultivos.api.soil import router as soil_router
 from cultivos.api.thermal import router as thermal_router
 from cultivos.api.treatments import router as treatments_router
@@ -92,6 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(knowledge_router)
     app.include_router(ndvi_router)
+    app.include_router(rotation_router)
     app.include_router(soil_router)
     app.include_router(thermal_router)
     app.include_router(treatments_router)
