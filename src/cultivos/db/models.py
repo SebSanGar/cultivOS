@@ -2,7 +2,7 @@
 SQLAlchemy ORM models for cultivOS.
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Text, JSON, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship
 from datetime import datetime
 
@@ -43,6 +43,7 @@ class Field(Base):
     flights = relationship("FlightLog", back_populates="field", cascade="all, delete-orphan")
     health_scores = relationship("HealthScore", back_populates="field", cascade="all, delete-orphan")
     soil_analyses = relationship("SoilAnalysis", back_populates="field", cascade="all, delete-orphan")
+    ndvi_results = relationship("NDVIResult", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -102,3 +103,22 @@ class SoilAnalysis(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="soil_analyses")
+
+
+class NDVIResult(Base):
+    __tablename__ = "ndvi_results"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    flight_id = Column(Integer, ForeignKey("flight_logs.id"))
+    ndvi_mean = Column(Float, nullable=False)
+    ndvi_std = Column(Float, nullable=False)
+    ndvi_min = Column(Float, nullable=False)
+    ndvi_max = Column(Float, nullable=False)
+    pixels_total = Column(Integer, nullable=False)
+    stress_pct = Column(Float, nullable=False)  # % of pixels below 0.4
+    zones = Column(JSON, nullable=False)  # list of zone dicts
+    analyzed_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="ndvi_results")
