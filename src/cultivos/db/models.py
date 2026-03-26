@@ -46,6 +46,7 @@ class Field(Base):
     soil_analyses = relationship("SoilAnalysis", back_populates="field", cascade="all, delete-orphan")
     ndvi_results = relationship("NDVIResult", back_populates="field", cascade="all, delete-orphan")
     treatments = relationship("TreatmentRecord", back_populates="field", cascade="all, delete-orphan")
+    thermal_results = relationship("ThermalResult", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -147,6 +148,25 @@ class TreatmentRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="treatments")
+
+
+class ThermalResult(Base):
+    __tablename__ = "thermal_results"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    flight_id = Column(Integer, ForeignKey("flight_logs.id"))
+    temp_mean = Column(Float, nullable=False)
+    temp_std = Column(Float, nullable=False)
+    temp_min = Column(Float, nullable=False)
+    temp_max = Column(Float, nullable=False)
+    pixels_total = Column(Integer, nullable=False)
+    stress_pct = Column(Float, nullable=False)
+    irrigation_deficit = Column(Boolean, nullable=False, default=False)
+    analyzed_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="thermal_results")
 
 
 class WeatherRecord(Base):
