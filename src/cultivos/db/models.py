@@ -45,6 +45,7 @@ class Field(Base):
     health_scores = relationship("HealthScore", back_populates="field", cascade="all, delete-orphan")
     soil_analyses = relationship("SoilAnalysis", back_populates="field", cascade="all, delete-orphan")
     ndvi_results = relationship("NDVIResult", back_populates="field", cascade="all, delete-orphan")
+    treatments = relationship("TreatmentRecord", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -128,6 +129,24 @@ class NDVIResult(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="ndvi_results")
+
+
+class TreatmentRecord(Base):
+    __tablename__ = "treatment_records"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    health_score_used = Column(Float, nullable=False)
+    problema = Column(String(200), nullable=False)
+    causa_probable = Column(String(300), nullable=False)
+    tratamiento = Column(Text, nullable=False)
+    costo_estimado_mxn = Column(Integer, nullable=False, default=0)
+    urgencia = Column(String(20), nullable=False)  # alta, media, baja
+    prevencion = Column(Text, nullable=False)
+    organic = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="treatments")
 
 
 class WeatherRecord(Base):
