@@ -14,6 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from cultivos.api.auth import router as auth_router
 from cultivos.api.dashboard import router as dashboard_router
 from cultivos.api.farms import router as farms_router
 from cultivos.api.health import router as health_router
@@ -89,6 +90,7 @@ def create_app() -> FastAPI:
     )
 
     # Routers
+    app.include_router(auth_router)
     app.include_router(dashboard_router)
     app.include_router(farms_router)
     app.include_router(health_router)

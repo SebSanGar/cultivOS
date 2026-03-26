@@ -111,16 +111,16 @@ class TestComputeNDVIStats:
 class TestNDVIAPI:
     """Tests for /api/farms/{farm_id}/fields/{field_id}/ndvi endpoints."""
 
-    def _create_farm_and_field(self, client):
-        farm = client.post("/api/farms", json={"name": "Test Farm"}).json()
+    def _create_farm_and_field(self, client, admin_headers):
+        farm = client.post("/api/farms", json={"name": "Test Farm"}, headers=admin_headers).json()
         field = client.post(
             f"/api/farms/{farm['id']}/fields",
             json={"name": "Parcela Norte", "crop_type": "maiz", "hectares": 5},
         ).json()
         return farm["id"], field["id"]
 
-    def test_analyze_ndvi_healthy(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_analyze_ndvi_healthy(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         # Healthy vegetation: high NIR, low Red
         nir = [[0.8, 0.85], [0.9, 0.75]]
         red = [[0.1, 0.12], [0.08, 0.15]]
@@ -135,8 +135,8 @@ class TestNDVIAPI:
         assert data["pixels_total"] == 4
         assert len(data["zones"]) == 5
 
-    def test_analyze_ndvi_stressed(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_analyze_ndvi_stressed(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         # Stressed: similar NIR and Red
         nir = [[0.25, 0.30], [0.28, 0.22]]
         red = [[0.20, 0.25], [0.22, 0.20]]
@@ -148,24 +148,24 @@ class TestNDVIAPI:
         data = resp.json()
         assert data["stress_pct"] == 100.0
 
-    def test_analyze_ndvi_dimension_mismatch(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_analyze_ndvi_dimension_mismatch(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         resp = client.post(
             f"/api/farms/{farm_id}/fields/{field_id}/ndvi",
             json={"nir_band": [[1, 2], [3, 4]], "red_band": [[1, 2, 3]]},
         )
         assert resp.status_code == 422
 
-    def test_analyze_ndvi_empty_bands(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_analyze_ndvi_empty_bands(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         resp = client.post(
             f"/api/farms/{farm_id}/fields/{field_id}/ndvi",
             json={"nir_band": [[]], "red_band": [[]]},
         )
         assert resp.status_code == 422
 
-    def test_list_ndvi_results(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_list_ndvi_results(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         # Submit two analyses
         bands = {"nir_band": [[0.8, 0.9]], "red_band": [[0.1, 0.1]]}
         client.post(f"/api/farms/{farm_id}/fields/{field_id}/ndvi", json=bands)
@@ -174,8 +174,8 @@ class TestNDVIAPI:
         assert resp.status_code == 200
         assert len(resp.json()) == 2
 
-    def test_get_ndvi_result_by_id(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_get_ndvi_result_by_id(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         create_resp = client.post(
             f"/api/farms/{farm_id}/fields/{field_id}/ndvi",
             json={"nir_band": [[0.7]], "red_band": [[0.1]]},
@@ -185,8 +185,8 @@ class TestNDVIAPI:
         assert resp.status_code == 200
         assert resp.json()["id"] == ndvi_id
 
-    def test_get_ndvi_not_found(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_get_ndvi_not_found(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         resp = client.get(f"/api/farms/{farm_id}/fields/{field_id}/ndvi/9999")
         assert resp.status_code == 404
 
@@ -197,16 +197,16 @@ class TestNDVIAPI:
         )
         assert resp.status_code == 404
 
-    def test_ndvi_field_not_found(self, client):
-        farm = client.post("/api/farms", json={"name": "Test"}).json()
+    def test_ndvi_field_not_found(self, client, admin_headers):
+        farm = client.post("/api/farms", json={"name": "Test"}, headers=admin_headers).json()
         resp = client.post(
             f"/api/farms/{farm['id']}/fields/9999/ndvi",
             json={"nir_band": [[0.5]], "red_band": [[0.2]]},
         )
         assert resp.status_code == 404
 
-    def test_ndvi_with_flight_id(self, client):
-        farm_id, field_id = self._create_farm_and_field(client)
+    def test_ndvi_with_flight_id(self, client, admin_headers):
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         resp = client.post(
             f"/api/farms/{farm_id}/fields/{field_id}/ndvi",
             json={"nir_band": [[0.8]], "red_band": [[0.1]], "flight_id": None},

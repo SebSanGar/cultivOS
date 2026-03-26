@@ -75,19 +75,19 @@ class TestFetchWeather:
 # Test 3 & 4: WeatherRecord CRUD via API
 # ---------------------------------------------------------------------------
 class TestWeatherAPI:
-    def _create_farm_and_field(self, client):
+    def _create_farm_and_field(self, client, admin_headers):
         """Helper — create a farm with coordinates for weather lookup."""
         farm_resp = client.post("/api/farms", json={
             "name": "Rancho Prueba",
             "location_lat": 20.6597,
             "location_lon": -103.3496,
-        })
+        }, headers=admin_headers)
         assert farm_resp.status_code == 201
         return farm_resp.json()
 
-    def test_weather_record_crud(self, client):
+    def test_weather_record_crud(self, client, admin_headers):
         """POST /api/farms/{id}/weather stores a WeatherRecord, GET returns it."""
-        farm = self._create_farm_and_field(client)
+        farm = self._create_farm_and_field(client, admin_headers)
         farm_id = farm["id"]
 
         # POST weather record

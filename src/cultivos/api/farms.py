@@ -3,7 +3,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field
+from cultivos.auth import get_current_user, require_role
+from cultivos.db.models import Farm, Field, User
 from cultivos.db.session import get_db
 from cultivos.models.farm import (
     FarmCreate, FarmUpdate, FarmOut,
@@ -16,7 +17,7 @@ router = APIRouter(prefix="/api/farms", tags=["farms"])
 # ── Farm CRUD ─────────────────────────────────────────────────────────
 
 @router.post("", response_model=FarmOut, status_code=201)
-def create_farm(body: FarmCreate, db: Session = Depends(get_db)):
+def create_farm(body: FarmCreate, db: Session = Depends(get_db), user: User = Depends(require_role("admin"))):
     farm = Farm(**body.model_dump())
     db.add(farm)
     db.commit()
@@ -25,7 +26,9 @@ def create_farm(body: FarmCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[FarmOut])
-def list_farms(db: Session = Depends(get_db)):
+def list_farms(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    if user.role == "farmer" and user.farm_id is not None:
+        return db.query(Farm).filter(Farm.id == user.farm_id).order_by(Farm.created_at.desc()).all()
     return db.query(Farm).order_by(Farm.created_at.desc()).all()
 
 

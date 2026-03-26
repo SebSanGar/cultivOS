@@ -58,17 +58,17 @@ class TestThermalVariationFlag:
 
 
 class TestThermalAPIStoresResult:
-    def _create_farm_and_field(self, client):
-        farm = client.post("/api/farms", json={"name": "Thermal Farm"}).json()
+    def _create_farm_and_field(self, client, admin_headers):
+        farm = client.post("/api/farms", json={"name": "Thermal Farm"}, headers=admin_headers).json()
         field = client.post(
             f"/api/farms/{farm['id']}/fields",
             json={"name": "Parcela Caliente", "crop_type": "agave", "hectares": 3},
         ).json()
         return farm["id"], field["id"]
 
-    def test_post_thermal_stores_result(self, client):
+    def test_post_thermal_stores_result(self, client, admin_headers):
         """POST /api/farms/{id}/fields/{id}/thermal with array stores ThermalResult."""
-        farm_id, field_id = self._create_farm_and_field(client)
+        farm_id, field_id = self._create_farm_and_field(client, admin_headers)
         thermal_data = [
             [36.0, 37.5, 38.0],
             [34.0, 40.0, 36.5],

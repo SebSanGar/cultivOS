@@ -50,3 +50,16 @@ def client(app, db):
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def admin_headers(client):
+    """Register an admin user and return auth headers for test convenience."""
+    client.post("/api/auth/register", json={
+        "username": "testadmin", "password": "secret123", "role": "admin"
+    })
+    resp = client.post("/api/auth/login", json={
+        "username": "testadmin", "password": "secret123"
+    })
+    token = resp.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

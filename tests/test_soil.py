@@ -4,9 +4,9 @@ import pytest
 
 
 @pytest.fixture
-def farm_and_field(client):
+def farm_and_field(client, admin_headers):
     """Create a farm + field and return (farm_id, field_id)."""
-    farm = client.post("/api/farms", json={"name": "Rancho Tierra"})
+    farm = client.post("/api/farms", json={"name": "Rancho Tierra"}, headers=admin_headers)
     farm_id = farm.json()["id"]
     field = client.post(f"/api/farms/{farm_id}/fields", json={
         "name": "Parcela Suelo", "crop_type": "maiz", "hectares": 10,

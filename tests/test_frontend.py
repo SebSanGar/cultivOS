@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.fixture
-def farm_with_data(client):
+def farm_with_data(client, admin_headers):
     """Create a farm with fields, soil, NDVI, and health data for dashboard testing."""
     # Create farm
     farm = client.post("/api/farms", json={
@@ -16,7 +16,7 @@ def farm_with_data(client):
         "municipality": "Zapopan",
         "state": "Jalisco",
         "country": "MX",
-    }).json()
+    }, headers=admin_headers).json()
 
     # Create two fields
     f1 = client.post(f"/api/farms/{farm['id']}/fields", json={
@@ -60,9 +60,9 @@ def test_dashboard_page_loads(client):
     assert "cultivOS" in resp.text
 
 
-def test_dashboard_fetches_farms(client, farm_with_data):
+def test_dashboard_fetches_farms(client, admin_headers, farm_with_data):
     """GET /api/farms returns farm data that the dashboard JS will fetch."""
-    resp = client.get("/api/farms")
+    resp = client.get("/api/farms", headers=admin_headers)
     assert resp.status_code == 200
     farms = resp.json()
     assert len(farms) >= 1

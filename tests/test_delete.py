@@ -4,9 +4,9 @@ import pytest
 
 
 @pytest.fixture
-def farm_field_with_data(client):
+def farm_field_with_data(client, admin_headers):
     """Create farm + field + soil analysis + NDVI result, return all IDs."""
-    farm = client.post("/api/farms", json={"name": "Rancho Borrar"})
+    farm = client.post("/api/farms", json={"name": "Rancho Borrar"}, headers=admin_headers)
     farm_id = farm.json()["id"]
 
     field = client.post(f"/api/farms/{farm_id}/fields", json={
@@ -75,8 +75,8 @@ class TestDeleteNonexistent:
         resp = client.delete("/api/farms/999")
         assert resp.status_code == 404
 
-    def test_delete_nonexistent_field_returns_404(self, client):
-        farm = client.post("/api/farms", json={"name": "Rancho Vacio"})
+    def test_delete_nonexistent_field_returns_404(self, client, admin_headers):
+        farm = client.post("/api/farms", json={"name": "Rancho Vacio"}, headers=admin_headers)
         farm_id = farm.json()["id"]
         resp = client.delete(f"/api/farms/{farm_id}/fields/999")
         assert resp.status_code == 404

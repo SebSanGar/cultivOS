@@ -6,8 +6,8 @@ import pytest
 # ── Farm CRUD ─────────────────────────────────────────────────────────
 
 class TestCreateFarm:
-    def test_create_farm_minimal(self, client):
-        resp = client.post("/api/farms", json={"name": "Rancho El Sol"})
+    def test_create_farm_minimal(self, client, admin_headers):
+        resp = client.post("/api/farms", json={"name": "Rancho El Sol"}, headers=admin_headers)
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "Rancho El Sol"
@@ -15,7 +15,7 @@ class TestCreateFarm:
         assert data["country"] == "MX"
         assert data["id"] is not None
 
-    def test_create_farm_full(self, client):
+    def test_create_farm_full(self, client, admin_headers):
         resp = client.post("/api/farms", json={
             "name": "Hacienda Los Agaves",
             "owner_name": "Juan Garcia",
@@ -25,32 +25,32 @@ class TestCreateFarm:
             "municipality": "Tequila",
             "state": "Jalisco",
             "country": "MX",
-        })
+        }, headers=admin_headers)
         assert resp.status_code == 201
         data = resp.json()
         assert data["owner_name"] == "Juan Garcia"
         assert data["total_hectares"] == 150.5
         assert data["municipality"] == "Tequila"
 
-    def test_create_farm_empty_name_rejected(self, client):
-        resp = client.post("/api/farms", json={"name": ""})
+    def test_create_farm_empty_name_rejected(self, client, admin_headers):
+        resp = client.post("/api/farms", json={"name": ""}, headers=admin_headers)
         assert resp.status_code == 422
 
-    def test_create_farm_missing_name_rejected(self, client):
-        resp = client.post("/api/farms", json={})
+    def test_create_farm_missing_name_rejected(self, client, admin_headers):
+        resp = client.post("/api/farms", json={}, headers=admin_headers)
         assert resp.status_code == 422
 
 
 class TestListFarms:
-    def test_list_empty(self, client):
-        resp = client.get("/api/farms")
+    def test_list_empty(self, client, admin_headers):
+        resp = client.get("/api/farms", headers=admin_headers)
         assert resp.status_code == 200
         assert resp.json() == []
 
-    def test_list_returns_created_farms(self, client):
-        client.post("/api/farms", json={"name": "Farm A"})
-        client.post("/api/farms", json={"name": "Farm B"})
-        resp = client.get("/api/farms")
+    def test_list_returns_created_farms(self, client, admin_headers):
+        client.post("/api/farms", json={"name": "Farm A"}, headers=admin_headers)
+        client.post("/api/farms", json={"name": "Farm B"}, headers=admin_headers)
+        resp = client.get("/api/farms", headers=admin_headers)
         assert resp.status_code == 200
         names = [f["name"] for f in resp.json()]
         assert "Farm A" in names
@@ -58,8 +58,8 @@ class TestListFarms:
 
 
 class TestGetFarm:
-    def test_get_existing(self, client):
-        create = client.post("/api/farms", json={"name": "Rancho Norte"})
+    def test_get_existing(self, client, admin_headers):
+        create = client.post("/api/farms", json={"name": "Rancho Norte"}, headers=admin_headers)
         farm_id = create.json()["id"]
         resp = client.get(f"/api/farms/{farm_id}")
         assert resp.status_code == 200
@@ -71,17 +71,17 @@ class TestGetFarm:
 
 
 class TestUpdateFarm:
-    def test_update_name(self, client):
-        create = client.post("/api/farms", json={"name": "Old Name"})
+    def test_update_name(self, client, admin_headers):
+        create = client.post("/api/farms", json={"name": "Old Name"}, headers=admin_headers)
         farm_id = create.json()["id"]
         resp = client.put(f"/api/farms/{farm_id}", json={"name": "New Name"})
         assert resp.status_code == 200
         assert resp.json()["name"] == "New Name"
 
-    def test_update_partial(self, client):
+    def test_update_partial(self, client, admin_headers):
         create = client.post("/api/farms", json={
             "name": "Rancho", "owner_name": "Pedro",
-        })
+        }, headers=admin_headers)
         farm_id = create.json()["id"]
         resp = client.put(f"/api/farms/{farm_id}", json={"total_hectares": 200})
         assert resp.status_code == 200
@@ -97,9 +97,9 @@ class TestUpdateFarm:
 # ── Field CRUD ────────────────────────────────────────────────────────
 
 @pytest.fixture
-def farm_id(client):
+def farm_id(client, admin_headers):
     """Create a farm and return its ID for field tests."""
-    resp = client.post("/api/farms", json={"name": "Test Farm"})
+    resp = client.post("/api/farms", json={"name": "Test Farm"}, headers=admin_headers)
     return resp.json()["id"]
 
 

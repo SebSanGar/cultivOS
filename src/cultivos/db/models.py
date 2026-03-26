@@ -181,6 +181,19 @@ class Fertilizer(Base):
     suitable_crops = Column(JSON, nullable=False, default=list)  # ["maiz", "agave", ...]
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(100), nullable=False, unique=True)
+    hashed_password = Column(String(200), nullable=False)
+    role = Column(String(20), nullable=False, default="farmer")  # admin, researcher, farmer
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=True)  # only for farmer role
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    farm = relationship("Farm")
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 
