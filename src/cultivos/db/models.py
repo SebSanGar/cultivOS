@@ -252,6 +252,23 @@ class CropType(Base):
     description_es = Column(Text, nullable=False)
 
 
+class Alert(Base):
+    __tablename__ = "alerts"
+
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    alert_type = Column(String(50), nullable=False)  # low_health, irrigation, pest
+    message = Column(Text, nullable=False)
+    phone_number = Column(String(20))  # recipient phone (E.164 format)
+    status = Column(String(20), default="pending")  # pending, sent, failed
+    sent_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    farm = relationship("Farm")
+    field = relationship("Field")
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 
