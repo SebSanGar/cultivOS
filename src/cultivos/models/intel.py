@@ -55,3 +55,15 @@ class AnomalyEntry(BaseModel):
 
 class AnomaliesOut(BaseModel):
     anomalies: list[AnomalyEntry]
+
+
+class SeasonEntry(BaseModel):
+    season: str  # "temporal" or "secas"
+    year: int  # start year of the season
+    avg_score: float
+    count: int
+    status: str  # "ok" or "insufficient_data"
+
+
+class SeasonalOut(BaseModel):
+    seasons: list[SeasonEntry]

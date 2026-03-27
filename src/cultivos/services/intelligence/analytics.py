@@ -9,6 +9,21 @@ from sqlalchemy.orm import Session
 from cultivos.db.models import Farm, Field, HealthScore, SoilAnalysis, TreatmentRecord
 
 
+def _classify_season(dt: datetime) -> tuple[str, int]:
+    """Classify a datetime into Jalisco season and start year.
+
+    Temporal: Jun-Oct (start year = same year)
+    Secas: Nov-May (start year = previous year if Jan-May, same year if Nov-Dec)
+    """
+    month = dt.month
+    if 6 <= month <= 10:
+        return "temporal", dt.year
+    elif month >= 11:
+        return "secas", dt.year
+    else:  # Jan-May
+        return "secas", dt.year - 1
+
+
 def compute_summary(db: Session) -> dict:
     """Compute cross-farm summary: total farms, fields, avg health, worst field."""
     total_farms = db.query(func.count(Farm.id)).scalar() or 0
@@ -158,3 +173,36 @@ def compute_anomalies(db: Session) -> dict:
             })
 
     return {"anomalies": anomalies}
+
+
+def compute_seasonal_performance(
+    db: Session, field_id: int, year: Optional[int] = None
+) -> dict:
+    """Group health scores by Jalisco season (temporal/secas) for a field."""
+    query = db.query(HealthScore).filter(HealthScore.field_id == field_id)
+    scores = query.order_by(HealthScore.scored_at.asc()).all()
+
+    # Group by (season, start_year)
+    groups: dict[tuple[str, int], list[float]] = {}
+    for hs in scores:
+        season, start_year = _classify_season(hs.scored_at)
+        groups.setdefault((season, start_year), []).append(hs.score)
+
+    # Filter by year if requested
+    if year is not None:
+        groups = {k: v for k, v in groups.items() if k[1] == year}
+
+    seasons = []
+    for (season, start_year), score_list in sorted(groups.items(), key=lambda x: (x[0][1], x[0][0])):
+        count = len(score_list)
+        avg = round(sum(score_list) / count, 2)
+        status = "ok" if count >= 2 else "insufficient_data"
+        seasons.append({
+            "season": season,
+            "year": start_year,
+            "avg_score": avg,
+            "count": count,
+            "status": status,
+        })
+
+    return {"seasons": seasons}
