@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Panel de Inteligencia</title>
+    <meta name="description" content="Panel de inteligencia agricola — analisis cruzado de granjas, anomalias, tendencias de suelo y efectividad de tratamientos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab active">Inteligencia</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Panel de Inteligencia</h1>
+            <p class="intel-subtitle">Analisis cruzado de granjas — vista admin/investigador</p>
+        </div>
+        <div class="admin-only">
+            <button class="intel-btn" onclick="window.location.href='/'">Agregar Granja</button>
+        </div>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="intel-stats-strip" id="intel-summary">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-total-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-total-fields">--</div>
+            <div class="intel-stat-label">Campos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-avg-health">--</div>
+            <div class="intel-stat-label">Salud Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-worst-field">--</div>
+            <div class="intel-stat-label">Campo Critico</div>
+        </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="intel-grid">
+        <!-- Anomalies -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Anomalias Detectadas</h2>
+                <span class="intel-badge" id="intel-anomaly-count">0</span>
+            </div>
+            <div id="intel-anomalies" class="intel-panel-body">
+                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+            </div>
+        </div>
+
+        <!-- Soil Trends Chart -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Tendencias de Suelo</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="intel-soil-chart" height="250"></canvas>
+                <div id="intel-soil-fallback" class="intel-chart-fallback" style="display:none">
+                    Sin datos de tendencias de suelo
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Effectiveness -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Efectividad de Tratamientos</h2>
+            </div>
+            <div id="intel-treatments" class="intel-panel-body">
+                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+            </div>
+        </div>
+
+        <!-- Farm Map Placeholder -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Mapa de Granjas</h2>
+            </div>
+            <div class="intel-panel-body">
+                <div id="intel-map" class="intel-map-placeholder">
+                    <div class="intel-map-icon">&#x1F5FA;</div>
+                    <div class="intel-map-text">Mapa interactivo — proximamente</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin actions -->
+    <div class="admin-only intel-admin-bar">
+        <button class="intel-btn" onclick="location.reload()">Actualizar Datos</button>
+    </div>
+</main>
+
+<script src="/intel.js"></script>
+</body>
+</html>

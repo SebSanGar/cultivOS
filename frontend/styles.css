@@ -334,3 +334,201 @@ nav {
     .field-list { grid-template-columns: 1fr; }
     .stats-strip { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   INTELLIGENCE DASHBOARD — Dark theme, data-dense admin/researcher view
+   ════════════════════════════════════════════════════════════════ */
+
+.intel-body {
+    --intel-bg: #0f1117;
+    --intel-surface: #1a1d27;
+    --intel-border: #2a2d3a;
+    --intel-text: #e5e7eb;
+    --intel-muted: #9ca3af;
+    background: var(--intel-bg);
+    color: var(--intel-text);
+}
+
+/* Nav override for dark */
+.intel-body nav {
+    background: rgba(15,17,23,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--intel-border);
+}
+.intel-logo { color: #e5e7eb !important; }
+.intel-logo span { color: var(--green) !important; }
+.intel-tab {
+    color: var(--intel-muted) !important; text-decoration: none;
+    padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+}
+.intel-tab:hover { background: rgba(22,163,74,0.15); color: #e5e7eb !important; }
+.intel-tab.active { background: var(--green); color: #fff !important; }
+
+/* Main layout */
+.intel-dashboard {
+    max-width: 1280px; margin: 0 auto;
+    padding: 72px 16px 40px;
+}
+.intel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.intel-title {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+    color: #f9fafb;
+}
+.intel-subtitle {
+    font-size: 0.85rem; color: var(--intel-muted); margin-top: 2px;
+}
+
+/* Stats strip */
+.intel-stats-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+}
+.intel-stat {
+    background: var(--intel-surface); border: 1px solid var(--intel-border);
+    border-radius: 10px; padding: 16px; text-align: center;
+}
+.intel-stat-value {
+    font-size: 1.6rem; font-weight: 800; color: #f9fafb;
+    font-variant-numeric: tabular-nums;
+}
+.intel-stat-label {
+    font-size: 0.7rem; color: var(--intel-muted); margin-top: 2px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* Two-column grid */
+.intel-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+}
+
+/* Panel cards */
+.intel-panel {
+    background: var(--intel-surface); border: 1px solid var(--intel-border);
+    border-radius: 10px; overflow: hidden;
+}
+.intel-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--intel-border);
+}
+.intel-panel-title {
+    font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--intel-muted);
+}
+.intel-panel-body {
+    padding: 16px 18px;
+}
+
+.intel-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 24px; height: 24px; border-radius: 12px;
+    background: var(--red); color: #fff;
+    font-size: 0.75rem; font-weight: 700; padding: 0 8px;
+}
+
+/* Anomaly cards */
+.intel-anomaly-card {
+    padding: 12px 0; border-bottom: 1px solid var(--intel-border);
+}
+.intel-anomaly-card:last-child { border-bottom: none; }
+.intel-anomaly-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+}
+.intel-anomaly-field { font-weight: 600; font-size: 0.9rem; }
+.intel-anomaly-farm { font-size: 0.75rem; color: var(--intel-muted); }
+.intel-anomaly-detail {
+    font-size: 0.8rem; color: var(--red); margin-top: 4px;
+}
+.intel-anomaly-history {
+    display: flex; gap: 6px; margin-top: 6px;
+}
+.intel-spark {
+    font-size: 0.7rem; font-weight: 700; font-variant-numeric: tabular-nums;
+    padding: 2px 6px; border-radius: 4px;
+}
+.intel-spark.good { background: rgba(22,163,74,0.2); color: var(--green); }
+.intel-spark.warning { background: rgba(217,119,6,0.2); color: var(--yellow); }
+.intel-spark.critical { background: rgba(220,38,38,0.2); color: var(--red); }
+
+/* Treatment effectiveness cards */
+.intel-treatment-card {
+    padding: 12px 0; border-bottom: 1px solid var(--intel-border);
+}
+.intel-treatment-card:last-child { border-bottom: none; }
+.intel-treatment-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+}
+.intel-treatment-name { font-weight: 600; font-size: 0.9rem; }
+.intel-treatment-delta {
+    font-weight: 700; font-size: 0.85rem; font-variant-numeric: tabular-nums;
+}
+.intel-treatment-delta.positive { color: var(--green); }
+.intel-treatment-delta.negative { color: var(--red); }
+.intel-treatment-field {
+    font-size: 0.75rem; color: var(--intel-muted);
+}
+.intel-treatment-scores {
+    display: flex; gap: 16px; font-size: 0.8rem; color: var(--intel-muted);
+    margin-top: 4px;
+}
+.intel-treatment-urgency {
+    display: inline-block; margin-top: 6px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.3px; padding: 2px 8px; border-radius: 4px;
+}
+.intel-treatment-urgency.urgency-inmediata { background: rgba(220,38,38,0.2); color: var(--red); }
+.intel-treatment-urgency.urgency-esta-semana { background: rgba(217,119,6,0.2); color: var(--yellow); }
+.intel-treatment-urgency.urgency-preventiva { background: rgba(22,163,74,0.2); color: var(--green); }
+
+/* Map placeholder */
+.intel-map-placeholder {
+    text-align: center; padding: 40px 20px; color: var(--intel-muted);
+}
+.intel-map-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.4; }
+.intel-map-text { font-size: 0.85rem; }
+
+/* Chart fallback */
+.intel-chart-fallback {
+    text-align: center; padding: 40px 20px;
+    color: var(--intel-muted); font-size: 0.85rem;
+}
+
+/* Empty state */
+.intel-empty {
+    text-align: center; padding: 24px; color: var(--intel-muted);
+    font-size: 0.85rem;
+}
+
+/* Admin button */
+.intel-btn {
+    padding: 8px 18px; border: 1px solid var(--intel-border);
+    border-radius: 8px; background: var(--intel-surface);
+    color: var(--intel-text); cursor: pointer;
+    font-size: 0.8rem; font-weight: 600;
+    transition: all 0.2s;
+}
+.intel-btn:hover { border-color: var(--green); color: var(--green); }
+
+.intel-admin-bar {
+    display: flex; justify-content: flex-end; gap: 8px;
+}
+
+/* Dark theme overrides for shared components */
+.intel-body .health-badge.good { background: rgba(22,163,74,0.2); color: var(--green); }
+.intel-body .health-badge.warning { background: rgba(217,119,6,0.2); color: var(--yellow); }
+.intel-body .health-badge.critical { background: rgba(220,38,38,0.2); color: var(--red); }
+.intel-body .health-badge.none { background: rgba(255,255,255,0.05); color: var(--intel-muted); }
+.intel-body .loading { color: var(--intel-muted); }
+.intel-body .loading-spinner { border-color: var(--intel-border); border-top-color: var(--green); }
+
+/* ── INTEL RESPONSIVE ── */
+@media (max-width: 640px) {
+    .intel-dashboard { padding: 64px 12px 32px; }
+    .intel-title { font-size: 1.2rem; }
+    .intel-grid { grid-template-columns: 1fr; }
+    .intel-stats-strip { grid-template-columns: repeat(2, 1fr); }
+}
