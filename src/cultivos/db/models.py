@@ -223,6 +223,19 @@ class User(Base):
     farm = relationship("Farm")
 
 
+class Disease(Base):
+    __tablename__ = "diseases"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False, unique=True)
+    description_es = Column(Text, nullable=False)
+    symptoms = Column(JSON, nullable=False, default=list)  # ["hojas amarillas", "manchas", ...]
+    affected_crops = Column(JSON, nullable=False, default=list)  # ["maiz", "frijol", ...]
+    treatments = Column(JSON, nullable=False, default=list)  # [{"name": ..., "description_es": ..., "organic": True}, ...]
+    region = Column(String(100), nullable=False, default="Jalisco")
+    severity = Column(String(20), nullable=False, default="media")  # alta, media, baja
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 

@@ -16,6 +16,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from cultivos.api.auth import router as auth_router
 from cultivos.api.dashboard import router as dashboard_router
+from cultivos.api.disease import router as disease_router
 from cultivos.api.farms import router as farms_router
 from cultivos.api.health import router as health_router
 from cultivos.api.intel import router as intel_router
@@ -44,7 +45,7 @@ async def _lifespan(app: FastAPI):
         get_engine()  # creates tables
         logger.info("Database initialized")
         # Seed knowledge base data
-        from cultivos.db.seeds import seed_ancestral_methods, seed_fertilizers
+        from cultivos.db.seeds import seed_ancestral_methods, seed_diseases, seed_fertilizers
         db_session = get_session_factory()()
         try:
             count = seed_fertilizers(db_session)
@@ -53,6 +54,9 @@ async def _lifespan(app: FastAPI):
             count = seed_ancestral_methods(db_session)
             if count:
                 logger.info("Seeded %d ancestral methods", count)
+            count = seed_diseases(db_session)
+            if count:
+                logger.info("Seeded %d diseases", count)
         finally:
             db_session.close()
     yield
@@ -99,6 +103,7 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(auth_router)
     app.include_router(dashboard_router)
+    app.include_router(disease_router)
     app.include_router(farms_router)
     app.include_router(health_router)
     app.include_router(intel_router)
