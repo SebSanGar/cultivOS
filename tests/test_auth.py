@@ -1,7 +1,19 @@
 """Tests for role-based access control."""
 
+import os
 import pytest
 from datetime import datetime
+
+
+@pytest.fixture(autouse=True)
+def enable_auth():
+    """Auth tests need AUTH_ENABLED=true to enforce role checks."""
+    os.environ["AUTH_ENABLED"] = "true"
+    from cultivos.config import get_settings
+    get_settings.cache_clear()
+    yield
+    os.environ.pop("AUTH_ENABLED", None)
+    get_settings.cache_clear()
 
 
 @pytest.fixture
