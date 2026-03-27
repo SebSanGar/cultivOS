@@ -28,6 +28,7 @@ from cultivos.api.thermal import router as thermal_router
 from cultivos.api.treatments import router as treatments_router
 from cultivos.api.weather import router as weather_router
 from cultivos.config import get_settings
+from cultivos.middleware import register_error_handlers
 
 logger = logging.getLogger(__name__)
 _access_log = logging.getLogger("cultivos.access")
@@ -81,6 +82,7 @@ def create_app() -> FastAPI:
         lifespan=_lifespan,
     )
 
+    register_error_handlers(app)
     app.add_middleware(RequestLoggingMiddleware)
     app.add_middleware(
         CORSMiddleware,

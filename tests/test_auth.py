@@ -93,8 +93,8 @@ class TestResearcherCanReadFarms:
         token = _login_user(client, "researcher2", "secret123")
         resp = client.get("/api/farms", headers=_auth_header(token))
         assert resp.status_code == 200
-        assert isinstance(resp.json(), list)
-        assert len(resp.json()) >= 1
+        assert isinstance(resp.json()["data"], list)
+        assert len(resp.json()["data"]) >= 1
 
 
 class TestFarmerSeesOnlyOwnFarms:
@@ -104,7 +104,7 @@ class TestFarmerSeesOnlyOwnFarms:
         token = _login_user(client, "farmer1", "secret123")
         resp = client.get("/api/farms", headers=_auth_header(token))
         assert resp.status_code == 200
-        farms = resp.json()
+        farms = resp.json()["data"]
         assert len(farms) == 1
         assert farms[0]["id"] == seed_farm.id
 

@@ -45,14 +45,15 @@ class TestListFarms:
     def test_list_empty(self, client, admin_headers):
         resp = client.get("/api/farms", headers=admin_headers)
         assert resp.status_code == 200
-        assert resp.json() == []
+        assert resp.json()["data"] == []
+        assert resp.json()["meta"]["total"] == 0
 
     def test_list_returns_created_farms(self, client, admin_headers):
         client.post("/api/farms", json={"name": "Farm A"}, headers=admin_headers)
         client.post("/api/farms", json={"name": "Farm B"}, headers=admin_headers)
         resp = client.get("/api/farms", headers=admin_headers)
         assert resp.status_code == 200
-        names = [f["name"] for f in resp.json()]
+        names = [f["name"] for f in resp.json()["data"]]
         assert "Farm A" in names
         assert "Farm B" in names
 

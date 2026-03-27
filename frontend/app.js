@@ -57,7 +57,8 @@ async function fetchJSON(path) {
 // ── Data loading ──
 async function loadFarms() {
     farmGrid.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>';
-    farms = await fetchJSON('/farms') || [];
+    const farmsResp = await fetchJSON('/farms');
+    farms = (farmsResp && farmsResp.data) ? farmsResp.data : (farmsResp || []);
     updateStats();
     renderFarms();
 }

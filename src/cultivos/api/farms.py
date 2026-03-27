@@ -1,6 +1,6 @@
 """Farm and Field CRUD endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 
 from cultivos.auth import get_current_user, require_role
@@ -25,11 +25,22 @@ def create_farm(body: FarmCreate, db: Session = Depends(get_db), user: User = De
     return farm
 
 
-@router.get("", response_model=list[FarmOut])
-def list_farms(db: Session = Depends(get_db), user=Depends(get_current_user)):
+@router.get("")
+def list_farms(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    query = db.query(Farm)
     if user and hasattr(user, 'role') and user.role == "farmer" and user.farm_id is not None:
-        return db.query(Farm).filter(Farm.id == user.farm_id).order_by(Farm.created_at.desc()).all()
-    return db.query(Farm).order_by(Farm.created_at.desc()).all()
+        query = query.filter(Farm.id == user.farm_id)
+    total = query.count()
+    items = query.order_by(Farm.created_at.desc()).offset((page - 1) * page_size).limit(page_size).all()
+    return {
+        "data": [FarmOut.model_validate(f) for f in items],
+        "meta": {"total": total, "page": page, "page_size": page_size},
+    }
 
 
 @router.get("/{farm_id}", response_model=FarmOut)

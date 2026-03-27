@@ -64,7 +64,7 @@ def test_dashboard_fetches_farms(client, admin_headers, farm_with_data):
     """GET /api/farms returns farm data that the dashboard JS will fetch."""
     resp = client.get("/api/farms", headers=admin_headers)
     assert resp.status_code == 200
-    farms = resp.json()
+    farms = resp.json()["data"]
     assert len(farms) >= 1
     assert farms[0]["name"] == "Rancho El Sol"
 
