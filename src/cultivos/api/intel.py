@@ -6,8 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from cultivos.auth import require_role
-from cultivos.db.models import Farm, Field
+from cultivos.db.models import Farm, FarmerFeedback, Field, TreatmentRecord
 from cultivos.db.session import get_db
+from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut
 from cultivos.models.intel import (
     AnomaliesOut,
     IntelSummaryOut,
@@ -58,6 +59,51 @@ def intel_anomalies(
     user=Depends(_admin_or_researcher),
 ):
     return compute_anomalies(db)
+
+
+@router.get("/tek-validation", response_model=TEKValidationOut)
+def tek_validation(
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate farmer feedback by ancestral method to see which TEK methods farmers trust."""
+    # Get all feedback joined with treatments that have an ancestral method
+    results = (
+        db.query(FarmerFeedback, TreatmentRecord)
+        .join(TreatmentRecord, FarmerFeedback.treatment_id == TreatmentRecord.id)
+        .filter(TreatmentRecord.ancestral_method_name.isnot(None))
+        .all()
+    )
+
+    # Aggregate by method name
+    method_data: dict[str, list[FarmerFeedback]] = {}
+    for feedback, treatment in results:
+        name = treatment.ancestral_method_name
+        method_data.setdefault(name, []).append(feedback)
+
+    methods = []
+    for method_name, feedbacks in method_data.items():
+        total = len(feedbacks)
+        positive = sum(1 for f in feedbacks if f.worked)
+        negative = total - positive
+        avg_rating = sum(f.rating for f in feedbacks) / total
+        # Trust score: weighted combination of positive ratio (60%) and normalized rating (40%)
+        positive_ratio = positive / total if total > 0 else 0
+        rating_normalized = (avg_rating - 1) / 4  # 1-5 → 0-1
+        trust_score = round((positive_ratio * 0.6 + rating_normalized * 0.4) * 100, 1)
+
+        methods.append(TEKMethodValidation(
+            method_name=method_name,
+            total_feedback=total,
+            positive_count=positive,
+            negative_count=negative,
+            average_rating=round(avg_rating, 2),
+            trust_score=trust_score,
+        ))
+
+    # Sort by trust score descending
+    methods.sort(key=lambda m: m.trust_score, reverse=True)
+    return TEKValidationOut(methods=methods)
 
 
 seasonal_router = APIRouter(

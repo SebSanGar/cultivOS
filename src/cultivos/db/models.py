@@ -275,6 +275,22 @@ class Alert(Base):
     field = relationship("Field")
 
 
+class FarmerFeedback(Base):
+    __tablename__ = "farmer_feedback"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    treatment_id = Column(Integer, ForeignKey("treatment_records.id"), nullable=False)
+    rating = Column(Integer, nullable=False)  # 1-5
+    worked = Column(Boolean, nullable=False)
+    farmer_notes = Column(Text, nullable=True)
+    alternative_method = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field")
+    treatment = relationship("TreatmentRecord")
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 
