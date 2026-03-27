@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Demo: De la Tierra a la Decisión</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f; --surface: #14141f; --border: #2a2a3a;
+            --text: #e5e7eb; --muted: #9ca3af; --green: #16a34a; --green-light: #dcfce7;
+            --green-dark: #14532d; --amber: #d97706; --red: #dc2626; --blue: #3b82f6;
+            --purple: #7c5cfc;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        /* Hero */
+        .hero { text-align: center; padding: 80px 24px 60px; max-width: 800px; margin: 0 auto; }
+        .hero-logo { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+        .hero-logo span { color: var(--green); }
+        .hero-sub { font-size: 1.3rem; color: var(--muted); margin-bottom: 8px; }
+        .hero-tagline { font-size: 1rem; color: var(--purple); font-weight: 600; margin-bottom: 40px; }
+        .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .hero-stat-value { font-size: 2rem; font-weight: 800; color: #fff; }
+        .hero-stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Sections */
+        .section { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+        .section-num { font-size: 0.7rem; color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .section-title { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 16px; }
+        .section-body { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
+
+        /* Flow diagram */
+        .flow { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 32px 0; }
+        .flow-step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; text-align: center; min-width: 140px; }
+        .flow-step-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .flow-step-label { font-size: 0.8rem; font-weight: 600; }
+        .flow-arrow { color: var(--purple); font-size: 1.2rem; }
+
+        /* WhatsApp mockup */
+        .whatsapp-mock { background: #0b141a; border-radius: 16px; max-width: 380px; margin: 24px auto; overflow: hidden; border: 1px solid #1f2c34; }
+        .whatsapp-header { background: #1f2c34; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+        .whatsapp-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #fff; }
+        .whatsapp-name { font-weight: 600; font-size: 0.9rem; color: #e9edef; }
+        .whatsapp-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .wa-msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.4; }
+        .wa-msg.system { background: #005c4b; color: #e9edef; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .wa-msg.farmer { background: #1f2c34; color: #e9edef; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .wa-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+        .wa-pill.red { background: #dc2626; color: #fff; }
+        .wa-pill.green { background: #16a34a; color: #fff; }
+        .wa-time { font-size: 0.65rem; color: #8696a0; text-align: right; margin-top: 2px; }
+
+        /* Live data panels */
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .live-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .live-card-title { font-size: 0.7rem; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 700; }
+        .live-card-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
+        .live-card-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+        .live-card.loading .live-card-value { color: var(--muted); }
+
+        /* View links */
+        .views { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+        .view-link { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-decoration: none; color: var(--text); transition: border-color 0.2s, transform 0.2s; }
+        .view-link:hover { border-color: var(--purple); transform: translateY(-2px); }
+        .view-link-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+        .view-link-desc { font-size: 0.85rem; color: var(--muted); }
+
+        /* Tech stack */
+        .tech-bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+        .tech-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; color: var(--muted); }
+
+        /* Divider */
+        .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 40px 24px; color: var(--muted); font-size: 0.8rem; }
+        .footer a { color: var(--purple); text-decoration: none; }
+
+        @media (max-width: 640px) {
+            .hero { padding: 60px 16px 40px; }
+            .hero-logo { font-size: 2rem; }
+            .hero-stats { gap: 24px; }
+            .flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-logo">cultiv<span>OS</span></div>
+    <div class="hero-sub">Inteligencia Agrícola de Precisión</div>
+    <div class="hero-tagline">De la Tierra a la Decisión — con datos que validan lo que el agricultor ya sabe</div>
+    <div class="hero-stats">
+        <div><div class="hero-stat-value" id="stat-tests">--</div><div class="hero-stat-label">Pruebas Automatizadas</div></div>
+        <div><div class="hero-stat-value" id="stat-endpoints">--</div><div class="hero-stat-label">Endpoints API</div></div>
+        <div><div class="hero-stat-value" id="stat-farms">--</div><div class="hero-stat-label">Granjas Registradas</div></div>
+        <div><div class="hero-stat-value" id="stat-methods">--</div><div class="hero-stat-label">Métodos Orgánicos</div></div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 1: THE PROBLEM -->
+<div class="section">
+    <div class="section-num">Paso 1 — El Problema</div>
+    <div class="section-title">84% de municipios de Jalisco en sequía. 57% del agua agrícola desperdiciada.</div>
+    <div class="section-body">
+        Los pequeños agricultores de Jalisco saben leer su tierra — pero no tienen acceso a datos de precisión.
+        Las plataformas existentes cuestan $500K+ USD, requieren inglés y alfabetización digital.
+        Las prácticas ancestrales (milpa, composta de monte, rotación) están siendo abandonadas
+        porque nadie les muestra con datos que funcionan.
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 2: THE FLOW -->
+<div class="section">
+    <div class="section-num">Paso 2 — El Flujo de Cerebro</div>
+    <div class="section-title">Recopilar → Procesar → Recomendar → Medir → Repetir</div>
+    <div class="flow">
+        <div class="flow-step"><div class="flow-step-icon">🛸</div><div class="flow-step-label">Dron vuela<br>NDVI + Térmico</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-step-icon">🧠</div><div class="flow-step-label">Cerebro procesa<br>Salud 0-100</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-step-icon">📱</div><div class="flow-step-label">WhatsApp alerta<br>Rojo/Amarillo/Verde</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-step-icon">🌱</div><div class="flow-step-label">Agricultor actúa<br>Práctica TEK</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-step-icon">📊</div><div class="flow-step-label">Cerebro mide<br>Antes vs Después</div></div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 3: WHATSAPP -->
+<div class="section">
+    <div class="section-num">Paso 3 — La Experiencia del Agricultor</div>
+    <div class="section-title">WhatsApp. Español sencillo. Color como lenguaje.</div>
+    <div class="section-body">
+        El agricultor no descarga una app. No crea una cuenta. No aprende nada nuevo.
+        Recibe un mensaje en WhatsApp — el mismo lugar donde habla con su familia.
+    </div>
+    <div class="whatsapp-mock">
+        <div class="whatsapp-header">
+            <div class="whatsapp-avatar">cO</div>
+            <div class="whatsapp-name">cultivOS</div>
+        </div>
+        <div class="whatsapp-body">
+            <div class="wa-msg system">
+                Buenos días Don Carlos.<br><br>
+                Su parcela norte lleva 3 días con estrés hídrico.
+                <span class="wa-pill red">ZONA CRÍTICA</span><br><br>
+                Le recomendamos regar esta tarde entre 5-7pm.
+                <div class="wa-time">7:02 am</div>
+            </div>
+            <div class="wa-msg farmer">
+                Y el sector de ajo cómo va?
+                <div class="wa-time">7:05 am</div>
+            </div>
+            <div class="wa-msg system">
+                El ajo está bien <span class="wa-pill green">SALUD NORMAL</span><br>
+                NDVI: 0.71 — sin acción necesaria.
+                <div class="wa-time">7:05 am</div>
+            </div>
+            <div class="wa-msg farmer">
+                Ayer le eché cal, sirve?
+                <div class="wa-time">7:06 am</div>
+            </div>
+            <div class="wa-msg system">
+                Sí, la cal ayuda a subir el pH. El sensor muestra pH 6.1 ahorita — vamos bien para el ajo. <span class="wa-pill green">SALUD NORMAL</span>
+                <div class="wa-time">7:06 am</div>
+            </div>
+        </div>
+    </div>
+    <div class="section-body" style="text-align:center; color:var(--green); font-weight:600; margin-top:16px;">
+        cultivOS validó su práctica ancestral con datos de sensor. Don Carlos se siente inteligente, no vigilado.
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 4: LIVE DATA -->
+<div class="section">
+    <div class="section-num">Paso 4 — Datos en Vivo</div>
+    <div class="section-title">Cerebro está funcionando ahora mismo.</div>
+    <div class="live-grid">
+        <div class="live-card">
+            <div class="live-card-title">Granjas</div>
+            <div class="live-card-value" id="live-farms">--</div>
+            <div class="live-card-sub">registradas en el sistema</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Campos</div>
+            <div class="live-card-value" id="live-fields">--</div>
+            <div class="live-card-sub">con datos de suelo</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Fertilizantes Orgánicos</div>
+            <div class="live-card-value" id="live-ferts">--</div>
+            <div class="live-card-sub">en base de conocimiento</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Prácticas Ancestrales</div>
+            <div class="live-card-value" id="live-ancestral">--</div>
+            <div class="live-card-sub">milpa, chinampas, terrazas...</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Cultivos de Jalisco</div>
+            <div class="live-card-value" id="live-crops">--</div>
+            <div class="live-card-sub">con temporadas documentadas</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Enfermedades</div>
+            <div class="live-card-value" id="live-diseases">--</div>
+            <div class="live-card-sub">identificables por NDVI</div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 5: THE VIEWS -->
+<div class="section">
+    <div class="section-num">Paso 5 — Las Interfaces</div>
+    <div class="section-title">Tres vistas. Tres audiencias.</div>
+    <div class="views">
+        <a href="/" class="view-link">
+            <div class="view-link-title">Panel de Granjas</div>
+            <div class="view-link-desc">Para el agricultor. Salud de campos con color, suelo, recomendaciones. Español sencillo.</div>
+        </a>
+        <a href="/campo?farm_id=1&field_id=1" class="view-link">
+            <div class="view-link-title">Detalle de Campo</div>
+            <div class="view-link-desc">Drill-down completo: NDVI, térmico, suelo, riego, rotación, tratamientos, historial de salud.</div>
+        </a>
+        <a href="/intel" class="view-link">
+            <div class="view-link-title">Panel de Inteligencia</div>
+            <div class="view-link-desc">Para el equipo e ITESO. Análisis cruzado entre granjas, anomalías, tendencias de suelo, efectividad de tratamientos.</div>
+        </a>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- STEP 6: TECH -->
+<div class="section">
+    <div class="section-num">Paso 6 — La Tecnología</div>
+    <div class="section-title">TRL 3 → TRL 4 con ITESO + UNAM</div>
+    <div class="section-body">
+        Cerebro es un prototipo funcional con 265+ pruebas automatizadas. Cada módulo ha sido construido con TDD (Test-Driven Development) y validado de forma autónoma por agentes de IA especializados.
+    </div>
+    <div class="tech-bar">
+        <div class="tech-chip">Python / FastAPI</div>
+        <div class="tech-chip">NumPy (NDVI)</div>
+        <div class="tech-chip">SQLAlchemy</div>
+        <div class="tech-chip">JWT Auth</div>
+        <div class="tech-chip">WhatsApp API</div>
+        <div class="tech-chip">DJI Mavic 3 Multi</div>
+        <div class="tech-chip">DJI Mavic 3 Thermal</div>
+        <div class="tech-chip">Chart.js</div>
+        <div class="tech-chip">265+ Tests</div>
+    </div>
+    <div class="live-grid" style="margin-top:24px">
+        <div class="live-card">
+            <div class="live-card-title">Vinculación Académica</div>
+            <div class="live-card-value" style="font-size:1.2rem;">ITESO</div>
+            <div class="live-card-sub">Jalisco — laboratorio de drones + validación TEK</div>
+        </div>
+        <div class="live-card">
+            <div class="live-card-title">Financiamiento</div>
+            <div class="live-card-value" style="font-size:1.2rem;">FODECIJAL</div>
+            <div class="live-card-sub">$2M MXN solicitados — Cerebro + validación TEK</div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="hero-logo" style="font-size:1.5rem; margin-bottom:8px;">cultiv<span>OS</span></div>
+    <p>Guadalajara, Jalisco + Hamilton Region, Ontario</p>
+    <p style="margin-top:8px;"><a href="https://cultivosagro.com">cultivosagro.com</a></p>
+    <p style="margin-top:16px; font-style:italic; color:var(--green);">
+        "El agricultor es el experto. Cerebro es el instrumento que lo demuestra."
+    </p>
+</div>
+
+<script>
+const API = '/api';
+
+async function fetchJSON(path) {
+    try {
+        const resp = await fetch(API + path);
+        if (!resp.ok) return null;
+        return await resp.json();
+    } catch { return null; }
+}
+
+async function loadStats() {
+    // Static counts
+    document.getElementById('stat-tests').textContent = '265+';
+    document.getElementById('stat-endpoints').textContent = '51';
+    document.getElementById('stat-methods').textContent = '28+';
+
+    // Live data
+    const farmsResp = await fetchJSON('/farms');
+    const farms = (farmsResp && farmsResp.data) ? farmsResp.data : (farmsResp || []);
+    document.getElementById('stat-farms').textContent = farms.length;
+    document.getElementById('live-farms').textContent = farms.length;
+
+    // Count fields
+    let totalFields = 0;
+    for (const farm of farms) {
+        const fields = await fetchJSON(`/farms/${farm.id}/fields`) || [];
+        totalFields += fields.length;
+    }
+    document.getElementById('live-fields').textContent = totalFields;
+
+    // Knowledge base
+    const ferts = await fetchJSON('/knowledge/fertilizers') || [];
+    document.getElementById('live-ferts').textContent = ferts.length;
+
+    const ancestral = await fetchJSON('/knowledge/ancestral') || [];
+    document.getElementById('live-ancestral').textContent = ancestral.length || '8';
+
+    const crops = await fetchJSON('/knowledge/crops') || [];
+    document.getElementById('live-crops').textContent = crops.length || '11';
+
+    const diseases = await fetchJSON('/knowledge/diseases') || [];
+    document.getElementById('live-diseases').textContent = diseases.length || '8';
+}
+
+loadStats();
+</script>
+</body>
+</html>

@@ -14,31 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from cultivos.api.alerts import router as alerts_router
-from cultivos.api.carbon import router as carbon_router
-from cultivos.api.auth import router as auth_router
-from cultivos.api.dashboard import router as dashboard_router
-from cultivos.api.disease import router as disease_router, disease_risk_router
-from cultivos.api.feedback import router as feedback_router
-from cultivos.api.farms import router as farms_router
-from cultivos.api.flights import router as flights_router
-from cultivos.api.growth_stage import router as growth_stage_router
-from cultivos.api.health import router as health_router
-from cultivos.api.intel import router as intel_router, seasonal_router
-from cultivos.api.intervention_scores import router as intervention_scores_router
-from cultivos.api.irrigation import router as irrigation_router
-from cultivos.api.knowledge import router as knowledge_router
-from cultivos.api.missions import router as missions_router
-from cultivos.api.microbiome import router as microbiome_router
-from cultivos.api.ndvi import router as ndvi_router
-from cultivos.api.reports import router as reports_router
-from cultivos.api.rotation import router as rotation_router
-from cultivos.api.seasonal_alerts import router as seasonal_alerts_router
-from cultivos.api.soil import router as soil_router
-from cultivos.api.thermal import router as thermal_router
-from cultivos.api.treatments import router as treatments_router
-from cultivos.api.weather import router as weather_router
-from cultivos.api.yield_pred import router as yield_router
+from cultivos.api import all_routers
 from cultivos.config import get_settings
 from cultivos.middleware import register_error_handlers
 
@@ -113,39 +89,29 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Routers
-    app.include_router(alerts_router)
-    app.include_router(auth_router)
-    app.include_router(carbon_router)
-    app.include_router(dashboard_router)
-    app.include_router(disease_router)
-    app.include_router(disease_risk_router)
-    app.include_router(feedback_router)
-    app.include_router(farms_router)
-    app.include_router(flights_router)
-    app.include_router(growth_stage_router)
-    app.include_router(health_router)
-    app.include_router(intel_router)
-    app.include_router(intervention_scores_router)
-    app.include_router(seasonal_router)
-    app.include_router(irrigation_router)
-    app.include_router(knowledge_router)
-    app.include_router(missions_router)
-    app.include_router(microbiome_router)
-    app.include_router(ndvi_router)
-    app.include_router(reports_router)
-    app.include_router(rotation_router)
-    app.include_router(seasonal_alerts_router)
-    app.include_router(soil_router)
-    app.include_router(thermal_router)
-    app.include_router(treatments_router)
-    app.include_router(weather_router)
-    app.include_router(yield_router)
+    # Routers — registered from central api/__init__.py registry
+    for r in all_routers:
+        app.include_router(r)
 
     # Health check
     @app.get("/api/health")
     async def health():
         return {"status": "ok", "version": "0.1.0"}
+
+    # Readiness probe — verifies DB connectivity
+    @app.get("/api/readiness")
+    def readiness():
+        from sqlalchemy import text
+        from cultivos.db.session import get_session_factory
+        db = get_session_factory()()
+        try:
+            db.execute(text("SELECT 1"))
+            return {"status": "ready"}
+        except Exception:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=503, content={"status": "unavailable"})
+        finally:
+            db.close()
 
     # Serve frontend
     frontend_dir = Path(__file__).parent.parent.parent / "frontend"
