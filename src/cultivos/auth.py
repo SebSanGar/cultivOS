@@ -83,6 +83,9 @@ def get_current_user(
     db: Session = Depends(get_db),
 ):
     """FastAPI dependency — extract and validate user from Bearer token."""
+    settings = get_settings()
+    if not settings.auth_enabled:
+        return None  # Auth disabled — allow all
     if credentials is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
@@ -95,9 +98,26 @@ def get_current_user(
     return user
 
 
+def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_security),
+    db: Session = Depends(get_db),
+):
+    """FastAPI dependency — returns user if authenticated, None if not. For public-read endpoints."""
+    if credentials is None:
+        return None
+    try:
+        payload = decode_access_token(credentials.credentials)
+        from cultivos.db.models import User
+        return db.query(User).filter(User.id == payload["sub"]).first()
+    except HTTPException:
+        return None
+
+
 def require_role(*roles: str):
     """Dependency factory — require the current user to have one of the given roles."""
     def _check(user=Depends(get_current_user)):
+        if user is None:
+            return None  # Auth disabled
         if user.role not in roles:
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         return user

@@ -17,6 +17,7 @@
         <a href="/" class="nav-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
             <li><button class="nav-tab active" id="tab-granjas">Granjas</button></li>
+            <li><button class="nav-tab" id="tab-fertilizantes" onclick="showFertilizers()">Fertilizantes</button></li>
         </ul>
     </div>
 </nav>
@@ -45,6 +46,10 @@
             <div class="stat-value" id="stat-avg-health">--</div>
             <div class="stat-label">Salud Promedio</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-hectares">--</div>
+            <div class="stat-label">Hectareas Total</div>
+        </div>
     </div>
 
     <!-- Farm cards grid -->
@@ -59,6 +64,15 @@
             <button class="field-panel-back" onclick="closeFarmDetail()">Volver</button>
         </div>
         <div id="field-list" class="field-list"></div>
+    </div>
+
+    <!-- Fertilizer knowledge base panel (hidden by default) -->
+    <div id="fert-panel" class="field-panel" style="display:none">
+        <div class="field-panel-header">
+            <h2 class="field-panel-title">Base de Conocimiento — Fertilizantes Organicos</h2>
+            <button class="field-panel-back" onclick="closeFertilizers()">Volver</button>
+        </div>
+        <div id="fert-list" class="field-list"></div>
     </div>
 </main>
 

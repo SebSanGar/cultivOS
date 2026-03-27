@@ -235,6 +235,97 @@ nav {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── FARM OWNER ── */
+.farm-owner {
+    font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;
+    font-style: italic;
+}
+
+/* ── EXPANDED FIELD CARD (with brain data) ── */
+.field-card-expanded {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+    transition: border-color 0.2s;
+}
+.field-card-expanded:hover { border-color: var(--green); }
+
+.field-section {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+.field-section-title {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--green); margin-bottom: 10px;
+}
+
+/* ── SOIL GRID ── */
+.soil-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+}
+.soil-item {
+    display: flex; flex-direction: column; gap: 2px;
+}
+.soil-label {
+    font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.soil-value {
+    font-size: 0.85rem; font-weight: 600;
+}
+
+/* ── TREATMENT CARD ── */
+.treatment-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px;
+    font-size: 0.85rem;
+}
+.treatment-row {
+    margin-bottom: 6px; line-height: 1.4;
+}
+.treatment-row:last-child { margin-bottom: 0; }
+.urgency-inmediata { color: var(--red); font-weight: 700; }
+.urgency-esta.semana, .urgency-esta\ semana { color: var(--yellow); font-weight: 600; }
+
+/* ── ROTATION TIMELINE ── */
+.rotation-timeline {
+    display: flex; flex-direction: column; gap: 8px;
+}
+.rotation-season {
+    display: flex; align-items: flex-start; gap: 12px;
+}
+.rotation-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-light); color: var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+}
+.rotation-crop {
+    font-size: 0.9rem; font-weight: 600;
+}
+.rotation-reason {
+    font-size: 0.75rem; color: var(--text-muted);
+}
+
+/* ── FERTILIZER CARDS ── */
+.fert-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+}
+.fert-card:hover { border-color: var(--green); }
+.fert-name {
+    font-size: 1rem; font-weight: 700; color: var(--green-dark);
+    margin-bottom: 6px;
+}
+.fert-desc {
+    font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;
+    line-height: 1.4;
+}
+.fert-meta {
+    font-size: 0.8rem; color: var(--text);
+    display: flex; flex-direction: column; gap: 4px;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
     .dashboard { padding: 64px 12px 32px; }

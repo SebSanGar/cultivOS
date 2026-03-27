@@ -26,8 +26,8 @@ def create_farm(body: FarmCreate, db: Session = Depends(get_db), user: User = De
 
 
 @router.get("", response_model=list[FarmOut])
-def list_farms(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    if user.role == "farmer" and user.farm_id is not None:
+def list_farms(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    if user and hasattr(user, 'role') and user.role == "farmer" and user.farm_id is not None:
         return db.query(Farm).filter(Farm.id == user.farm_id).order_by(Farm.created_at.desc()).all()
     return db.query(Farm).order_by(Farm.created_at.desc()).all()
 

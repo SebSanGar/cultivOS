@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     # Auth
     jwt_secret_key: str = "change-me-in-production-use-a-random-32-char-string"
+    auth_enabled: bool = False  # Set True in production
 
     # WhatsApp
     whatsapp_api_token: str | None = None
