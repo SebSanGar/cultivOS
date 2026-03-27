@@ -1,10 +1,11 @@
 """
-Pure PDF report generation for farm health summaries.
+Pure report generation for farm health summaries (PDF and CSV).
 
-Generates a printable PDF suitable for FIRA/Financiera Rural loan applications.
-All text in Spanish. No I/O — takes data dicts in, returns PDF bytes out.
+Generates printable reports suitable for FIRA/Financiera Rural loan applications.
+All text in Spanish. No I/O — takes data dicts in, returns bytes out.
 """
 
+import csv
 import io
 from datetime import datetime
 
@@ -199,4 +200,64 @@ def generate_farm_report_pdf(
     ))
 
     doc.build(story)
+    return buf.getvalue()
+
+
+# -- CSV Export --
+
+_CSV_HEADERS = [
+    "Parcela",
+    "Cultivo",
+    "Hectareas",
+    "Salud",
+    "Tendencia",
+    "NDVI Promedio",
+    "pH Suelo",
+    "Materia Organica %",
+]
+
+
+def generate_farm_export_csv(fields: list[dict]) -> str:
+    """Generate a CSV export of farm field data with Spanish headers.
+
+    Args:
+        fields: list of dicts with keys: name, crop_type, hectares,
+                health_score, health_trend, ndvi_mean, soil_ph,
+                soil_organic_matter_pct
+
+    Returns:
+        CSV content as a string.
+    """
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(_CSV_HEADERS)
+
+    for f in fields:
+        score = f.get("health_score")
+        score_str = f"{score:.1f}" if score is not None else ""
+        trend_map = {
+            "improving": "Mejorando",
+            "stable": "Estable",
+            "declining": "Declinando",
+        }
+        trend = f.get("health_trend", "")
+        trend_str = trend_map.get(trend, trend) if trend else ""
+        ndvi = f.get("ndvi_mean")
+        ndvi_str = f"{ndvi:.3f}" if ndvi is not None else ""
+        ph = f.get("soil_ph")
+        ph_str = f"{ph:.1f}" if ph is not None else ""
+        om = f.get("soil_organic_matter_pct")
+        om_str = f"{om:.1f}" if om is not None else ""
+
+        writer.writerow([
+            f.get("name", ""),
+            f.get("crop_type", "") or "",
+            f.get("hectares", ""),
+            score_str,
+            trend_str,
+            ndvi_str,
+            ph_str,
+            om_str,
+        ])
+
     return buf.getvalue()
