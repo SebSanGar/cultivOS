@@ -50,6 +50,7 @@ class FieldCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     crop_type: str | None = None
     hectares: float = 0
+    planted_at: datetime | None = None
     boundary_coordinates: list[list[float]] | None = None
 
     @field_validator("boundary_coordinates")
@@ -69,6 +70,7 @@ class FieldUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
     crop_type: str | None = None
     hectares: float | None = None
+    planted_at: datetime | None = None
     boundary_coordinates: list[list[float]] | None = None
 
     @field_validator("boundary_coordinates")
@@ -90,6 +92,7 @@ class FieldOut(BaseModel):
     name: str
     crop_type: str | None
     hectares: float
+    planted_at: datetime | None
     boundary_coordinates: list[list[float]] | None
     computed_area_hectares: float | None
     created_at: datetime

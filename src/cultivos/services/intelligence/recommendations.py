@@ -225,6 +225,7 @@ def recommend_treatment(
     microbiome: MicrobiomeInput | None = None,
     ancestral_methods: list[AncestralMethodData] | None = None,
     weather: WeatherInput | None = None,
+    growth_stage: str | None = None,
 ) -> list[Treatment]:
     """Generate organic treatment recommendations based on health score, soil, microbiome, and weather.
 
@@ -412,5 +413,20 @@ def recommend_treatment(
     # Add weather-based timing advice to each recommendation
     for rec in recommendations:
         rec["timing_consejo"] = _compute_timing(rec, weather)
+
+    # Add growth stage context to treatment descriptions
+    if growth_stage:
+        _STAGE_GUIDANCE: dict[str, str] = {
+            "siembra": "En etapa de siembra: priorizar desarrollo radicular, aplicaciones suaves",
+            "vegetativo": "En etapa vegetativa: priorizar nitrogeno para crecimiento foliar",
+            "floracion": "En etapa de floracion: evitar estres hidrico, priorizar potasio y fosforo",
+            "fructificacion": "En etapa de fructificacion: priorizar potasio para frutos, calcio para firmeza",
+            "cosecha": "En etapa de cosecha: reducir insumos, preparar suelo para siguiente ciclo",
+        }
+        guidance = _STAGE_GUIDANCE.get(growth_stage, "")
+        if guidance:
+            for rec in recommendations:
+                existing = rec.get("prevencion", "")
+                rec["prevencion"] = f"{guidance}. {existing}"
 
     return recommendations

@@ -37,6 +37,7 @@ class Field(Base):
     name = Column(String(100), nullable=False)
     crop_type = Column(String(50))  # maiz, agave, aguacate, etc.
     hectares = Column(Float, default=0)
+    planted_at = Column(DateTime, nullable=True)  # when crop was planted (for phenology)
     boundary_coordinates = Column(JSON)  # [[lon, lat], ...] polygon vertices
     computed_area_hectares = Column(Float)  # auto-computed from boundary polygon
     created_at = Column(DateTime, default=datetime.utcnow)

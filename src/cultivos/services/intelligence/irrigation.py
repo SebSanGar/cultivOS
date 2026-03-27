@@ -56,6 +56,7 @@ def compute_irrigation_schedule(
     soil: dict | None,
     weather: dict | None,
     thermal: dict | None,
+    growth_stage: str | None = None,
 ) -> IrrigationResult:
     """Compute a 7-day irrigation schedule based on available data.
 
@@ -76,6 +77,13 @@ def compute_irrigation_schedule(
     texture = (soil or {}).get("texture", "loam") or "loam"
     soil_mult = SOIL_TEXTURE_MULTIPLIER.get(texture.lower(), 1.0)
     adjusted = base * soil_mult
+
+    # Step 2.5: Growth stage adjustment
+    if growth_stage:
+        from cultivos.services.crop.phenology import _STAGE_DEFS
+        stage_multipliers = {s[0]: s[2] for s in _STAGE_DEFS}
+        stage_mult = stage_multipliers.get(growth_stage, 1.0)
+        adjusted *= stage_mult
 
     # Step 3: Soil moisture adjustment — high existing moisture reduces need
     moisture_pct = (soil or {}).get("moisture_pct")

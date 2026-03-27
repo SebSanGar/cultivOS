@@ -22,6 +22,7 @@ from cultivos.api.disease import router as disease_router, disease_risk_router
 from cultivos.api.feedback import router as feedback_router
 from cultivos.api.farms import router as farms_router
 from cultivos.api.flights import router as flights_router
+from cultivos.api.growth_stage import router as growth_stage_router
 from cultivos.api.health import router as health_router
 from cultivos.api.intel import router as intel_router, seasonal_router
 from cultivos.api.irrigation import router as irrigation_router
@@ -121,6 +122,7 @@ def create_app() -> FastAPI:
     app.include_router(feedback_router)
     app.include_router(farms_router)
     app.include_router(flights_router)
+    app.include_router(growth_stage_router)
     app.include_router(health_router)
     app.include_router(intel_router)
     app.include_router(seasonal_router)

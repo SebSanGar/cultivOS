@@ -77,12 +77,21 @@ def get_irrigation_schedule(
             "irrigation_deficit": thermal_record.irrigation_deficit,
         }
 
+    # Compute growth stage if planted_at is set
+    growth_stage = None
+    if field.planted_at:
+        from cultivos.services.crop.phenology import compute_growth_stage
+        stage_result = compute_growth_stage(field.crop_type or "desconocido", field.planted_at)
+        if stage_result:
+            growth_stage = stage_result["stage"]
+
     result = compute_irrigation_schedule(
         crop_type=field.crop_type,
         hectares=field.hectares or 0.0,
         soil=soil_dict,
         weather=weather_dict,
         thermal=thermal_dict,
+        growth_stage=growth_stage,
     )
 
     return IrrigationScheduleOut(

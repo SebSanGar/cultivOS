@@ -138,6 +138,14 @@ def generate_treatments(
         for m in ancestral_rows
     ]
 
+    # Compute growth stage if planted_at is set
+    growth_stage = None
+    if field.planted_at:
+        from cultivos.services.crop.phenology import compute_growth_stage
+        stage_result = compute_growth_stage(field.crop_type or "desconocido", field.planted_at)
+        if stage_result:
+            growth_stage = stage_result["stage"]
+
     recommendations = recommend_treatment(
         health_score=latest_health.score,
         soil=soil_input,
@@ -145,6 +153,7 @@ def generate_treatments(
         microbiome=microbiome_input,
         ancestral_methods=ancestral_data,
         weather=weather_input,
+        growth_stage=growth_stage,
     )
 
     records = []
