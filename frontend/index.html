@@ -52,6 +52,31 @@
         </div>
     </div>
 
+    <!-- Weather widget (shown when a farm is selected) -->
+    <div id="weather-widget" class="weather-widget" style="display:none">
+        <div class="weather-current">
+            <div class="weather-header">
+                <div class="weather-title">Clima</div>
+                <div class="weather-farm-name" id="weather-farm-name"></div>
+            </div>
+            <div class="weather-now">
+                <div class="weather-temp" id="weather-temp">--</div>
+                <div class="weather-desc" id="weather-desc">--</div>
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <span class="weather-detail-label">Humedad</span>
+                        <span class="weather-detail-value" id="weather-humidity">--%</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="weather-detail-label">Viento</span>
+                        <span class="weather-detail-value" id="weather-wind">-- km/h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weather-forecast" id="weather-forecast"></div>
+    </div>
+
     <!-- Farm cards grid -->
     <div id="farm-grid" class="farm-grid">
         <div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>

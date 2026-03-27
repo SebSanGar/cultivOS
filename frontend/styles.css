@@ -663,3 +663,106 @@ nav {
     .intel-grid { grid-template-columns: 1fr; }
     .intel-stats-strip { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── WEATHER WIDGET ── */
+.weather-widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+.weather-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+.weather-farm-name {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+.weather-now {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+.weather-temp {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+}
+.weather-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+.weather-details {
+    display: flex;
+    gap: 24px;
+    margin-top: 8px;
+}
+.weather-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.weather-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.weather-detail-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.weather-forecast {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+.forecast-day {
+    text-align: center;
+    padding: 12px 8px;
+    background: var(--bg);
+    border-radius: 8px;
+}
+.forecast-day-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.forecast-day-temp {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.forecast-day-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.forecast-day-details {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ── WEATHER RESPONSIVE ── */
+@media (max-width: 480px) {
+    .weather-forecast { grid-template-columns: 1fr; gap: 8px; }
+    .weather-temp { font-size: 1.8rem; }
+}

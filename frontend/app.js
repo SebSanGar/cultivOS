@@ -331,12 +331,45 @@ function closeFertilizers() {
     farmGrid.style.display = '';
 }
 
+// ── Weather widget ──
+async function loadWeather(farmId) {
+    const records = await fetchJSON(`/farms/${farmId}/weather`) || [];
+    if (records.length === 0) {
+        document.getElementById('weather-widget').style.display = 'none';
+        return;
+    }
+    const w = records[0]; // latest record (sorted desc by recorded_at)
+    const farm = farms.find(f => f.id === farmId);
+
+    document.getElementById('weather-widget').style.display = '';
+    document.getElementById('weather-farm-name').textContent = farm ? farm.name : '';
+    document.getElementById('weather-temp').textContent = Math.round(w.temp_c) + '\u00B0C';
+    document.getElementById('weather-desc').textContent = esc(w.description);
+    document.getElementById('weather-humidity').textContent = Math.round(w.humidity_pct) + '%';
+    document.getElementById('weather-wind').textContent = w.wind_kmh.toFixed(1) + ' km/h';
+
+    const forecastEl = document.getElementById('weather-forecast');
+    if (w.forecast_3day && w.forecast_3day.length > 0) {
+        const dayLabels = ['Manana', 'Pasado', 'En 3 dias'];
+        forecastEl.innerHTML = w.forecast_3day.map((day, i) => `
+            <div class="forecast-day">
+                <div class="forecast-day-label">${dayLabels[i] || 'Dia ' + (i + 1)}</div>
+                <div class="forecast-day-temp">${Math.round(day.temp_c)}\u00B0C</div>
+                <div class="forecast-day-desc">${esc(day.description)}</div>
+                <div class="forecast-day-details">${Math.round(day.humidity_pct)}% hum &middot; ${day.wind_kmh.toFixed(0)} km/h</div>
+            </div>
+        `).join('');
+    } else {
+        forecastEl.innerHTML = '';
+    }
+}
+
 // ── Navigation ──
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await loadFieldsForFarm(farmId);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -346,6 +379,7 @@ async function selectFarm(farmId) {
 function closeFarmDetail() {
     selectedFarmId = null;
     fieldPanel.style.display = 'none';
+    document.getElementById('weather-widget').style.display = 'none';
 }
 
 // ── Escape HTML ──
