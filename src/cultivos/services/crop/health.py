@@ -251,3 +251,39 @@ def compute_health_score(
         sources=sources,
         breakdown=breakdown,
     )
+
+
+def compute_trend_from_history(scores: list[float]) -> str:
+    """Compute overall trend from a chronological list of health scores.
+
+    Requires 3+ scores for a meaningful trend. Uses linear regression slope
+    to determine direction: positive slope > threshold = improving,
+    negative slope < -threshold = declining, otherwise stable.
+
+    Args:
+        scores: chronological list of health scores (oldest first)
+
+    Returns:
+        "improving", "declining", "stable", or "insufficient_data"
+    """
+    if len(scores) < 3:
+        return "insufficient_data"
+
+    n = len(scores)
+    x_mean = (n - 1) / 2
+    y_mean = sum(scores) / n
+
+    numerator = sum((i - x_mean) * (s - y_mean) for i, s in enumerate(scores))
+    denominator = sum((i - x_mean) ** 2 for i in range(n))
+
+    if denominator == 0:
+        return "stable"
+
+    slope = numerator / denominator
+
+    # Threshold: slope > 3 points per observation = meaningful change
+    if slope > 3.0:
+        return "improving"
+    elif slope < -3.0:
+        return "declining"
+    return "stable"

@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis
 from cultivos.db.session import get_db
-from cultivos.models.health import HealthScoreOut
-from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, compute_health_score
+from cultivos.models.health import HealthHistoryOut, HealthScoreOut
+from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, compute_health_score, compute_trend_from_history
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/health",
@@ -145,6 +145,33 @@ def list_health_scores(
         .filter(HealthScore.field_id == field_id)
         .order_by(HealthScore.scored_at.desc())
         .all()
+    )
+
+
+@router.get("/history", response_model=HealthHistoryOut)
+def get_health_history(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Get chronological health score history with computed overall trend.
+
+    Returns all health scores for this field ordered oldest-first,
+    plus a computed trend from the score values (requires 3+ scores).
+    """
+    _get_field(farm_id, field_id, db)
+    records = (
+        db.query(HealthScore)
+        .filter(HealthScore.field_id == field_id)
+        .order_by(HealthScore.scored_at.asc())
+        .all()
+    )
+    score_values = [r.score for r in records]
+    trend = compute_trend_from_history(score_values)
+    return HealthHistoryOut(
+        scores=[HealthScoreOut.model_validate(r) for r in records],
+        trend=trend,
+        count=len(records),
     )
 
 

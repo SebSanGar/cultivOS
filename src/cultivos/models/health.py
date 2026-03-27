@@ -21,3 +21,10 @@ class HealthScoreOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class HealthHistoryOut(BaseModel):
+    """Health score history with computed overall trend."""
+    scores: list[HealthScoreOut]
+    trend: str  # improving, stable, declining, insufficient_data
+    count: int
