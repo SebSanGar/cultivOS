@@ -146,6 +146,10 @@ def create_app() -> FastAPI:
         async def serve_intel():
             return FileResponse(frontend_dir / "intel.html")
 
+        @app.get("/campo")
+        async def serve_campo():
+            return FileResponse(frontend_dir / "field.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

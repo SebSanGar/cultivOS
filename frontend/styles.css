@@ -336,6 +336,137 @@ nav {
 }
 
 /* ════════════════════════════════════════════════════════════════
+   FIELD DETAIL PAGE — /campo — Full Cerebro intelligence view
+   ════════════════════════════════════════════════════════════════ */
+
+.campo-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px;
+}
+
+.campo-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+}
+
+.campo-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 16px;
+}
+
+.campo-section-title {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--green); margin-bottom: 12px;
+}
+
+.campo-section-body {
+    font-size: 0.85rem;
+}
+
+.campo-chart-container {
+    height: 220px; position: relative;
+}
+
+.campo-placeholder {
+    text-align: center; padding: 20px;
+    color: var(--text-muted); font-size: 0.85rem;
+}
+
+.campo-data-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.campo-data-item {
+    display: flex; flex-direction: column; gap: 2px;
+}
+
+.campo-data-label {
+    font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.campo-data-value {
+    font-size: 0.9rem; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+
+.campo-zones { margin-top: 14px; }
+
+.campo-zone-bar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 4px;
+}
+
+.campo-zone-label {
+    font-size: 0.7rem; color: var(--text-muted); min-width: 80px;
+}
+
+.campo-zone-track {
+    flex: 1; height: 8px; border-radius: 4px;
+    background: var(--border); overflow: hidden;
+}
+
+.campo-zone-fill {
+    height: 100%; border-radius: 4px;
+}
+
+.zone-healthy, .zone-saludable { background: var(--green); }
+.zone-moderate, .zone-moderado { background: #84cc16; }
+.zone-stressed, .zone-estresado { background: var(--yellow); }
+.zone-critical, .zone-critico { background: var(--red); }
+.zone-dead, .zone-muerto { background: #6b7280; }
+
+.campo-zone-pct {
+    font-size: 0.7rem; font-weight: 600; min-width: 32px;
+    text-align: right; font-variant-numeric: tabular-nums;
+}
+
+.campo-alert-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 6px;
+    font-size: 0.8rem; font-weight: 700; margin-top: 10px;
+}
+.campo-alert-badge.critical { background: var(--red-light); color: #991b1b; }
+.campo-alert-badge.warning { background: var(--yellow-light); color: #92400e; }
+
+.campo-risk-desc {
+    font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;
+    line-height: 1.5;
+}
+
+.campo-risk-recs { margin-top: 10px; }
+.campo-risk-rec {
+    font-size: 0.8rem; padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+.campo-risk-rec:last-child { border-bottom: none; }
+
+.campo-treatment-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-bottom: 8px;
+}
+.campo-treatment-card:last-child { margin-bottom: 0; }
+.campo-treatment-row { margin-bottom: 4px; line-height: 1.4; }
+
+.campo-schedule { margin-top: 12px; }
+.campo-schedule-day {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+}
+.campo-schedule-day:last-child { border-bottom: none; }
+.campo-schedule-date { color: var(--text-muted); }
+.campo-schedule-liters { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* -- CAMPO RESPONSIVE -- */
+@media (max-width: 640px) {
+    .campo-grid { grid-template-columns: 1fr; }
+    .campo-data-grid { grid-template-columns: repeat(2, 1fr); }
+    .campo-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* ════════════════════════════════════════════════════════════════
    INTELLIGENCE DASHBOARD — Dark theme, data-dense admin/researcher view
    ════════════════════════════════════════════════════════════════ */
 

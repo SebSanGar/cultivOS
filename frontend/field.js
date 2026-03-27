@@ -1,0 +1,356 @@
+/* -- cultivOS Field Detail -- field.js -- */
+
+const API = '/api';
+
+// -- Parse URL params --
+const params = new URLSearchParams(window.location.search);
+const farmId = params.get('farm');
+const fieldId = params.get('field');
+
+// -- Helpers --
+function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+}
+
+function healthClass(score) {
+    if (score == null) return 'none';
+    if (score > 70) return 'good';
+    if (score >= 40) return 'warning';
+    return 'critical';
+}
+
+async function fetchJSON(path) {
+    try {
+        const resp = await fetch(API + path);
+        if (!resp.ok) return null;
+        return await resp.json();
+    } catch {
+        return null;
+    }
+}
+
+// -- Load all field data --
+async function loadFieldDetail() {
+    if (!farmId || !fieldId) {
+        document.getElementById('campo-title').textContent = 'Error: parametros faltantes';
+        document.getElementById('campo-subtitle').textContent = 'URL debe incluir ?farm=ID&field=ID';
+        return;
+    }
+
+    const base = `/farms/${farmId}/fields/${fieldId}`;
+
+    // Fetch field info and all intelligence in parallel
+    const [fields, healthList, ndviList, thermalList, soilList, treatments,
+           irrigation, rotation, yieldPred, diseaseRisk, healthHistory] = await Promise.all([
+        fetchJSON(`/farms/${farmId}/fields`),
+        fetchJSON(`${base}/health`),
+        fetchJSON(`${base}/ndvi`),
+        fetchJSON(`${base}/thermal`),
+        fetchJSON(`${base}/soil`),
+        fetchJSON(`${base}/treatments`),
+        fetchJSON(`${base}/irrigation`),
+        fetchJSON(`${base}/rotation`),
+        fetchJSON(`${base}/yield`),
+        fetchJSON(`${base}/disease-risk`),
+        fetchJSON(`${base}/health/history`),
+    ]);
+
+    // Find this field
+    const field = fields ? fields.find(f => f.id === parseInt(fieldId)) : null;
+
+    // Header
+    if (field) {
+        document.getElementById('campo-title').textContent = field.name;
+        document.getElementById('campo-subtitle').textContent =
+            (field.crop_type ? field.crop_type : '') + ' — ' + field.hectares + ' ha';
+        document.getElementById('campo-hectares').textContent = field.hectares;
+        document.getElementById('campo-crop').textContent = field.crop_type || '--';
+    }
+
+    // Back button links to farm
+    document.getElementById('btn-back').onclick = function() {
+        window.location.href = '/';
+    };
+
+    // Health score
+    const latestHealth = healthList && healthList.length > 0 ? healthList[healthList.length - 1] : null;
+    if (latestHealth) {
+        const el = document.getElementById('campo-health');
+        el.textContent = Math.round(latestHealth.score);
+        el.className = 'stat-value health-badge ' + healthClass(latestHealth.score);
+    }
+
+    // NDVI
+    const latestNdvi = ndviList && ndviList.length > 0 ? ndviList[ndviList.length - 1] : null;
+    if (latestNdvi) {
+        document.getElementById('campo-ndvi').textContent = latestNdvi.ndvi_mean.toFixed(2);
+        renderNdvi(latestNdvi);
+    }
+
+    // Thermal
+    const latestThermal = thermalList && thermalList.length > 0 ? thermalList[thermalList.length - 1] : null;
+    if (latestThermal) renderThermal(latestThermal);
+
+    // Soil
+    const latestSoil = soilList && soilList.length > 0 ? soilList[soilList.length - 1] : null;
+    if (latestSoil) renderSoil(latestSoil);
+
+    // Disease risk
+    if (diseaseRisk) renderDisease(diseaseRisk);
+
+    // Irrigation
+    if (irrigation) renderIrrigation(irrigation);
+
+    // Yield
+    if (yieldPred) renderYield(yieldPred);
+
+    // Treatments
+    if (treatments && treatments.length > 0) renderTreatments(treatments);
+
+    // Rotation
+    if (rotation && rotation.seasons) renderRotation(rotation);
+
+    // Health history chart
+    if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
+        renderHealthChart(healthHistory);
+    }
+}
+
+// -- Render functions --
+
+function renderNdvi(ndvi) {
+    const zones = ndvi.zones || {};
+    document.getElementById('ndvi-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">NDVI Promedio</span>
+                <span class="campo-data-value">${ndvi.ndvi_mean.toFixed(3)}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Min</span>
+                <span class="campo-data-value">${ndvi.ndvi_min.toFixed(3)}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Max</span>
+                <span class="campo-data-value">${ndvi.ndvi_max.toFixed(3)}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Estres</span>
+                <span class="campo-data-value">${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
+            </div>
+        </div>
+        ${Object.keys(zones).length > 0 ? `
+        <div class="campo-zones">
+            <div class="campo-data-label" style="margin-bottom:6px">Zonas de salud</div>
+            ${Object.entries(zones).map(([zone, pct]) => `
+                <div class="campo-zone-bar">
+                    <span class="campo-zone-label">${esc(zone)}</span>
+                    <div class="campo-zone-track">
+                        <div class="campo-zone-fill zone-${zone.toLowerCase().replace(/\s+/g, '-')}" style="width:${pct}%"></div>
+                    </div>
+                    <span class="campo-zone-pct">${pct.toFixed(0)}%</span>
+                </div>
+            `).join('')}
+        </div>` : ''}`;
+}
+
+function renderThermal(thermal) {
+    const stressCls = thermal.stress_pct > 30 ? 'critical' : thermal.stress_pct > 10 ? 'warning' : 'good';
+    document.getElementById('thermal-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Temp Promedio</span>
+                <span class="campo-data-value">${thermal.temp_mean.toFixed(1)}C</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Min</span>
+                <span class="campo-data-value">${thermal.temp_min.toFixed(1)}C</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Max</span>
+                <span class="campo-data-value">${thermal.temp_max.toFixed(1)}C</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Pixeles Estresados</span>
+                <span class="campo-data-value health-badge ${stressCls}">${thermal.stress_pct.toFixed(1)}%</span>
+            </div>
+        </div>
+        ${thermal.irrigation_deficit ? '<div class="campo-alert-badge critical">Deficit de riego detectado</div>' : ''}`;
+}
+
+function renderSoil(soil) {
+    const phCls = (soil.ph >= 6.0 && soil.ph <= 7.0) ? 'good' : (soil.ph >= 5.5 && soil.ph <= 7.5) ? 'warning' : 'critical';
+    document.getElementById('soil-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">pH</span>
+                <span class="campo-data-value health-badge ${phCls}">${soil.ph}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Materia Organica</span>
+                <span class="campo-data-value">${soil.organic_matter_pct}%</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Nitrogeno</span>
+                <span class="campo-data-value">${soil.nitrogen_ppm} ppm</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Fosforo</span>
+                <span class="campo-data-value">${soil.phosphorus_ppm} ppm</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Potasio</span>
+                <span class="campo-data-value">${soil.potassium_ppm} ppm</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Humedad</span>
+                <span class="campo-data-value">${soil.moisture_pct}%</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Textura</span>
+                <span class="campo-data-value">${esc(soil.texture || '--')}</span>
+            </div>
+        </div>`;
+}
+
+function renderDisease(risk) {
+    const riskCls = risk.risk_level === 'alto' ? 'critical' : risk.risk_level === 'medio' ? 'warning' : 'good';
+    document.getElementById('disease-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Nivel de Riesgo</span>
+                <span class="campo-data-value health-badge ${riskCls}">${esc(risk.risk_level || '--')}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Tipo</span>
+                <span class="campo-data-value">${esc(risk.risk_type || '--')}</span>
+            </div>
+        </div>
+        ${risk.description ? `<div class="campo-risk-desc">${esc(risk.description)}</div>` : ''}
+        ${risk.recommendations && risk.recommendations.length > 0 ? `
+            <div class="campo-risk-recs">
+                ${risk.recommendations.map(r => `<div class="campo-risk-rec">${esc(r)}</div>`).join('')}
+            </div>` : ''}`;
+}
+
+function renderIrrigation(irrigation) {
+    const urgCls = irrigation.urgency === 'critico' ? 'critical' : irrigation.urgency === 'moderado' ? 'warning' : 'good';
+    let scheduleHtml = '';
+    if (irrigation.schedule && irrigation.schedule.length > 0) {
+        scheduleHtml = `
+        <div class="campo-schedule">
+            ${irrigation.schedule.map(day => `
+                <div class="campo-schedule-day">
+                    <span class="campo-schedule-date">${esc(day.date || day.dia || '')}</span>
+                    <span class="campo-schedule-liters">${day.liters_per_ha || day.litros_por_ha || 0} L/ha</span>
+                </div>
+            `).join('')}
+        </div>`;
+    }
+    document.getElementById('irrigation-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Urgencia</span>
+                <span class="campo-data-value health-badge ${urgCls}">${esc(irrigation.urgency || irrigation.urgencia || '--')}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">L/ha Total Semana</span>
+                <span class="campo-data-value">${irrigation.total_liters_week || irrigation.total_litros_semana || '--'}</span>
+            </div>
+        </div>
+        ${irrigation.recommendation || irrigation.recomendacion ? `<div class="campo-risk-desc">${esc(irrigation.recommendation || irrigation.recomendacion)}</div>` : ''}
+        ${scheduleHtml}`;
+}
+
+function renderYield(yieldData) {
+    document.getElementById('yield-content').innerHTML = `
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Rendimiento Estimado</span>
+                <span class="campo-data-value">${yieldData.predicted_yield_kg_ha ? yieldData.predicted_yield_kg_ha.toLocaleString() + ' kg/ha' : '--'}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Rango</span>
+                <span class="campo-data-value">${yieldData.low_estimate ? yieldData.low_estimate.toLocaleString() : '--'} — ${yieldData.high_estimate ? yieldData.high_estimate.toLocaleString() : '--'} kg/ha</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Cultivo</span>
+                <span class="campo-data-value">${esc(yieldData.crop_type || '--')}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Base SIAP</span>
+                <span class="campo-data-value">${yieldData.baseline_yield_kg_ha ? yieldData.baseline_yield_kg_ha.toLocaleString() + ' kg/ha' : '--'}</span>
+            </div>
+        </div>`;
+}
+
+function renderTreatments(treatments) {
+    document.getElementById('treatments-content').innerHTML = treatments.map(t => `
+        <div class="campo-treatment-card">
+            ${t.problema ? `<div class="campo-treatment-row"><strong>Problema:</strong> ${esc(t.problema)}</div>` : ''}
+            ${t.tratamiento ? `<div class="campo-treatment-row"><strong>Tratamiento:</strong> ${esc(t.tratamiento)}</div>` : ''}
+            ${t.costo_estimado_mxn ? `<div class="campo-treatment-row"><strong>Costo:</strong> $${t.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+            ${t.urgencia ? `<div class="campo-treatment-row"><span class="campo-alert-badge ${t.urgencia.toLowerCase() === 'inmediata' ? 'critical' : 'warning'}">${esc(t.urgencia)}</span></div>` : ''}
+            ${t.prevencion ? `<div class="campo-treatment-row"><strong>Prevencion:</strong> ${esc(t.prevencion)}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function renderRotation(rotation) {
+    document.getElementById('rotation-content').innerHTML = `
+        <div class="rotation-timeline">
+            ${rotation.seasons.map((s, i) => `
+                <div class="rotation-season">
+                    <div class="rotation-num">${i + 1}</div>
+                    <div>
+                        <div class="rotation-crop">${esc(s.crop || s.cultivo || '')}</div>
+                        <div class="rotation-reason">${esc(s.reason || s.razon || '')}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>`;
+}
+
+function renderHealthChart(history) {
+    const scores = history.scores;
+    const labels = scores.map((s, i) => s.date || '#' + (i + 1));
+    const data = scores.map(s => s.score);
+
+    const ctx = document.getElementById('health-chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Salud',
+                data: data,
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#16a34a',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100,
+                    ticks: { stepSize: 20 }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+// -- Init --
+loadFieldDetail();

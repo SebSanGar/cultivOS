@@ -263,7 +263,7 @@ function renderFields(farmId) {
         }
 
         return `
-        <div class="field-card-expanded">
+        <div class="field-card-expanded" onclick="window.location.href='/campo?farm=${farmId}&field=${f.id}'" style="cursor:pointer" title="Ver detalle completo">
             <div class="field-card-header">
                 <span class="field-name">${esc(f.name)}</span>
                 ${f.crop_type ? `<span class="field-crop">${esc(f.crop_type)}</span>` : ''}

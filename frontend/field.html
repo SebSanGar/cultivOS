@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Detalle de Campo</title>
+    <meta name="description" content="Detalle de campo — salud, NDVI, suelo, riego, rotacion y recomendaciones.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab">Inteligencia</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- FIELD DETAIL -->
+<main class="dashboard">
+    <!-- Back + Header -->
+    <div class="campo-header">
+        <button class="field-panel-back" id="btn-back" onclick="history.back()">Volver</button>
+        <div>
+            <h1 class="dash-title" id="campo-title">Detalle de Campo</h1>
+            <p class="dash-subtitle" id="campo-subtitle"></p>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip" id="campo-stats">
+        <div class="stat-card">
+            <div class="stat-value" id="campo-health">--</div>
+            <div class="stat-label">Salud</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="campo-ndvi">--</div>
+            <div class="stat-label">NDVI</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="campo-hectares">--</div>
+            <div class="stat-label">Hectareas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="campo-crop">--</div>
+            <div class="stat-label">Cultivo</div>
+        </div>
+    </div>
+
+    <!-- Health history chart -->
+    <div class="campo-section" id="section-health">
+        <div class="campo-section-title">Historial de Salud</div>
+        <div class="campo-chart-container">
+            <canvas id="health-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Two-column grid for data sections -->
+    <div class="campo-grid">
+        <!-- NDVI -->
+        <div class="campo-section" id="section-ndvi">
+            <div class="campo-section-title">NDVI — Indice de Vegetacion</div>
+            <div id="ndvi-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos NDVI</div>
+            </div>
+        </div>
+
+        <!-- Thermal -->
+        <div class="campo-section" id="section-thermal">
+            <div class="campo-section-title">Estres Termico</div>
+            <div id="thermal-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos termicos</div>
+            </div>
+        </div>
+
+        <!-- Suelo -->
+        <div class="campo-section" id="section-soil">
+            <div class="campo-section-title">Analisis de Suelo</div>
+            <div id="soil-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin analisis de suelo</div>
+            </div>
+        </div>
+
+        <!-- Disease risk -->
+        <div class="campo-section" id="section-disease">
+            <div class="campo-section-title">Riesgo de Enfermedades</div>
+            <div id="disease-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin evaluacion de riesgo</div>
+            </div>
+        </div>
+
+        <!-- Riego -->
+        <div class="campo-section" id="section-irrigation">
+            <div class="campo-section-title">Plan de Riego</div>
+            <div id="irrigation-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin plan de riego</div>
+            </div>
+        </div>
+
+        <!-- Yield -->
+        <div class="campo-section" id="section-yield">
+            <div class="campo-section-title">Prediccion de Rendimiento</div>
+            <div id="yield-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin prediccion</div>
+            </div>
+        </div>
+
+        <!-- Treatments -->
+        <div class="campo-section" id="section-treatments">
+            <div class="campo-section-title">Tratamientos Recomendados</div>
+            <div id="treatments-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin tratamientos</div>
+            </div>
+        </div>
+
+        <!-- Rotation -->
+        <div class="campo-section" id="section-rotation">
+            <div class="campo-section-title">Plan de Rotacion</div>
+            <div id="rotation-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin plan de rotacion</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/field.js"></script>
+</body>
+</html>
