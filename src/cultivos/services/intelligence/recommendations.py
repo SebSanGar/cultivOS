@@ -32,6 +32,21 @@ class AncestralMethodData(TypedDict, total=False):
     scientific_basis: str
 
 
+class ForecastInput(TypedDict, total=False):
+    temp_c: float
+    humidity_pct: float
+    wind_kmh: float
+    description: str
+
+
+class WeatherInput(TypedDict, total=False):
+    temp_c: float
+    humidity_pct: float
+    wind_kmh: float
+    description: str
+    forecast_3day: list[ForecastInput]
+
+
 class Treatment(TypedDict, total=False):
     problema: str
     causa_probable: str
@@ -43,6 +58,7 @@ class Treatment(TypedDict, total=False):
     metodo_ancestral: str | None
     base_cientifica: str | None
     razon_match: str | None
+    timing_consejo: str | None
 
 
 _NO_TREATMENT = Treatment(
@@ -123,18 +139,101 @@ def _match_ancestral(
     return best["name"], best.get("scientific_basis"), reason
 
 
+def _has_rain_forecast(weather: WeatherInput | None) -> bool:
+    """Check if any forecast day mentions rain."""
+    if not weather:
+        return False
+    for day in weather.get("forecast_3day", []):
+        desc = day.get("description", "").lower()
+        if "lluvia" in desc or "rain" in desc or "tormenta" in desc:
+            return True
+    return False
+
+
+def _rain_in_24h(weather: WeatherInput | None) -> bool:
+    """Check if rain is expected in the first forecast day (next 24h)."""
+    if not weather:
+        return False
+    forecast = weather.get("forecast_3day", [])
+    if not forecast:
+        return False
+    desc = forecast[0].get("description", "").lower()
+    return "lluvia" in desc or "rain" in desc or "tormenta" in desc
+
+
+def _is_extreme_heat(weather: WeatherInput | None) -> bool:
+    """Check if current or forecast temps exceed 38C."""
+    if not weather:
+        return False
+    if weather.get("temp_c", 0) >= 38:
+        return True
+    for day in weather.get("forecast_3day", []):
+        if day.get("temp_c", 0) >= 38:
+            return True
+    return False
+
+
+def _is_drought_conditions(weather: WeatherInput | None) -> bool:
+    """Check for dry/hot conditions: high temp, low humidity, no rain."""
+    if not weather:
+        return False
+    if weather.get("humidity_pct", 50) > 40:
+        return False
+    if _has_rain_forecast(weather):
+        return False
+    if weather.get("temp_c", 0) >= 32:
+        return True
+    return False
+
+
+def _compute_timing(rec: Treatment, weather: WeatherInput | None) -> str:
+    """Compute timing advice for a recommendation based on weather forecast."""
+    if not weather:
+        return ""
+
+    problema = rec.get("problema", "").lower()
+    tratamiento = rec.get("tratamiento", "").lower()
+
+    # Foliar sprays and liquid applications should wait if rain in 24h
+    # "te de composta" is a liquid application (not a solid amendment)
+    is_foliar = "foliar" in tratamiento or "te de composta" in tratamiento or "te de" in tratamiento
+    if is_foliar and _rain_in_24h(weather):
+        return "Esperar a que pase la lluvia (pronostico de lluvia en 24h) — aplicar despues para evitar lavado"
+
+    # Solid organic amendments (composta madura, abono, compost) benefit from rain
+    is_amendment = ("composta" in tratamiento or "abono" in tratamiento or "compost" in tratamiento) and not is_foliar
+    if is_amendment and _has_rain_forecast(weather):
+        if _rain_in_24h(weather):
+            return "Aplicar ahora antes de la lluvia pronosticada en 24h — la lluvia ayuda a incorporar la materia organica"
+        return "Aplicar antes de la lluvia pronosticada — la humedad ayuda a incorporar la materia organica"
+
+    # Extreme heat — apply early morning
+    if _is_extreme_heat(weather):
+        return "Aplicar temprano (6-8 AM) — calor extremo pronosticado, evitar horas de mayor temperatura"
+
+    # Drought conditions — prioritize water-related treatments
+    if _is_drought_conditions(weather):
+        return "Condiciones de sequia pronosticadas — priorizar riego y acolchado antes de aplicar tratamientos al suelo"
+
+    return ""
+
+
 def recommend_treatment(
     health_score: float,
     soil: SoilInput | None = None,
     crop_type: str | None = None,
     microbiome: MicrobiomeInput | None = None,
     ancestral_methods: list[AncestralMethodData] | None = None,
+    weather: WeatherInput | None = None,
 ) -> list[Treatment]:
-    """Generate organic treatment recommendations based on health score, soil, and microbiome.
+    """Generate organic treatment recommendations based on health score, soil, microbiome, and weather.
 
     Returns a list of Treatment dicts. Healthy fields (score > 80) get a single
     "no treatment needed" entry. Lower scores trigger specific recommendations
-    based on soil deficiencies and microbiome degradation.
+    based on soil deficiencies, microbiome degradation, and weather conditions.
+
+    When weather data is provided, recommendations include timing advice and
+    weather-triggered treatments (drought resilience, heat protection).
 
     When ancestral_methods are provided, each recommendation is enriched with
     the best matching traditional practice and its scientific validation.
@@ -264,6 +363,33 @@ def recommend_treatment(
             organic=True,
         ))
 
+    # Weather-triggered recommendations
+    if weather and _is_extreme_heat(weather):
+        max_temp = max(
+            weather.get("temp_c", 0),
+            *(d.get("temp_c", 0) for d in weather.get("forecast_3day", [])),
+        )
+        recommendations.append(Treatment(
+            problema=f"Calor extremo pronosticado ({max_temp:.0f}C)",
+            causa_probable="Ola de calor — riesgo de estres termico y deshidratacion del cultivo",
+            tratamiento="Aplicar acolchado organico grueso (15 cm paja), riego por goteo temprano (5-7 AM), malla sombra si disponible",
+            costo_estimado_mxn=3500,
+            urgencia="alta",
+            prevencion="Mantener cobertura vegetal permanente, seleccionar variedades resistentes al calor",
+            organic=True,
+        ))
+
+    if weather and _is_drought_conditions(weather):
+        recommendations.append(Treatment(
+            problema="Condiciones de sequia pronosticadas",
+            causa_probable=f"Humedad baja ({weather.get('humidity_pct', 0):.0f}%), sin lluvia pronosticada, temperatura alta",
+            tratamiento="Aplicar mulch organico (10-15 cm), reducir frecuencia de riego pero aumentar profundidad, priorizar cultivos de cobertura",
+            costo_estimado_mxn=2000,
+            urgencia="alta",
+            prevencion="Zanjas de infiltracion, cosecha de agua de lluvia, seleccion de cultivos resistentes a sequia",
+            organic=True,
+        ))
+
     # General stress with no specific soil cause identified
     if not recommendations and health_score <= 80:
         recommendations.append(Treatment(
@@ -282,5 +408,9 @@ def recommend_treatment(
         rec["metodo_ancestral"] = name
         rec["base_cientifica"] = basis
         rec["razon_match"] = reason
+
+    # Add weather-based timing advice to each recommendation
+    for rec in recommendations:
+        rec["timing_consejo"] = _compute_timing(rec, weather)
 
     return recommendations

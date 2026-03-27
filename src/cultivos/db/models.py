@@ -150,6 +150,7 @@ class TreatmentRecord(Base):
     ancestral_method_name = Column(String(100), nullable=True)  # linked TEK method
     ancestral_base_cientifica = Column(Text, nullable=True)  # scientific validation
     ancestral_razon_match = Column(String(300), nullable=True)  # why this method matches
+    timing_consejo = Column(Text, nullable=True)  # weather-based timing advice
     applied_at = Column(DateTime, nullable=True)  # when the farmer applied the treatment
     applied_notes = Column(Text, nullable=True)  # farmer's notes on application
     created_at = Column(DateTime, default=datetime.utcnow)

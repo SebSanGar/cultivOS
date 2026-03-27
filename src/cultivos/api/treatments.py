@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import AncestralMethod, Farm, Field, HealthScore, MicrobiomeRecord, SoilAnalysis, TreatmentRecord
+from cultivos.db.models import AncestralMethod, Farm, Field, HealthScore, MicrobiomeRecord, SoilAnalysis, TreatmentRecord, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.treatment import (
     TreatmentAppliedIn,
@@ -11,7 +11,14 @@ from cultivos.models.treatment import (
     TreatmentOut,
     TreatmentTimelineEntry,
 )
-from cultivos.services.intelligence.recommendations import AncestralMethodData, MicrobiomeInput, SoilInput, recommend_treatment
+from cultivos.services.intelligence.recommendations import (
+    AncestralMethodData,
+    ForecastInput,
+    MicrobiomeInput,
+    SoilInput,
+    WeatherInput,
+    recommend_treatment,
+)
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/treatments",
@@ -92,6 +99,32 @@ def generate_treatments(
             classification=latest_microbiome.classification,
         )
 
+    # Fetch latest weather record for this farm
+    latest_weather = (
+        db.query(WeatherRecord)
+        .filter(WeatherRecord.farm_id == farm_id)
+        .order_by(WeatherRecord.recorded_at.desc())
+        .first()
+    )
+    weather_input: WeatherInput | None = None
+    if latest_weather:
+        forecast_data = latest_weather.forecast_3day or []
+        weather_input = WeatherInput(
+            temp_c=latest_weather.temp_c,
+            humidity_pct=latest_weather.humidity_pct,
+            wind_kmh=latest_weather.wind_kmh,
+            description=latest_weather.description,
+            forecast_3day=[
+                ForecastInput(
+                    temp_c=f.get("temp_c", 0),
+                    humidity_pct=f.get("humidity_pct", 0),
+                    wind_kmh=f.get("wind_kmh", 0),
+                    description=f.get("description", ""),
+                )
+                for f in forecast_data
+            ],
+        )
+
     # Fetch ancestral methods for TEK enrichment
     ancestral_rows = db.query(AncestralMethod).all()
     ancestral_data: list[AncestralMethodData] = [
@@ -111,6 +144,7 @@ def generate_treatments(
         crop_type=field.crop_type,
         microbiome=microbiome_input,
         ancestral_methods=ancestral_data,
+        weather=weather_input,
     )
 
     records = []
@@ -128,6 +162,7 @@ def generate_treatments(
             ancestral_method_name=rec.get("metodo_ancestral"),
             ancestral_base_cientifica=rec.get("base_cientifica"),
             ancestral_razon_match=rec.get("razon_match"),
+            timing_consejo=rec.get("timing_consejo") or None,
         )
         db.add(record)
         records.append(record)
