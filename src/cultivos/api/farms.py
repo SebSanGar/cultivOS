@@ -80,7 +80,11 @@ def create_field(farm_id: int, body: FieldCreate, db: Session = Depends(get_db))
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
-    field = Field(farm_id=farm_id, **body.model_dump())
+    data = body.model_dump()
+    if data.get("boundary_coordinates"):
+        from cultivos.utils.geo import calculate_polygon_area_hectares
+        data["computed_area_hectares"] = calculate_polygon_area_hectares(data["boundary_coordinates"])
+    field = Field(farm_id=farm_id, **data)
     db.add(field)
     db.commit()
     db.refresh(field)
@@ -108,7 +112,11 @@ def update_field(farm_id: int, field_id: int, body: FieldUpdate, db: Session = D
     field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
-    for key, value in body.model_dump(exclude_unset=True).items():
+    data = body.model_dump(exclude_unset=True)
+    if "boundary_coordinates" in data and data["boundary_coordinates"]:
+        from cultivos.utils.geo import calculate_polygon_area_hectares
+        data["computed_area_hectares"] = calculate_polygon_area_hectares(data["boundary_coordinates"])
+    for key, value in data.items():
         setattr(field, key, value)
     db.commit()
     db.refresh(field)
