@@ -65,6 +65,29 @@ def format_irrigation_sms(
     )
 
 
+def format_anomaly_sms(
+    farm_name: str,
+    field_name: str,
+    anomaly_type: str,
+    recommendation: str,
+) -> str:
+    """Format an anomaly alert SMS in farmer-friendly Spanish."""
+    if anomaly_type == "health_drop":
+        return (
+            f"[cultivOS] {field_name} en {farm_name}: "
+            f"{recommendation}"
+        )
+    elif anomaly_type == "ndvi_drop":
+        return (
+            f"[cultivOS] {field_name} en {farm_name}: "
+            f"{recommendation}"
+        )
+    return (
+        f"[cultivOS] {field_name} en {farm_name}: "
+        f"anomalia detectada. Revise su parcela."
+    )
+
+
 def should_send_alert(
     db: Session,
     farm_id: int,

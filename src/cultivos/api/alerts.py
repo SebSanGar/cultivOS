@@ -3,10 +3,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Alert, Farm, Field, HealthScore, SoilAnalysis, ThermalResult, WeatherRecord
+from cultivos.db.models import Alert, Farm, Field, HealthScore, NDVIResult, SoilAnalysis, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.alert import AlertCheckResponse, AlertOut
-from cultivos.services.alerts.sms import HEALTH_THRESHOLD, format_irrigation_sms, format_sms_message, should_send_alert
+from cultivos.services.alerts.sms import HEALTH_THRESHOLD, format_anomaly_sms, format_irrigation_sms, format_sms_message, should_send_alert
+from cultivos.services.intelligence.anomaly import detect_health_anomalies, detect_ndvi_anomalies
 from cultivos.services.intelligence.irrigation import compute_irrigation_schedule
 
 router = APIRouter(
@@ -184,6 +185,102 @@ def check_irrigation_alerts(
         )
         db.add(alert)
         alerts_created.append(alert)
+
+    if alerts_created:
+        db.commit()
+        for a in alerts_created:
+            db.refresh(a)
+
+    return AlertCheckResponse(
+        farm_id=farm_id,
+        alerts_created=[AlertOut.model_validate(a) for a in alerts_created],
+        fields_checked=len(fields),
+    )
+
+
+@router.post("/check-anomalies", response_model=AlertCheckResponse)
+def check_anomaly_alerts(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Scan all fields for health and NDVI anomalies and create alerts.
+
+    Health anomaly: score drops >15 points between consecutive readings.
+    NDVI anomaly: latest NDVI mean drops >20% below historical average.
+    Deduplicates: no repeat alert within 24h for the same field+type.
+    """
+    farm = _get_farm(farm_id, db)
+    fields = db.query(Field).filter(Field.farm_id == farm_id).all()
+
+    alerts_created = []
+    for field in fields:
+        # --- Health score anomalies ---
+        health_records = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == field.id)
+            .order_by(HealthScore.scored_at.asc())
+            .all()
+        )
+        if len(health_records) >= 2:
+            score_dicts = [
+                {"score": hs.score, "scored_at": hs.scored_at}
+                for hs in health_records
+            ]
+            health_anomalies = detect_health_anomalies(score_dicts, field_name=field.name)
+            for anomaly in health_anomalies:
+                alert_type = "anomaly_health_drop"
+                if not should_send_alert(db, farm_id, field.id, alert_type):
+                    continue
+                message = format_anomaly_sms(
+                    farm_name=farm.name,
+                    field_name=field.name,
+                    anomaly_type="health_drop",
+                    recommendation=anomaly["recommendation"],
+                )
+                alert = Alert(
+                    farm_id=farm_id,
+                    field_id=field.id,
+                    alert_type=alert_type,
+                    message=message,
+                    phone_number=None,
+                    status="pending",
+                )
+                db.add(alert)
+                alerts_created.append(alert)
+
+        # --- NDVI anomalies ---
+        ndvi_records = (
+            db.query(NDVIResult)
+            .filter(NDVIResult.field_id == field.id)
+            .order_by(NDVIResult.analyzed_at.asc())
+            .all()
+        )
+        if len(ndvi_records) >= 2:
+            ndvi_dicts = [
+                {"ndvi_mean": nr.ndvi_mean, "analyzed_at": nr.analyzed_at}
+                for nr in ndvi_records
+            ]
+            ndvi_anomalies = detect_ndvi_anomalies(ndvi_dicts, field_name=field.name)
+            for anomaly in ndvi_anomalies:
+                alert_type = "anomaly_ndvi_drop"
+                if not should_send_alert(db, farm_id, field.id, alert_type):
+                    continue
+                message = format_anomaly_sms(
+                    farm_name=farm.name,
+                    field_name=field.name,
+                    anomaly_type="ndvi_drop",
+                    recommendation=anomaly["recommendation"],
+                )
+                alert = Alert(
+                    farm_id=farm_id,
+                    field_id=field.id,
+                    alert_type=alert_type,
+                    message=message,
+                    phone_number=None,
+                    status="pending",
+                )
+                db.add(alert)
+                alerts_created.append(alert)
 
     if alerts_created:
         db.commit()
