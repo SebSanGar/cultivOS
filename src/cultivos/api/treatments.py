@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, SoilAnalysis, TreatmentRecord
+from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.treatment import TreatmentOut
-from cultivos.services.intelligence.recommendations import SoilInput, recommend_treatment
+from cultivos.services.intelligence.recommendations import MicrobiomeInput, SoilInput, recommend_treatment
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/treatments",
@@ -71,10 +71,27 @@ def generate_treatments(
             moisture_pct=latest_soil.moisture_pct,
         )
 
+    # Fetch latest microbiome record
+    latest_microbiome = (
+        db.query(MicrobiomeRecord)
+        .filter(MicrobiomeRecord.field_id == field_id)
+        .order_by(MicrobiomeRecord.sampled_at.desc())
+        .first()
+    )
+    microbiome_input: MicrobiomeInput | None = None
+    if latest_microbiome:
+        microbiome_input = MicrobiomeInput(
+            respiration_rate=latest_microbiome.respiration_rate,
+            microbial_biomass_carbon=latest_microbiome.microbial_biomass_carbon,
+            fungi_bacteria_ratio=latest_microbiome.fungi_bacteria_ratio,
+            classification=latest_microbiome.classification,
+        )
+
     recommendations = recommend_treatment(
         health_score=latest_health.score,
         soil=soil_input,
         crop_type=field.crop_type,
+        microbiome=microbiome_input,
     )
 
     records = []

@@ -47,6 +47,7 @@ class Field(Base):
     ndvi_results = relationship("NDVIResult", back_populates="field", cascade="all, delete-orphan")
     treatments = relationship("TreatmentRecord", back_populates="field", cascade="all, delete-orphan")
     thermal_results = relationship("ThermalResult", back_populates="field", cascade="all, delete-orphan")
+    microbiome_records = relationship("MicrobiomeRecord", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -167,6 +168,21 @@ class ThermalResult(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="thermal_results")
+
+
+class MicrobiomeRecord(Base):
+    __tablename__ = "microbiome_records"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    respiration_rate = Column(Float, nullable=False)  # mg CO2/kg/day
+    microbial_biomass_carbon = Column(Float, nullable=False)  # mg C/kg soil
+    fungi_bacteria_ratio = Column(Float, nullable=False)
+    classification = Column(String(20), nullable=False)  # healthy, moderate, degraded
+    sampled_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="microbiome_records")
 
 
 class Fertilizer(Base):

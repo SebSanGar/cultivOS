@@ -16,6 +16,13 @@ class SoilInput(TypedDict, total=False):
     moisture_pct: float | None
 
 
+class MicrobiomeInput(TypedDict, total=False):
+    respiration_rate: float
+    microbial_biomass_carbon: float
+    fungi_bacteria_ratio: float
+    classification: str  # healthy, moderate, degraded
+
+
 class Treatment(TypedDict):
     problema: str
     causa_probable: str
@@ -41,18 +48,20 @@ def recommend_treatment(
     health_score: float,
     soil: SoilInput | None = None,
     crop_type: str | None = None,
+    microbiome: MicrobiomeInput | None = None,
 ) -> list[Treatment]:
-    """Generate organic treatment recommendations based on health score and soil.
+    """Generate organic treatment recommendations based on health score, soil, and microbiome.
 
     Returns a list of Treatment dicts. Healthy fields (score > 80) get a single
     "no treatment needed" entry. Lower scores trigger specific recommendations
-    based on soil deficiencies.
+    based on soil deficiencies and microbiome degradation.
     """
     if health_score > 80:
         return [_NO_TREATMENT]
 
     recommendations: list[Treatment] = []
     soil = soil or {}
+    microbiome = microbiome or {}
 
     # High pH — alkaline soil needs acidification
     ph = soil.get("ph")
@@ -141,6 +150,32 @@ def recommend_treatment(
             costo_estimado_mxn=2500,
             urgencia="alta" if moisture < 8 else "media",
             prevencion="Mantener cobertura permanente, riego temprano (6-8 AM), zanjas de infiltracion",
+            organic=True,
+        ))
+
+    # Degraded microbiome — needs biological restoration
+    micro_class = microbiome.get("classification")
+    if micro_class == "degraded":
+        recommendations.append(Treatment(
+            problema="Microbioma del suelo degradado",
+            causa_probable="Baja actividad microbiana por uso excesivo de agroquimicos, compactacion o falta de materia organica",
+            tratamiento="Aplicar te de composta aireado (200 L/ha), inocular micorrizas (2 kg/ha), sembrar cultivos de cobertura multiespecies",
+            costo_estimado_mxn=2500,
+            urgencia="alta",
+            prevencion="Mantener cobertura vegetal permanente, no usar agroquimicos sinteticos, incorporar composta cada ciclo",
+            organic=True,
+        ))
+
+    # Low fungi:bacteria ratio — soil ecosystem immature
+    fbr = microbiome.get("fungi_bacteria_ratio")
+    if fbr is not None and fbr < 0.5 and micro_class != "healthy":
+        recommendations.append(Treatment(
+            problema="Relacion hongos:bacterias baja — ecosistema del suelo inmaduro",
+            causa_probable="Labranza excesiva destruye redes de micelio, suelo perturbado",
+            tratamiento="Reducir labranza, aplicar mulch de madera (5-10 cm), inocular hongos micorrizicos",
+            costo_estimado_mxn=1800,
+            urgencia="media",
+            prevencion="Labranza minima o cero, mantener raices vivas en el suelo todo el ano",
             organic=True,
         ))
 

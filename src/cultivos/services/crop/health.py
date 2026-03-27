@@ -22,6 +22,13 @@ class NDVIInput(TypedDict, total=False):
     stress_pct: float
 
 
+class MicrobiomeInput(TypedDict, total=False):
+    respiration_rate: float
+    microbial_biomass_carbon: float
+    fungi_bacteria_ratio: float
+    classification: str  # healthy, moderate, degraded
+
+
 class HealthResult(TypedDict):
     score: int  # 0-100
     trend: str  # improving, stable, declining
@@ -31,8 +38,9 @@ class HealthResult(TypedDict):
 
 # --- Base weights (sum to 1.0) ---
 _BASE_WEIGHTS = {
-    "ndvi": 0.55,
-    "soil": 0.25,
+    "ndvi": 0.45,
+    "soil": 0.20,
+    "microbiome": 0.15,
     "trend": 0.20,
 }
 
@@ -137,6 +145,25 @@ def _score_soil(soil: SoilInput) -> float:
     return sum(sub_scores) / len(sub_scores)
 
 
+def _score_microbiome(micro: MicrobiomeInput) -> float:
+    """Score microbiome health 0-100.
+
+    Classification drives base score: healthy=90, moderate=60, degraded=25.
+    Fungi:bacteria ratio bonus: >1.0 adds up to +10 (indicates mature soil ecosystem).
+    Biomass carbon bonus: >300 mg C/kg adds up to +5.
+    """
+    classification = micro.get("classification", "moderate")
+    base = {"healthy": 90.0, "moderate": 60.0, "degraded": 25.0}.get(classification, 60.0)
+
+    fbr = micro.get("fungi_bacteria_ratio", 0.5)
+    fbr_bonus = min(10.0, max(0.0, (fbr - 0.5) * 10))
+
+    mbc = micro.get("microbial_biomass_carbon", 0.0)
+    mbc_bonus = min(5.0, max(0.0, (mbc - 200) / 100 * 5))
+
+    return max(0.0, min(100.0, base + fbr_bonus + mbc_bonus))
+
+
 def _compute_trend(current_score: float, previous_score: float | None) -> str:
     """Determine trend from current vs previous score."""
     if previous_score is None:
@@ -158,6 +185,7 @@ def compute_health_score(
     ndvi: NDVIInput | None = None,
     soil: SoilInput | None = None,
     previous_score: float | None = None,
+    microbiome: MicrobiomeInput | None = None,
 ) -> HealthResult:
     """Compute composite health score 0-100 from available inputs.
 
@@ -179,6 +207,12 @@ def compute_health_score(
         available["soil"] = soil_score
         breakdown["soil"] = round(soil_score, 1)
         sources.append("soil")
+
+    if microbiome is not None:
+        micro_score = _score_microbiome(microbiome)
+        available["microbiome"] = micro_score
+        breakdown["microbiome"] = round(micro_score, 1)
+        sources.append("microbiome")
 
     # Trend is always computed (stable if no history)
     # But we need at least one primary input to have a meaningful score

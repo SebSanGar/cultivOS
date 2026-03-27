@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis
+from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis
 from cultivos.db.session import get_db
 from cultivos.models.health import HealthScoreOut
-from cultivos.services.crop.health import NDVIInput, SoilInput, compute_health_score
+from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, compute_health_score
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/health",
@@ -55,10 +55,18 @@ def compute_field_health(
         .first()
     )
 
-    if not latest_ndvi and not latest_soil:
+    # Fetch latest microbiome record
+    latest_microbiome = (
+        db.query(MicrobiomeRecord)
+        .filter(MicrobiomeRecord.field_id == field_id)
+        .order_by(MicrobiomeRecord.sampled_at.desc())
+        .first()
+    )
+
+    if not latest_ndvi and not latest_soil and not latest_microbiome:
         raise HTTPException(
             status_code=422,
-            detail="No NDVI or soil data available for this field. Submit at least one before computing health.",
+            detail="No NDVI, soil, or microbiome data available for this field. Submit at least one before computing health.",
         )
 
     # Build inputs
@@ -81,6 +89,15 @@ def compute_field_health(
             moisture_pct=latest_soil.moisture_pct,
         )
 
+    microbiome_input: MicrobiomeInput | None = None
+    if latest_microbiome:
+        microbiome_input = MicrobiomeInput(
+            respiration_rate=latest_microbiome.respiration_rate,
+            microbial_biomass_carbon=latest_microbiome.microbial_biomass_carbon,
+            fungi_bacteria_ratio=latest_microbiome.fungi_bacteria_ratio,
+            classification=latest_microbiome.classification,
+        )
+
     # Get previous score for trend
     previous = (
         db.query(HealthScore)
@@ -94,6 +111,7 @@ def compute_field_health(
         ndvi=ndvi_input,
         soil=soil_input,
         previous_score=previous_score,
+        microbiome=microbiome_input,
     )
 
     record = HealthScore(
