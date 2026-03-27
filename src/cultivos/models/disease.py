@@ -43,3 +43,19 @@ class DiseaseMatch(BaseModel):
 class IdentifyRequest(BaseModel):
     symptoms: list[str]
     crop: str | None = None
+
+
+class RiskItemOut(BaseModel):
+    tipo: str
+    descripcion: str
+    recomendacion: str
+    urgencia: str
+    organico: bool
+
+
+class DiseaseRiskOut(BaseModel):
+    field_id: int
+    risk_level: str
+    mensaje: str
+    risks: list[RiskItemOut]
+    nota: str | None = None
