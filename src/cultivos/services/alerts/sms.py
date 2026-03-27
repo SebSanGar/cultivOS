@@ -35,6 +35,36 @@ def format_sms_message(
     )
 
 
+def format_irrigation_sms(
+    farm_name: str,
+    field_name: str,
+    urgencia: str,
+    liters_per_ha: float,
+    crop_type: str,
+) -> str:
+    """Format an irrigation SMS alert in farmer-friendly Spanish.
+
+    Urgency levels: alta (act now), media (plan today), baja (informational).
+    """
+    liters_str = f"{liters_per_ha:.0f}"
+
+    if urgencia == "alta":
+        return (
+            f"[cultivOS] {field_name} en {farm_name}: "
+            f"su {crop_type} necesita riego urgente. "
+            f"Regar hoy {liters_str} litros/ha, temprano antes de 8am."
+        )
+    elif urgencia == "media":
+        return (
+            f"[cultivOS] {field_name} en {farm_name}: "
+            f"programe riego de {liters_str} litros/ha para {crop_type} esta semana."
+        )
+    return (
+        f"[cultivOS] {field_name} en {farm_name}: "
+        f"riego normal de {liters_str} litros/ha para {crop_type}."
+    )
+
+
 def should_send_alert(
     db: Session,
     farm_id: int,
