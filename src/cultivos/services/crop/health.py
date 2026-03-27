@@ -22,6 +22,12 @@ class NDVIInput(TypedDict, total=False):
     stress_pct: float
 
 
+class ThermalInput(TypedDict, total=False):
+    stress_pct: float  # % of pixels above 35C threshold
+    temp_mean: float  # average temperature in Celsius
+    irrigation_deficit: bool  # True if temp variation > 5C
+
+
 class MicrobiomeInput(TypedDict, total=False):
     respiration_rate: float
     microbial_biomass_carbon: float
@@ -38,9 +44,10 @@ class HealthResult(TypedDict):
 
 # --- Base weights (sum to 1.0) ---
 _BASE_WEIGHTS = {
-    "ndvi": 0.45,
-    "soil": 0.20,
+    "ndvi": 0.35,
+    "soil": 0.15,
     "microbiome": 0.15,
+    "thermal": 0.15,
     "trend": 0.20,
 }
 
@@ -164,6 +171,30 @@ def _score_microbiome(micro: MicrobiomeInput) -> float:
     return max(0.0, min(100.0, base + fbr_bonus + mbc_bonus))
 
 
+def _score_thermal(thermal: "ThermalInput") -> float:
+    """Score thermal component 0-100.
+
+    Low stress_pct and moderate temp_mean are optimal.
+    stress_pct drives the base score (inverse — 0% stress = 100).
+    High mean temp (>35C) adds additional penalty.
+    Irrigation deficit flag adds a flat penalty.
+    """
+    stress = thermal.get("stress_pct", 0.0)
+    temp_mean = thermal.get("temp_mean", 25.0)
+    irrigation_deficit = thermal.get("irrigation_deficit", False)
+
+    # Base: inverse of stress percentage
+    base = max(0.0, 100 - stress)
+
+    # High temperature penalty: above 35C, each degree costs 5 points
+    temp_penalty = max(0.0, (temp_mean - 35.0) * 5) if temp_mean > 35.0 else 0.0
+
+    # Irrigation deficit penalty: flat 10 points
+    deficit_penalty = 10.0 if irrigation_deficit else 0.0
+
+    return max(0.0, min(100.0, base - temp_penalty - deficit_penalty))
+
+
 def _compute_trend(current_score: float, previous_score: float | None) -> str:
     """Determine trend from current vs previous score."""
     if previous_score is None:
@@ -186,6 +217,7 @@ def compute_health_score(
     soil: SoilInput | None = None,
     previous_score: float | None = None,
     microbiome: MicrobiomeInput | None = None,
+    thermal: ThermalInput | None = None,
 ) -> HealthResult:
     """Compute composite health score 0-100 from available inputs.
 
@@ -213,6 +245,12 @@ def compute_health_score(
         available["microbiome"] = micro_score
         breakdown["microbiome"] = round(micro_score, 1)
         sources.append("microbiome")
+
+    if thermal is not None:
+        thermal_score = _score_thermal(thermal)
+        available["thermal"] = thermal_score
+        breakdown["thermal"] = round(thermal_score, 1)
+        sources.append("thermal")
 
     # Trend is always computed (stable if no history)
     # But we need at least one primary input to have a meaningful score

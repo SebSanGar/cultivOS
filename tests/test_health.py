@@ -5,6 +5,7 @@ from datetime import datetime
 from cultivos.services.crop.health import (
     NDVIInput,
     SoilInput,
+    ThermalInput,
     _score_ndvi,
     _score_soil,
     compute_health_score,
@@ -142,6 +143,57 @@ class TestComputeHealthScore:
         assert "ndvi" in result["breakdown"]
         assert "soil" in result["breakdown"]
         assert "trend" in result["breakdown"]
+
+    # ── Thermal integration tests ──────────────────────────────────────
+
+    def test_health_with_thermal(self):
+        """Health score with high thermal stress (>50%) produces lower score than without."""
+        base = compute_health_score(
+            ndvi=NDVIInput(ndvi_mean=0.7, ndvi_std=0.05, stress_pct=5.0),
+            soil=SoilInput(ph=6.5, organic_matter_pct=5.0),
+        )
+        with_thermal = compute_health_score(
+            ndvi=NDVIInput(ndvi_mean=0.7, ndvi_std=0.05, stress_pct=5.0),
+            soil=SoilInput(ph=6.5, organic_matter_pct=5.0),
+            thermal=ThermalInput(stress_pct=60.0, temp_mean=38.0, irrigation_deficit=True),
+        )
+        assert with_thermal["score"] < base["score"]
+        assert "thermal" in with_thermal["sources"]
+
+    def test_health_thermal_weight(self):
+        """Thermal contributes ~15% of total score (check breakdown exists and is reasonable)."""
+        result = compute_health_score(
+            ndvi=NDVIInput(ndvi_mean=0.7, ndvi_std=0.05, stress_pct=5.0),
+            soil=SoilInput(ph=6.5, organic_matter_pct=5.0),
+            thermal=ThermalInput(stress_pct=10.0, temp_mean=28.0, irrigation_deficit=False),
+        )
+        assert "thermal" in result["breakdown"]
+        # Thermal sub-score should exist and be 0-100
+        assert 0 <= result["breakdown"]["thermal"] <= 100
+
+    def test_health_without_thermal(self):
+        """Health score still computes when no thermal data exists (graceful degradation)."""
+        result = compute_health_score(
+            ndvi=NDVIInput(ndvi_mean=0.7, ndvi_std=0.05, stress_pct=5.0),
+            soil=SoilInput(ph=6.5),
+        )
+        assert result["score"] > 0
+        assert "thermal" not in result["sources"]
+
+    def test_health_all_sources(self):
+        """Score with NDVI + soil + microbiome + thermal uses all four inputs."""
+        from cultivos.services.crop.health import MicrobiomeInput
+        result = compute_health_score(
+            ndvi=NDVIInput(ndvi_mean=0.8, ndvi_std=0.04, stress_pct=3.0),
+            soil=SoilInput(ph=6.5, organic_matter_pct=5.0, nitrogen_ppm=35),
+            microbiome=MicrobiomeInput(
+                respiration_rate=60.0, microbial_biomass_carbon=350.0,
+                fungi_bacteria_ratio=1.2, classification="healthy",
+            ),
+            thermal=ThermalInput(stress_pct=5.0, temp_mean=27.0, irrigation_deficit=False),
+        )
+        assert set(result["sources"]) == {"ndvi", "soil", "microbiome", "thermal"}
+        assert result["score"] > 70
 
 
 # ── API integration tests ───────────────────────────────────────────────

@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis
+from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis, ThermalResult
 from cultivos.db.session import get_db
 from cultivos.models.health import HealthHistoryOut, HealthScoreOut
-from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, compute_health_score, compute_trend_from_history
+from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, ThermalInput, compute_health_score, compute_trend_from_history
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/health",
@@ -63,10 +63,18 @@ def compute_field_health(
         .first()
     )
 
-    if not latest_ndvi and not latest_soil and not latest_microbiome:
+    # Fetch latest thermal result
+    latest_thermal = (
+        db.query(ThermalResult)
+        .filter(ThermalResult.field_id == field_id)
+        .order_by(ThermalResult.analyzed_at.desc())
+        .first()
+    )
+
+    if not latest_ndvi and not latest_soil and not latest_microbiome and not latest_thermal:
         raise HTTPException(
             status_code=422,
-            detail="No NDVI, soil, or microbiome data available for this field. Submit at least one before computing health.",
+            detail="No NDVI, soil, microbiome, or thermal data available for this field. Submit at least one before computing health.",
         )
 
     # Build inputs
@@ -98,6 +106,14 @@ def compute_field_health(
             classification=latest_microbiome.classification,
         )
 
+    thermal_input: ThermalInput | None = None
+    if latest_thermal:
+        thermal_input = ThermalInput(
+            stress_pct=latest_thermal.stress_pct,
+            temp_mean=latest_thermal.temp_mean,
+            irrigation_deficit=latest_thermal.irrigation_deficit,
+        )
+
     # Get previous score for trend
     previous = (
         db.query(HealthScore)
@@ -112,6 +128,7 @@ def compute_field_health(
         soil=soil_input,
         previous_score=previous_score,
         microbiome=microbiome_input,
+        thermal=thermal_input,
     )
 
     record = HealthScore(
