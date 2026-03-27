@@ -32,6 +32,7 @@ from cultivos.api.soil import router as soil_router
 from cultivos.api.thermal import router as thermal_router
 from cultivos.api.treatments import router as treatments_router
 from cultivos.api.weather import router as weather_router
+from cultivos.api.yield_pred import router as yield_router
 from cultivos.config import get_settings
 from cultivos.middleware import register_error_handlers
 
@@ -125,6 +126,7 @@ def create_app() -> FastAPI:
     app.include_router(thermal_router)
     app.include_router(treatments_router)
     app.include_router(weather_router)
+    app.include_router(yield_router)
 
     # Health check
     @app.get("/api/health")
