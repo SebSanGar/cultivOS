@@ -3,8 +3,9 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Fertilizer
+from cultivos.db.models import AncestralMethod, Fertilizer
 from cultivos.db.session import get_db
+from cultivos.models.ancestral import AncestralMethodOut
 from cultivos.models.fertilizer import FertilizerOut
 
 router = APIRouter(
@@ -29,4 +30,21 @@ def list_fertilizers(
     if crop:
         # Double-check filtering since SQLite JSON support varies
         results = [f for f in results if crop in (f.suitable_crops or [])]
+    return results
+
+
+@router.get("/ancestral", response_model=list[AncestralMethodOut])
+def list_ancestral_methods(
+    region: str | None = Query(None, description="Filter by region (e.g. jalisco, mesoamerica)"),
+    type: str | None = Query(None, alias="type", description="Filter by practice type (e.g. soil_management, intercropping)"),
+    db: Session = Depends(get_db),
+):
+    """List ancestral farming methods, optionally filtered by region or practice type."""
+    query = db.query(AncestralMethod)
+    if type:
+        query = query.filter(AncestralMethod.practice_type == type)
+    results = query.all()
+    if region:
+        region_lower = region.lower()
+        results = [m for m in results if region_lower in m.region.lower()]
     return results

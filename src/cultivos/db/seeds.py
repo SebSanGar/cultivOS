@@ -1,6 +1,6 @@
 """Seed data for the cultivOS knowledge base."""
 
-from cultivos.db.models import Fertilizer
+from cultivos.db.models import AncestralMethod, Fertilizer
 
 
 FERTILIZER_SEEDS = [
@@ -103,3 +103,98 @@ def seed_fertilizers(db_session) -> int:
         ))
     db_session.commit()
     return len(FERTILIZER_SEEDS)
+
+
+ANCESTRAL_METHOD_SEEDS = [
+    AncestralMethod(
+        name="Milpa",
+        description_es="Sistema de policultivo mesoamericano que combina maiz, frijol y calabaza (las tres hermanas). El maiz da estructura al frijol, el frijol fija nitrogeno, la calabaza cubre el suelo reduciendo evaporacion y malezas.",
+        region="Mesoamerica / Jalisco",
+        practice_type="intercropping",
+        crops=["maiz", "frijol", "calabaza"],
+        benefits_es="Fijacion biologica de nitrogeno, control natural de malezas, diversificacion de cosecha, resiliencia ante sequias.",
+        scientific_basis="Validado por FAO e INIFAP — la milpa produce mas calorias/ha que el monocultivo de maiz y regenera nitrogeno del suelo sin fertilizantes sinteticos.",
+    ),
+    AncestralMethod(
+        name="Chinampa",
+        description_es="Islas artificiales flotantes construidas en lagos y zonas pantanosas. Capas de vegetacion acuatica, lodo y estacas crean parcelas extremadamente fertiles con riego natural por capilaridad.",
+        region="Valle de Mexico",
+        practice_type="water_management",
+        crops=["maiz", "frijol", "calabaza", "chile", "tomate", "flores"],
+        benefits_es="Productividad hasta 4 cosechas/ano, riego pasivo, reciclaje de materia organica acuatica, biodiversidad acuatica-terrestre.",
+        scientific_basis="UNESCO Patrimonio de la Humanidad. Estudios de la UNAM demuestran que las chinampas activas en Xochimilco mantienen rendimientos comparables a agricultura convencional sin insumos sinteticos.",
+    ),
+    AncestralMethod(
+        name="Terrazas de cultivo",
+        description_es="Plataformas escalonadas en laderas para retener suelo y agua. Usadas desde epocas prehispanicas en zonas montanosas de Mesoamerica para cultivar en pendientes pronunciadas.",
+        region="Mesoamerica / Jalisco",
+        practice_type="soil_management",
+        crops=["maiz", "frijol", "agave", "nopal"],
+        benefits_es="Prevencion de erosion, retencion de agua de lluvia, creacion de microclimas, aprovechamiento de terrenos en pendiente.",
+        scientific_basis="CONABIO documenta que las terrazas reducen erosion hidrica hasta 90% en laderas con pendiente >15%. Patron similar a terrazas incas validadas por estudios en Peru y Bolivia.",
+    ),
+    AncestralMethod(
+        name="Roza-tumba-quema controlada",
+        description_es="Sistema rotativo donde se tala y quema vegetacion secundaria para liberar nutrientes al suelo. Con periodos de descanso (barbecho) de 5-15 anos permite regeneracion natural del bosque.",
+        region="Sureste de Mexico / Jalisco",
+        practice_type="soil_management",
+        crops=["maiz", "frijol", "calabaza", "chile"],
+        benefits_es="Liberacion rapida de nutrientes (ceniza rica en K y Ca), control de plagas por calor, regeneracion de bosque secundario en ciclos largos.",
+        scientific_basis="INIFAP y estudios de la Selva Maya demuestran que con barbecho adecuado (>10 anos) el sistema es sustentable. El problema moderno es la reduccion de periodos de descanso por presion demografica.",
+    ),
+    AncestralMethod(
+        name="Abonos verdes ancestrales",
+        description_es="Siembra de leguminosas nativas (frijol terciopelo, canavalia, crotalaria) como cultivo de cobertura entre ciclos para fijar nitrogeno y proteger el suelo.",
+        region="Mesoamerica / Jalisco",
+        practice_type="soil_management",
+        crops=["maiz", "frijol", "calabaza", "sorgo"],
+        benefits_es="Fijacion biologica de nitrogeno (80-200 kg N/ha), supresion de malezas, prevencion de erosion, aporte de materia organica.",
+        scientific_basis="Mucuna pruriens (frijol terciopelo) fija hasta 200 kg N/ha segun estudios de CIMMYT en Mesoamerica. Reduccion documentada de fertilizantes sinteticos hasta 50% en rotaciones maiz-mucuna.",
+    ),
+    AncestralMethod(
+        name="Cultivo en callejones",
+        description_es="Hileras de arboles o arbustos leguminosos (leucaena, gliricidia) intercalados con cultivos anuales. Las podas aportan materia organica y nitrogeno al suelo entre las filas.",
+        region="Mesoamerica / Jalisco",
+        practice_type="intercropping",
+        crops=["maiz", "frijol", "calabaza", "chile"],
+        benefits_es="Aporte continuo de nitrogeno, sombra parcial para cultivos sensibles, leña como subproducto, barrera cortavientos.",
+        scientific_basis="Investigaciones de ICRAF (World Agroforestry) confirman que la leucaena en callejones aporta 100-300 kg N/ha/ano mediante podas incorporadas al suelo.",
+    ),
+    AncestralMethod(
+        name="Asociacion de cultivos",
+        description_es="Siembra de multiples especies compatibles en la misma parcela basada en conocimiento tradicional de companerismo entre plantas — mas alla de la milpa clasica.",
+        region="Jalisco",
+        practice_type="intercropping",
+        crops=["maiz", "frijol", "calabaza", "chile", "tomate", "nopal"],
+        benefits_es="Control biologico de plagas, uso eficiente de espacio y luz, diversificacion de ingresos, resiliencia ante clima extremo.",
+        scientific_basis="Meta-analisis de Altieri (UC Berkeley) demuestra que policultivos reducen incidencia de plagas 30-60% comparado con monocultivos, con rendimientos equivalentes o superiores por unidad de area total.",
+    ),
+    AncestralMethod(
+        name="Labranza cero tradicional",
+        description_es="Siembra directa sin arar el suelo, usando coa (palo plantador) o espeque. El suelo mantiene su estructura, vida microbiana y cobertura organica intactas.",
+        region="Mesoamerica / Jalisco",
+        practice_type="soil_management",
+        crops=["maiz", "frijol", "calabaza", "agave"],
+        benefits_es="Conservacion de estructura del suelo, retencion de humedad, proteccion de vida microbiana, reduccion de erosion.",
+        scientific_basis="CIMMYT demuestra que la labranza cero incrementa materia organica del suelo 0.2-0.5% en 5 anos y reduce erosion hidrica hasta 80% comparada con labranza convencional en laderas de Jalisco.",
+    ),
+]
+
+
+def seed_ancestral_methods(db_session) -> int:
+    """Load ancestral method seed data if table is empty. Returns count of records inserted."""
+    existing = db_session.query(AncestralMethod).count()
+    if existing > 0:
+        return 0
+    for method in ANCESTRAL_METHOD_SEEDS:
+        db_session.add(AncestralMethod(
+            name=method.name,
+            description_es=method.description_es,
+            region=method.region,
+            practice_type=method.practice_type,
+            crops=method.crops,
+            benefits_es=method.benefits_es,
+            scientific_basis=method.scientific_basis,
+        ))
+    db_session.commit()
+    return len(ANCESTRAL_METHOD_SEEDS)

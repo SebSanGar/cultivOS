@@ -185,6 +185,19 @@ class MicrobiomeRecord(Base):
     field = relationship("Field", back_populates="microbiome_records")
 
 
+class AncestralMethod(Base):
+    __tablename__ = "ancestral_methods"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False, unique=True)
+    description_es = Column(Text, nullable=False)
+    region = Column(String(100), nullable=False)  # e.g. "Jalisco", "Mesoamerica"
+    practice_type = Column(String(50), nullable=False)  # soil_management, intercropping, water_management, etc.
+    crops = Column(JSON, nullable=False, default=list)  # ["maiz", "frijol", ...]
+    benefits_es = Column(Text, nullable=False)
+    scientific_basis = Column(Text)  # modern scientific validation
+
+
 class Fertilizer(Base):
     __tablename__ = "fertilizers"
 
