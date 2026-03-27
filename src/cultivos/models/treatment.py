@@ -17,6 +17,9 @@ class TreatmentOut(BaseModel):
     urgencia: str
     prevencion: str
     organic: bool
+    ancestral_method_name: Optional[str] = None
+    ancestral_base_cientifica: Optional[str] = None
+    ancestral_razon_match: Optional[str] = None
     applied_at: Optional[datetime] = None
     applied_notes: Optional[str] = None
     created_at: datetime

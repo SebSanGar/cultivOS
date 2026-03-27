@@ -1,7 +1,8 @@
 """Pure treatment recommendation engine — data in, recommendations out.
 
 No HTTP, no DB, no side effects. Regenerative-first: never recommends
-synthetic pesticides or fertilizers.
+synthetic pesticides or fertilizers. Links recommendations to ancestral
+methods when available (TEK integration for FODECIJAL).
 """
 
 from typing import TypedDict
@@ -23,7 +24,15 @@ class MicrobiomeInput(TypedDict, total=False):
     classification: str  # healthy, moderate, degraded
 
 
-class Treatment(TypedDict):
+class AncestralMethodData(TypedDict, total=False):
+    name: str
+    practice_type: str  # intercropping, soil_management, water_management
+    crops: list[str]
+    benefits_es: str
+    scientific_basis: str
+
+
+class Treatment(TypedDict, total=False):
     problema: str
     causa_probable: str
     tratamiento: str
@@ -31,6 +40,9 @@ class Treatment(TypedDict):
     urgencia: str  # alta, media, baja
     prevencion: str
     organic: bool
+    metodo_ancestral: str | None
+    base_cientifica: str | None
+    razon_match: str | None
 
 
 _NO_TREATMENT = Treatment(
@@ -41,7 +53,74 @@ _NO_TREATMENT = Treatment(
     urgencia="baja",
     prevencion="Monitoreo regular cada 2 semanas",
     organic=True,
+    metodo_ancestral=None,
+    base_cientifica=None,
+    razon_match=None,
 )
+
+# Maps treatment problem keywords to ancestral practice_types that address them
+_PROBLEM_TO_PRACTICE_TYPE: dict[str, list[str]] = {
+    "organica": ["soil_management"],       # low organic matter
+    "nitrogeno": ["intercropping", "soil_management"],  # nitrogen deficiency
+    "fosforo": ["soil_management"],        # phosphorus deficiency
+    "potasio": ["soil_management"],        # potassium deficiency
+    "humedad": ["water_management", "soil_management"],  # low moisture
+    "microbioma": ["soil_management"],     # degraded microbiome
+    "hongos:bacterias": ["soil_management"],  # low fungi:bacteria ratio
+    "ph": ["soil_management"],             # pH issues
+    "estres general": ["intercropping", "soil_management"],  # general stress
+}
+
+
+def _match_ancestral(
+    problema: str,
+    crop_type: str | None,
+    ancestral_methods: list[AncestralMethodData],
+) -> tuple[str | None, str | None, str | None]:
+    """Match a treatment problem to the best ancestral method.
+
+    Returns (method_name, scientific_basis, reason) or (None, None, None).
+    """
+    if not ancestral_methods:
+        return None, None, None
+
+    problema_lower = problema.lower()
+
+    # Find which practice types are relevant for this problem
+    matching_types: list[str] = []
+    for keyword, types in _PROBLEM_TO_PRACTICE_TYPE.items():
+        if keyword in problema_lower:
+            matching_types.extend(types)
+
+    if not matching_types:
+        return None, None, None
+
+    # Filter ancestral methods by: practice_type matches AND crop is compatible
+    # Group by practice_type priority (first matching type in list wins)
+    candidates_by_type: dict[str, list[AncestralMethodData]] = {}
+    for method in ancestral_methods:
+        ptype = method.get("practice_type")
+        if ptype not in matching_types:
+            continue
+        # If crop_type specified, method must support that crop
+        if crop_type and method.get("crops"):
+            if crop_type.lower() not in [c.lower() for c in method["crops"]]:
+                continue
+        candidates_by_type.setdefault(ptype, []).append(method)
+
+    if not candidates_by_type:
+        return None, None, None
+
+    # Pick the best candidate: prefer the first practice_type in matching_types order
+    best = None
+    for ptype in matching_types:
+        if ptype in candidates_by_type:
+            best = candidates_by_type[ptype][0]
+            break
+    if best is None:
+        return None, None, None
+    reason = f"Practica {best.get('practice_type', '')} validada para {crop_type or 'cultivos generales'}"
+    return best["name"], best.get("scientific_basis"), reason
 
 
 def recommend_treatment(
@@ -49,15 +128,21 @@ def recommend_treatment(
     soil: SoilInput | None = None,
     crop_type: str | None = None,
     microbiome: MicrobiomeInput | None = None,
+    ancestral_methods: list[AncestralMethodData] | None = None,
 ) -> list[Treatment]:
     """Generate organic treatment recommendations based on health score, soil, and microbiome.
 
     Returns a list of Treatment dicts. Healthy fields (score > 80) get a single
     "no treatment needed" entry. Lower scores trigger specific recommendations
     based on soil deficiencies and microbiome degradation.
+
+    When ancestral_methods are provided, each recommendation is enriched with
+    the best matching traditional practice and its scientific validation.
     """
     if health_score > 80:
         return [_NO_TREATMENT]
+
+    ancestral = ancestral_methods or []
 
     recommendations: list[Treatment] = []
     soil = soil or {}
@@ -190,5 +275,12 @@ def recommend_treatment(
             prevencion="Monitoreo semanal con dron, observacion directa en campo cada 3 dias",
             organic=True,
         ))
+
+    # Enrich each recommendation with matching ancestral method
+    for rec in recommendations:
+        name, basis, reason = _match_ancestral(rec["problema"], crop_type, ancestral)
+        rec["metodo_ancestral"] = name
+        rec["base_cientifica"] = basis
+        rec["razon_match"] = reason
 
     return recommendations

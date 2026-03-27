@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, SoilAnalysis, TreatmentRecord
+from cultivos.db.models import AncestralMethod, Farm, Field, HealthScore, MicrobiomeRecord, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.treatment import (
     TreatmentAppliedIn,
@@ -11,7 +11,7 @@ from cultivos.models.treatment import (
     TreatmentOut,
     TreatmentTimelineEntry,
 )
-from cultivos.services.intelligence.recommendations import MicrobiomeInput, SoilInput, recommend_treatment
+from cultivos.services.intelligence.recommendations import AncestralMethodData, MicrobiomeInput, SoilInput, recommend_treatment
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/treatments",
@@ -92,11 +92,25 @@ def generate_treatments(
             classification=latest_microbiome.classification,
         )
 
+    # Fetch ancestral methods for TEK enrichment
+    ancestral_rows = db.query(AncestralMethod).all()
+    ancestral_data: list[AncestralMethodData] = [
+        AncestralMethodData(
+            name=m.name,
+            practice_type=m.practice_type,
+            crops=m.crops or [],
+            benefits_es=m.benefits_es,
+            scientific_basis=m.scientific_basis or "",
+        )
+        for m in ancestral_rows
+    ]
+
     recommendations = recommend_treatment(
         health_score=latest_health.score,
         soil=soil_input,
         crop_type=field.crop_type,
         microbiome=microbiome_input,
+        ancestral_methods=ancestral_data,
     )
 
     records = []
@@ -111,6 +125,9 @@ def generate_treatments(
             urgencia=rec["urgencia"],
             prevencion=rec["prevencion"],
             organic=rec["organic"],
+            ancestral_method_name=rec.get("metodo_ancestral"),
+            ancestral_base_cientifica=rec.get("base_cientifica"),
+            ancestral_razon_match=rec.get("razon_match"),
         )
         db.add(record)
         records.append(record)
