@@ -147,6 +147,8 @@ class TreatmentRecord(Base):
     urgencia = Column(String(20), nullable=False)  # alta, media, baja
     prevencion = Column(Text, nullable=False)
     organic = Column(Boolean, nullable=False, default=True)
+    applied_at = Column(DateTime, nullable=True)  # when the farmer applied the treatment
+    applied_notes = Column(Text, nullable=True)  # farmer's notes on application
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="treatments")
