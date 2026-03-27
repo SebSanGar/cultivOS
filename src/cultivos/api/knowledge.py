@@ -3,9 +3,10 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import AncestralMethod, Fertilizer
+from cultivos.db.models import AncestralMethod, CropType, Fertilizer
 from cultivos.db.session import get_db
 from cultivos.models.ancestral import AncestralMethodOut
+from cultivos.models.crop_type import CropTypeOut
 from cultivos.models.fertilizer import FertilizerOut
 
 router = APIRouter(
@@ -30,6 +31,19 @@ def list_fertilizers(
     if crop:
         # Double-check filtering since SQLite JSON support varies
         results = [f for f in results if crop in (f.suitable_crops or [])]
+    return results
+
+
+@router.get("/crops", response_model=list[CropTypeOut])
+def list_crops(
+    region: str | None = Query(None, description="Filter by growing region (e.g. jalisco, ontario)"),
+    db: Session = Depends(get_db),
+):
+    """List all crop types, optionally filtered by growing region."""
+    results = db.query(CropType).all()
+    if region:
+        region_lower = region.lower()
+        results = [c for c in results if region_lower in [r.lower() for r in (c.regions or [])]]
     return results
 
 

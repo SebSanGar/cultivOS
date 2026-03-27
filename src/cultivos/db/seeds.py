@@ -1,6 +1,6 @@
 """Seed data for the cultivOS knowledge base."""
 
-from cultivos.db.models import AncestralMethod, Disease, Fertilizer
+from cultivos.db.models import AncestralMethod, CropType, Disease, Fertilizer
 
 
 FERTILIZER_SEEDS = [
@@ -198,6 +198,164 @@ def seed_ancestral_methods(db_session) -> int:
         ))
     db_session.commit()
     return len(ANCESTRAL_METHOD_SEEDS)
+
+
+CROP_TYPE_SEEDS = [
+    CropType(
+        name="Maiz",
+        family="Poaceae",
+        growing_season="Temporal (Jun-Oct)",
+        water_needs="media",
+        regions=["Jalisco", "Mesoamerica", "Ontario"],
+        companions=["frijol", "calabaza", "chile"],
+        days_to_harvest=120,
+        optimal_temp_min=18.0,
+        optimal_temp_max=32.0,
+        description_es="Cereal base de la alimentacion mexicana. Cultivo de temporal por excelencia en Jalisco. Se asocia tradicionalmente con frijol y calabaza en el sistema milpa.",
+    ),
+    CropType(
+        name="Frijol",
+        family="Fabaceae",
+        growing_season="Temporal (Jun-Oct)",
+        water_needs="media",
+        regions=["Jalisco", "Mesoamerica", "Ontario"],
+        companions=["maiz", "calabaza", "zanahoria"],
+        days_to_harvest=90,
+        optimal_temp_min=15.0,
+        optimal_temp_max=27.0,
+        description_es="Leguminosa clave en la dieta mexicana y en la agricultura regenerativa — fija nitrogeno atmosferico en el suelo, beneficiando cultivos asociados.",
+    ),
+    CropType(
+        name="Calabaza",
+        family="Cucurbitaceae",
+        growing_season="Temporal (Jun-Oct)",
+        water_needs="media",
+        regions=["Jalisco", "Mesoamerica"],
+        companions=["maiz", "frijol", "girasol"],
+        days_to_harvest=100,
+        optimal_temp_min=18.0,
+        optimal_temp_max=35.0,
+        description_es="Tercera hermana de la milpa. Sus hojas grandes cubren el suelo reduciendo evaporacion y malezas. Frutos, flores y semillas son comestibles.",
+    ),
+    CropType(
+        name="Chile",
+        family="Solanaceae",
+        growing_season="Temporal (Jun-Oct) o riego",
+        water_needs="media",
+        regions=["Jalisco", "Mesoamerica"],
+        companions=["tomate", "albahaca", "zanahoria"],
+        days_to_harvest=80,
+        optimal_temp_min=20.0,
+        optimal_temp_max=35.0,
+        description_es="Hortaliza fundamental en la gastronomia mexicana. Jalisco produce chile de arbol, serrano y cascabel. Sensible a exceso de humedad.",
+    ),
+    CropType(
+        name="Jitomate",
+        family="Solanaceae",
+        growing_season="Todo el ano (con riego)",
+        water_needs="alta",
+        regions=["Jalisco", "Mesoamerica"],
+        companions=["albahaca", "zanahoria", "cebolla"],
+        days_to_harvest=75,
+        optimal_temp_min=18.0,
+        optimal_temp_max=30.0,
+        description_es="Hortaliza de alto valor comercial. Requiere tutoreo y manejo sanitario cuidadoso. Vulnerable a tizon tardio y mosca blanca en Jalisco.",
+    ),
+    CropType(
+        name="Aguacate",
+        family="Lauraceae",
+        growing_season="Perenne (cosecha Oct-Mar)",
+        water_needs="alta",
+        regions=["Jalisco", "Michoacan"],
+        companions=["cafe", "platano", "macadamia"],
+        days_to_harvest=365,
+        optimal_temp_min=16.0,
+        optimal_temp_max=28.0,
+        description_es="Arbol frutal de alto valor economico. Jalisco es zona de expansion del aguacate Hass. Requiere suelo bien drenado y es susceptible a antracnosis.",
+    ),
+    CropType(
+        name="Agave",
+        family="Asparagaceae",
+        growing_season="Perenne (cosecha 6-8 anos)",
+        water_needs="baja",
+        regions=["Jalisco"],
+        companions=["frijol", "calabaza", "nopal"],
+        days_to_harvest=2555,
+        optimal_temp_min=15.0,
+        optimal_temp_max=35.0,
+        description_es="Agave tequilana Weber variedad azul. Cultivo emblematico de Jalisco para la industria tequilera. Extremadamente resistente a sequia. Denominacion de origen protegida.",
+    ),
+    CropType(
+        name="Sorgo",
+        family="Poaceae",
+        growing_season="Temporal (Jun-Oct)",
+        water_needs="baja",
+        regions=["Jalisco", "Ontario"],
+        companions=["frijol", "girasol", "calabaza"],
+        days_to_harvest=110,
+        optimal_temp_min=20.0,
+        optimal_temp_max=38.0,
+        description_es="Cereal resistente a sequia usado como forraje y grano. Alternativa al maiz en zonas de Jalisco con precipitacion limitada.",
+    ),
+    CropType(
+        name="Garbanzo",
+        family="Fabaceae",
+        growing_season="Secas (Nov-Mar)",
+        water_needs="baja",
+        regions=["Jalisco", "Ontario"],
+        companions=["trigo", "cebada", "girasol"],
+        days_to_harvest=100,
+        optimal_temp_min=10.0,
+        optimal_temp_max=25.0,
+        description_es="Leguminosa de ciclo invernal. Fija nitrogeno en el suelo. Jalisco es productor importante de garbanzo blanco para exportacion.",
+    ),
+    CropType(
+        name="Cana de azucar",
+        family="Poaceae",
+        growing_season="Perenne (cosecha Nov-May)",
+        water_needs="alta",
+        regions=["Jalisco"],
+        companions=["frijol", "soya", "cacahuate"],
+        days_to_harvest=365,
+        optimal_temp_min=20.0,
+        optimal_temp_max=38.0,
+        description_es="Graminea tropical de alto rendimiento. Jalisco es uno de los principales productores en Mexico. La region Costa Sur es zona canera importante.",
+    ),
+    CropType(
+        name="Nopal",
+        family="Cactaceae",
+        growing_season="Perenne (cosecha todo el ano)",
+        water_needs="baja",
+        regions=["Jalisco", "Mesoamerica"],
+        companions=["agave", "frijol", "maiz"],
+        days_to_harvest=180,
+        optimal_temp_min=12.0,
+        optimal_temp_max=38.0,
+        description_es="Cactacea comestible (pencas y tunas) extremadamente resistente a sequia. Cultivo ideal para zonas aridas de Jalisco. Rico en fibra y antioxidantes.",
+    ),
+]
+
+
+def seed_crops(db_session) -> int:
+    """Load crop type seed data if table is empty. Returns count of records inserted."""
+    existing = db_session.query(CropType).count()
+    if existing > 0:
+        return 0
+    for crop in CROP_TYPE_SEEDS:
+        db_session.add(CropType(
+            name=crop.name,
+            family=crop.family,
+            growing_season=crop.growing_season,
+            water_needs=crop.water_needs,
+            regions=crop.regions,
+            companions=crop.companions,
+            days_to_harvest=crop.days_to_harvest,
+            optimal_temp_min=crop.optimal_temp_min,
+            optimal_temp_max=crop.optimal_temp_max,
+            description_es=crop.description_es,
+        ))
+    db_session.commit()
+    return len(CROP_TYPE_SEEDS)
 
 
 DISEASE_SEEDS = [

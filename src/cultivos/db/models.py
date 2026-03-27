@@ -236,6 +236,22 @@ class Disease(Base):
     severity = Column(String(20), nullable=False, default="media")  # alta, media, baja
 
 
+class CropType(Base):
+    __tablename__ = "crop_types"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False, unique=True)
+    family = Column(String(100), nullable=False)  # e.g. "Poaceae", "Fabaceae"
+    growing_season = Column(String(100), nullable=False)  # e.g. "temporal (Jun-Oct)"
+    water_needs = Column(String(50), nullable=False)  # alta, media, baja
+    regions = Column(JSON, nullable=False, default=list)  # ["Jalisco", "Ontario"]
+    companions = Column(JSON, nullable=False, default=list)  # companion plants for intercropping
+    days_to_harvest = Column(Integer)  # approximate days from sowing
+    optimal_temp_min = Column(Float)  # degrees C
+    optimal_temp_max = Column(Float)
+    description_es = Column(Text, nullable=False)
+
+
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
 
