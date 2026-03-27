@@ -25,6 +25,7 @@ from cultivos.api.flights import router as flights_router
 from cultivos.api.growth_stage import router as growth_stage_router
 from cultivos.api.health import router as health_router
 from cultivos.api.intel import router as intel_router, seasonal_router
+from cultivos.api.intervention_scores import router as intervention_scores_router
 from cultivos.api.irrigation import router as irrigation_router
 from cultivos.api.knowledge import router as knowledge_router
 from cultivos.api.missions import router as missions_router
@@ -125,6 +126,7 @@ def create_app() -> FastAPI:
     app.include_router(growth_stage_router)
     app.include_router(health_router)
     app.include_router(intel_router)
+    app.include_router(intervention_scores_router)
     app.include_router(seasonal_router)
     app.include_router(irrigation_router)
     app.include_router(knowledge_router)
