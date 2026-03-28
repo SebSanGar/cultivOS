@@ -135,7 +135,10 @@
     <div id="field-panel" class="field-panel" style="display:none">
         <div class="field-panel-header">
             <h2 id="field-panel-title" class="field-panel-title">Campos</h2>
-            <button class="field-panel-back" onclick="closeFarmDetail()">Volver</button>
+            <div class="field-panel-actions">
+                <button class="export-csv-btn" id="btn-export-csv" onclick="exportFarmCSV()">Exportar Datos</button>
+                <button class="field-panel-back" onclick="closeFarmDetail()">Volver</button>
+            </div>
         </div>
         <div id="field-list" class="field-list"></div>
     </div>

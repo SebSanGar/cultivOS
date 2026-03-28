@@ -630,6 +630,35 @@ function esc(str) {
     return d.innerHTML;
 }
 
+// ── CSV Export ──
+async function exportFarmCSV() {
+    if (!selectedFarmId) return;
+    const btn = document.getElementById('btn-export-csv');
+    btn.disabled = true;
+    btn.textContent = 'Exportando...';
+    try {
+        const resp = await fetch(`/api/farms/${selectedFarmId}/export?format=csv`);
+        if (!resp.ok) throw new Error(`Error ${resp.status}`);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const disposition = resp.headers.get('content-disposition') || '';
+        const match = disposition.match(/filename="(.+?)"/);
+        a.download = match ? match[1] : `export_granja_${selectedFarmId}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        console.error('Export failed:', e);
+        alert('No se pudo exportar los datos. Intenta de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Exportar Datos';
+    }
+}
+
 // ── Init ──
 async function init() {
     await loadFarms();

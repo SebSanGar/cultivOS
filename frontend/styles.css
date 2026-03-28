@@ -165,6 +165,21 @@ nav {
 .field-panel-back:hover {
     border-color: var(--green); color: var(--green);
 }
+.field-panel-actions {
+    display: flex; align-items: center; gap: 8px;
+}
+.export-csv-btn {
+    padding: 6px 14px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--surface); cursor: pointer;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    transition: all 0.2s; white-space: nowrap;
+}
+.export-csv-btn:hover {
+    border-color: var(--green); color: var(--green);
+}
+.export-csv-btn:disabled {
+    opacity: 0.5; cursor: wait;
+}
 
 .field-list {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
