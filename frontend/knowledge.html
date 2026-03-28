@@ -61,6 +61,32 @@
             <p class="knowledge-placeholder">Cargando fertilizantes...</p>
         </div>
     </section>
+
+    <!-- Diseases -->
+    <section class="knowledge-section">
+        <h2 class="knowledge-section-title">Enfermedades y Plagas</h2>
+        <div id="disease-cards" class="knowledge-grid">
+            <p class="knowledge-placeholder">Cargando enfermedades...</p>
+        </div>
+    </section>
+
+    <!-- Identify Disease Form -->
+    <section class="knowledge-section">
+        <h2 class="knowledge-section-title">Identificar Enfermedad</h2>
+        <form id="identify-form" class="identify-form">
+            <div class="identify-field">
+                <label for="identify-symptoms">Sintomas observados</label>
+                <input type="text" id="identify-symptoms" placeholder="Ej: hojas amarillas, manchas, marchitamiento" class="knowledge-search-input" required>
+                <small class="identify-hint">Separa los sintomas con comas</small>
+            </div>
+            <div class="identify-field">
+                <label for="identify-crop">Cultivo (opcional)</label>
+                <input type="text" id="identify-crop" placeholder="Ej: maiz, tomate, frijol" class="knowledge-search-input">
+            </div>
+            <button type="submit" class="identify-btn">Identificar</button>
+        </form>
+        <div id="identify-results" class="identify-results"></div>
+    </section>
 </main>
 
 <script src="/knowledge.js"></script>

@@ -1793,6 +1793,59 @@ nav {
     font-size: 0.85rem; color: var(--text-muted); padding: 12px 0;
 }
 
+/* Disease severity badges */
+.severity-high { background: var(--red-light, #fde8e8); color: var(--red, #e53e3e); }
+.severity-med { background: var(--yellow-light); color: var(--yellow); }
+.severity-low { background: var(--green-light); color: var(--green-dark); }
+.knowledge-card-symptoms {
+    font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;
+}
+.knowledge-card-symptoms strong { color: var(--text); }
+.knowledge-card-treatments {
+    margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;
+}
+.knowledge-card-treatments strong {
+    color: var(--text); font-size: 0.8rem; width: 100%;
+}
+.treatment-tag {
+    font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;
+    background: var(--surface-hover, #f0f0f0); color: var(--text-muted);
+}
+.treatment-tag.organic {
+    background: var(--green-light); color: var(--green-dark);
+}
+/* Identify form */
+.identify-form {
+    display: flex; flex-direction: column; gap: 12px;
+    max-width: 500px;
+}
+.identify-field { display: flex; flex-direction: column; gap: 4px; }
+.identify-field label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.identify-hint { font-size: 0.75rem; color: var(--text-muted); }
+.identify-btn {
+    align-self: flex-start; background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; padding: 8px 20px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer;
+}
+.identify-btn:hover { opacity: 0.9; }
+.identify-results { margin-top: 16px; }
+.identify-results-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+.identify-match {
+    background: var(--card-bg, var(--surface)); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 10px;
+}
+.identify-match-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.identify-match-header strong { font-size: 0.95rem; color: var(--text); }
+.confidence-bar {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+    text-align: right; min-width: 36px;
+}
+.identify-match p { font-size: 0.82rem; color: var(--text-muted); margin: 4px 0; }
+.identify-match p strong { color: var(--text); }
+
 @media (max-width: 640px) {
     .knowledge-grid { grid-template-columns: 1fr; }
     .knowledge-title { font-size: 1.25rem; }

@@ -82,6 +82,83 @@ function renderFertilizers(fertilizers) {
     `).join('');
 }
 
+function renderDiseases(diseases) {
+    const container = document.getElementById('disease-cards');
+    if (!container) return;
+    if (!diseases || diseases.length === 0) {
+        container.innerHTML = '<p class="knowledge-empty">No se encontraron enfermedades.</p>';
+        return;
+    }
+    container.innerHTML = diseases.map(d => {
+        const severityClass = d.severity === 'alta' ? 'severity-high' : d.severity === 'media' ? 'severity-med' : 'severity-low';
+        return `
+        <div class="knowledge-card" data-search="${(d.name + ' ' + d.description_es + ' ' + (d.affected_crops || []).join(' ') + ' ' + (d.symptoms || []).join(' ')).toLowerCase()}">
+            <div class="knowledge-card-header">
+                <h3 class="knowledge-card-title">${d.name}</h3>
+                <span class="knowledge-badge ${severityClass}">${d.severity}</span>
+            </div>
+            <p class="knowledge-card-desc">${d.description_es}</p>
+            <div class="knowledge-card-meta">
+                <span class="knowledge-meta-item"><strong>Cultivos:</strong> ${(d.affected_crops || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>Region:</strong> ${d.region}</span>
+            </div>
+            <p class="knowledge-card-symptoms"><strong>Sintomas:</strong> ${(d.symptoms || []).join(', ')}</p>
+            <div class="knowledge-card-treatments">
+                <strong>Tratamientos:</strong>
+                ${(d.treatments || []).map(t =>
+                    `<span class="treatment-tag${t.organic ? ' organic' : ''}">${t.name}</span>`
+                ).join(' ')}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderIdentifyResults(matches) {
+    const container = document.getElementById('identify-results');
+    if (!container) return;
+    if (!matches || matches.length === 0) {
+        container.innerHTML = '<p class="knowledge-empty">No se encontraron coincidencias.</p>';
+        return;
+    }
+    container.innerHTML = '<h3 class="identify-results-title">Resultados</h3>' +
+        matches.filter(m => m.confidence > 0).map(m => `
+        <div class="identify-match">
+            <div class="identify-match-header">
+                <strong>${m.name}</strong>
+                <span class="confidence-bar" style="width:${Math.round(m.confidence * 100)}%">${Math.round(m.confidence * 100)}%</span>
+            </div>
+            <p>${m.description_es}</p>
+            <p><strong>Sintomas coincidentes:</strong> ${(m.symptoms_matched || []).join(', ')}</p>
+            <div class="knowledge-card-treatments">
+                ${(m.treatments || []).map(t =>
+                    `<span class="treatment-tag${t.organic ? ' organic' : ''}">${t.name}</span>`
+                ).join(' ')}
+            </div>
+        </div>
+    `).join('');
+}
+
+async function handleIdentify(e) {
+    e.preventDefault();
+    const symptomsInput = document.getElementById('identify-symptoms').value.trim();
+    const cropInput = document.getElementById('identify-crop').value.trim();
+    if (!symptomsInput) return;
+    const symptoms = symptomsInput.split(',').map(s => s.trim()).filter(Boolean);
+    const body = { symptoms };
+    if (cropInput) body.crop = cropInput;
+    const resp = await fetch(`${API}/api/knowledge/diseases/identify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!resp.ok) {
+        document.getElementById('identify-results').innerHTML = '<p class="knowledge-empty">Error al identificar.</p>';
+        return;
+    }
+    const matches = await resp.json();
+    renderIdentifyResults(matches);
+}
+
 /* ── Search / Filter ── */
 
 function filterCards(query) {
@@ -100,13 +177,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('input', e => filterCards(e.target.value));
     }
 
-    const [ancestral, crops, fertilizers] = await Promise.all([
+    const identifyForm = document.getElementById('identify-form');
+    if (identifyForm) {
+        identifyForm.addEventListener('submit', handleIdentify);
+    }
+
+    const [ancestral, crops, fertilizers, diseases] = await Promise.all([
         fetchJSON(`${API}/api/knowledge/ancestral`),
         fetchJSON(`${API}/api/knowledge/crops`),
         fetchJSON(`${API}/api/knowledge/fertilizers`),
+        fetchJSON(`${API}/api/knowledge/diseases`),
     ]);
 
     renderAncestral(ancestral);
     renderCrops(crops);
     renderFertilizers(fertilizers);
+    renderDiseases(diseases);
 });
