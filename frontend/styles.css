@@ -1035,3 +1035,78 @@ nav {
     padding: 12px 0;
     text-align: center;
 }
+
+/* ── Regenerative Score Card ── */
+.regen-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.regen-hero {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.regen-score {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+.regen-score-label {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+.regen-components {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.regen-component-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.regen-component-label {
+    font-size: 0.85rem;
+    color: var(--text);
+}
+.regen-component-value {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.regen-bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.regen-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+.regen-bar-good { background: var(--green); }
+.regen-bar-warning { background: var(--yellow); }
+.regen-bar-critical { background: var(--red); }
+.regen-recs {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+.regen-recs-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+.regen-rec-item {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+}
+.regen-rec-item:last-child {
+    border-bottom: none;
+}

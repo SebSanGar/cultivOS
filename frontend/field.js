@@ -45,7 +45,7 @@ async function loadFieldDetail() {
     // Fetch field info and all intelligence in parallel
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
-           actionTimeline, intelligence] = await Promise.all([
+           actionTimeline, intelligence, regenScore] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -59,6 +59,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/health/history`),
         fetchJSON(`${base}/action-timeline`),
         fetchJSON(`${base}/intelligence`),
+        fetchJSON(`${base}/regenerative-score`),
     ]);
 
     // Find this field
@@ -121,6 +122,9 @@ async function loadFieldDetail() {
 
     // Action timeline
     renderActionTimeline(actionTimeline);
+
+    // Regenerative score
+    renderRegenerativeScore(regenScore);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -372,6 +376,59 @@ function renderActionTimeline(timeline) {
                     ${a.stage_es ? `<div class="timeline-action-meta"><strong>Etapa:</strong> ${esc(a.stage_es)}${a.days_in_stage != null ? ' (dia ' + a.days_in_stage + ')' : ''}</div>` : ''}
                 </div>
             `).join('')}
+        </div>`;
+}
+
+function renderRegenerativeScore(data) {
+    const el = document.getElementById('regenerative-content');
+    if (!data) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de puntuacion regenerativa</div>';
+        return;
+    }
+
+    const score = data.score;
+    const scoreCls = score >= 70 ? 'good' : score >= 40 ? 'warning' : 'critical';
+    const bd = data.breakdown;
+
+    // Component labels (Spanish) and max values
+    const components = [
+        { key: 'organic_treatments', label: 'Tratamientos organicos', max: 25 },
+        { key: 'ancestral_methods', label: 'Metodos ancestrales', max: 20 },
+        { key: 'soil_organic_trend', label: 'Tendencia materia organica', max: 25 },
+        { key: 'microbiome_health', label: 'Salud del microbioma', max: 20 },
+        { key: 'treatment_diversity', label: 'Diversidad de tratamientos', max: 10 },
+    ];
+
+    const barsHtml = components.map(c => {
+        const val = bd[c.key] || 0;
+        const pct = Math.round((val / c.max) * 100);
+        return `
+            <div class="regen-component">
+                <div class="regen-component-header">
+                    <span class="regen-component-label">${c.label}</span>
+                    <span class="regen-component-value">${val.toFixed(1)}/${c.max}</span>
+                </div>
+                <div class="regen-bar-track">
+                    <div class="regen-bar-fill regen-bar-${pct >= 70 ? 'good' : pct >= 40 ? 'warning' : 'critical'}" style="width:${pct}%"></div>
+                </div>
+            </div>`;
+    }).join('');
+
+    const recsHtml = data.recommendations && data.recommendations.length > 0
+        ? `<div class="regen-recs">
+            <div class="regen-recs-title">Recomendaciones</div>
+            ${data.recommendations.map(r => `<div class="regen-rec-item">${esc(r)}</div>`).join('')}
+           </div>`
+        : '';
+
+    el.innerHTML = `
+        <div class="regen-card">
+            <div class="regen-hero">
+                <div class="regen-score health-badge ${scoreCls}">${Math.round(score)}</div>
+                <div class="regen-score-label">/ 100</div>
+            </div>
+            <div class="regen-components">${barsHtml}</div>
+            ${recsHtml}
         </div>`;
 }
 
