@@ -430,3 +430,202 @@ def recommend_treatment(
                 rec["prevencion"] = f"{guidance}. {existing}"
 
     return recommendations
+
+
+# ── Treatment timing optimizer ─────────────────────────────────────────
+
+
+class TimingResult(TypedDict):
+    best_day: int
+    best_time: str
+    reason: str
+    avoid_days: list[int]
+
+
+_RAIN_KEYWORDS = ("lluvia", "rain", "tormenta")
+_HEAVY_RAIN_KEYWORDS = ("tormenta fuerte", "heavy rain", "lluvia fuerte")
+
+
+def _day_has_rain(day: ForecastInput) -> bool:
+    desc = day.get("description", "").lower()
+    return any(kw in desc for kw in _RAIN_KEYWORDS)
+
+
+def _day_has_heavy_rain(day: ForecastInput) -> bool:
+    desc = day.get("description", "").lower()
+    return any(kw in desc for kw in _HEAVY_RAIN_KEYWORDS)
+
+
+def _rain_severity(day: ForecastInput) -> int:
+    """0 = no rain, 1 = light, 2 = moderate, 3 = heavy/storm."""
+    desc = day.get("description", "").lower()
+    if any(kw in desc for kw in _HEAVY_RAIN_KEYWORDS):
+        return 3
+    if "moderada" in desc or "moderate" in desc:
+        return 2
+    if any(kw in desc for kw in _RAIN_KEYWORDS):
+        return 1
+    return 0
+
+
+def _has_extreme_heat(forecast: list[ForecastInput]) -> bool:
+    return any(d.get("temp_c", 0) >= 38 for d in forecast)
+
+
+def optimize_treatment_timing(
+    treatment_type: str,
+    forecast_3day: list[ForecastInput],
+) -> TimingResult:
+    """Recommend the optimal day and time to apply a treatment based on 3-day forecast.
+
+    Pure function — no DB, no HTTP.
+
+    Args:
+        treatment_type: one of "organic_amendment", "foliar_spray", "soil_drench"
+        forecast_3day: list of up to 3 ForecastInput dicts
+
+    Returns:
+        TimingResult with best_day (0-2), best_time, reason, avoid_days.
+    """
+    if not forecast_3day:
+        return TimingResult(
+            best_day=0,
+            best_time="Temprano en la mañana (6-8 AM)",
+            reason="Sin datos de pronostico — aplicar lo antes posible",
+            avoid_days=[],
+        )
+
+    # Determine early-morning recommendation if any day has extreme heat
+    heat_warning = _has_extreme_heat(forecast_3day)
+    default_time = "Temprano en la mañana (6-8 AM)" if heat_warning else "Temprano en la mañana (6-8 AM)"
+
+    avoid_days: list[int] = []
+
+    if treatment_type == "organic_amendment":
+        return _optimize_amendment(forecast_3day, default_time)
+    elif treatment_type == "foliar_spray":
+        return _optimize_foliar(forecast_3day, default_time)
+    elif treatment_type == "soil_drench":
+        return _optimize_soil_drench(forecast_3day, default_time)
+    else:
+        # Unknown type — default to first calm day
+        return TimingResult(
+            best_day=0,
+            best_time=default_time,
+            reason="Tipo de tratamiento no reconocido — aplicar en condiciones favorables",
+            avoid_days=[],
+        )
+
+
+def _optimize_amendment(
+    forecast: list[ForecastInput], default_time: str
+) -> TimingResult:
+    """Organic amendments benefit from rain (helps incorporation).
+    Best day: the day BEFORE rain. If rain is day 0, apply day 0.
+    No rain: pick the coolest day.
+    """
+    rain_days = [i for i, d in enumerate(forecast) if _day_has_rain(d)]
+
+    if rain_days:
+        first_rain = rain_days[0]
+        best_day = max(0, first_rain - 1) if first_rain > 0 else 0
+        if first_rain == 0:
+            reason = "Lluvia hoy — aplicar ahora, la lluvia ayuda a incorporar la materia organica"
+        else:
+            reason = f"Aplicar antes de la lluvia pronosticada (dia {first_rain + 1}) — la humedad ayuda a incorporar la materia organica"
+        return TimingResult(
+            best_day=best_day,
+            best_time=default_time,
+            reason=reason,
+            avoid_days=[],
+        )
+
+    # No rain — pick coolest day
+    temps = [d.get("temp_c", 30.0) for d in forecast]
+    coolest = temps.index(min(temps))
+    return TimingResult(
+        best_day=coolest,
+        best_time=default_time,
+        reason=f"Sin lluvia pronosticada — aplicar el dia mas fresco ({temps[coolest]:.0f}C)",
+        avoid_days=[],
+    )
+
+
+def _optimize_foliar(
+    forecast: list[ForecastInput], default_time: str
+) -> TimingResult:
+    """Foliar sprays are washed off by rain and drift in wind.
+    Avoid: rain days, wind > 20 km/h.
+    If all days have rain, pick lightest rain.
+    """
+    avoid_days: list[int] = []
+
+    for i, d in enumerate(forecast):
+        if _day_has_rain(d):
+            avoid_days.append(i)
+        elif d.get("wind_kmh", 0) > 20:
+            avoid_days.append(i)
+
+    good_days = [i for i in range(len(forecast)) if i not in avoid_days]
+
+    if good_days:
+        best_day = good_days[0]
+        reason = "Dia sin lluvia ni viento fuerte — condiciones optimas para aplicacion foliar"
+        return TimingResult(
+            best_day=best_day,
+            best_time=default_time,
+            reason=reason,
+            avoid_days=avoid_days,
+        )
+
+    # All days have issues — pick the one with lightest rain
+    severities = [_rain_severity(d) for d in forecast]
+    # Among rain days, also factor in wind
+    scores = []
+    for i, d in enumerate(forecast):
+        score = severities[i] * 10 + max(0, d.get("wind_kmh", 0) - 10)
+        scores.append(score)
+    best_day = scores.index(min(scores))
+    return TimingResult(
+        best_day=best_day,
+        best_time=default_time,
+        reason="Todos los dias tienen lluvia — seleccionado el dia con lluvia mas ligera",
+        avoid_days=[i for i in range(len(forecast)) if i != best_day],
+    )
+
+
+def _optimize_soil_drench(
+    forecast: list[ForecastInput], default_time: str
+) -> TimingResult:
+    """Soil drenches need soil to absorb the liquid — avoid saturated soil
+    (day after heavy rain) and rain days (dilution).
+    """
+    avoid_days: list[int] = []
+
+    for i, d in enumerate(forecast):
+        if _day_has_heavy_rain(d):
+            avoid_days.append(i)
+            # Day after heavy rain is also bad (saturated)
+            if i + 1 < len(forecast):
+                avoid_days.append(i + 1)
+        elif _day_has_rain(d):
+            avoid_days.append(i)
+
+    avoid_days = sorted(set(avoid_days))
+    good_days = [i for i in range(len(forecast)) if i not in avoid_days]
+
+    if good_days:
+        # Prefer driest day (lowest humidity)
+        best_day = min(good_days, key=lambda i: forecast[i].get("humidity_pct", 50))
+        reason = "Suelo no saturado — condiciones optimas para absorcion del drench"
+    else:
+        # All days problematic — pick last day (most time for soil to dry)
+        best_day = len(forecast) - 1
+        reason = "Suelo puede estar saturado — esperar al ultimo dia para mayor secado"
+
+    return TimingResult(
+        best_day=best_day,
+        best_time=default_time,
+        reason=reason,
+        avoid_days=avoid_days,
+    )

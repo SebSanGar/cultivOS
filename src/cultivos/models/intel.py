@@ -67,3 +67,25 @@ class SeasonEntry(BaseModel):
 
 class SeasonalOut(BaseModel):
     seasons: list[SeasonEntry]
+
+
+# ── Treatment timing optimizer ─────────────────────────────────────────
+
+
+class ForecastDayIn(BaseModel):
+    description: str
+    temp_c: float = 28.0
+    humidity_pct: float = 55.0
+    wind_kmh: float = 8.0
+
+
+class TimingRequestIn(BaseModel):
+    treatment_type: str  # organic_amendment, foliar_spray, soil_drench
+    forecast_3day: list[ForecastDayIn]
+
+
+class TimingOut(BaseModel):
+    best_day: int
+    best_time: str
+    reason: str
+    avoid_days: list[int]

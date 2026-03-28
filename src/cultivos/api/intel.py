@@ -14,6 +14,8 @@ from cultivos.models.intel import (
     IntelSummaryOut,
     SeasonalOut,
     SoilTrendsOut,
+    TimingOut,
+    TimingRequestIn,
     TreatmentEffectivenessOut,
 )
 from cultivos.services.intelligence.analytics import (
@@ -23,6 +25,7 @@ from cultivos.services.intelligence.analytics import (
     compute_summary,
     compute_treatment_effectiveness,
 )
+from cultivos.services.intelligence.recommendations import optimize_treatment_timing
 
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
@@ -104,6 +107,13 @@ def tek_validation(
     # Sort by trust score descending
     methods.sort(key=lambda m: m.trust_score, reverse=True)
     return TEKValidationOut(methods=methods)
+
+
+@router.post("/treatment-timing", response_model=TimingOut)
+def treatment_timing(body: TimingRequestIn):
+    """Recommend optimal day and time to apply a treatment based on weather forecast."""
+    forecast = [f.model_dump() for f in body.forecast_3day]
+    return optimize_treatment_timing(body.treatment_type, forecast)
 
 
 seasonal_router = APIRouter(
