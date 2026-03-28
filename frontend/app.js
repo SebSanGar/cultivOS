@@ -921,6 +921,24 @@ async function loadDashboardSummary(farmId) {
     const crops = [...new Set(data.fields.map(f => f.crop_type).filter(Boolean))];
     document.getElementById('summary-crops').textContent = crops.length;
 
+    // Treatment count
+    document.getElementById('summary-treatments').textContent = data.treatment_count || 0;
+
+    // Top risk field
+    const riskEl = document.getElementById('summary-top-risk');
+    if (data.top_risk) {
+        const trendLabel = data.top_risk.trend === 'declining' ? 'En declive' : data.top_risk.trend === 'improving' ? 'Mejorando' : 'Estable';
+        riskEl.innerHTML = `<div class="summary-risk-title">Mayor riesgo</div>
+            <div class="summary-risk-item">
+                <span class="summary-risk-name">${esc(data.top_risk.field_name)}</span>
+                <span class="summary-alert-score health-badge critical">${Math.round(data.top_risk.score)}</span>
+                <span class="summary-alert-trend">${trendLabel}</span>
+            </div>`;
+        riskEl.style.display = '';
+    } else {
+        riskEl.style.display = 'none';
+    }
+
     // Show urgent fields (health < 50) as alerts
     const alertsEl = document.getElementById('summary-alerts');
     const urgentFields = data.fields.filter(f => f.latest_health_score && f.latest_health_score.score < 50);
@@ -959,6 +977,7 @@ function closeFarmDetail() {
     document.getElementById('seasonal-calendar').style.display = 'none';
     document.getElementById('alert-history').style.display = 'none';
     document.getElementById('dashboard-summary').style.display = 'none';
+    document.getElementById('summary-top-risk').style.display = 'none';
     document.getElementById('economic-impact-panel').style.display = 'none';
     document.getElementById('carbon-summary-panel').style.display = 'none';
     document.getElementById('field-comparison-panel').style.display = 'none';

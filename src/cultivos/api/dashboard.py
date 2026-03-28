@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, WeatherRecord
+from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.dashboard import (
     DashboardField,
@@ -11,6 +11,7 @@ from cultivos.models.dashboard import (
     DashboardNDVI,
     DashboardOut,
     DashboardSoil,
+    DashboardTopRisk,
     DashboardWeather,
 )
 
@@ -92,9 +93,31 @@ def get_farm_dashboard(farm_id: int, db: Session = Depends(get_db)):
     )
     weather_out = DashboardWeather.model_validate(latest_weather) if latest_weather else None
 
+    # Treatment count across all fields
+    field_ids = [f.id for f in fields]
+    treatment_count = 0
+    if field_ids:
+        treatment_count = (
+            db.query(TreatmentRecord)
+            .filter(TreatmentRecord.field_id.in_(field_ids))
+            .count()
+        )
+
+    # Top risk: field with lowest health score
+    top_risk = None
+    if dashboard_fields and dashboard_fields[0].latest_health_score:
+        worst = dashboard_fields[0]  # already sorted ascending by score
+        top_risk = DashboardTopRisk(
+            field_name=worst.name,
+            score=worst.latest_health_score.score,
+            trend=worst.latest_health_score.trend,
+        )
+
     return DashboardOut(
         farm=farm,
         fields=dashboard_fields,
         overall_health=overall_health,
         weather=weather_out,
+        treatment_count=treatment_count,
+        top_risk=top_risk,
     )

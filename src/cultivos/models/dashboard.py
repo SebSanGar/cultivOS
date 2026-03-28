@@ -71,8 +71,16 @@ class DashboardField(BaseModel):
     latest_soil: DashboardSoil | None
 
 
+class DashboardTopRisk(BaseModel):
+    field_name: str
+    score: float
+    trend: str
+
+
 class DashboardOut(BaseModel):
     farm: DashboardFarm
     fields: list[DashboardField]
     overall_health: float | None
     weather: DashboardWeather | None
+    treatment_count: int = 0
+    top_risk: DashboardTopRisk | None = None

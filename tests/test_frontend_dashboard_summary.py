@@ -101,3 +101,101 @@ def test_dashboard_summary_shows_correct_aggregates(client, db):
     # Unique crops: maiz, agave
     crops = {f["crop_type"] for f in data["fields"]}
     assert crops == {"maiz", "agave"}
+
+
+def test_dashboard_includes_treatment_count(client, db):
+    """Dashboard summary includes total treatment count across all fields."""
+    from cultivos.db.models import Farm, Field, TreatmentRecord
+    from datetime import datetime
+
+    farm = Farm(name="Finca Tratamientos", location_lat=20.5, location_lon=-103.3)
+    db.add(farm)
+    db.commit()
+    db.refresh(farm)
+
+    f1 = Field(farm_id=farm.id, name="Campo T1", crop_type="maiz", hectares=30)
+    f2 = Field(farm_id=farm.id, name="Campo T2", crop_type="agave", hectares=40)
+    db.add_all([f1, f2])
+    db.commit()
+    db.refresh(f1)
+    db.refresh(f2)
+
+    # 3 treatments across 2 fields
+    for field in [f1, f1, f2]:
+        db.add(TreatmentRecord(
+            field_id=field.id, health_score_used=65.0, problema="Plagas",
+            causa_probable="Humedad alta", tratamiento="Neem",
+            costo_estimado_mxn=500, urgencia="media", prevencion="Monitoreo",
+            organic=True,
+        ))
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/dashboard")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["treatment_count"] == 3
+
+
+def test_dashboard_includes_top_risk(client, db):
+    """Dashboard summary includes the top risk field (lowest health score)."""
+    from cultivos.db.models import Farm, Field, HealthScore
+    from datetime import datetime
+
+    farm = Farm(name="Finca Riesgo", location_lat=20.5, location_lon=-103.3)
+    db.add(farm)
+    db.commit()
+    db.refresh(farm)
+
+    f1 = Field(farm_id=farm.id, name="Campo Sano", crop_type="maiz", hectares=30)
+    f2 = Field(farm_id=farm.id, name="Campo Enfermo", crop_type="agave", hectares=40)
+    db.add_all([f1, f2])
+    db.commit()
+    db.refresh(f1)
+    db.refresh(f2)
+
+    db.add(HealthScore(
+        field_id=f1.id, score=85.0, trend="stable", sources=["ndvi"],
+        breakdown={"ndvi": 85.0}, scored_at=datetime(2026, 3, 1),
+    ))
+    db.add(HealthScore(
+        field_id=f2.id, score=35.0, trend="declining", sources=["ndvi"],
+        breakdown={"ndvi": 35.0}, scored_at=datetime(2026, 3, 1),
+    ))
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/dashboard")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["top_risk"] is not None
+    assert data["top_risk"]["field_name"] == "Campo Enfermo"
+    assert data["top_risk"]["score"] == 35.0
+    assert data["top_risk"]["trend"] == "declining"
+
+
+def test_dashboard_no_treatments_returns_zero(client, db):
+    """Dashboard with no treatments returns treatment_count=0."""
+    from cultivos.db.models import Farm
+
+    farm = Farm(name="Finca Sin Tratamientos", location_lat=20.5, location_lon=-103.3)
+    db.add(farm)
+    db.commit()
+    db.refresh(farm)
+
+    resp = client.get(f"/api/farms/{farm.id}/dashboard")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["treatment_count"] == 0
+    assert data["top_risk"] is None
+
+
+def test_dashboard_html_has_treatment_and_risk_elements(client):
+    """Dashboard HTML contains treatment count and top risk elements."""
+    resp = client.get("/")
+    assert resp.status_code == 200
+    html = resp.text
+    assert 'id="summary-treatments"' in html
+    assert 'id="summary-top-risk"' in html
+    assert "Tratamientos" in html
