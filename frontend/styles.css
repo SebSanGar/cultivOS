@@ -617,6 +617,62 @@ nav {
     font-style: italic;
 }
 
+/* ── SOIL ENTRY FORM ── */
+.soil-entry-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 16px 0;
+}
+.soil-form-field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+.soil-form-field input,
+.soil-form-field select,
+.soil-form-field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+.soil-form-field input:focus,
+.soil-form-field select:focus,
+.soil-form-field textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+}
+.soil-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+.soil-submit-btn {
+    padding: 8px 20px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.soil-submit-btn:hover { background: var(--green-dark); }
+.soil-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.soil-form-msg { font-size: 0.85rem; }
+.soil-form-msg.success { color: var(--green); }
+.soil-form-msg.error { color: var(--red); }
+
 /* ── ANOMALY CARDS ── */
 .anomaly-card {
     padding: 12px; border-bottom: 1px solid var(--border);

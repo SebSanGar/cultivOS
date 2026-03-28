@@ -438,6 +438,74 @@ function renderSoilHistory(list) {
     </div>`;
 }
 
+// -- Soil Entry Form --
+function initSoilForm() {
+    const form = document.getElementById('soil-entry-form');
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('soil-submit-btn');
+        const msg = document.getElementById('soil-form-msg');
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+        msg.textContent = '';
+        msg.className = 'soil-form-msg';
+
+        const payload = { sampled_at: document.getElementById('soil-sampled-at').value };
+        if (!payload.sampled_at) {
+            msg.textContent = 'Fecha de muestreo es requerida';
+            msg.classList.add('error');
+            btn.disabled = false;
+            btn.textContent = 'Guardar Analisis';
+            return;
+        }
+
+        const numFields = [
+            ['soil-ph', 'ph'], ['soil-organic-matter', 'organic_matter_pct'],
+            ['soil-nitrogen', 'nitrogen_ppm'], ['soil-phosphorus', 'phosphorus_ppm'],
+            ['soil-potassium', 'potassium_ppm'], ['soil-moisture', 'moisture_pct'],
+            ['soil-ec', 'electrical_conductivity'], ['soil-depth', 'depth_cm'],
+        ];
+        for (const [elId, key] of numFields) {
+            const val = document.getElementById(elId).value;
+            if (val !== '') payload[key] = parseFloat(val);
+        }
+        const texture = document.getElementById('soil-texture').value;
+        if (texture) payload.texture = texture;
+        const notes = document.getElementById('soil-notes').value;
+        if (notes) payload.notes = notes;
+
+        try {
+            const resp = await fetch(`${API}/farms/${farmId}/fields/${fieldId}/soil`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (resp.ok) {
+                msg.textContent = 'Analisis guardado';
+                msg.classList.add('success');
+                form.reset();
+                // Refresh soil history
+                const soilList = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/soil`);
+                renderSoilHistory(soilList);
+                const latestSoil = soilList && soilList.length > 0 ? soilList[soilList.length - 1] : null;
+                if (latestSoil) renderSoil(latestSoil);
+            } else {
+                const err = await resp.json().catch(() => null);
+                msg.textContent = err && err.detail ? (typeof err.detail === 'string' ? err.detail : 'Error de validacion') : 'Error al guardar';
+                msg.classList.add('error');
+            }
+        } catch {
+            msg.textContent = 'Error de conexion';
+            msg.classList.add('error');
+        }
+        btn.disabled = false;
+        btn.textContent = 'Guardar Analisis';
+    });
+}
+
+initSoilForm();
+
 function renderDisease(risk) {
     const riskCls = risk.risk_level === 'alto' ? 'critical' : risk.risk_level === 'medio' ? 'warning' : 'good';
     const urgencyLabel = {'critico': 'Critico', 'alto': 'Alto', 'medio': 'Medio', 'bajo': 'Bajo'};

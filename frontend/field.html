@@ -200,6 +200,71 @@
             </div>
         </div>
 
+        <!-- Soil Data Entry Form -->
+        <div class="campo-section" id="section-soil-entry">
+            <div class="campo-section-title" style="cursor:pointer" onclick="document.getElementById('soil-entry-form').style.display = document.getElementById('soil-entry-form').style.display === 'none' ? 'grid' : 'none'">
+                Registrar Analisis de Suelo <span class="soil-timeline-expand">&#9660;</span>
+            </div>
+            <form id="soil-entry-form" class="soil-entry-form" style="display:none">
+                <div class="soil-form-field">
+                    <label for="soil-ph">pH</label>
+                    <input type="number" id="soil-ph" name="ph" step="0.1" min="0" max="14" placeholder="6.5">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-organic-matter">Materia Organica (%)</label>
+                    <input type="number" id="soil-organic-matter" name="organic_matter_pct" step="0.1" min="0" max="100" placeholder="3.0">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-nitrogen">Nitrogeno (ppm)</label>
+                    <input type="number" id="soil-nitrogen" name="nitrogen_ppm" step="0.1" min="0" placeholder="30">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-phosphorus">Fosforo (ppm)</label>
+                    <input type="number" id="soil-phosphorus" name="phosphorus_ppm" step="0.1" min="0" placeholder="20">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-potassium">Potasio (ppm)</label>
+                    <input type="number" id="soil-potassium" name="potassium_ppm" step="0.1" min="0" placeholder="150">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-texture">Textura</label>
+                    <select id="soil-texture" name="texture">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="arenoso">Arenoso</option>
+                        <option value="franco-arenoso">Franco-Arenoso</option>
+                        <option value="franco">Franco</option>
+                        <option value="franco-arcilloso">Franco-Arcilloso</option>
+                        <option value="arcilloso">Arcilloso</option>
+                        <option value="limoso">Limoso</option>
+                    </select>
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-moisture">Humedad (%)</label>
+                    <input type="number" id="soil-moisture" name="moisture_pct" step="0.1" min="0" max="100" placeholder="25">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-ec">Conductividad Electrica (dS/m)</label>
+                    <input type="number" id="soil-ec" name="electrical_conductivity" step="0.01" min="0" placeholder="1.2">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-depth">Profundidad (cm)</label>
+                    <input type="number" id="soil-depth" name="depth_cm" step="1" min="0" placeholder="30">
+                </div>
+                <div class="soil-form-field">
+                    <label for="soil-sampled-at">Fecha de Muestreo</label>
+                    <input type="datetime-local" id="soil-sampled-at" name="sampled_at" required>
+                </div>
+                <div class="soil-form-field" style="grid-column: 1 / -1">
+                    <label for="soil-notes">Notas</label>
+                    <textarea id="soil-notes" name="notes" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+                <div class="soil-form-actions" style="grid-column: 1 / -1">
+                    <button type="submit" id="soil-submit-btn" class="soil-submit-btn">Guardar Analisis</button>
+                    <span id="soil-form-msg" class="soil-form-msg"></span>
+                </div>
+            </form>
+        </div>
+
         <!-- Disease risk -->
         <div class="campo-section" id="section-disease">
             <div class="campo-section-title">Riesgo de Enfermedades</div>
