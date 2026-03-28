@@ -618,6 +618,40 @@ nav {
 .anomaly-ndvi .anomaly-drop { color: var(--warning, #f59e0b); }
 .anomaly-ndvi .anomaly-card-rec { border-left-color: var(--warning, #f59e0b); }
 
+/* ── REGIONAL CONTEXT CARD ── */
+.regional-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 12px;
+}
+.regional-item {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 10px 12px; background: var(--surface-alt, #1a1a1a); border-radius: 8px;
+}
+.regional-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.regional-value { font-size: 0.88rem; color: var(--text); }
+.regional-notes {
+    font-size: 0.82rem; color: var(--muted); padding: 8px 12px;
+    border-left: 3px solid var(--green, #00c896); margin-bottom: 12px;
+}
+.regional-recs { margin-top: 10px; }
+.regional-recs-title { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.regional-rec-item {
+    padding: 10px 12px; margin-bottom: 8px;
+    background: var(--surface-alt, #1a1a1a); border-radius: 8px;
+    border-left: 3px solid var(--green, #00c896);
+}
+.regional-rec-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.regional-rec-urgencia {
+    font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase;
+}
+.urgencia-alta { background: var(--red-light, #fee2e2); color: #991b1b; }
+.urgencia-media { background: var(--yellow-light, #fef3c7); color: #92400e; }
+.urgencia-baja { background: var(--green-light, #dcfce7); color: var(--green-dark, #166534); }
+.regional-rec-problema { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+.regional-rec-treatment { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+.regional-rec-context { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+.regional-rec-cost { font-size: 0.78rem; color: var(--green, #00c896); font-weight: 500; }
+
 /* ── ACTION TIMELINE ── */
 .timeline-weather {
     display: flex; gap: 12px; flex-wrap: wrap;

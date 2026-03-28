@@ -48,7 +48,7 @@ async function loadFieldDetail() {
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
-           anomaliesData, completenessData] = await Promise.all([
+           anomaliesData, completenessData, regionalData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -74,6 +74,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/flights/stats`),
         fetchJSON(`${base}/anomalies`),
         fetchJSON(`/farms/${farmId}/data-completeness`),
+        fetchJSON(`/farms/${farmId}/recommendations`),
     ]);
 
     // Find this field
@@ -136,6 +137,9 @@ async function loadFieldDetail() {
 
     // Rotation
     if (rotation && rotation.seasons) renderRotation(rotation);
+
+    // Regional context
+    renderRegionalCard(regionalData, parseInt(fieldId));
 
     // Action timeline
     renderActionTimeline(actionTimeline);
@@ -576,6 +580,65 @@ function renderRotation(rotation) {
                 </div>
             `).join('')}
         </div>`;
+}
+
+function renderRegionalCard(data, currentFieldId) {
+    const el = document.getElementById('regional-content');
+    if (!data || !data.region) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos regionales disponibles</div>';
+        return;
+    }
+
+    const r = data.region;
+    const climaLabels = {
+        'tropical_subtropical': 'Tropical / Subtropical',
+        'temperate_continental': 'Templado Continental',
+        'generic': 'Variable',
+    };
+
+    // Filter recommendations to current field
+    const fieldRecs = (data.recommendations || []).filter(rec => rec.field_id === currentFieldId);
+
+    let recsHtml = '';
+    if (fieldRecs.length > 0) {
+        recsHtml = `
+        <div class="regional-recs">
+            <div class="regional-recs-title">Recomendaciones para este campo</div>
+            ${fieldRecs.slice(0, 3).map(rec => `
+                <div class="regional-rec-item">
+                    <div class="regional-rec-header">
+                        <span class="regional-rec-urgencia urgencia-${esc(rec.urgencia)}">${esc(rec.urgencia)}</span>
+                        <span class="regional-rec-problema">${esc(rec.problema)}</span>
+                    </div>
+                    <div class="regional-rec-treatment">${esc(rec.tratamiento)}</div>
+                    ${rec.contexto_regional ? `<div class="regional-rec-context">${esc(rec.contexto_regional)}</div>` : ''}
+                    ${rec.costo_estimado_mxn ? `<div class="regional-rec-cost">$${rec.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+                </div>
+            `).join('')}
+        </div>`;
+    }
+
+    el.innerHTML = `
+        <div class="regional-grid">
+            <div class="regional-item">
+                <span class="regional-label">Clima</span>
+                <span class="regional-value">${esc(climaLabels[r.climate_zone] || r.climate_zone)}</span>
+            </div>
+            <div class="regional-item">
+                <span class="regional-label">Suelo</span>
+                <span class="regional-value">${esc(r.soil_type)}</span>
+            </div>
+            <div class="regional-item">
+                <span class="regional-label">Temporada</span>
+                <span class="regional-value">${esc(r.growing_season)}</span>
+            </div>
+            <div class="regional-item">
+                <span class="regional-label">Cultivos clave</span>
+                <span class="regional-value">${r.key_crops.map(c => esc(c)).join(', ')}</span>
+            </div>
+        </div>
+        ${r.seasonal_notes ? `<div class="regional-notes">${esc(r.seasonal_notes)}</div>` : ''}
+        ${recsHtml}`;
 }
 
 function renderActionTimeline(timeline) {
