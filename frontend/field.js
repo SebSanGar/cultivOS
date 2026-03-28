@@ -47,7 +47,7 @@ async function loadFieldDetail() {
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
-           feedbackList, treatmentHistory] = await Promise.all([
+           feedbackList, treatmentHistory, flightsList, flightStats] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -69,6 +69,8 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/growth-stage`),
         fetchJSON(`${base}/feedback`),
         fetchJSON(`${base}/treatments/treatment-history`),
+        fetchJSON(`${base}/flights`),
+        fetchJSON(`${base}/flights/stats`),
     ]);
 
     // Find this field
@@ -140,6 +142,9 @@ async function loadFieldDetail() {
 
     // Mission plan
     renderMissionPlan(missionPlan);
+
+    // Flight log history
+    renderFlights(flightsList, flightStats);
 
     // Intervention scores
     renderInterventionScores(interventionScores);
@@ -970,6 +975,98 @@ async function submitFeedback(e) {
             renderFeedback(updated, null);
         }
     } catch { /* silent */ }
+}
+
+// -- Flight Log History --
+function renderFlights(flights, stats) {
+    const statsEl = document.getElementById('flights-stats');
+    const contentEl = document.getElementById('flights-content');
+
+    // Render stats summary
+    if (stats && stats.total_flights > 0) {
+        const droneLabels = {
+            'mavic_multispectral': 'Mavic 3 Multispectral',
+            'mavic_thermal': 'Mavic 3 Thermal',
+            'agras_t100': 'Agras T100',
+        };
+        const breakdownHtml = stats.drone_breakdown
+            ? Object.entries(stats.drone_breakdown).map(([drone, count]) =>
+                `<span class="flight-drone-chip">${esc(droneLabels[drone] || drone)}: ${count}</span>`
+            ).join(' ')
+            : '';
+        statsEl.innerHTML = `
+            <div class="campo-data-grid">
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Total Vuelos</span>
+                    <span class="campo-data-value">${stats.total_flights}</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Horas de Vuelo</span>
+                    <span class="campo-data-value">${stats.total_hours.toFixed(1)} h</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Cobertura Total</span>
+                    <span class="campo-data-value">${stats.total_area_covered_ha.toFixed(1)} ha</span>
+                </div>
+            </div>
+            ${breakdownHtml ? `<div class="flight-drone-breakdown">${breakdownHtml}</div>` : ''}`;
+    } else {
+        statsEl.innerHTML = '';
+    }
+
+    // Render flight list
+    if (!flights || flights.length === 0) {
+        contentEl.innerHTML = '<div class="campo-placeholder">Sin vuelos registrados</div>';
+        return;
+    }
+
+    const missionLabels = {
+        'health_scan': 'Escaneo de salud',
+        'thermal_check': 'Revision termica',
+        'spray': 'Aplicacion',
+    };
+    const droneLabels = {
+        'mavic_multispectral': 'Mavic 3 Multispectral',
+        'mavic_thermal': 'Mavic 3 Thermal',
+        'agras_t100': 'Agras T100',
+    };
+    const statusLabels = {
+        'pending': 'Pendiente',
+        'processing': 'Procesando',
+        'complete': 'Completo',
+        'failed': 'Fallido',
+    };
+    const statusCls = {
+        'complete': 'good',
+        'processing': 'warning',
+        'failed': 'critical',
+        'pending': 'none',
+    };
+
+    contentEl.innerHTML = `<div class="flight-log-list">
+        ${flights.map(f => {
+            const date = f.flight_date
+                ? new Date(f.flight_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                : '--';
+            const sCls = statusCls[f.status] || 'none';
+            return `<div class="flight-log-item">
+                <div class="flight-log-date">${date}</div>
+                <div class="flight-log-body">
+                    <div class="flight-log-header">
+                        <strong>${esc(droneLabels[f.drone_type] || f.drone_type)}</strong>
+                        <span class="flight-mission-badge">${esc(missionLabels[f.mission_type] || f.mission_type)}</span>
+                        <span class="health-badge ${sCls}">${esc(statusLabels[f.status] || f.status)}</span>
+                    </div>
+                    <div class="flight-log-details">
+                        <span>${f.duration_minutes} min</span>
+                        <span>${f.altitude_m} m alt</span>
+                        <span>${f.images_count} fotos</span>
+                        <span>${f.coverage_pct}% cobertura</span>
+                    </div>
+                </div>
+            </div>`;
+        }).join('')}
+    </div>`;
 }
 
 // -- PDF Download --
