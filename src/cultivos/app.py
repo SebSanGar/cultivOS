@@ -188,6 +188,11 @@ def create_app() -> FastAPI:
             """Login and registration page."""
             return FileResponse(frontend_dir / "login.html")
 
+        @app.get("/notificaciones")
+        async def serve_notifications():
+            """Notification history — alerts and recommendations across all farms."""
+            return FileResponse(frontend_dir / "notifications.html")
+
         @app.get("/estado")
         async def serve_status():
             """Platform status dashboard — system health, data freshness, endpoint checks."""

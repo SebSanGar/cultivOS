@@ -3099,3 +3099,29 @@ nav {
     .weather-day { grid-template-columns: 60px 1fr 40px; gap: 4px; }
     .weather-day-desc, .weather-day-rain-amt, .weather-day-humidity { display: none; }
 }
+
+/* === Notification History === */
+.notif-filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.notif-filter-select { background: #1e293b; color: #e5e7eb; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 14px; font-size: 0.9rem; cursor: pointer; }
+.notif-filter-select:focus { outline: none; border-color: #22c55e; }
+.notif-list { display: flex; flex-direction: column; gap: 12px; }
+.notif-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 20px; border-left: 4px solid #6b7280; }
+.notif-card.notif-severity-critical { border-left-color: #ef4444; }
+.notif-card.notif-severity-warning { border-left-color: #f59e0b; }
+.notif-card.notif-severity-info { border-left-color: #60a5fa; }
+.notif-card.notif-acknowledged { opacity: 0.6; }
+.notif-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.notif-type-badge { background: rgba(34,197,94,0.12); color: #22c55e; padding: 2px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
+.notif-severity-badge { padding: 2px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; }
+.notif-severity-badge.notif-severity-critical { background: rgba(239,68,68,0.15); color: #ef4444; }
+.notif-severity-badge.notif-severity-warning { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.notif-severity-badge.notif-severity-info { background: rgba(96,165,250,0.15); color: #60a5fa; }
+.notif-farm-name { color: #9ca3af; font-size: 0.85rem; }
+.notif-date { color: #6b7280; font-size: 0.82rem; margin-left: auto; }
+.notif-message { color: #d1d5db; font-size: 0.92rem; line-height: 1.5; margin: 0; }
+.notif-card-footer { margin-top: 10px; display: flex; justify-content: flex-end; }
+.notif-ack-btn { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); border-radius: 6px; padding: 5px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.notif-ack-btn:hover { background: rgba(34,197,94,0.2); }
+.notif-ack-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.notif-ack-badge { background: rgba(34,197,94,0.12); color: #22c55e; padding: 3px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
+.notif-empty { text-align: center; color: #6b7280; padding: 40px 20px; font-size: 0.95rem; }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Historial de Notificaciones</title>
+    <meta name="description" content="Historial de alertas y notificaciones de todas las granjas — filtrar por severidad, tipo, y reconocer alertas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab active">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- NOTIFICATIONS DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Historial de Notificaciones</h1>
+            <p class="intel-subtitle">Alertas y recomendaciones de todas las granjas</p>
+        </div>
+        <div class="intel-header-actions">
+            <button class="intel-btn" onclick="loadNotifications()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="notif-total">--</div>
+            <div class="intel-stat-label">Total</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="notif-pending">--</div>
+            <div class="intel-stat-label">Pendientes</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="notif-critical">--</div>
+            <div class="intel-stat-label">Criticas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="notif-acknowledged">--</div>
+            <div class="intel-stat-label">Reconocidas</div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="notif-filters">
+        <select id="notif-filter-severity" class="notif-filter-select" onchange="applyFilters()">
+            <option value="">Todas las severidades</option>
+            <option value="critical">Critica</option>
+            <option value="warning">Advertencia</option>
+            <option value="info">Informativa</option>
+        </select>
+        <select id="notif-filter-type" class="notif-filter-select" onchange="applyFilters()">
+            <option value="">Todos los tipos</option>
+            <option value="health">Salud</option>
+            <option value="irrigation">Riego</option>
+            <option value="pest">Plagas</option>
+            <option value="recommendation">Recomendacion</option>
+            <option value="anomaly_health_drop">Anomalia Salud</option>
+            <option value="anomaly_ndvi_drop">Anomalia NDVI</option>
+        </select>
+        <select id="notif-filter-status" class="notif-filter-select" onchange="applyFilters()">
+            <option value="">Todas</option>
+            <option value="pending">Pendientes</option>
+            <option value="acknowledged">Reconocidas</option>
+        </select>
+    </div>
+
+    <!-- Notification list -->
+    <div id="notif-list" class="notif-list">
+        <div class="loading"><div class="loading-spinner"></div>Cargando notificaciones...</div>
+    </div>
+</main>
+
+<script src="/notifications.js"></script>
+</body>
+</html>
