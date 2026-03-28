@@ -223,6 +223,11 @@ def create_app() -> FastAPI:
             """Farm economic impact report — savings breakdown in MXN."""
             return FileResponse(frontend_dir / "economic-impact.html")
 
+        @app.get("/docs-api")
+        async def serve_api_docs():
+            """Branded API reference page — links to Swagger, ReDoc, and OpenAPI."""
+            return FileResponse(frontend_dir / "api-docs.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

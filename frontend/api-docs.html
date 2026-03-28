@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Referencia API</title>
+    <meta name="description" content="Referencia de la API de cultivOS — endpoints de inteligencia agricola, analisis de cultivos y datos de precision.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/impacto-economico" class="nav-tab intel-tab">Impacto Economico</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/docs-api" class="nav-tab intel-tab active">API</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- API DOCS DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Referencia API — cultivOS</h1>
+            <p class="intel-subtitle">Plataforma de inteligencia agricola de precision — endpoints REST para datos de cultivos, drones y recomendaciones regenerativas</p>
+        </div>
+        <div class="intel-header-actions">
+            <a href="/docs" target="_blank" class="intel-btn">Swagger UI</a>
+            <a href="/redoc" target="_blank" class="intel-btn">ReDoc</a>
+            <a href="/openapi.json" target="_blank" class="intel-btn" style="opacity:0.7">OpenAPI JSON</a>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="api-endpoint-count">--</div>
+            <div class="intel-stat-label">Endpoints</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="api-tag-count">--</div>
+            <div class="intel-stat-label">Categorias</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="api-version">--</div>
+            <div class="intel-stat-label">Version</div>
+        </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="api-quick-links">
+        <h2 class="econ-section-title">Documentacion interactiva</h2>
+        <div class="api-links-grid">
+            <a href="/docs" target="_blank" class="api-link-card">
+                <div class="api-link-icon" style="color:#4da6ff">&#9654;</div>
+                <h3>Swagger UI</h3>
+                <p>Interfaz interactiva para probar endpoints directamente desde el navegador. Ideal para desarrollo y demostraciones.</p>
+            </a>
+            <a href="/redoc" target="_blank" class="api-link-card">
+                <div class="api-link-icon" style="color:#00c896">&#9654;</div>
+                <h3>ReDoc</h3>
+                <p>Documentacion estructurada con modelos de datos, parametros y ejemplos de respuesta. Ideal para referencia tecnica.</p>
+            </a>
+            <a href="/openapi.json" target="_blank" class="api-link-card">
+                <div class="api-link-icon" style="color:#f0b429">&#9654;</div>
+                <h3>OpenAPI JSON</h3>
+                <p>Esquema OpenAPI 3.1 para integracion con herramientas de terceros, generacion de SDK y pruebas automatizadas.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- API Categories -->
+    <div class="api-categories-section">
+        <h2 class="econ-section-title">Categorias de la API</h2>
+        <div id="api-categories" class="api-categories-grid">
+            <div class="api-loading">Cargando categorias...</div>
+        </div>
+    </div>
+</main>
+
+<script src="/api-docs.js"></script>
+</body>
+</html>

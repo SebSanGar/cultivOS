@@ -3418,3 +3418,22 @@ nav {
 .econ-card-value { font-size: 1.4rem; font-weight: 700; font-family: 'Courier New', monospace; color: #00c896; }
 .econ-reference { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-top: 8px; }
 .econ-reference p { font-size: 0.8rem; color: var(--text-muted, #888); margin: 0; line-height: 1.5; }
+
+/* ── API Docs Page ──────────────────────────────────────────────── */
+.api-quick-links { margin-bottom: 24px; }
+.api-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.api-link-card { display: block; background: var(--card-bg, #141414); border-radius: 12px; padding: 24px; text-decoration: none; color: inherit; border: 1px solid rgba(255,255,255,0.06); transition: border-color 0.2s, transform 0.15s; }
+.api-link-card:hover { border-color: rgba(77,166,255,0.3); transform: translateY(-2px); }
+.api-link-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+.api-link-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--text-primary, #fff); margin: 0 0 8px 0; }
+.api-link-card p { font-size: 0.85rem; color: var(--text-muted, #888); line-height: 1.5; margin: 0; }
+.api-categories-section { margin-bottom: 24px; }
+.api-categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.api-category-card { background: var(--card-bg, #141414); border-radius: 10px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.06); transition: border-color 0.2s; }
+.api-category-card:hover { border-color: rgba(77,166,255,0.2); }
+.api-category-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.api-category-icon { font-size: 1.2rem; }
+.api-category-name { font-size: 0.95rem; font-weight: 600; color: var(--text-primary, #fff); text-transform: capitalize; }
+.api-category-count { margin-left: auto; font-size: 0.8rem; font-weight: 500; color: #4da6ff; background: rgba(77,166,255,0.1); padding: 2px 8px; border-radius: 10px; font-family: 'Courier New', monospace; }
+.api-category-desc { font-size: 0.82rem; color: var(--text-muted, #888); line-height: 1.4; margin: 0; }
+.api-loading { color: var(--text-muted, #888); font-size: 0.9rem; padding: 24px; text-align: center; }
