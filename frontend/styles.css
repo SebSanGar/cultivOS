@@ -2355,3 +2355,66 @@ nav {
     color: var(--text-muted); margin-top: 16px; margin-bottom: 4px;
     border-top: 1px solid var(--border); padding-top: 12px;
 }
+
+/* ── Guided Tour ── */
+.tour-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9998;
+}
+.tour-highlight {
+    position: relative;
+    z-index: 9999;
+    box-shadow: 0 0 0 4px var(--green, #16a34a), 0 0 24px rgba(22, 163, 74, 0.3);
+    border-radius: 8px;
+}
+.tour-tooltip {
+    z-index: 10000;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 360px;
+    min-width: 260px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #e5e7eb;
+}
+.tour-tooltip-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+}
+.tour-tooltip-counter {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #16a34a;
+}
+.tour-tooltip-close {
+    background: none; border: none; color: #9ca3af; font-size: 1.3rem;
+    cursor: pointer; padding: 0 4px; line-height: 1;
+}
+.tour-tooltip-close:hover { color: #fff; }
+.tour-tooltip-title {
+    font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 6px;
+}
+.tour-tooltip-body {
+    font-size: 0.85rem; color: #9ca3af; line-height: 1.5; margin-bottom: 16px;
+}
+.tour-tooltip-nav {
+    display: flex; justify-content: space-between; gap: 8px;
+}
+.tour-tooltip-btn {
+    padding: 8px 16px; border-radius: 6px; font-size: 0.8rem;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+}
+.tour-btn-prev {
+    background: transparent; color: #9ca3af; border: 1px solid #2a2a3a;
+}
+.tour-btn-prev:hover:not(:disabled) { border-color: #e5e7eb; color: #e5e7eb; }
+.tour-btn-prev:disabled { opacity: 0.3; cursor: not-allowed; }
+.tour-btn-next {
+    background: #16a34a; color: #fff;
+}
+.tour-btn-next:hover { background: #15803d; }
+@media (max-width: 640px) {
+    .tour-tooltip { max-width: calc(100vw - 32px); min-width: 200px; }
+}

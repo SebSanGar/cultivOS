@@ -217,7 +217,8 @@
         </div>
     </div>
     <div style="text-align:center; margin-top:32px;">
-        <a href="/" class="nav-btn primary" style="text-decoration:none; display:inline-block;">Explorar el Panel de Granjas</a>
+        <button class="nav-btn primary" id="iniciar-tour" onclick="startTour()" style="display:inline-block;">Iniciar Tour Guiado</button>
+        <a href="/" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;">Explorar el Panel de Granjas</a>
         <a href="/intel" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;">Panel de Inteligencia</a>
     </div>
 </div>
@@ -369,5 +370,6 @@ async function init() {
 
 init();
 </script>
+<script src="/tour.js"></script>
 </body>
 </html>
