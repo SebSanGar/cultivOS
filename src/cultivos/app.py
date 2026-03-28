@@ -75,8 +75,47 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="cultivOS API",
         version="0.1.0",
-        description="Agricultural Intelligence — precision farming platform",
+        description=(
+            "Agricultural Intelligence — precision farming platform.\n\n"
+            "cultivOS transforms drone imagery (NDVI, thermal) and soil data into "
+            "actionable regenerative agriculture recommendations for small and medium farms."
+        ),
+        contact={"name": "cultivOS", "url": "https://github.com/SebSanGar/cultivOS"},
         lifespan=_lifespan,
+        openapi_tags=[
+            {"name": "farms", "description": "Farm and field CRUD operations"},
+            {"name": "auth", "description": "User registration and JWT authentication"},
+            {"name": "ndvi", "description": "NDVI vegetation index analysis from drone imagery"},
+            {"name": "thermal", "description": "Thermal stress detection from drone imagery"},
+            {"name": "health", "description": "Crop health scoring and trend analysis"},
+            {"name": "soil", "description": "Soil analysis records and composition tracking"},
+            {"name": "weather", "description": "Weather observations and forecast integration"},
+            {"name": "treatments", "description": "Treatment application records and effectiveness"},
+            {"name": "intelligence", "description": "Cerebro AI field intelligence and regenerative scoring"},
+            {"name": "dashboard", "description": "Aggregated farm dashboard data"},
+            {"name": "alerts", "description": "Automated health, irrigation, and anomaly alerts"},
+            {"name": "alert-config", "description": "Per-farm alert threshold configuration"},
+            {"name": "notifications", "description": "Notification history and acknowledgement"},
+            {"name": "knowledge", "description": "Organic fertilizers, ancestral methods, and crop database"},
+            {"name": "diseases", "description": "Plant disease identification reference data"},
+            {"name": "disease-risk", "description": "Weather-based disease risk assessment"},
+            {"name": "irrigation", "description": "Irrigation scheduling optimization"},
+            {"name": "rotation", "description": "Crop rotation planning and recommendations"},
+            {"name": "carbon", "description": "Soil carbon MRV (measurement, reporting, verification)"},
+            {"name": "microbiome", "description": "Soil microbiome health analysis"},
+            {"name": "growth-stage", "description": "Crop growth stage tracking and phenology"},
+            {"name": "flights", "description": "Drone flight logging and statistics"},
+            {"name": "missions", "description": "Drone mission planning and path optimization"},
+            {"name": "fusion", "description": "Multi-sensor data fusion analysis"},
+            {"name": "yield", "description": "Crop yield prediction models"},
+            {"name": "economics", "description": "Economic impact analysis per farm"},
+            {"name": "feedback", "description": "Farmer feedback on treatment effectiveness"},
+            {"name": "intervention-scores", "description": "Predictive intervention priority scoring"},
+            {"name": "action-timeline", "description": "Weather-integrated prioritized action timeline"},
+            {"name": "seasonal-alerts", "description": "Season-specific agricultural alerts and calendar"},
+            {"name": "seasonal-comparison", "description": "Temporal vs dry season performance comparison"},
+            {"name": "reports", "description": "PDF reports and CSV data exports"},
+        ],
     )
 
     register_error_handlers(app)
@@ -96,11 +135,13 @@ def create_app() -> FastAPI:
     # Health check
     @app.get("/api/health")
     async def health():
+        """Return a simple health check with the current API version."""
         return {"status": "ok", "version": "0.1.0"}
 
     # Readiness probe — verifies DB connectivity
     @app.get("/api/readiness")
     def readiness():
+        """Verify database connectivity and return readiness status (503 if unavailable)."""
         from sqlalchemy import text
         from cultivos.db.session import get_session_factory
         db = get_session_factory()()

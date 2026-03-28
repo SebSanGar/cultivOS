@@ -44,6 +44,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(request: Request, body: UserRegister, db: Session = Depends(get_db)):
+    """Register a new user account. Returns the created user or 409 if the username is taken."""
     _check_rate_limit(request, max_calls=5, window_seconds=60)
     existing = db.query(User).filter(User.username == body.username).first()
     if existing:
@@ -62,6 +63,7 @@ def register(request: Request, body: UserRegister, db: Session = Depends(get_db)
 
 @router.post("/login", response_model=TokenOut)
 def login(request: Request, body: UserLogin, db: Session = Depends(get_db)):
+    """Authenticate a user and return a JWT access token."""
     _check_rate_limit(request, max_calls=10, window_seconds=60)
     user = db.query(User).filter(User.username == body.username).first()
     if not user or not verify_password(body.password, user.hashed_password):

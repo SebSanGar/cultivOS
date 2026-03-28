@@ -27,6 +27,7 @@ def create_weather_record(
     body: WeatherRecordCreate,
     db: Session = Depends(get_db),
 ):
+    """Record a new weather observation for a farm, including current conditions and 3-day forecast."""
     _get_farm(farm_id, db)
     record = WeatherRecord(
         farm_id=farm_id,
@@ -48,6 +49,7 @@ def list_weather_records(
     farm_id: int,
     db: Session = Depends(get_db),
 ):
+    """Return all weather records for a farm, ordered by most recent first."""
     _get_farm(farm_id, db)
     return (
         db.query(WeatherRecord)

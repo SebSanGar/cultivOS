@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/farms", tags=["farms"])
 
 @router.post("", response_model=FarmOut, status_code=201)
 def create_farm(body: FarmCreate, db: Session = Depends(get_db), user: User = Depends(require_role("admin"))):
+    """Create a new farm. Requires admin role."""
     farm = Farm(**body.model_dump())
     db.add(farm)
     db.commit()
@@ -33,6 +34,7 @@ def list_farms(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
+    """List farms with pagination. Farmers only see their own farm; admins see all."""
     query = db.query(Farm)
     if user and hasattr(user, 'role') and user.role == "farmer" and user.farm_id is not None:
         query = query.filter(Farm.id == user.farm_id)
@@ -46,6 +48,7 @@ def list_farms(
 
 @router.get("/{farm_id}", response_model=FarmOut)
 def get_farm(farm_id: int, db: Session = Depends(get_db)):
+    """Retrieve a single farm by ID."""
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
@@ -54,6 +57,7 @@ def get_farm(farm_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{farm_id}", response_model=FarmOut)
 def update_farm(farm_id: int, body: FarmUpdate, db: Session = Depends(get_db)):
+    """Update an existing farm's attributes. Only provided fields are changed."""
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
@@ -66,6 +70,7 @@ def update_farm(farm_id: int, body: FarmUpdate, db: Session = Depends(get_db)):
 
 @router.delete("/{farm_id}", status_code=204)
 def delete_farm(farm_id: int, db: Session = Depends(get_db)):
+    """Permanently delete a farm by ID."""
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
@@ -117,6 +122,7 @@ def farm_heatmap(farm_id: int, db: Session = Depends(get_db)):
 
 @router.post("/{farm_id}/fields", response_model=FieldOut, status_code=201)
 def create_field(farm_id: int, body: FieldCreate, db: Session = Depends(get_db)):
+    """Create a new field under a farm. Automatically computes area from boundary coordinates."""
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
@@ -133,6 +139,7 @@ def create_field(farm_id: int, body: FieldCreate, db: Session = Depends(get_db))
 
 @router.get("/{farm_id}/fields", response_model=list[FieldOut])
 def list_fields(farm_id: int, db: Session = Depends(get_db)):
+    """List all fields belonging to a farm, ordered by creation date descending."""
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
@@ -141,6 +148,7 @@ def list_fields(farm_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{farm_id}/fields/{field_id}", response_model=FieldOut)
 def get_field(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Retrieve a single field by ID within a given farm."""
     field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
@@ -149,6 +157,7 @@ def get_field(farm_id: int, field_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{farm_id}/fields/{field_id}", response_model=FieldOut)
 def update_field(farm_id: int, field_id: int, body: FieldUpdate, db: Session = Depends(get_db)):
+    """Update a field's attributes. Recomputes area if boundary coordinates change."""
     field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
@@ -165,6 +174,7 @@ def update_field(farm_id: int, field_id: int, body: FieldUpdate, db: Session = D
 
 @router.delete("/{farm_id}/fields/{field_id}", status_code=204)
 def delete_field(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Permanently delete a field from a farm."""
     field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")

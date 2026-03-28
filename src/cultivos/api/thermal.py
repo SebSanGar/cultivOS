@@ -68,6 +68,7 @@ def list_thermal_results(
     field_id: int,
     db: Session = Depends(get_db),
 ):
+    """Return all thermal stress results for a field, ordered by most recent first."""
     _get_field(farm_id, field_id, db)
     return (
         db.query(ThermalResult)
@@ -84,6 +85,7 @@ def get_thermal_result(
     thermal_id: int,
     db: Session = Depends(get_db),
 ):
+    """Retrieve a single thermal stress result by its ID for the given field."""
     _get_field(farm_id, field_id, db)
     result = (
         db.query(ThermalResult)

@@ -23,6 +23,7 @@ def create_notification(
     payload: AlertLogCreate,
     db: Session = Depends(get_db),
 ):
+    """Create a new notification alert for a farm, specifying type, message, and severity."""
     _get_farm(farm_id, db)
     log = AlertLog(
         farm_id=farm_id,
@@ -43,6 +44,7 @@ def list_notifications(
     severity: str | None = Query(None),
     db: Session = Depends(get_db),
 ):
+    """List all notifications for a farm, optionally filtered by severity, ordered by most recent."""
     _get_farm(farm_id, db)
     q = db.query(AlertLog).filter(AlertLog.farm_id == farm_id)
     if severity:
@@ -56,6 +58,7 @@ def acknowledge_notification(
     notification_id: int,
     db: Session = Depends(get_db),
 ):
+    """Mark a notification as acknowledged by its ID."""
     _get_farm(farm_id, db)
     log = (
         db.query(AlertLog)

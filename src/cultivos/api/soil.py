@@ -32,6 +32,7 @@ def create_soil_analysis(
     body: SoilAnalysisCreate,
     db: Session = Depends(get_db),
 ):
+    """Create a new soil analysis record for a field with pH, nutrient, and moisture data."""
     _get_field(farm_id, field_id, db)
     analysis = SoilAnalysis(field_id=field_id, **body.model_dump())
     db.add(analysis)
@@ -93,6 +94,7 @@ def list_soil_analyses(
     field_id: int,
     db: Session = Depends(get_db),
 ):
+    """List all soil analysis records for a field, ordered by most recent sample date."""
     _get_field(farm_id, field_id, db)
     return (
         db.query(SoilAnalysis)
@@ -109,6 +111,7 @@ def get_soil_analysis(
     soil_id: int,
     db: Session = Depends(get_db),
 ):
+    """Retrieve a single soil analysis record by its ID."""
     _get_field(farm_id, field_id, db)
     analysis = (
         db.query(SoilAnalysis)
@@ -128,6 +131,7 @@ def update_soil_analysis(
     body: SoilAnalysisUpdate,
     db: Session = Depends(get_db),
 ):
+    """Update an existing soil analysis record with partial data."""
     _get_field(farm_id, field_id, db)
     analysis = (
         db.query(SoilAnalysis)
@@ -150,6 +154,7 @@ def delete_soil_analysis(
     soil_id: int,
     db: Session = Depends(get_db),
 ):
+    """Delete a soil analysis record by its ID."""
     _get_field(farm_id, field_id, db)
     analysis = (
         db.query(SoilAnalysis)

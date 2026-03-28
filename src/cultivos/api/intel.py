@@ -61,6 +61,7 @@ def intel_summary(
     db: Session = Depends(get_db),
     user=Depends(_admin_or_researcher),
 ):
+    """Return a high-level intelligence summary across all farms, including health stats and alert counts."""
     return compute_summary(db)
 
 
@@ -69,6 +70,7 @@ def intel_soil_trends(
     db: Session = Depends(get_db),
     user=Depends(_admin_or_researcher),
 ):
+    """Return soil health trends aggregated across all fields over time."""
     return compute_soil_trends(db)
 
 
@@ -77,6 +79,7 @@ def intel_treatments(
     db: Session = Depends(get_db),
     user=Depends(_admin_or_researcher),
 ):
+    """Return treatment effectiveness metrics showing which treatments improve crop health."""
     return compute_treatment_effectiveness(db)
 
 
@@ -95,6 +98,7 @@ def intel_anomalies(
     db: Session = Depends(get_db),
     user=Depends(_admin_or_researcher),
 ):
+    """Detect and return fields with anomalous health scores or unusual trend changes."""
     return compute_anomalies(db)
 
 
@@ -187,5 +191,6 @@ def field_seasonal(
     year: Optional[int] = None,
     db: Session = Depends(get_db),
 ):
+    """Return seasonal performance breakdown for a field, optionally filtered by year."""
     field = _get_field(farm_id, field_id, db)
     return compute_seasonal_performance(db, field.id, year=year)

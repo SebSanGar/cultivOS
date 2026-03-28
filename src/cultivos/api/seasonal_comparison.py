@@ -29,6 +29,7 @@ def get_seasonal_comparison(
     field_id: int,
     db: Session = Depends(get_db),
 ):
+    """Return side-by-side temporal vs secas season metrics for a field, comparing health scores and treatments."""
     field = _get_field(farm_id, field_id, db)
 
     health_rows = (

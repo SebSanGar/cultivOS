@@ -34,6 +34,7 @@ def get_mission_plan(
     drone_type: str = "mavic_multispectral",
     db: Session = Depends(get_db),
 ):
+    """Generate a drone mission plan for a field based on its boundary coordinates, mission type, and drone type."""
     field = _get_field(farm_id, field_id, db)
     if not field.boundary_coordinates:
         raise HTTPException(

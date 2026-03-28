@@ -72,6 +72,7 @@ def list_ndvi_results(
     field_id: int,
     db: Session = Depends(get_db),
 ):
+    """List all NDVI analysis results for a field, ordered by most recent analysis date."""
     _get_field(farm_id, field_id, db)
     return (
         db.query(NDVIResult)
@@ -88,6 +89,7 @@ def get_ndvi_result(
     ndvi_id: int,
     db: Session = Depends(get_db),
 ):
+    """Retrieve a single NDVI analysis result by its ID."""
     _get_field(farm_id, field_id, db)
     result = (
         db.query(NDVIResult)

@@ -31,6 +31,7 @@ def create_microbiome_record(
     body: MicrobiomeCreate,
     db: Session = Depends(get_db),
 ):
+    """Create a soil microbiome record for a field, auto-classifying health from respiration rate."""
     _get_field(farm_id, field_id, db)
     classification = classify_microbiome(body.respiration_rate)
     record = MicrobiomeRecord(
@@ -50,6 +51,7 @@ def list_microbiome_records(
     field_id: int,
     db: Session = Depends(get_db),
 ):
+    """List all microbiome records for a field, ordered by most recent sample date."""
     _get_field(farm_id, field_id, db)
     return (
         db.query(MicrobiomeRecord)
