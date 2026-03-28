@@ -49,7 +49,7 @@ async function loadFieldDetail() {
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
            anomaliesData, completenessData, regionalData, carbonData, weatherRecords,
-           seasonalAlertsData] = await Promise.all([
+           seasonalAlertsData, seasonalPerfData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -79,6 +79,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/carbon`),
         fetchJSON(`/farms/${farmId}/weather`),
         fetchJSON(`/farms/${farmId}/seasonal-alerts`),
+        fetchJSON(`${base}/seasonal`),
     ]);
 
     // Find this field
@@ -170,6 +171,9 @@ async function loadFieldDetail() {
 
     // Seasonal comparison
     renderSeasonalComparison(seasonalData);
+
+    // Seasonal performance chart (year-over-year)
+    renderSeasonalPerformance(seasonalPerfData);
 
     // Mission plan
     renderMissionPlan(missionPlan);
@@ -1371,6 +1375,93 @@ function renderSeasonalComparison(data) {
                 <span class="seasonal-meta-item">Secas (Nov-May): ${secas.data_points || 0} registros</span>
             </div>
         </div>`;
+}
+
+// -- Seasonal Performance Chart (year-over-year grouped bar) --
+let seasonalPerfChartInstance = null;
+
+function renderSeasonalPerformance(data) {
+    const el = document.getElementById('seasonal-perf-content');
+    const canvas = document.getElementById('seasonal-perf-chart');
+
+    if (!data || !data.seasons || data.seasons.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de rendimiento estacional</div>';
+        canvas.style.display = 'none';
+        return;
+    }
+
+    el.innerHTML = '';
+    canvas.style.display = '';
+
+    // Group by year, each year has temporal + secas
+    const years = [...new Set(data.seasons.map(s => s.year))].sort();
+    const temporalScores = years.map(y => {
+        const entry = data.seasons.find(s => s.year === y && s.season === 'temporal');
+        return entry ? entry.avg_score : null;
+    });
+    const secasScores = years.map(y => {
+        const entry = data.seasons.find(s => s.year === y && s.season === 'secas');
+        return entry ? entry.avg_score : null;
+    });
+
+    if (seasonalPerfChartInstance) {
+        seasonalPerfChartInstance.destroy();
+    }
+
+    const ctx = canvas.getContext('2d');
+    seasonalPerfChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: years.map(String),
+            datasets: [
+                {
+                    label: 'Temporal (Jun-Oct)',
+                    data: temporalScores,
+                    backgroundColor: 'rgba(0, 200, 150, 0.7)',
+                    borderColor: 'rgba(0, 200, 150, 1)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Secas (Nov-May)',
+                    data: secasScores,
+                    backgroundColor: 'rgba(240, 180, 41, 0.7)',
+                    borderColor: 'rgba(240, 180, 41, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#aaa', font: { size: 11 } },
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            const val = ctx.parsed.y;
+                            return val != null ? `${ctx.dataset.label}: ${val.toFixed(1)}` : `${ctx.dataset.label}: --`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#aaa' },
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                },
+                y: {
+                    min: 0,
+                    max: 100,
+                    ticks: { color: '#aaa' },
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    title: { display: true, text: 'Salud Promedio', color: '#aaa' },
+                },
+            },
+        },
+    });
 }
 
 // -- Mission Plan --
