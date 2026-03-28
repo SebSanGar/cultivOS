@@ -228,6 +228,11 @@ def create_app() -> FastAPI:
             """Branded API reference page — links to Swagger, ReDoc, and OpenAPI."""
             return FileResponse(frontend_dir / "api-docs.html")
 
+        @app.get("/onboarding")
+        async def serve_onboarding():
+            """Onboarding wizard — create a new farm with fields in 3 steps."""
+            return FileResponse(frontend_dir / "onboarding.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

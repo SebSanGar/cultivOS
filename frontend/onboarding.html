@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Nueva Granja</title>
+    <meta name="description" content="Asistente para crear una nueva granja con parcelas en menos de 60 segundos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/gestion" class="nav-tab intel-tab">Gestion</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- WIZARD -->
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Nueva Granja</h1>
+            <p class="intel-subtitle">Cree una granja con parcelas en 3 pasos</p>
+        </div>
+    </div>
+
+    <!-- Error display -->
+    <div id="wizard-error" class="wizard-error" style="display:none;"></div>
+
+    <!-- Step Progress -->
+    <div class="wizard-progress">
+        <div class="wizard-progress-step active" id="wizard-prog-1">
+            <span class="wizard-progress-num">1</span>
+            <span class="wizard-progress-label">Granja</span>
+        </div>
+        <div class="wizard-progress-line"></div>
+        <div class="wizard-progress-step" id="wizard-prog-2">
+            <span class="wizard-progress-num">2</span>
+            <span class="wizard-progress-label">Parcelas</span>
+        </div>
+        <div class="wizard-progress-line"></div>
+        <div class="wizard-progress-step" id="wizard-prog-3">
+            <span class="wizard-progress-num">3</span>
+            <span class="wizard-progress-label">Confirmar</span>
+        </div>
+    </div>
+
+    <!-- Step 1: Farm Info -->
+    <section class="wizard-step wizard-step-active" id="wizard-step-1">
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Datos de la Granja</h2>
+            </div>
+            <div class="intel-panel-body">
+                <div class="wizard-form">
+                    <div class="wizard-form-row">
+                        <div class="wizard-form-group">
+                            <label for="wizard-farm-name">Nombre de la granja *</label>
+                            <input type="text" id="wizard-farm-name" placeholder="Ej: Rancho Los Alamos" required>
+                        </div>
+                        <div class="wizard-form-group">
+                            <label for="wizard-farm-owner">Propietario</label>
+                            <input type="text" id="wizard-farm-owner" placeholder="Nombre del propietario">
+                        </div>
+                    </div>
+                    <div class="wizard-form-row">
+                        <div class="wizard-form-group">
+                            <label for="wizard-farm-state">Estado</label>
+                            <input type="text" id="wizard-farm-state" value="Jalisco" placeholder="Estado">
+                        </div>
+                        <div class="wizard-form-group">
+                            <label for="wizard-farm-municipality">Municipio</label>
+                            <input type="text" id="wizard-farm-municipality" placeholder="Ej: Zapopan">
+                        </div>
+                        <div class="wizard-form-group">
+                            <label for="wizard-farm-hectares">Hectareas totales</label>
+                            <input type="number" id="wizard-farm-hectares" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+                <div class="wizard-actions">
+                    <span></span>
+                    <button class="wizard-btn wizard-btn-next" onclick="nextStep()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: Fields -->
+    <section class="wizard-step" id="wizard-step-2">
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Parcelas</h2>
+                <button class="intel-btn intel-btn-sm" onclick="addField()">+ Agregar Parcela</button>
+            </div>
+            <div class="intel-panel-body">
+                <div id="wizard-fields" class="wizard-fields-list">
+                    <!-- Field rows added dynamically -->
+                </div>
+                <div id="wizard-no-fields" class="intel-empty">
+                    Haga clic en "+ Agregar Parcela" para anadir parcelas a la granja
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn wizard-btn-back" onclick="prevStep()">Anterior</button>
+                    <button class="wizard-btn wizard-btn-next" onclick="nextStep()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 3: Confirm & Create -->
+    <section class="wizard-step" id="wizard-step-3">
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Confirmar y Crear</h2>
+            </div>
+            <div class="intel-panel-body">
+                <div id="wizard-summary" class="wizard-summary">
+                    <!-- Summary populated by JS -->
+                </div>
+                <div id="wizard-result" class="wizard-result" style="display:none;"></div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn wizard-btn-back" onclick="prevStep()">Anterior</button>
+                    <button class="wizard-btn wizard-btn-finish" id="wiz-finish-btn" onclick="finishWizard()">Finalizar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success -->
+    <section id="wizard-success" class="intel-panel" style="display:none;">
+        <div class="intel-panel-header">
+            <h2 class="intel-panel-title">Granja Creada</h2>
+        </div>
+        <div class="intel-panel-body" style="text-align:center; padding:2rem;">
+            <p id="wizard-success-msg" style="font-size:1.1rem; margin-bottom:1.5rem;"></p>
+            <a href="/" class="wizard-btn wizard-btn-finish">Ir al Dashboard</a>
+        </div>
+    </section>
+</main>
+
+<script src="/onboarding.js"></script>
+</body>
+</html>
