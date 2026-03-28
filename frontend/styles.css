@@ -891,6 +891,36 @@ nav {
     font-size: 0.6rem; text-transform: uppercase; font-weight: 700;
     color: var(--text-muted); letter-spacing: 0.3px;
 }
+.cerebro-confidence {
+    display: flex; align-items: center; gap: 6px; margin-top: 8px;
+}
+.cerebro-conf-label {
+    font-size: 0.6rem; text-transform: uppercase; font-weight: 600;
+    color: var(--text-muted); letter-spacing: 0.3px;
+}
+.cerebro-insights {
+    margin-top: 14px; display: flex; flex-direction: column; gap: 8px;
+    border-top: 1px solid var(--border); padding-top: 12px;
+}
+.cerebro-insight-item {
+    display: flex; gap: 10px; align-items: baseline;
+    padding: 8px 12px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+}
+.cerebro-insight-item.cerebro-risk {
+    border-left: 3px solid var(--red);
+}
+.cerebro-insight-item.cerebro-action {
+    border-left: 3px solid var(--blue, #3b82f6);
+}
+.cerebro-insight-label {
+    font-size: 0.6rem; text-transform: uppercase; font-weight: 700;
+    color: var(--text-muted); letter-spacing: 0.3px;
+    white-space: nowrap; min-width: 120px;
+}
+.cerebro-insight-text {
+    font-size: 0.85rem; color: var(--text);
+}
 
 /* -- CAMPO RESPONSIVE -- */
 @media (max-width: 640px) {
@@ -899,6 +929,8 @@ nav {
     .campo-header { flex-direction: column; align-items: flex-start; }
     .cerebro-grid { flex-direction: column; }
     .cerebro-badges { gap: 8px; }
+    .cerebro-insight-item { flex-direction: column; gap: 4px; }
+    .cerebro-insight-label { min-width: unset; }
 }
 
 /* ════════════════════════════════════════════════════════════════

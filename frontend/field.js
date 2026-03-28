@@ -1095,8 +1095,31 @@ function renderCerebro(intel) {
     const dr = intel.disease_risk;
     const drCls = dr ? (dr.risk_level === 'alto' ? 'critical' : dr.risk_level === 'medio' ? 'warning' : 'good') : '';
 
-    // Treatment count
-    const treatCount = intel.treatments ? intel.treatments.length : 0;
+    // Treatment count + next action
+    const treats = intel.treatments || [];
+    const treatCount = treats.length;
+    const urgencyOrder = {alta: 0, media: 1, baja: 2};
+    const nextAction = treats.length > 0
+        ? treats.slice().sort((a, b) => (urgencyOrder[a.urgencia] ?? 3) - (urgencyOrder[b.urgencia] ?? 3))[0]
+        : null;
+
+    // Yield estimate
+    const yld = intel.yield_prediction;
+
+    // Sensor confidence (fusion)
+    const fusion = intel.fusion;
+    const confPct = fusion ? Math.round(fusion.confidence * 100) : null;
+    const confCls = fusion ? (fusion.confidence >= 0.7 ? 'good' : fusion.confidence >= 0.4 ? 'warning' : 'critical') : '';
+
+    // Top risk — derive from disease risk or health trend
+    let topRisk = null;
+    if (dr && dr.risk_level !== 'bajo') {
+        topRisk = dr.mensaje || `Riesgo de enfermedad: ${dr.risk_level}`;
+    } else if (h && h.trend === 'declining') {
+        topRisk = 'Salud en declive — revisar condiciones del campo';
+    } else if (ndvi && ndvi.stress_pct > 30) {
+        topRisk = `${ndvi.stress_pct.toFixed(0)}% del campo bajo estres vegetativo`;
+    }
 
     el.innerHTML = `
         <div class="cerebro-grid">
@@ -1105,6 +1128,7 @@ function renderCerebro(intel) {
                     <div class="cerebro-score health-badge ${healthCls}">${h ? Math.round(h.score) : '--'}</div>
                     <div class="cerebro-score-label">Salud <span class="${trendCls}">${trendArrow}</span></div>
                 </div>
+                ${confPct != null ? `<div class="cerebro-confidence"><span class="health-badge ${confCls}">${confPct}%</span> <span class="cerebro-conf-label">Confianza</span></div>` : ''}
             </div>
             <div class="cerebro-badges">
                 ${ndvi ? `<div class="cerebro-badge"><span class="cerebro-badge-label">NDVI</span><span class="health-badge ${ndviCls}">${ndvi.ndvi_mean.toFixed(2)} — ${ndviStatus}</span></div>` : ''}
@@ -1113,8 +1137,15 @@ function renderCerebro(intel) {
                 ${weather ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Clima</span><span class="campo-data-value">${Math.round(weather.temp_c)}C &middot; ${Math.round(weather.humidity_pct)}% hum</span></div>` : ''}
                 ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Etapa</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
                 ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Riesgo</span><span class="health-badge ${drCls}">${esc(dr.risk_level)}</span></div>` : ''}
+                ${yld ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Rendimiento</span><span class="campo-data-value">${Math.round(yld.kg_per_ha).toLocaleString()} kg/ha</span></div>` : ''}
                 ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Tratamientos</span><span class="campo-data-value">${treatCount} activos</span></div>` : ''}
             </div>
+        </div>
+        <div class="cerebro-insights">
+            ${topRisk ? `<div class="cerebro-insight-item cerebro-risk"><span class="cerebro-insight-label">Riesgo Principal</span><span class="cerebro-insight-text">${esc(topRisk)}</span></div>` : ''}
+            ${nextAction ? `<div class="cerebro-insight-item cerebro-action"><span class="cerebro-insight-label">Accion Recomendada</span><span class="cerebro-insight-text">${esc(nextAction.tratamiento)} — ${esc(nextAction.problema)} <span class="health-badge ${nextAction.urgencia === 'alta' ? 'critical' : nextAction.urgencia === 'media' ? 'warning' : 'good'}">${esc(nextAction.urgencia)}</span></span></div>` : ''}
+            ${yld ? `<div class="cerebro-insight-item"><span class="cerebro-insight-label">Estimacion de Rendimiento</span><span class="cerebro-insight-text">${Math.round(yld.min_kg_per_ha).toLocaleString()} — ${Math.round(yld.max_kg_per_ha).toLocaleString()} kg/ha (${esc(yld.nota)})</span></div>` : ''}
+            ${!topRisk && !nextAction && !yld ? '<div class="campo-placeholder">Sin datos de inteligencia avanzada disponibles</div>' : ''}
         </div>`;
 }
 

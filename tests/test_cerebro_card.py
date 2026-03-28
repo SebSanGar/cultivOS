@@ -117,6 +117,54 @@ def test_intelligence_handles_empty_field(client, admin_headers):
     assert data["soil"] is None
 
 
+# ── Enhanced Cerebro card: top risk, next action, yield, confidence ──
+
+def test_intelligence_yields_present(client, farm_with_full_data):
+    """Intelligence endpoint includes yield prediction data when available."""
+    farm = farm_with_full_data["farm"]
+    field = farm_with_full_data["field"]
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/intelligence"
+    )
+    data = resp.json()
+    # yield_prediction may be None if no planted_at, but key must exist
+    assert "yield_prediction" in data
+
+
+def test_intelligence_fusion_present(client, farm_with_full_data):
+    """Intelligence endpoint includes fusion/confidence data."""
+    farm = farm_with_full_data["farm"]
+    field = farm_with_full_data["field"]
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/intelligence"
+    )
+    data = resp.json()
+    assert "fusion" in data
+
+
+def test_intelligence_disease_risk_present(client, farm_with_full_data):
+    """Intelligence endpoint includes disease risk for top-risk derivation."""
+    farm = farm_with_full_data["farm"]
+    field = farm_with_full_data["field"]
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/intelligence"
+    )
+    data = resp.json()
+    assert "disease_risk" in data
+
+
+def test_intelligence_treatments_present(client, farm_with_full_data):
+    """Intelligence endpoint includes treatments for next-action derivation."""
+    farm = farm_with_full_data["farm"]
+    field = farm_with_full_data["field"]
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/intelligence"
+    )
+    data = resp.json()
+    assert "treatments" in data
+    assert isinstance(data["treatments"], list)
+
+
 # ── Frontend JS tests ──
 
 def test_field_js_has_cerebro_render(client):
@@ -135,6 +183,43 @@ def test_field_js_fetches_intelligence(client):
     assert "/intelligence" in js
 
 
+def test_cerebro_renders_yield_estimate(client):
+    """Cerebro card JS renders yield estimate section."""
+    resp = client.get("/field.js")
+    js = resp.text
+    assert "yield_prediction" in js or "yield" in js
+    assert "kg/ha" in js
+
+
+def test_cerebro_renders_sensor_confidence(client):
+    """Cerebro card JS renders sensor confidence from fusion data."""
+    resp = client.get("/field.js")
+    js = resp.text
+    assert "fusion" in js or "confidence" in js
+    assert "Confianza" in js
+
+
+def test_cerebro_renders_top_risk(client):
+    """Cerebro card JS renders top risk indicator."""
+    resp = client.get("/field.js")
+    js = resp.text
+    assert "cerebro-risk" in js or "Riesgo Principal" in js
+
+
+def test_cerebro_renders_next_action(client):
+    """Cerebro card JS renders next recommended action."""
+    resp = client.get("/field.js")
+    js = resp.text
+    assert "cerebro-action" in js or "Accion" in js
+
+
+def test_cerebro_handles_partial_data(client):
+    """Cerebro card shows placeholders when data is missing."""
+    resp = client.get("/field.js")
+    js = resp.text
+    assert "Sin datos" in js or "campo-placeholder" in js
+
+
 # ── CSS tests ──
 
 def test_cerebro_styles_present(client):
@@ -143,3 +228,11 @@ def test_cerebro_styles_present(client):
     assert resp.status_code == 200
     css = resp.text
     assert "cerebro" in css.lower()
+
+
+def test_cerebro_enhanced_styles(client):
+    """styles.css has styles for the enhanced Cerebro sections."""
+    resp = client.get("/styles.css")
+    css = resp.text
+    assert "cerebro-insights" in css
+    assert "cerebro-insight-item" in css
