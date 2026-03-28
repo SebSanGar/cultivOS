@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Disease, Farm, Field, NDVIResult, ThermalResult
+from cultivos.db.models import Disease, Farm, Field, NDVIResult, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.disease import DiseaseMatch, DiseaseOut, DiseaseRiskOut, IdentifyRequest
-from cultivos.services.crop.disease import assess_disease_risk, identify_diseases
+from cultivos.services.crop.disease import assess_disease_weather_risk, identify_diseases
 
 router = APIRouter(
     prefix="/api/knowledge/diseases",
@@ -106,12 +106,23 @@ def get_disease_risk(
             nota="Sin datos NDVI disponibles para evaluar riesgo",
         )
 
-    result = assess_disease_risk(
+    # Fetch latest weather record for the farm
+    weather = (
+        db.query(WeatherRecord)
+        .filter(WeatherRecord.farm_id == farm_id)
+        .order_by(WeatherRecord.recorded_at.desc())
+        .first()
+    )
+
+    result = assess_disease_weather_risk(
         ndvi_mean=ndvi.ndvi_mean,
         stress_pct=ndvi.stress_pct,
         ndvi_std=ndvi.ndvi_std,
         thermal_stress_pct=thermal.stress_pct if thermal else 0.0,
         thermal_temp_mean=thermal.temp_mean if thermal else 25.0,
+        humidity_pct=weather.humidity_pct if weather else 50.0,
+        rainfall_mm=weather.rainfall_mm if weather else 0.0,
+        temp_c=weather.temp_c if weather else 25.0,
     )
 
     return DiseaseRiskOut(
@@ -119,4 +130,5 @@ def get_disease_risk(
         risk_level=result["risk_level"],
         mensaje=result["mensaje"],
         risks=result["risks"],
+        weather_context=result["weather_context"],
     )

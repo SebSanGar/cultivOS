@@ -173,3 +173,118 @@ def assess_disease_risk(
         mensaje=mensaje,
         risks=risks,
     )
+
+
+# -- Weather-enhanced risk assessment -----------------------------------------
+
+HUMIDITY_FUNGAL_THRESHOLD = 80.0  # % — above this, fungal conditions favorable
+RAINFALL_FUNGAL_THRESHOLD = 5.0  # mm — recent rain creates moisture for fungi
+TEMP_FUNGAL_MIN = 20.0  # C — fungi need warmth
+TEMP_FUNGAL_MAX = 35.0  # C — most pathogens thrive in this range
+
+
+class WeatherContext(TypedDict):
+    humidity_pct: float
+    rainfall_mm: float
+    temp_c: float
+
+
+class DiseaseWeatherResult(TypedDict):
+    risk_level: str  # alto, medio, bajo, sin_riesgo
+    mensaje: str
+    risks: list[RiskItem]
+    weather_context: WeatherContext
+
+
+def assess_disease_weather_risk(
+    ndvi_mean: float,
+    stress_pct: float,
+    thermal_stress_pct: float = 0.0,
+    thermal_temp_mean: float = 25.0,
+    ndvi_std: float = 0.10,
+    humidity_pct: float = 50.0,
+    rainfall_mm: float = 0.0,
+    temp_c: float = 25.0,
+) -> DiseaseWeatherResult:
+    """Assess disease risk combining NDVI/thermal anomalies with weather conditions.
+
+    Extends assess_disease_risk by adding fungal risk detection:
+    - High humidity (>80%) + recent rainfall (>5mm) + warm temps (20-35C) = fungal risk
+    - This can elevate risk even when NDVI alone looks borderline
+
+    Args:
+        ndvi_mean: mean NDVI value (0-1)
+        stress_pct: % of NDVI pixels below stress threshold
+        thermal_stress_pct: % of thermal pixels above 35C
+        thermal_temp_mean: mean temperature from thermal sensor (C)
+        ndvi_std: standard deviation of NDVI values
+        humidity_pct: current relative humidity (%)
+        rainfall_mm: recent rainfall in mm
+        temp_c: current air temperature (C)
+
+    Returns:
+        DiseaseWeatherResult with risk assessment including weather context
+    """
+    # Start with base NDVI/thermal risk assessment
+    base = assess_disease_risk(
+        ndvi_mean=ndvi_mean,
+        stress_pct=stress_pct,
+        thermal_stress_pct=thermal_stress_pct,
+        thermal_temp_mean=thermal_temp_mean,
+        ndvi_std=ndvi_std,
+    )
+
+    risks: list[RiskItem] = list(base["risks"])
+
+    # Check fungal-favorable weather conditions
+    is_humid = humidity_pct >= HUMIDITY_FUNGAL_THRESHOLD
+    has_rain = rainfall_mm >= RAINFALL_FUNGAL_THRESHOLD
+    is_warm = TEMP_FUNGAL_MIN <= temp_c <= TEMP_FUNGAL_MAX
+
+    if is_humid and has_rain and is_warm:
+        severity = "alta"
+        if humidity_pct >= 90.0 and rainfall_mm >= 20.0:
+            severity = "alta"
+        elif humidity_pct < 85.0 or rainfall_mm < 10.0:
+            severity = "media"
+
+        risks.append(RiskItem(
+            tipo="Riesgo fungico por clima",
+            descripcion=(
+                f"Condiciones climaticas favorables para hongos: "
+                f"humedad alta ({humidity_pct:.0f}%), "
+                f"lluvia reciente ({rainfall_mm:.0f}mm), "
+                f"temperatura {temp_c:.0f}C. "
+                "Ambiente propicio para desarrollo de enfermedades fungicas "
+                "como roya, tizon, y mildiu."
+            ),
+            recomendacion=(
+                "Monitoreo preventivo del follaje cada 2-3 dias. "
+                "Aplicar caldo bordeles organico (sulfato de cobre + cal) como preventivo. "
+                "Mejorar ventilacion entre plantas si es posible. "
+                "Evitar riego por aspersion durante periodo humedo."
+            ),
+            urgencia=severity,
+            organico=True,
+        ))
+
+    # Determine overall risk level
+    if any(r["urgencia"] == "alta" for r in risks):
+        risk_level = "alto"
+    elif risks:
+        risk_level = "medio"
+    else:
+        risk_level = "sin_riesgo"
+
+    mensaje = f"{len(risks)} riesgo(s) detectado(s)" if risks else "Sin riesgo detectado"
+
+    return DiseaseWeatherResult(
+        risk_level=risk_level,
+        mensaje=mensaje,
+        risks=risks,
+        weather_context=WeatherContext(
+            humidity_pct=humidity_pct,
+            rainfall_mm=rainfall_mm,
+            temp_c=temp_c,
+        ),
+    )

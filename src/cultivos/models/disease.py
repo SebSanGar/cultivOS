@@ -53,9 +53,16 @@ class RiskItemOut(BaseModel):
     organico: bool
 
 
+class WeatherContextOut(BaseModel):
+    humidity_pct: float
+    rainfall_mm: float
+    temp_c: float
+
+
 class DiseaseRiskOut(BaseModel):
     field_id: int
     risk_level: str
     mensaje: str
     risks: list[RiskItemOut]
     nota: str | None = None
+    weather_context: WeatherContextOut | None = None
