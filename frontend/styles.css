@@ -1411,3 +1411,37 @@ nav {
     color: var(--muted, #9ca3af);
     margin-left: auto;
 }
+
+/* ── Mission Plan ── */
+.mission-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.mission-header {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.mission-drone-badge,
+.mission-type-badge {
+    background: var(--surface, #1e1e1e);
+    border: 1px solid var(--border, #333);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text, #e5e5e5);
+}
+.mission-drone-badge {
+    border-color: var(--green, #16a34a);
+    color: var(--green, #16a34a);
+}
+.mission-waypoints-summary {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px solid var(--border, #333);
+    font-size: 0.8rem;
+}

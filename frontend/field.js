@@ -45,7 +45,8 @@ async function loadFieldDetail() {
     // Fetch field info and all intelligence in parallel
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
-           actionTimeline, intelligence, regenScore, seasonalData] = await Promise.all([
+           actionTimeline, intelligence, regenScore, seasonalData,
+           missionPlan] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -61,6 +62,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/intelligence`),
         fetchJSON(`${base}/regenerative-score`),
         fetchJSON(`${base}/seasonal-comparison`),
+        fetchJSON(`${base}/mission-plan`),
     ]);
 
     // Find this field
@@ -129,6 +131,9 @@ async function loadFieldDetail() {
 
     // Seasonal comparison
     renderSeasonalComparison(seasonalData);
+
+    // Mission plan
+    renderMissionPlan(missionPlan);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -587,6 +592,78 @@ function renderSeasonalComparison(data) {
             <div class="seasonal-meta">
                 <span class="seasonal-meta-item">Temporal (Jun-Oct): ${temporal.data_points || 0} registros</span>
                 <span class="seasonal-meta-item">Secas (Nov-May): ${secas.data_points || 0} registros</span>
+            </div>
+        </div>`;
+}
+
+// -- Mission Plan --
+function renderMissionPlan(plan) {
+    const el = document.getElementById('mission-content');
+    if (!plan) {
+        el.innerHTML = '<div class="campo-placeholder">Sin plan de mision disponible</div>';
+        return;
+    }
+
+    const droneLabels = {
+        mavic_multispectral: 'DJI Mavic 3 Multispectral',
+        mavic_thermal: 'DJI Mavic 3 Thermal',
+        agras_t100: 'DJI Agras T100',
+    };
+    const missionLabels = {
+        health_scan: 'Escaneo de salud',
+        thermal_check: 'Revision termica',
+        spray: 'Aplicacion de tratamiento',
+        emergency_recon: 'Reconocimiento de emergencia',
+    };
+
+    const droneName = droneLabels[plan.drone_type] || plan.drone_type;
+    const missionName = missionLabels[plan.mission_type] || plan.mission_type;
+    const waypointCount = plan.waypoints ? plan.waypoints.length : 0;
+
+    el.innerHTML = `
+        <div class="mission-card">
+            <div class="mission-header">
+                <span class="mission-drone-badge">${esc(droneName)}</span>
+                <span class="mission-type-badge">${esc(missionName)}</span>
+            </div>
+            <div class="campo-data-grid">
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Duracion estimada</span>
+                    <span class="campo-data-value">${plan.estimated_duration_min} min</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Baterias necesarias</span>
+                    <span class="campo-data-value">${plan.batteries_needed}</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Altitud</span>
+                    <span class="campo-data-value">${plan.altitude_m} m</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Fotos estimadas</span>
+                    <span class="campo-data-value">${plan.estimated_photos}</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Distancia total</span>
+                    <span class="campo-data-value">${(plan.total_distance_m / 1000).toFixed(1)} km</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Velocidad</span>
+                    <span class="campo-data-value">${plan.speed_ms} m/s</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Cobertura</span>
+                    <span class="campo-data-value">${plan.area_hectares} ha</span>
+                </div>
+                <div class="campo-data-item">
+                    <span class="campo-data-label">Patron</span>
+                    <span class="campo-data-value">${esc(plan.pattern)}</span>
+                </div>
+            </div>
+            <div class="mission-waypoints-summary">
+                <span class="campo-data-label">Waypoints: ${waypointCount}</span>
+                <span class="campo-data-label">Solapamiento: ${plan.overlap_pct}%</span>
+                <span class="campo-data-label">Espaciado: ${plan.line_spacing_m} m</span>
             </div>
         </div>`;
 }
