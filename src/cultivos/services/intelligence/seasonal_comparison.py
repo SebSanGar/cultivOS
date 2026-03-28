@@ -22,6 +22,7 @@ def _empty_season() -> dict:
 def compute_seasonal_comparison(
     health_records: list[dict],
     treatments: list[dict],
+    year: int | None = None,
 ) -> dict:
     """Compute per-season aggregates from health records and treatments.
 
@@ -29,12 +30,24 @@ def compute_seasonal_comparison(
     ----------
     health_records : list of dicts with keys score, ndvi_mean, scored_at
     treatments : list of dicts with key created_at
+    year : optional int — if provided, only include records from that year
 
     Returns
     -------
-    dict with keys "temporal" and "secas", each containing
-    avg_health_score, avg_ndvi, treatment_count, data_points.
+    dict with keys "temporal", "secas" (each with avg_health_score, avg_ndvi,
+    treatment_count, data_points), and "available_years" (sorted desc).
     """
+    # Collect all years from health records
+    all_years = sorted(
+        {rec["scored_at"].year for rec in health_records if rec.get("scored_at")},
+        reverse=True,
+    )
+
+    # Filter by year if specified
+    if year is not None:
+        health_records = [r for r in health_records if r["scored_at"].year == year]
+        treatments = [t for t in treatments if t["created_at"].year == year]
+
     seasons = {
         "temporal": {"scores": [], "ndvis": [], "treatment_count": 0},
         "secas": {"scores": [], "ndvis": [], "treatment_count": 0},
@@ -63,5 +76,7 @@ def compute_seasonal_comparison(
         else:
             result[key] = _empty_season()
             result[key]["treatment_count"] = s["treatment_count"]
+
+    result["available_years"] = all_years
 
     return result

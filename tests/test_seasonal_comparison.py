@@ -180,3 +180,90 @@ def test_compute_seasonal_comparison_empty():
     result = compute_seasonal_comparison([], [])
     assert result["temporal"]["data_points"] == 0
     assert result["secas"]["data_points"] == 0
+
+
+# --- Multi-year tests ---
+
+def test_seasonal_comparison_year_filter(client, db):
+    """Passing ?year= filters to only that year's data."""
+    farm, field = _seed_farm_field(db)
+
+    # 2024 data
+    _add_health(db, field.id, 60.0, 0.50, datetime(2024, 7, 15))
+    _add_treatment(db, field.id, datetime(2024, 8, 1))
+
+    # 2025 data
+    _add_health(db, field.id, 80.0, 0.70, datetime(2025, 7, 15))
+    _add_treatment(db, field.id, datetime(2025, 7, 10))
+    _add_treatment(db, field.id, datetime(2025, 8, 20))
+
+    db.commit()
+
+    # Filter to 2025 only
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/seasonal-comparison?year=2025")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["temporal"]["avg_health_score"] == pytest.approx(80.0)
+    assert data["temporal"]["treatment_count"] == 2
+    assert data["temporal"]["data_points"] == 1
+
+    # Filter to 2024 only
+    resp2 = client.get(f"/api/farms/{farm.id}/fields/{field.id}/seasonal-comparison?year=2024")
+    data2 = resp2.json()
+    assert data2["temporal"]["avg_health_score"] == pytest.approx(60.0)
+    assert data2["temporal"]["treatment_count"] == 1
+
+
+def test_seasonal_comparison_available_years(client, db):
+    """Response includes available_years list sorted descending."""
+    farm, field = _seed_farm_field(db)
+
+    _add_health(db, field.id, 70.0, 0.60, datetime(2023, 3, 1))
+    _add_health(db, field.id, 75.0, 0.65, datetime(2024, 7, 15))
+    _add_health(db, field.id, 80.0, 0.70, datetime(2025, 9, 1))
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/seasonal-comparison")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["available_years"] == [2025, 2024, 2023]
+
+
+def test_seasonal_comparison_year_no_data(client, db):
+    """Filtering to a year with no data returns empty seasons."""
+    farm, field = _seed_farm_field(db)
+
+    _add_health(db, field.id, 80.0, 0.70, datetime(2025, 7, 15))
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/seasonal-comparison?year=2020")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["temporal"]["avg_health_score"] is None
+    assert data["secas"]["avg_health_score"] is None
+    assert data["temporal"]["data_points"] == 0
+
+
+def test_compute_seasonal_comparison_with_year():
+    """Pure function year filtering works."""
+    from cultivos.services.intelligence.seasonal_comparison import (
+        compute_seasonal_comparison,
+    )
+
+    health_records = [
+        {"score": 60.0, "ndvi_mean": 0.5, "scored_at": datetime(2024, 7, 1)},
+        {"score": 80.0, "ndvi_mean": 0.7, "scored_at": datetime(2025, 7, 1)},
+    ]
+    treatments = [
+        {"created_at": datetime(2024, 7, 5)},
+        {"created_at": datetime(2025, 8, 10)},
+    ]
+
+    result = compute_seasonal_comparison(health_records, treatments, year=2025)
+
+    assert result["temporal"]["avg_health_score"] == pytest.approx(80.0)
+    assert result["temporal"]["treatment_count"] == 1
+    assert result["available_years"] == [2025, 2024]

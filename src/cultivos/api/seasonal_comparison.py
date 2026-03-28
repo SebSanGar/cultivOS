@@ -1,6 +1,8 @@
 """Seasonal comparison endpoint — temporal vs secas side-by-side metrics."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field, HealthScore, TreatmentRecord
@@ -27,6 +29,7 @@ def _get_field(farm_id: int, field_id: int, db: Session) -> Field:
 def get_seasonal_comparison(
     farm_id: int,
     field_id: int,
+    year: Optional[int] = Query(None, description="Filter to a specific year"),
     db: Session = Depends(get_db),
 ):
     """Return side-by-side temporal vs secas season metrics for a field, comparing health scores and treatments."""
@@ -55,4 +58,4 @@ def get_seasonal_comparison(
         if t.created_at is not None
     ]
 
-    return compute_seasonal_comparison(health_records, treatments)
+    return compute_seasonal_comparison(health_records, treatments, year=year)

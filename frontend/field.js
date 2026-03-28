@@ -895,9 +895,33 @@ function renderFusion(fusion) {
 
 function renderSeasonalComparison(data) {
     const el = document.getElementById('seasonal-content');
+    const yearSelect = document.getElementById('seasonal-year-select');
+
     if (!data) {
         el.innerHTML = '<div class="campo-placeholder">Sin datos de comparacion estacional</div>';
+        yearSelect.style.display = 'none';
         return;
+    }
+
+    // Populate year selector if available_years present
+    const years = data.available_years || [];
+    if (years.length > 1) {
+        const currentVal = yearSelect.value;
+        yearSelect.innerHTML = '<option value="">Todos los anos</option>' +
+            years.map(y => `<option value="${y}"${String(y) === currentVal ? ' selected' : ''}>${y}</option>`).join('');
+        yearSelect.style.display = '';
+        if (!yearSelect.dataset.bound) {
+            yearSelect.dataset.bound = '1';
+            yearSelect.addEventListener('change', async () => {
+                el.innerHTML = '<div class="campo-placeholder">Cargando...</div>';
+                const yearParam = yearSelect.value ? `?year=${yearSelect.value}` : '';
+                const base = `/farms/${farmId}/fields/${fieldId}`;
+                const newData = await fetchJSON(`${base}/seasonal-comparison${yearParam}`);
+                renderSeasonalComparison(newData);
+            });
+        }
+    } else {
+        yearSelect.style.display = 'none';
     }
 
     const temporal = data.temporal || {};
@@ -942,6 +966,7 @@ function renderSeasonalComparison(data) {
     }
 
     const maxTreatments = Math.max(temporal.treatment_count || 0, secas.treatment_count || 0, 1);
+    const yearLabel = yearSelect.value ? ` (${yearSelect.value})` : ' (Todos)';
 
     el.innerHTML = `
         <div class="seasonal-card">
