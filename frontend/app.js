@@ -1029,6 +1029,32 @@ async function downloadFarmPDF() {
     }
 }
 
+// ── Portfolio PDF Report Download ──
+async function downloadPortfolioPDF() {
+    const btn = document.getElementById('btn-portfolio-pdf');
+    btn.disabled = true;
+    btn.textContent = 'Generando...';
+    try {
+        const resp = await fetch('/api/reports/portfolio', { method: 'POST' });
+        if (!resp.ok) throw new Error(`Error ${resp.status}`);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_portafolio.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        console.error('Portfolio PDF download failed:', e);
+        alert('No se pudo generar el reporte de portafolio. Intente de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Descargar Reporte de Portafolio';
+    }
+}
+
 // ── Farm & Field Creation ──
 function getAuthHeaders() {
     const token = localStorage.getItem('cultivOS_token');
