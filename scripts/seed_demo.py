@@ -4,11 +4,13 @@ Demo data seeder for cultivOS — populates the DB with realistic Jalisco farm d
 Usage:
     PYTHONPATH=src python3 scripts/seed_demo.py
 
-Creates 3 farms with 2-3 fields each, plus historical NDVI, soil, thermal,
-health scores, treatments, and weather records showing improvement over 3 months.
+Creates 3 farms with 2-3 fields each, plus 6 months of time-series data:
+weekly NDVI/health, bi-weekly thermal, monthly soil, every-other-day weather,
+and 4 treatments per field showing a clear regenerative improvement arc.
 Idempotent: checks for existing demo data before inserting.
 """
 
+import math
 from datetime import datetime, timedelta
 
 from cultivos.db.models import (
@@ -18,11 +20,21 @@ from cultivos.db.models import (
 
 DEMO_MARKER = "[DEMO]"
 
+# Jalisco seasons: temporal (rainy) June-October, secas (dry) November-May
+TEMPORAL_MONTHS = {6, 7, 8, 9, 10}
+
 
 def _demo_exists(session) -> bool:
     """Check if demo data is already seeded."""
     farm = session.query(Farm).filter(Farm.name.like(f"%{DEMO_MARKER}%")).first()
     return farm is not None
+
+
+def _seasonal_modifier(dt):
+    """Return a modifier based on Jalisco season. Temporal (rainy) is better for crops."""
+    if dt.month in TEMPORAL_MONTHS:
+        return 0.08  # rainy season boost
+    return -0.03  # dry season slight penalty
 
 
 def seed_demo_data(session):
@@ -31,7 +43,7 @@ def seed_demo_data(session):
         return
 
     now = datetime.utcnow()
-    three_months_ago = now - timedelta(days=90)
+    six_months_ago = now - timedelta(days=182)
 
     # --- Farms ---
     farms_data = [
@@ -90,44 +102,62 @@ def seed_demo_data(session):
         fields_data = farm_data.pop("fields")
         farm = Farm(**farm_data)
         session.add(farm)
-        session.flush()  # get farm.id
+        session.flush()
 
         for field_data in fields_data:
             field = Field(farm_id=farm.id, **field_data)
             session.add(field)
-            session.flush()  # get field.id
+            session.flush()
 
-            _seed_field_history(session, farm, field, now, three_months_ago)
+            _seed_field_history(session, farm, field, now, six_months_ago)
+
+        _seed_weather_history(session, farm, now, six_months_ago)
 
     session.commit()
 
 
 def _seed_field_history(session, farm, field, now, start_date):
-    """Seed historical records for a single field showing improvement over time."""
-    # Generate 6 time points over 3 months
-    intervals = 6
-    delta = (now - start_date) / intervals
+    """Seed 6 months of time-series data for a single field.
 
-    # Base values that improve over time
-    base_ndvi = 0.35 + (hash(field.name) % 10) * 0.02  # 0.35-0.53 starting
-    base_health = 40 + (hash(field.name) % 15)  # 40-54 starting
-    base_temp = 28.0 + (hash(field.name) % 8)  # 28-35 starting stress
+    Data shows a clear before-regenerative → after-regenerative improvement arc:
+    - Weeks 1-8: degraded baseline (low NDVI, low health, high stress)
+    - Weeks 9-12: first treatments applied, early recovery
+    - Weeks 13-26: sustained improvement, strong health scores
+    """
+    total_days = (now - start_date).days  # ~182
+    total_weeks = total_days // 7  # ~26
 
-    for i in range(intervals):
-        ts = start_date + delta * i
-        improvement = i * 0.04  # progressive improvement
+    # Per-field variation from field name hash
+    field_hash = hash(field.name) % 100
+    base_ndvi = 0.30 + (field_hash % 12) * 0.01  # 0.30-0.41
+    base_health = 35 + (field_hash % 12)  # 35-46
+    base_temp = 30.0 + (field_hash % 6)  # 30-35 starting stress
 
-        # NDVI — improving over time
-        ndvi_mean = min(base_ndvi + improvement, 0.85)
-        ndvi_std = 0.08 - i * 0.005  # less variance as field improves
+    # --- Weekly NDVI + Health Scores (26 records each) ---
+    for week in range(total_weeks):
+        ts = start_date + timedelta(weeks=week)
+        progress = week / max(total_weeks - 1, 1)  # 0.0 → 1.0
+        seasonal = _seasonal_modifier(ts)
+
+        # Improvement curve: slow start, accelerates after treatments (week 8-10)
+        if week < 8:
+            improvement = progress * 0.05
+        elif week < 14:
+            improvement = 0.05 + (week - 8) * 0.03
+        else:
+            improvement = 0.05 + 6 * 0.03 + (week - 14) * 0.015
+
+        ndvi_mean = min(base_ndvi + improvement + seasonal, 0.88)
+        ndvi_std = max(0.10 - progress * 0.06, 0.02)
+
         session.add(NDVIResult(
             field_id=field.id,
             ndvi_mean=round(ndvi_mean, 3),
-            ndvi_std=round(max(ndvi_std, 0.02), 3),
+            ndvi_std=round(ndvi_std, 3),
             ndvi_min=round(max(ndvi_mean - 0.15, 0.05), 3),
-            ndvi_max=round(min(ndvi_mean + 0.15, 0.95), 3),
+            ndvi_max=round(min(ndvi_mean + 0.12, 0.95), 3),
             pixels_total=50000,
-            stress_pct=round(max(30 - i * 5, 2), 1),
+            stress_pct=round(max(35 - week * 1.4, 2), 1),
             zones=[
                 {"zone": "norte", "ndvi_mean": round(ndvi_mean + 0.02, 3)},
                 {"zone": "sur", "ndvi_mean": round(ndvi_mean - 0.02, 3)},
@@ -135,23 +165,36 @@ def _seed_field_history(session, farm, field, now, start_date):
             analyzed_at=ts,
         ))
 
-        # Health scores — improving
-        health = min(base_health + i * 8, 92)
-        trend = "improving" if i > 0 else "stable"
+        health = min(base_health + improvement * 150, 94)
+        if week < 2:
+            trend = "stable"
+        elif week < 8:
+            trend = "stable"
+        else:
+            trend = "improving"
+
         session.add(HealthScore(
             field_id=field.id,
             score=round(health, 1),
             ndvi_mean=round(ndvi_mean, 3),
-            ndvi_std=round(max(ndvi_std, 0.02), 3),
-            stress_pct=round(max(30 - i * 5, 2), 1),
+            ndvi_std=round(ndvi_std, 3),
+            stress_pct=round(max(35 - week * 1.4, 2), 1),
             trend=trend,
-            sources=["ndvi", "soil"],
-            breakdown={"ndvi": round(ndvi_mean * 100, 1), "soil": round(health * 0.9, 1)},
+            sources=["ndvi", "soil", "thermal"],
+            breakdown={
+                "ndvi": round(ndvi_mean * 100, 1),
+                "soil": round(health * 0.85, 1),
+                "thermal": round(max(60 - week * 1.5, 20), 1),
+            },
             scored_at=ts,
         ))
 
-        # Thermal — stress reducing over time
-        temp_mean = base_temp - i * 0.5
+    # --- Bi-weekly Thermal (13 records) ---
+    for bi_week in range(total_weeks // 2):
+        ts = start_date + timedelta(weeks=bi_week * 2)
+        progress = bi_week / max(total_weeks // 2 - 1, 1)
+
+        temp_mean = base_temp - progress * 5
         session.add(ThermalResult(
             field_id=field.id,
             temp_mean=round(temp_mean, 1),
@@ -159,73 +202,152 @@ def _seed_field_history(session, farm, field, now, start_date):
             temp_min=round(temp_mean - 4, 1),
             temp_max=round(temp_mean + 6, 1),
             pixels_total=40000,
-            stress_pct=round(max(25 - i * 4, 3), 1),
-            irrigation_deficit=i < 2,  # deficit only early on
+            stress_pct=round(max(30 - bi_week * 2.5, 3), 1),
+            irrigation_deficit=bi_week < 4,
             analyzed_at=ts,
         ))
 
-    # Soil analysis — 2 samples (before and after treatments)
-    session.add(SoilAnalysis(
-        field_id=field.id,
-        ph=6.2, organic_matter_pct=2.1, nitrogen_ppm=25, phosphorus_ppm=15,
-        potassium_ppm=120, texture="loam", moisture_pct=22, electrical_conductivity=0.8,
-        depth_cm=30, notes="Muestra inicial", sampled_at=start_date,
-    ))
-    session.add(SoilAnalysis(
-        field_id=field.id,
-        ph=6.5, organic_matter_pct=3.0, nitrogen_ppm=35, phosphorus_ppm=20,
-        potassium_ppm=140, texture="loam", moisture_pct=28, electrical_conductivity=0.6,
-        depth_cm=30, notes="Post-tratamiento organico", sampled_at=now - timedelta(days=15),
-    ))
+    # --- Monthly Soil (6 records) ---
+    for month_idx in range(6):
+        ts = start_date + timedelta(days=month_idx * 30)
+        progress = month_idx / 5.0
 
-    # Treatments — 2 organic treatments
-    session.add(TreatmentRecord(
-        field_id=field.id,
-        health_score_used=base_health,
-        problema="Estres hidrico moderado",
-        causa_probable="Riego insuficiente y suelo compactado",
-        tratamiento="Aplicar acolchado organico (mulch) de 10cm y ajustar frecuencia de riego",
-        costo_estimado_mxn=3500,
-        urgencia="alta",
-        prevencion="Monitoreo semanal de humedad del suelo con sensor capacitivo",
-        organic=True,
-        ancestral_method_name="Acolchado con rastrojo",
-        applied_at=start_date + timedelta(days=20),
-        applied_notes="Aplicado con rastrojo de maiz",
-        created_at=start_date + timedelta(days=10),
-    ))
-    session.add(TreatmentRecord(
-        field_id=field.id,
-        health_score_used=base_health + 16,
-        problema="Materia organica baja",
-        causa_probable="Suelo degradado por monocultivo previo",
-        tratamiento="Incorporar composta madura 5 ton/ha + inoculante micorriza",
-        costo_estimado_mxn=5000,
-        urgencia="media",
-        prevencion="Rotacion con leguminosas cada 2 ciclos",
-        organic=True,
-        applied_at=start_date + timedelta(days=50),
-        applied_notes="Composta de lombriz local",
-        created_at=start_date + timedelta(days=40),
-    ))
+        # Soil improves gradually with organic amendments
+        ph = round(6.0 + progress * 0.5, 1)
+        om = round(1.8 + progress * 1.4, 1)  # organic matter 1.8% → 3.2%
+        n = round(20 + progress * 20, 0)  # nitrogen 20 → 40 ppm
+        p = round(12 + progress * 10, 0)
+        k = round(110 + progress * 40, 0)
+        moisture = round(18 + progress * 12, 0)
+        ec = round(0.9 - progress * 0.3, 1)
 
-    # Weather — 3 records spread across the period
-    for j, offset_days in enumerate([0, 30, 60]):
-        ts = start_date + timedelta(days=offset_days)
+        notes_map = {
+            0: "Muestra inicial — suelo degradado por monocultivo previo",
+            1: "Post primera aplicacion de composta",
+            2: "Incorporacion de abonos verdes",
+            3: "Post inoculacion micorriza",
+            4: "Suelo en recuperacion activa",
+            5: "Muestra final — mejora significativa en materia organica",
+        }
+
+        session.add(SoilAnalysis(
+            field_id=field.id,
+            ph=ph,
+            organic_matter_pct=om,
+            nitrogen_ppm=n,
+            phosphorus_ppm=p,
+            potassium_ppm=k,
+            texture="loam",
+            moisture_pct=moisture,
+            electrical_conductivity=ec,
+            depth_cm=30,
+            notes=notes_map[month_idx],
+            sampled_at=ts,
+        ))
+
+    # --- 4 Treatments at intervals ---
+    treatments = [
+        {
+            "offset_days": 14,
+            "health_offset": 0,
+            "problema": "Suelo compactado y materia organica baja",
+            "causa_probable": "Monocultivo previo sin rotacion ni enmiendas organicas",
+            "tratamiento": "Aplicar composta madura 8 ton/ha + acolchado organico (mulch) de 10cm",
+            "costo_estimado_mxn": 4500,
+            "urgencia": "alta",
+            "prevencion": "Rotacion con leguminosas cada 2 ciclos + incorporar rastrojo",
+            "ancestral_method_name": "Acolchado con rastrojo",
+            "applied_notes": "Composta de lombriz local + rastrojo de maiz como mulch",
+        },
+        {
+            "offset_days": 50,
+            "health_offset": 10,
+            "problema": "Baja actividad microbiana en rizosfera",
+            "causa_probable": "pH acido y ausencia de inoculantes biologicos",
+            "tratamiento": "Inocular con micorriza arbuscular 2kg/ha + te de composta semanal",
+            "costo_estimado_mxn": 3200,
+            "urgencia": "media",
+            "prevencion": "Mantener cobertura vegetal permanente para alimentar microbiota",
+            "ancestral_method_name": "Abonos verdes",
+            "applied_notes": "Inoculante Glomus intraradices + te de composta aerobico",
+        },
+        {
+            "offset_days": 95,
+            "health_offset": 25,
+            "problema": "Estres hidrico moderado en zona sur del campo",
+            "causa_probable": "Distribucion irregular de riego y suelo con baja retencion",
+            "tratamiento": "Instalar riego por goteo + biochar 3 ton/ha para retencion hidrica",
+            "costo_estimado_mxn": 8500,
+            "urgencia": "media",
+            "prevencion": "Monitoreo semanal de humedad con sensor capacitivo",
+            "applied_notes": "Biochar de cascara de coco + goteo cada 50cm",
+        },
+        {
+            "offset_days": 140,
+            "health_offset": 40,
+            "problema": "Deficiencia leve de nitrogeno en fase de crecimiento",
+            "causa_probable": "Alta demanda del cultivo + lixiviacion por lluvias temporales",
+            "tratamiento": "Aplicar bocashi 4 ton/ha + siembra de frijol de abono intercalado",
+            "costo_estimado_mxn": 3000,
+            "urgencia": "baja",
+            "prevencion": "Intercalar leguminosas fijadoras de nitrogeno en rotacion",
+            "ancestral_method_name": "Milpa",
+            "applied_notes": "Bocashi fermentado 14 dias + frijol terciopelo como cobertura",
+        },
+    ]
+
+    for t in treatments:
+        offset = t.pop("offset_days")
+        health_offset = t.pop("health_offset")
+        session.add(TreatmentRecord(
+            field_id=field.id,
+            health_score_used=base_health + health_offset,
+            organic=True,
+            applied_at=start_date + timedelta(days=offset + 10),
+            created_at=start_date + timedelta(days=offset),
+            **t,
+        ))
+
+
+def _seed_weather_history(session, farm, now, start_date):
+    """Seed every-other-day weather records for a farm over 6 months."""
+    total_days = (now - start_date).days
+    day = 0
+    while day < total_days:
+        ts = start_date + timedelta(days=day)
+        month = ts.month
+        is_temporal = month in TEMPORAL_MONTHS
+
+        # Jalisco climate: temporal is warmer/wetter, secas is cooler/drier
+        if is_temporal:
+            temp = round(26 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
+            humidity = round(70 + (day % 5) * 2, 1)
+            rainfall = round(max(0, 8 + math.sin(day / 7) * 12), 1)
+            description = "Lluvia temporal" if rainfall > 5 else "Parcialmente nublado"
+        else:
+            temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
+            humidity = round(40 + (day % 5) * 2, 1)
+            rainfall = round(max(0, math.sin(day / 15) * 3), 1)
+            description = "Seco y soleado" if rainfall < 1 else "Llovizna ligera"
+
+        wind = round(10 + math.sin(day / 10) * 5, 1)
+
         session.add(WeatherRecord(
             farm_id=farm.id,
-            temp_c=round(24 + j * 2, 1),
-            humidity_pct=round(55 + j * 5, 1),
-            wind_kmh=round(12 - j, 1),
-            rainfall_mm=round(j * 8.5, 1),
-            description="Parcialmente nublado" if j < 2 else "Lluvia ligera",
+            temp_c=temp,
+            humidity_pct=humidity,
+            wind_kmh=wind,
+            rainfall_mm=rainfall,
+            description=description,
             forecast_3day=[
-                {"day": 1, "temp_c": 25, "rain_mm": 0},
-                {"day": 2, "temp_c": 26, "rain_mm": 5},
-                {"day": 3, "temp_c": 24, "rain_mm": 12},
+                {"day": 1, "temp_c": round(temp + 0.5, 1), "rain_mm": round(max(0, rainfall - 2), 1)},
+                {"day": 2, "temp_c": round(temp + 1, 1), "rain_mm": round(max(0, rainfall + 3), 1)},
+                {"day": 3, "temp_c": round(temp - 0.5, 1), "rain_mm": round(max(0, rainfall - 1), 1)},
             ],
             recorded_at=ts,
         ))
+
+        day += 2  # every other day
 
 
 if __name__ == "__main__":
