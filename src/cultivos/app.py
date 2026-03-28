@@ -218,6 +218,11 @@ def create_app() -> FastAPI:
             """Soil CSV import — bulk upload lab results for a field."""
             return FileResponse(frontend_dir / "soil-import.html")
 
+        @app.get("/impacto-economico")
+        async def serve_economic_impact():
+            """Farm economic impact report — savings breakdown in MXN."""
+            return FileResponse(frontend_dir / "economic-impact.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

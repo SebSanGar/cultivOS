@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Impacto Economico</title>
+    <meta name="description" content="Reporte de impacto economico por granja — ahorro en agua, fertilizante y rendimiento en MXN.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/impacto-economico" class="nav-tab intel-tab active">Impacto Economico</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ECONOMIC IMPACT DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Impacto Economico</h1>
+            <p class="intel-subtitle">Ahorro estimado por granja — agua, fertilizante y rendimiento en MXN</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="econ-farm-select" class="intel-select" onchange="loadEconomicImpact()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <button class="intel-btn" onclick="loadEconomicImpact()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="econ-total-savings">--</div>
+            <div class="intel-stat-label">Ahorro total MXN/ano</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="econ-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="econ-water">--</div>
+            <div class="intel-stat-label">Ahorro en agua</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="econ-fertilizer">--</div>
+            <div class="intel-stat-label">Fertilizante</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="econ-yield">--</div>
+            <div class="intel-stat-label">Rendimiento</div>
+        </div>
+    </div>
+
+    <!-- Nota -->
+    <div id="econ-nota" class="econ-nota" style="display:none"></div>
+
+    <!-- Chart -->
+    <div class="econ-chart-section">
+        <h2 class="econ-section-title">Desglose de ahorro por categoria</h2>
+        <div class="econ-chart-wrapper">
+            <canvas id="econ-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Savings detail cards -->
+    <div id="econ-cards" class="econ-cards-grid">
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#4da6ff">&#9672;</div>
+            <h3 class="econ-card-title">Ahorro en agua</h3>
+            <p class="econ-card-desc">Reduccion de desperdicio por riego de precision. CONAGUA reporta 57% de agua desperdiciada por ineficiencia.</p>
+            <div class="econ-card-value" id="econ-card-water">$0 MXN</div>
+        </div>
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#00c896">&#9672;</div>
+            <h3 class="econ-card-title">Fertilizante organico</h3>
+            <p class="econ-card-desc">Aplicacion dirigida de tratamientos organicos vs. aplicacion general. Mas datos = mejor focalizado.</p>
+            <div class="econ-card-value" id="econ-card-fertilizer">$0 MXN</div>
+        </div>
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#f0b429">&#9672;</div>
+            <h3 class="econ-card-title">Rendimiento</h3>
+            <p class="econ-card-desc">Mejora de rendimiento por intervencion temprana basada en datos de salud del cultivo.</p>
+            <div class="econ-card-value" id="econ-card-yield">$0 MXN</div>
+        </div>
+    </div>
+
+    <!-- Reference -->
+    <div class="econ-reference">
+        <p>Referencia: $414,000 MXN/ano para una granja tipica de 20 hectareas en Jalisco. Basado en datos de CONAGUA, precios de mercado local, y literatura de agricultura de precision.</p>
+    </div>
+</main>
+
+<script src="/economic-impact.js"></script>
+</body>
+</html>
