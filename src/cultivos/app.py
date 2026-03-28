@@ -188,6 +188,11 @@ def create_app() -> FastAPI:
             """Login and registration page."""
             return FileResponse(frontend_dir / "login.html")
 
+        @app.get("/estado")
+        async def serve_status():
+            """Platform status dashboard — system health, data freshness, endpoint checks."""
+            return FileResponse(frontend_dir / "status.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

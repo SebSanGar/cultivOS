@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Estado de la Plataforma</title>
+    <meta name="description" content="Estado operativo de la plataforma cultivOS — salud del sistema, conectividad, y frescura de datos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab active">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- STATUS DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Estado de la Plataforma</h1>
+            <p class="intel-subtitle">Salud del sistema, conectividad y frescura de datos</p>
+        </div>
+        <div class="intel-header-actions">
+            <button class="intel-btn" onclick="loadStatus()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- System overview strip -->
+    <div class="intel-stats-strip" id="status-overview">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="status-api-version">--</div>
+            <div class="intel-stat-label">Version API</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="status-uptime">--</div>
+            <div class="intel-stat-label">Tiempo Activo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="status-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="status-fields">--</div>
+            <div class="intel-stat-label">Campos</div>
+        </div>
+    </div>
+
+    <!-- Panels -->
+    <div class="intel-grid">
+        <!-- DB Health -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Conectividad</h2>
+                <span class="intel-badge" id="status-db-badge">--</span>
+            </div>
+            <div class="intel-panel-body">
+                <div class="status-check-row">
+                    <span class="status-check-label">Base de datos</span>
+                    <span class="status-check-indicator" id="status-db-indicator"></span>
+                </div>
+                <div class="status-check-row">
+                    <span class="status-check-label">API REST</span>
+                    <span class="status-check-indicator status-ok" id="status-api-indicator"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data freshness -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Frescura de Datos</h2>
+            </div>
+            <div class="intel-panel-body">
+                <div class="status-check-row">
+                    <span class="status-check-label">Suelo</span>
+                    <span class="status-ts" id="status-soil-ts">--</span>
+                </div>
+                <div class="status-check-row">
+                    <span class="status-check-label">NDVI</span>
+                    <span class="status-ts" id="status-ndvi-ts">--</span>
+                </div>
+                <div class="status-check-row">
+                    <span class="status-check-label">Termico</span>
+                    <span class="status-ts" id="status-thermal-ts">--</span>
+                </div>
+                <div class="status-check-row">
+                    <span class="status-check-label">Clima</span>
+                    <span class="status-ts" id="status-weather-ts">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Endpoint health -->
+        <div class="intel-panel intel-panel-wide">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Endpoints Activos</h2>
+                <span class="intel-badge" id="status-endpoints-count">--</span>
+            </div>
+            <div id="status-endpoints" class="intel-panel-body">
+                <div class="loading"><div class="loading-spinner"></div>Verificando...</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/auth-guard.js"></script>
+<script src="/status.js"></script>
+</body>
+</html>

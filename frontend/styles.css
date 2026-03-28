@@ -2888,3 +2888,29 @@ nav {
     .comparison-table { font-size: 0.78rem; }
     .comparison-table thead th, .comparison-table tbody td { padding: 8px 6px; }
 }
+
+/* ── Status Dashboard ── */
+.status-check-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.status-check-row:last-child { border-bottom: none; }
+.status-check-label { color: #ccc; font-size: 0.9rem; }
+.status-check-indicator {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #444; display: inline-block;
+}
+.status-check-indicator.status-ok { background: var(--play-green, #00c896); }
+.status-check-indicator.status-err { background: #e74c3c; }
+.status-ts { font-family: 'Inter', monospace; font-size: 0.85rem; }
+.status-ts.status-fresh { color: var(--play-green, #00c896); }
+.status-ts.status-aging { color: var(--watch-yellow, #f0b429); }
+.status-ts.status-stale { color: #666; }
+.status-badge-ok { background: var(--play-green, #00c896) !important; color: #000 !important; }
+.status-badge-err { background: #e74c3c !important; color: #fff !important; }
+.status-ep-badge {
+    font-size: 0.78rem; padding: 2px 8px; border-radius: 4px;
+    font-family: 'Inter', monospace;
+}
+.status-ep-ok { background: rgba(0,200,150,0.15); color: var(--play-green, #00c896); }
+.status-ep-err { background: rgba(231,76,60,0.15); color: #e74c3c; }
