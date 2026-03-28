@@ -213,6 +213,11 @@ def create_app() -> FastAPI:
             """Platform status dashboard — system health, data freshness, endpoint checks."""
             return FileResponse(frontend_dir / "status.html")
 
+        @app.get("/importar-suelo")
+        async def serve_soil_import():
+            """Soil CSV import — bulk upload lab results for a field."""
+            return FileResponse(frontend_dir / "soil-import.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

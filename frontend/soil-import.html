@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Importar Datos de Suelo</title>
+    <meta name="description" content="Importar datos de analisis de suelo desde archivos CSV — carga masiva de resultados de laboratorio.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/gestion" class="nav-tab intel-tab">Gestion</a></li>
+            <li><a href="/importar-suelo" class="nav-tab intel-tab active">Suelo CSV</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- SOIL IMPORT PAGE -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Importar Datos de Suelo</h1>
+            <p class="intel-subtitle">Carga masiva de resultados de laboratorio desde archivos CSV</p>
+        </div>
+    </div>
+
+    <!-- Step 1: Select Farm + Field -->
+    <section class="mgmt-section">
+        <h2 class="mgmt-section-title">1. Seleccionar Granja y Parcela</h2>
+        <div class="si-selector-row">
+            <div class="mgmt-form-group">
+                <label class="mgmt-label" for="si-farm-select">Granja</label>
+                <select id="si-farm-select" class="mgmt-input">
+                    <option value="">-- Seleccionar granja --</option>
+                </select>
+            </div>
+            <div class="mgmt-form-group">
+                <label class="mgmt-label" for="si-field-select">Parcela</label>
+                <select id="si-field-select" class="mgmt-input" disabled>
+                    <option value="">-- Seleccionar parcela --</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: File Upload -->
+    <section class="mgmt-section">
+        <h2 class="mgmt-section-title">2. Archivo CSV</h2>
+        <div class="si-upload-area">
+            <p class="si-help-text">
+                El archivo debe contener la columna <strong>sampled_at</strong> (fecha de muestreo).
+                Columnas opcionales: ph, organic_matter_pct, nitrogen_ppm, phosphorus_ppm, potassium_ppm, texture, moisture_pct, electrical_conductivity, depth_cm, notes, recommendations.
+            </p>
+            <input type="file" id="si-file-input" accept=".csv" class="si-file-input">
+            <label for="si-file-input" class="si-file-label">Seleccionar archivo .csv</label>
+        </div>
+    </section>
+
+    <!-- Step 3: Preview -->
+    <section class="mgmt-section" id="si-preview-section" style="display:none;">
+        <h2 class="mgmt-section-title">3. Vista Previa</h2>
+        <div class="si-preview-wrapper">
+            <table class="mgmt-table" id="si-preview-table">
+                <thead id="si-preview-thead"></thead>
+                <tbody id="si-preview-tbody"></tbody>
+            </table>
+        </div>
+        <p id="si-preview-count" class="si-help-text"></p>
+    </section>
+
+    <!-- Import Button -->
+    <section class="mgmt-section" id="si-action-section" style="display:none;">
+        <button id="si-import-btn" class="mgmt-btn mgmt-btn-create" disabled>
+            Importar Datos
+        </button>
+        <span id="si-import-status" class="si-status-text"></span>
+    </section>
+
+    <!-- Results -->
+    <section class="mgmt-section" id="si-results" style="display:none;">
+        <h2 class="mgmt-section-title">Resultado de Importacion</h2>
+        <div class="si-results-grid">
+            <div class="si-result-card si-result-imported">
+                <span class="si-result-value" id="si-count-imported">0</span>
+                <span class="si-result-label">Registros importados</span>
+            </div>
+            <div class="si-result-card si-result-skipped">
+                <span class="si-result-value" id="si-count-skipped">0</span>
+                <span class="si-result-label">Duplicados omitidos</span>
+            </div>
+            <div class="si-result-card si-result-errors">
+                <span class="si-result-value" id="si-count-errors">0</span>
+                <span class="si-result-label">Filas con errores</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Errors -->
+    <section class="mgmt-section" id="si-errors" style="display:none;">
+        <h2 class="mgmt-section-title">Errores</h2>
+        <div id="si-error-list" class="si-error-list"></div>
+    </section>
+
+</main>
+
+<script src="/soil-import.js"></script>
+</body>
+</html>

@@ -3359,3 +3359,27 @@ nav {
     .mgmt-form-row { flex-direction: column; }
     .mgmt-actions-cell { flex-direction: column; }
 }
+
+/* ── Soil CSV Import ── */
+.si-selector-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.si-selector-row .mgmt-form-group { flex: 1; min-width: 200px; }
+.si-upload-area { padding: 16px 0; }
+.si-help-text { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; line-height: 1.5; }
+.si-file-input { display: none; }
+.si-file-label { display: inline-block; padding: 10px 20px; background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; color: var(--text); cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s; }
+.si-file-label:hover { border-color: var(--accent, #00c896); }
+.si-preview-wrapper { overflow-x: auto; max-height: 320px; overflow-y: auto; }
+.si-status-text { color: var(--text-muted); font-size: 0.85rem; margin-left: 12px; }
+.si-results-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.si-result-card { flex: 1; min-width: 140px; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid var(--border); background: var(--surface); }
+.si-result-value { display: block; font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+.si-result-imported .si-result-value { color: #00c896; }
+.si-result-skipped .si-result-value { color: #f0b429; }
+.si-result-errors .si-result-value { color: #e74c3c; }
+.si-result-label { color: var(--text-muted); font-size: 0.8rem; }
+.si-error-list { display: flex; flex-direction: column; gap: 6px; }
+.si-error-row { padding: 8px 12px; background: rgba(231,76,60,0.1); border-radius: 6px; color: #e74c3c; font-size: 0.85rem; }
+@media (max-width: 640px) {
+    .si-selector-row { flex-direction: column; }
+    .si-results-grid { flex-direction: column; }
+}
