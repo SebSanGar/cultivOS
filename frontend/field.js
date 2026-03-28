@@ -48,7 +48,7 @@ async function loadFieldDetail() {
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
-           anomaliesData, completenessData, regionalData, carbonData] = await Promise.all([
+           anomaliesData, completenessData, regionalData, carbonData, weatherRecords] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -76,6 +76,7 @@ async function loadFieldDetail() {
         fetchJSON(`/farms/${farmId}/data-completeness`),
         fetchJSON(`/farms/${farmId}/recommendations`),
         fetchJSON(`${base}/carbon`),
+        fetchJSON(`/farms/${farmId}/weather`),
     ]);
 
     // Find this field
@@ -129,6 +130,13 @@ async function loadFieldDetail() {
 
     // Irrigation
     if (irrigation) renderIrrigation(irrigation);
+
+    // Treatment timing — needs pending treatments + weather forecast
+    const pendingTreatments = treatments ? treatments.filter(t => !t.applied_at) : [];
+    const latestWeather = weatherRecords && weatherRecords.length > 0 ? weatherRecords[0] : null;
+    if (pendingTreatments.length > 0) {
+        loadTreatmentTiming(pendingTreatments, latestWeather);
+    }
 
     // Yield
     if (yieldPred) renderYield(yieldPred);
@@ -1618,6 +1626,137 @@ function renderDataCompleteness(data, currentFieldId) {
                 </div>
             `).join('')}
         </div>`;
+}
+
+// ── Treatment Timing ────────────────────────────────────────────────
+
+function classifyTreatmentType(tratamiento) {
+    const t = (tratamiento || '').toLowerCase();
+    if (t.includes('foliar') || t.includes('aspersi') || t.includes('neem') || t.includes('spray')) {
+        return 'foliar_spray';
+    }
+    if (t.includes('drench') || t.includes('riego') || t.includes('solucion')) {
+        return 'soil_drench';
+    }
+    return 'organic_amendment';
+}
+
+const TREATMENT_TYPE_LABELS = {
+    organic_amendment: 'Enmienda organica',
+    foliar_spray: 'Aplicacion foliar',
+    soil_drench: 'Riego al suelo',
+};
+
+async function loadTreatmentTiming(pendingTreatments, latestWeather) {
+    const forecast = latestWeather && latestWeather.forecast_3day && latestWeather.forecast_3day.length > 0
+        ? latestWeather.forecast_3day
+        : [];
+
+    // Group treatments by type
+    const byType = {};
+    for (const t of pendingTreatments) {
+        const type = classifyTreatmentType(t.tratamiento);
+        if (!byType[type]) byType[type] = [];
+        byType[type].push(t);
+    }
+
+    // Fetch timing for each unique type
+    const types = Object.keys(byType);
+    const results = await Promise.all(types.map(type =>
+        fetch(API + '/intel/treatment-timing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                treatment_type: type,
+                forecast_3day: forecast.map(d => ({
+                    description: d.description || '',
+                    temp_c: d.temp_c || 28,
+                    humidity_pct: d.humidity_pct || 55,
+                    wind_kmh: d.wind_kmh || 8,
+                })),
+            }),
+        }).then(r => r.ok ? r.json() : null).catch(() => null)
+    ));
+
+    // Combine type info with timing results
+    const timingData = types.map((type, i) => ({
+        type,
+        label: TREATMENT_TYPE_LABELS[type] || type,
+        treatments: byType[type],
+        timing: results[i],
+    }));
+
+    renderTreatmentTiming(timingData, forecast);
+}
+
+function renderTreatmentTiming(timingData, forecast) {
+    const el = document.getElementById('treatment-timing-content');
+    if (!el) return;
+
+    if (!timingData || timingData.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin tratamientos pendientes</div>';
+        return;
+    }
+
+    const dayLabels = ['Hoy', 'Manana', 'Pasado manana'];
+
+    // Rain warning from forecast
+    const rainyDays = forecast
+        .map((d, i) => ({ idx: i, rain: d.rainfall_mm || 0, desc: d.description || '' }))
+        .filter(d => d.rain > 0 || d.desc.toLowerCase().includes('lluvia'));
+
+    let rainWarningHtml = '';
+    if (rainyDays.length > 0) {
+        const rainDayNames = rainyDays.map(d => dayLabels[d.idx] || `Dia ${d.idx + 1}`).join(', ');
+        rainWarningHtml = `<div class="timing-rain-warning">Lluvia esperada: ${esc(rainDayNames)}</div>`;
+    }
+
+    // Forecast bar
+    let forecastHtml = '';
+    if (forecast.length > 0) {
+        forecastHtml = `<div class="timing-forecast">${forecast.map((d, i) => {
+            const hasRain = (d.rainfall_mm || 0) > 0 || (d.description || '').toLowerCase().includes('lluvia');
+            return `<div class="timing-forecast-day ${hasRain ? 'timing-rain-day' : ''}">
+                <span class="timing-forecast-label">${dayLabels[i] || 'Dia ' + (i + 1)}</span>
+                <span class="timing-forecast-temp">${Math.round(d.temp_c)}C</span>
+                ${hasRain ? '<span class="timing-forecast-rain">lluvia</span>' : ''}
+            </div>`;
+        }).join('')}</div>`;
+    }
+
+    // Timing cards per type
+    const cardsHtml = timingData.map(item => {
+        const t = item.timing;
+        if (!t) {
+            return `<div class="timing-card">
+                <div class="timing-card-type">${esc(item.label)}</div>
+                <div class="campo-placeholder">Sin pronostico disponible</div>
+                <div class="timing-card-treatments">${item.treatments.map(tr =>
+                    `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
+                ).join('')}</div>
+            </div>`;
+        }
+
+        const bestDayLabel = dayLabels[t.best_day] || `Dia ${t.best_day + 1}`;
+        const avoidHtml = t.avoid_days && t.avoid_days.length > 0
+            ? `<div class="timing-avoid">Evitar: ${t.avoid_days.map(d => dayLabels[d] || `Dia ${d + 1}`).join(', ')}</div>`
+            : '';
+
+        return `<div class="timing-card">
+            <div class="timing-card-type">${esc(item.label)}</div>
+            <div class="timing-card-best">
+                <span class="timing-best-day">${esc(bestDayLabel)}</span>
+                <span class="timing-best-time">${esc(t.best_time)}</span>
+            </div>
+            <div class="timing-card-reason">${esc(t.reason)}</div>
+            ${avoidHtml}
+            <div class="timing-card-treatments">${item.treatments.map(tr =>
+                `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
+            ).join('')}</div>
+        </div>`;
+    }).join('');
+
+    el.innerHTML = `${rainWarningHtml}${forecastHtml}${cardsHtml}`;
 }
 
 // -- Init --

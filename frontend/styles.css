@@ -2583,3 +2583,45 @@ nav {
 @media (max-width: 640px) {
     .tour-tooltip { max-width: calc(100vw - 32px); min-width: 200px; }
 }
+
+/* ── Treatment Timing Card ─────────────────────────────────── */
+.timing-rain-warning {
+    background: rgba(239, 68, 68, 0.15); color: #fca5a5; padding: 8px 12px;
+    border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem;
+}
+.timing-forecast {
+    display: flex; gap: 8px; margin-bottom: 12px;
+}
+.timing-forecast-day {
+    flex: 1; background: #1e1e2e; border-radius: 6px; padding: 8px;
+    text-align: center; font-size: 0.8rem; color: #9ca3af;
+}
+.timing-rain-day {
+    border: 1px solid rgba(96, 165, 250, 0.4); background: rgba(96, 165, 250, 0.08);
+}
+.timing-forecast-label { display: block; font-weight: 600; color: #e5e7eb; margin-bottom: 2px; }
+.timing-forecast-temp { display: block; }
+.timing-forecast-rain { display: block; color: #60a5fa; font-size: 0.75rem; }
+.timing-card {
+    background: #1e1e2e; border-radius: 8px; padding: 12px;
+    margin-bottom: 8px;
+}
+.timing-card-type {
+    font-weight: 600; color: #e5e7eb; margin-bottom: 6px; font-size: 0.9rem;
+}
+.timing-card-best {
+    display: flex; gap: 12px; align-items: baseline; margin-bottom: 6px;
+}
+.timing-best-day {
+    font-size: 1.1rem; font-weight: 700; color: #16a34a;
+}
+.timing-best-time { color: #9ca3af; font-size: 0.85rem; }
+.timing-card-reason { color: #9ca3af; font-size: 0.82rem; margin-bottom: 6px; }
+.timing-avoid {
+    color: #fca5a5; font-size: 0.82rem; margin-bottom: 6px;
+}
+.timing-card-treatments { display: flex; flex-wrap: wrap; gap: 4px; }
+.timing-treatment-name {
+    background: rgba(22, 163, 74, 0.12); color: #86efac; padding: 2px 8px;
+    border-radius: 4px; font-size: 0.75rem;
+}
