@@ -3257,3 +3257,56 @@ nav {
     .flights-table { font-size: 0.78rem; }
     .flights-table thead th, .flights-table tbody td { padding: 8px 6px; }
 }
+
+/* == Recommendations Page == */
+.recs-cards-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 16px;
+}
+.recs-card {
+    background: var(--card-bg, #141414); border: 1px solid var(--border, #222); border-radius: 10px;
+    overflow: hidden; transition: border-color 0.2s;
+}
+.recs-card:hover { border-color: var(--play-green, #00c896); }
+.recs-card-header {
+    display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border, #222); gap: 8px; flex-wrap: wrap;
+}
+.recs-card-field { display: flex; flex-direction: column; gap: 2px; }
+.recs-field-name { font-weight: 600; font-size: 0.95rem; color: var(--text, #e0e0e0); }
+.recs-crop-type { font-size: 0.78rem; color: var(--muted, #888); }
+.recs-card-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.recs-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap;
+}
+.recs-badge-urgencia { color: #fff; }
+.recs-badge-organic { background: rgba(0, 200, 150, 0.15); color: #00c896; border: 1px solid rgba(0, 200, 150, 0.3); }
+.recs-badge-ancestral { background: rgba(77, 166, 255, 0.15); color: #4da6ff; border: 1px solid rgba(77, 166, 255, 0.3); }
+.recs-card-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.recs-card-row { display: flex; flex-direction: column; gap: 2px; }
+.recs-card-label { font-size: 0.75rem; color: var(--muted, #888); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+.recs-card-value { font-size: 0.88rem; color: var(--text, #e0e0e0); line-height: 1.4; }
+.recs-card-treatment .recs-card-value { color: var(--play-green, #00c896); font-weight: 500; }
+.recs-card-footer {
+    display: flex; justify-content: space-between; align-items: center; padding: 10px 16px;
+    border-top: 1px solid var(--border, #222); gap: 12px; flex-wrap: wrap;
+}
+.recs-card-cost { font-size: 0.88rem; font-weight: 600; color: var(--play-green, #00c896); }
+.recs-card-cost-cad { font-size: 0.78rem; color: var(--muted, #888); }
+.recs-health-score { font-weight: 700; }
+.recs-region-info {
+    background: var(--card-bg, #141414); border: 1px solid var(--border, #222); border-radius: 10px;
+    padding: 14px 18px; margin-top: 12px;
+}
+.recs-region-grid { display: flex; flex-wrap: wrap; gap: 16px 32px; }
+.recs-region-item { display: flex; flex-direction: column; gap: 2px; }
+.recs-region-notes { flex-basis: 100%; }
+.recs-region-label { font-size: 0.72rem; color: var(--muted, #888); text-transform: uppercase; letter-spacing: 0.04em; }
+.recs-region-value { font-size: 0.88rem; color: var(--text, #e0e0e0); }
+.recs-placeholder, .recs-loading, .recs-empty {
+    text-align: center; color: #888; padding: 40px 20px; font-size: 0.9rem; grid-column: 1 / -1;
+}
+@media (max-width: 640px) {
+    .recs-cards-grid { grid-template-columns: 1fr; }
+    .recs-card-header { flex-direction: column; }
+}

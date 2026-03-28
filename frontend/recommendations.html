@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Recomendaciones</title>
+    <meta name="description" content="Recomendaciones agricolas por granja — tratamientos organicos, metodos ancestrales, y costos estimados.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab active">Recomendaciones</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- RECOMMENDATIONS DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Recomendaciones</h1>
+            <p class="intel-subtitle">Tratamientos y acciones recomendadas por Cerebro para cada granja</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="recs-farm-select" class="intel-select" onchange="loadRecommendations()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <button class="intel-btn" onclick="loadRecommendations()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="recs-total">--</div>
+            <div class="intel-stat-label">Recomendaciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="recs-urgent">--</div>
+            <div class="intel-stat-label">Urgentes</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="recs-organic">--</div>
+            <div class="intel-stat-label">Organicas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="recs-fields">--</div>
+            <div class="intel-stat-label">Campos afectados</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="recs-cost">--</div>
+            <div class="intel-stat-label">Costo total estimado</div>
+        </div>
+    </div>
+
+    <!-- Region info -->
+    <div id="recs-region-info" class="recs-region-info" style="display:none"></div>
+
+    <!-- Recommendation cards -->
+    <div id="recs-cards" class="recs-cards-grid">
+        <div class="recs-placeholder">Seleccione una granja para ver las recomendaciones de Cerebro.</div>
+    </div>
+</main>
+
+<script src="/recommendations.js"></script>
+</body>
+</html>
