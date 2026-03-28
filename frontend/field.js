@@ -45,7 +45,7 @@ async function loadFieldDetail() {
     // Fetch field info and all intelligence in parallel
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
-           actionTimeline] = await Promise.all([
+           actionTimeline, intelligence] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -58,6 +58,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/disease-risk`),
         fetchJSON(`${base}/health/history`),
         fetchJSON(`${base}/action-timeline`),
+        fetchJSON(`${base}/intelligence`),
     ]);
 
     // Find this field
@@ -76,6 +77,9 @@ async function loadFieldDetail() {
     document.getElementById('btn-back').onclick = function() {
         window.location.href = '/';
     };
+
+    // Cerebro intelligence summary
+    renderCerebro(intelligence);
 
     // Health score
     const latestHealth = healthList && healthList.length > 0 ? healthList[healthList.length - 1] : null;
@@ -407,6 +411,61 @@ function renderHealthChart(history) {
             }
         }
     });
+}
+
+// -- Cerebro Intelligence Summary --
+function renderCerebro(intel) {
+    const el = document.getElementById('cerebro-content');
+    if (!intel) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de inteligencia disponibles</div>';
+        return;
+    }
+
+    // Health score — big number + trend
+    const h = intel.health;
+    const healthCls = h ? (h.score > 70 ? 'good' : h.score >= 40 ? 'warning' : 'critical') : 'none';
+    const trendArrow = h ? (h.trend === 'improving' ? ' &#x25B2;' : h.trend === 'declining' ? ' &#x25BC;' : ' &#x25CF;') : '';
+    const trendCls = h ? (h.trend === 'improving' ? 'cerebro-trend-up' : h.trend === 'declining' ? 'cerebro-trend-down' : 'cerebro-trend-stable') : '';
+
+    // NDVI badge
+    const ndvi = intel.ndvi;
+    const ndviStatus = ndvi ? (ndvi.ndvi_mean >= 0.6 ? 'Saludable' : ndvi.ndvi_mean >= 0.3 ? 'Moderado' : 'Estresado') : null;
+    const ndviCls = ndvi ? (ndvi.ndvi_mean >= 0.6 ? 'good' : ndvi.ndvi_mean >= 0.3 ? 'warning' : 'critical') : '';
+
+    // Soil summary
+    const soil = intel.soil;
+
+    // Weather
+    const weather = intel.weather;
+
+    // Growth stage
+    const gs = intel.growth_stage;
+
+    // Disease risk
+    const dr = intel.disease_risk;
+    const drCls = dr ? (dr.risk_level === 'alto' ? 'critical' : dr.risk_level === 'medio' ? 'warning' : 'good') : '';
+
+    // Treatment count
+    const treatCount = intel.treatments ? intel.treatments.length : 0;
+
+    el.innerHTML = `
+        <div class="cerebro-grid">
+            <div class="cerebro-hero">
+                <div class="cerebro-score-wrap">
+                    <div class="cerebro-score health-badge ${healthCls}">${h ? Math.round(h.score) : '--'}</div>
+                    <div class="cerebro-score-label">Salud <span class="${trendCls}">${trendArrow}</span></div>
+                </div>
+            </div>
+            <div class="cerebro-badges">
+                ${ndvi ? `<div class="cerebro-badge"><span class="cerebro-badge-label">NDVI</span><span class="health-badge ${ndviCls}">${ndvi.ndvi_mean.toFixed(2)} — ${ndviStatus}</span></div>` : ''}
+                ${soil ? `<div class="cerebro-badge"><span class="cerebro-badge-label">pH</span><span class="campo-data-value">${soil.ph}</span></div>` : ''}
+                ${soil && soil.organic_matter_pct != null ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Materia Org.</span><span class="campo-data-value">${soil.organic_matter_pct}%</span></div>` : ''}
+                ${weather ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Clima</span><span class="campo-data-value">${Math.round(weather.temp_c)}C &middot; ${Math.round(weather.humidity_pct)}% hum</span></div>` : ''}
+                ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Etapa</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
+                ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Riesgo</span><span class="health-badge ${drCls}">${esc(dr.risk_level)}</span></div>` : ''}
+                ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Tratamientos</span><span class="campo-data-value">${treatCount} activos</span></div>` : ''}
+            </div>
+        </div>`;
 }
 
 // -- Init --

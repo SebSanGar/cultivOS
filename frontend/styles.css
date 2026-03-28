@@ -516,11 +516,50 @@ nav {
     font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
 }
 
+/* ── CEREBRO INTELLIGENCE SUMMARY ── */
+.cerebro-grid {
+    display: flex; gap: 20px; align-items: flex-start;
+}
+.cerebro-hero {
+    flex-shrink: 0; text-align: center;
+}
+.cerebro-score-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.cerebro-score {
+    font-size: 2.2rem; font-weight: 800; line-height: 1;
+    padding: 12px 20px; border-radius: 12px;
+    font-variant-numeric: tabular-nums;
+}
+.cerebro-score-label {
+    font-size: 0.7rem; text-transform: uppercase; font-weight: 600;
+    color: var(--text-muted); letter-spacing: 0.3px;
+}
+.cerebro-trend-up { color: var(--green); }
+.cerebro-trend-down { color: var(--red); }
+.cerebro-trend-stable { color: var(--text-muted); }
+.cerebro-badges {
+    flex: 1; display: flex; flex-wrap: wrap; gap: 10px;
+    align-content: flex-start;
+}
+.cerebro-badge {
+    display: flex; flex-direction: column; gap: 2px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    min-width: 100px;
+}
+.cerebro-badge-label {
+    font-size: 0.6rem; text-transform: uppercase; font-weight: 700;
+    color: var(--text-muted); letter-spacing: 0.3px;
+}
+
 /* -- CAMPO RESPONSIVE -- */
 @media (max-width: 640px) {
     .campo-grid { grid-template-columns: 1fr; }
     .campo-data-grid { grid-template-columns: repeat(2, 1fr); }
     .campo-header { flex-direction: column; align-items: flex-start; }
+    .cerebro-grid { flex-direction: column; }
+    .cerebro-badges { gap: 8px; }
 }
 
 /* ════════════════════════════════════════════════════════════════
