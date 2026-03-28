@@ -153,10 +153,13 @@ async function loadSoilTrends() {
     });
 }
 
-// ── Treatment Effectiveness ──
-async function loadTreatments() {
-    const container = document.getElementById('intel-treatments');
-    const data = await fetchJSON(API + '/treatments');
+// ── Treatment Effectiveness Report ──
+async function loadTreatmentReport() {
+    const container = document.getElementById('intel-treatment-report');
+    const filter = document.getElementById('treatment-crop-filter');
+    const crop_type = filter ? filter.value : '';
+    const qs = crop_type ? '?crop_type=' + encodeURIComponent(crop_type) : '';
+    const data = await fetchJSON(API + '/treatment-effectiveness-report' + qs);
 
     if (!data || data.treatments.length === 0) {
         container.innerHTML = '<div class="intel-empty">Sin datos de tratamientos</div>';
@@ -164,22 +167,67 @@ async function loadTreatments() {
     }
 
     container.innerHTML = data.treatments.map(t => {
-        const delta = t.delta != null ? (t.delta >= 0 ? '+' : '') + t.delta.toFixed(1) : '--';
-        const deltaCls = t.delta != null ? (t.delta > 0 ? 'positive' : t.delta < 0 ? 'negative' : '') : '';
+        const scoreWidth = Math.min(Math.round(t.composite_score), 100);
+        const scoreCls = scoreWidth > 60 ? 'good' : scoreWidth >= 30 ? 'warning' : 'critical';
+
+        const successRate = t.feedback_success_rate != null
+            ? Math.round(t.feedback_success_rate) + '%'
+            : '--';
+
+        const delta = t.avg_health_delta != null
+            ? (t.avg_health_delta >= 0 ? '+' : '') + t.avg_health_delta.toFixed(1)
+            : '--';
+        const deltaCls = t.avg_health_delta != null
+            ? (t.avg_health_delta > 0 ? 'positive' : t.avg_health_delta < 0 ? 'negative' : '')
+            : '';
+
         return `
-        <div class="intel-treatment-card">
-            <div class="intel-treatment-header">
-                <span class="intel-treatment-name">${esc(t.tratamiento)}</span>
-                <span class="intel-treatment-delta ${deltaCls}">${delta}</span>
+        <div class="treatment-report-card">
+            <div class="treatment-report-header">
+                <span class="treatment-report-name">${esc(t.tratamiento)}</span>
+                <span class="treatment-report-apps">${t.total_applications} aplicaciones</span>
             </div>
-            <div class="intel-treatment-field">${esc(t.field_name)} — ${esc(t.farm_name)}</div>
-            <div class="intel-treatment-scores">
-                <span>Antes: ${Math.round(t.health_before)}</span>
-                ${t.health_after != null ? `<span>Despues: ${Math.round(t.health_after)}</span>` : '<span>Pendiente</span>'}
+            <div class="treatment-report-score-row">
+                <span class="treatment-report-label">Puntaje</span>
+                <div class="treatment-report-score-bar">
+                    <div class="score-bar-fill ${scoreCls}" style="width:${scoreWidth}%"></div>
+                </div>
+                <span class="treatment-report-score-val">${t.composite_score.toFixed(1)}</span>
             </div>
-            <div class="intel-treatment-urgency urgency-${t.urgencia.toLowerCase().replace(' ', '-')}">${esc(t.urgencia)}</div>
+            <div class="treatment-report-metrics">
+                <div class="treatment-report-metric">
+                    <span class="treatment-report-metric-label">Tasa de exito</span>
+                    <span class="treatment-report-metric-value">${successRate}</span>
+                </div>
+                <div class="treatment-report-metric">
+                    <span class="treatment-report-metric-label">Delta salud</span>
+                    <span class="treatment-report-metric-value ${deltaCls}">${delta}</span>
+                </div>
+                <div class="treatment-report-metric">
+                    <span class="treatment-report-metric-label">Feedback</span>
+                    <span class="treatment-report-metric-value">${t.feedback_count}</span>
+                </div>
+            </div>
         </div>`;
     }).join('');
+}
+
+async function loadCropTypeOptions() {
+    const filter = document.getElementById('treatment-crop-filter');
+    if (!filter) return;
+    const fields = await fetchJSON('/api/fields');
+    if (!fields) return;
+    const types = [...new Set(
+        (Array.isArray(fields) ? fields : (fields.data || []))
+            .map(f => f.crop_type)
+            .filter(Boolean)
+    )].sort();
+    types.forEach(ct => {
+        const opt = document.createElement('option');
+        opt.value = ct;
+        opt.textContent = ct.charAt(0).toUpperCase() + ct.slice(1);
+        filter.appendChild(opt);
+    });
 }
 
 // ── Role-based UI ──
@@ -206,7 +254,7 @@ async function init() {
         loadSummary(),
         loadAnomalies(),
         loadSoilTrends(),
-        loadTreatments(),
+        loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
 }
 

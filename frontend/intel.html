@@ -81,12 +81,15 @@
             </div>
         </div>
 
-        <!-- Treatment Effectiveness -->
-        <div class="intel-panel">
+        <!-- Treatment Effectiveness Report -->
+        <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
                 <h2 class="intel-panel-title">Efectividad de Tratamientos</h2>
+                <select id="treatment-crop-filter" class="intel-filter-select" onchange="loadTreatmentReport()">
+                    <option value="">Todos los cultivos</option>
+                </select>
             </div>
-            <div id="intel-treatments" class="intel-panel-body">
+            <div id="intel-treatment-report" class="intel-panel-body">
                 <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
             </div>
         </div>
