@@ -1,6 +1,7 @@
 """API router registry — import modules, not individual routers."""
 
 from cultivos.api import (
+    action_timeline,
     alert_config,
     alerts,
     auth,
@@ -33,6 +34,7 @@ from cultivos.api import (
 
 # Flat list of every APIRouter that app.py should mount.
 all_routers = [
+    action_timeline.router,
     alert_config.router,
     alerts.router,
     auth.router,
