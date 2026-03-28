@@ -46,7 +46,7 @@ async function loadFieldDetail() {
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
-           missionPlan, interventionScores] = await Promise.all([
+           missionPlan, interventionScores, microbiomeList] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -64,6 +64,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/seasonal-comparison`),
         fetchJSON(`${base}/mission-plan`),
         fetchJSON(`${base}/intervention-scores`),
+        fetchJSON(`${base}/microbiome`),
     ]);
 
     // Find this field
@@ -138,6 +139,9 @@ async function loadFieldDetail() {
 
     // Intervention scores
     renderInterventionScores(interventionScores);
+
+    // Microbiome
+    renderMicrobiome(microbiomeList);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -755,6 +759,52 @@ function renderInterventionScores(scores) {
             </div>`;
         }).join('')}
     </div>`;
+}
+
+// -- Microbiome --
+function renderMicrobiome(data) {
+    const el = document.getElementById('microbiome-content');
+    if (!data || data.length === 0) return;
+
+    const latest = data[0];
+    const classMap = {
+        healthy: { label: 'Saludable', cls: 'good' },
+        moderate: { label: 'Moderado', cls: 'warning' },
+        degraded: { label: 'Degradado', cls: 'critical' },
+    };
+    const info = classMap[latest.classification] || { label: latest.classification, cls: 'none' };
+
+    el.innerHTML = `
+        <div class="microbiome-header">
+            <span class="health-badge ${info.cls}">${esc(info.label)}</span>
+            <span class="microbiome-date">${new Date(latest.sampled_at).toLocaleDateString('es-MX')}</span>
+        </div>
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Respiracion</span>
+                <span class="campo-data-value">${latest.respiration_rate.toFixed(1)} mg CO2/kg/dia</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Carbono Microbiano</span>
+                <span class="campo-data-value">${latest.microbial_biomass_carbon.toFixed(0)} mg C/kg</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Ratio Hongos/Bacterias</span>
+                <span class="campo-data-value">${latest.fungi_bacteria_ratio.toFixed(2)}</span>
+            </div>
+        </div>
+        ${data.length > 1 ? `
+        <div class="microbiome-history">
+            <div class="campo-data-label" style="margin-bottom:6px">Historial de muestras (${data.length})</div>
+            ${data.slice(0, 5).map(s => {
+                const si = classMap[s.classification] || { label: s.classification, cls: 'none' };
+                return `<div class="microbiome-sample">
+                    <span class="health-badge ${si.cls}" style="font-size:0.65rem;padding:1px 6px">${esc(si.label)}</span>
+                    <span class="microbiome-sample-rate">${s.respiration_rate.toFixed(1)}</span>
+                    <span class="microbiome-sample-date">${new Date(s.sampled_at).toLocaleDateString('es-MX')}</span>
+                </div>`;
+            }).join('')}
+        </div>` : ''}`;
 }
 
 // -- PDF Download --
