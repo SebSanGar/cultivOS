@@ -745,6 +745,43 @@ nav {
 .anomaly-ndvi .anomaly-drop { color: var(--warning, #f59e0b); }
 .anomaly-ndvi .anomaly-card-rec { border-left-color: var(--warning, #f59e0b); }
 
+/* ── SEASONAL RISK ALERTS ── */
+.seasonal-alerts-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.seasonal-season-badge {
+    background: var(--accent, #00c896); color: #000;
+    padding: 0.2rem 0.6rem; border-radius: 4px;
+    font-weight: 700; font-size: 0.8rem; text-transform: uppercase;
+}
+.seasonal-date { color: var(--text-muted, #888); font-size: 0.8rem; }
+.seasonal-alerts-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.seasonal-alert-card {
+    border-left: 3px solid var(--accent, #00c896);
+    padding: 0.6rem 0.8rem; border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+}
+.seasonal-alert-card.seasonal-prep { border-left-color: var(--info, #4da6ff); }
+.seasonal-alert-card.seasonal-siembra { border-left-color: var(--accent, #00c896); }
+.seasonal-alert-card.seasonal-cosecha { border-left-color: var(--warning, #f59e0b); }
+.seasonal-alert-card.seasonal-maint { border-left-color: var(--text-muted, #888); }
+.seasonal-alert-top {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin-bottom: 0.3rem; flex-wrap: wrap;
+}
+.seasonal-alert-crop { font-weight: 700; font-size: 0.9rem; }
+.seasonal-alert-type {
+    font-size: 0.75rem; padding: 0.1rem 0.4rem;
+    border-radius: 3px; background: rgba(255,255,255,0.06);
+    color: var(--text-muted, #888);
+}
+.seasonal-alert-months {
+    font-size: 0.75rem; color: var(--text-muted, #888);
+    margin-left: auto;
+}
+.seasonal-alert-message { font-size: 0.85rem; color: var(--text-secondary, #aaa); line-height: 1.4; }
+
 /* ── REGIONAL CONTEXT CARD ── */
 .regional-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

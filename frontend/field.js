@@ -48,7 +48,8 @@ async function loadFieldDetail() {
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
-           anomaliesData, completenessData, regionalData, carbonData, weatherRecords] = await Promise.all([
+           anomaliesData, completenessData, regionalData, carbonData, weatherRecords,
+           seasonalAlertsData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -77,6 +78,7 @@ async function loadFieldDetail() {
         fetchJSON(`/farms/${farmId}/recommendations`),
         fetchJSON(`${base}/carbon`),
         fetchJSON(`/farms/${farmId}/weather`),
+        fetchJSON(`/farms/${farmId}/seasonal-alerts`),
     ]);
 
     // Find this field
@@ -153,6 +155,9 @@ async function loadFieldDetail() {
 
     // Regional context
     renderRegionalCard(regionalData, parseInt(fieldId));
+
+    // Seasonal risk alerts
+    renderSeasonalAlerts(seasonalAlertsData);
 
     // Action timeline
     renderActionTimeline(actionTimeline);
@@ -2091,6 +2096,51 @@ function renderFieldMap(field) {
     }).addTo(map);
 
     map.fitBounds(polygon.getBounds(), { padding: [30, 30] });
+}
+
+// -- Seasonal Risk Alerts --
+function renderSeasonalAlerts(data) {
+    const el = document.getElementById('seasonal-alerts-content');
+    if (!data || !data.alerts || data.alerts.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin alertas estacionales</div>';
+        return;
+    }
+
+    const typeLabels = {
+        preparacion: 'Preparacion',
+        siembra: 'Siembra',
+        cosecha: 'Cosecha',
+        mantenimiento: 'Mantenimiento',
+    };
+
+    const typeColors = {
+        preparacion: 'seasonal-prep',
+        siembra: 'seasonal-siembra',
+        cosecha: 'seasonal-cosecha',
+        mantenimiento: 'seasonal-maint',
+    };
+
+    let html = `<div class="seasonal-alerts-header">
+        <span class="seasonal-season-badge">${esc(data.season)}</span>
+        <span class="seasonal-date">${esc(data.reference_date)}</span>
+    </div>`;
+
+    html += '<div class="seasonal-alerts-list">';
+    data.alerts.forEach(a => {
+        const cls = typeColors[a.alert_type] || 'seasonal-prep';
+        const label = typeLabels[a.alert_type] || a.alert_type;
+        html += `<div class="seasonal-alert-card ${cls}">
+            <div class="seasonal-alert-top">
+                <span class="seasonal-alert-crop">${esc(a.crop)}</span>
+                <span class="seasonal-alert-type">${esc(label)}</span>
+                <span class="seasonal-alert-months">${esc(a.month_range)}</span>
+            </div>
+            <div class="seasonal-alert-message">${esc(a.message)}</div>
+        </div>`;
+    });
+    html += '</div>';
+
+    el.innerHTML = html;
 }
 
 // -- Init --
