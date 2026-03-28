@@ -222,6 +222,10 @@ function renderThermal(thermal) {
 
 function renderSoil(soil) {
     const phCls = (soil.ph >= 6.0 && soil.ph <= 7.0) ? 'good' : (soil.ph >= 5.5 && soil.ph <= 7.5) ? 'warning' : 'critical';
+    const nCls = (soil.nitrogen_ppm >= 25 && soil.nitrogen_ppm <= 50) ? 'good' : (soil.nitrogen_ppm >= 10 && soil.nitrogen_ppm <= 80) ? 'warning' : 'critical';
+    const pCls = (soil.phosphorus_ppm >= 15 && soil.phosphorus_ppm <= 40) ? 'good' : (soil.phosphorus_ppm >= 5 && soil.phosphorus_ppm <= 60) ? 'warning' : 'critical';
+    const kCls = (soil.potassium_ppm >= 120 && soil.potassium_ppm <= 250) ? 'good' : (soil.potassium_ppm >= 80 && soil.potassium_ppm <= 350) ? 'warning' : 'critical';
+    const omCls = (soil.organic_matter_pct >= 3.0 && soil.organic_matter_pct <= 6.0) ? 'good' : (soil.organic_matter_pct >= 1.5 && soil.organic_matter_pct <= 8.0) ? 'warning' : 'critical';
     document.getElementById('soil-content').innerHTML = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
@@ -230,19 +234,19 @@ function renderSoil(soil) {
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Materia Organica</span>
-                <span class="campo-data-value">${soil.organic_matter_pct}%</span>
+                <span class="campo-data-value health-badge ${omCls}">${soil.organic_matter_pct}%</span>
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Nitrogeno</span>
-                <span class="campo-data-value">${soil.nitrogen_ppm} ppm</span>
+                <span class="campo-data-value health-badge ${nCls}">${soil.nitrogen_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Fosforo</span>
-                <span class="campo-data-value">${soil.phosphorus_ppm} ppm</span>
+                <span class="campo-data-value health-badge ${pCls}">${soil.phosphorus_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Potasio</span>
-                <span class="campo-data-value">${soil.potassium_ppm} ppm</span>
+                <span class="campo-data-value health-badge ${kCls}">${soil.potassium_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Humedad</span>
@@ -252,7 +256,8 @@ function renderSoil(soil) {
                 <span class="campo-data-label">Textura</span>
                 <span class="campo-data-value">${esc(soil.texture || '--')}</span>
             </div>
-        </div>`;
+        </div>
+        ${soil.recommendations ? `<div class="campo-data-item" style="margin-top:0.75rem;grid-column:1/-1"><span class="campo-data-label">Recomendaciones</span><p class="campo-data-value">${esc(soil.recommendations)}</p></div>` : ''}`;
 }
 
 function renderDisease(risk) {
