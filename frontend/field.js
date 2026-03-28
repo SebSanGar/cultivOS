@@ -151,6 +151,22 @@ async function loadFieldDetail() {
     // Treatments
     if (treatments && treatments.length > 0) renderTreatments(treatments);
 
+    // Treatment effectiveness — fetch for each applied treatment
+    if (treatments && treatments.length > 0) {
+        const appliedTreatments = treatments.filter(t => t.applied_at);
+        if (appliedTreatments.length > 0) {
+            const effectivenessResults = await Promise.all(
+                appliedTreatments.map(t =>
+                    fetchJSON(`${base}/treatments/${t.id}/effectiveness`)
+                )
+            );
+            const validResults = effectivenessResults.filter(r => r !== null);
+            if (validResults.length > 0) {
+                renderTreatmentEffectiveness(validResults);
+            }
+        }
+    }
+
     // Rotation
     if (rotation && rotation.plan && rotation.plan.length) renderRotation(rotation);
 
@@ -2231,6 +2247,63 @@ function renderSeasonalAlerts(data) {
     });
     html += '</div>';
 
+    el.innerHTML = html;
+}
+
+// -- Treatment Effectiveness --
+function renderTreatmentEffectiveness(results) {
+    const el = document.getElementById('treatment-effectiveness-content');
+    if (!el || !results || results.length === 0) return;
+
+    const statusLabels = {
+        effective: 'Efectivo',
+        ineffective: 'Sin efecto',
+        neutral: 'Neutral',
+        insufficient_data: 'Datos insuficientes',
+        not_applied: 'No aplicado',
+    };
+    const statusClasses = {
+        effective: 'treatment-effectiveness-effective',
+        ineffective: 'treatment-effectiveness-ineffective',
+        neutral: 'treatment-effectiveness-neutral',
+        insufficient_data: 'treatment-effectiveness-neutral',
+        not_applied: 'treatment-effectiveness-neutral',
+    };
+
+    let html = '<div class="treatment-effectiveness-grid">';
+    results.forEach(r => {
+        const label = statusLabels[r.status] || r.status;
+        const cls = statusClasses[r.status] || '';
+        const deltaSign = r.delta !== null && r.delta > 0 ? '+' : '';
+        const deltaText = r.delta !== null ? `${deltaSign}${r.delta.toFixed(1)}` : '--';
+        const deltaClass = r.delta !== null
+            ? (r.delta > 0 ? 'delta-positive' : r.delta < 0 ? 'delta-negative' : 'delta-neutral')
+            : 'delta-neutral';
+
+        html += `
+        <div class="treatment-effectiveness-card">
+            <div class="treatment-effectiveness-header">
+                <span class="treatment-effectiveness-name">${esc(r.tratamiento)}</span>
+                <span class="treatment-effectiveness-badge ${cls}">${esc(label)}</span>
+            </div>
+            <div class="treatment-effectiveness-problem">${esc(r.problema)}</div>
+            <div class="treatment-effectiveness-scores">
+                <div class="treatment-effectiveness-score-box">
+                    <div class="treatment-effectiveness-score-label">Antes</div>
+                    <div class="treatment-effectiveness-score-value">${r.score_before !== null ? r.score_before.toFixed(0) : '--'}</div>
+                </div>
+                <div class="treatment-effectiveness-delta ${deltaClass}">
+                    ${deltaText}
+                </div>
+                <div class="treatment-effectiveness-score-box">
+                    <div class="treatment-effectiveness-score-label">Despues</div>
+                    <div class="treatment-effectiveness-score-value">${r.score_after !== null ? r.score_after.toFixed(0) : '--'}</div>
+                </div>
+            </div>
+            ${r.applied_at ? `<div class="treatment-effectiveness-date">Aplicado: ${new Date(r.applied_at).toLocaleDateString('es-MX')}</div>` : ''}
+        </div>`;
+    });
+    html += '</div>';
     el.innerHTML = html;
 }
 

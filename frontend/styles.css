@@ -3383,3 +3383,23 @@ nav {
     .si-selector-row { flex-direction: column; }
     .si-results-grid { flex-direction: column; }
 }
+
+/* ── Treatment Effectiveness Cards ── */
+.treatment-effectiveness-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.treatment-effectiveness-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 10px; padding: 16px; }
+.treatment-effectiveness-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+.treatment-effectiveness-name { font-weight: 600; font-size: 0.95rem; color: var(--text-primary, #fff); }
+.treatment-effectiveness-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.treatment-effectiveness-effective { background: rgba(0,200,150,0.15); color: #00c896; }
+.treatment-effectiveness-ineffective { background: rgba(231,76,60,0.15); color: #e74c3c; }
+.treatment-effectiveness-neutral { background: rgba(150,150,150,0.15); color: #999; }
+.treatment-effectiveness-problem { color: var(--text-muted, #888); font-size: 0.85rem; margin-bottom: 12px; }
+.treatment-effectiveness-scores { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 8px; }
+.treatment-effectiveness-score-box { text-align: center; }
+.treatment-effectiveness-score-label { font-size: 0.7rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.treatment-effectiveness-score-value { font-size: 1.6rem; font-weight: 700; font-family: 'Courier New', monospace; color: var(--text-primary, #fff); }
+.treatment-effectiveness-delta { font-size: 1.4rem; font-weight: 700; font-family: 'Courier New', monospace; padding: 4px 10px; border-radius: 6px; }
+.delta-positive { color: #00c896; background: rgba(0,200,150,0.1); }
+.delta-negative { color: #e74c3c; background: rgba(231,76,60,0.1); }
+.delta-neutral { color: #999; background: rgba(150,150,150,0.1); }
+.treatment-effectiveness-date { font-size: 0.8rem; color: var(--text-muted, #888); text-align: right; }
