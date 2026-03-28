@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Iniciar Sesion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-container { width: 100%; max-width: 400px; padding: 24px; }
+        .login-logo { text-align: center; margin-bottom: 32px; }
+        .login-logo h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
+        .login-logo h1 span { color: var(--green); }
+        .login-logo p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+        }
+        .login-card h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; text-align: center; }
+        .login-field { margin-bottom: 16px; }
+        .login-field label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+        .login-field input, .login-field select {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 0.95rem; font-family: inherit;
+            background: var(--bg); color: var(--text); outline: none; transition: border 0.2s;
+        }
+        .login-field input:focus, .login-field select:focus { border-color: var(--green); }
+        .login-submit {
+            width: 100%; padding: 12px; margin-top: 8px;
+            background: var(--green); color: #fff; border: none;
+            border-radius: 8px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .login-submit:hover { background: var(--green-dark); }
+        .login-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .login-error {
+            display: none; margin-top: 12px; padding: 10px 12px;
+            background: var(--red-light); color: var(--red);
+            border-radius: 8px; font-size: 0.85rem; text-align: center;
+        }
+        .login-error.visible { display: block; }
+        .login-toggle { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
+        .login-toggle a { color: var(--green); cursor: pointer; text-decoration: none; font-weight: 600; }
+        .login-toggle a:hover { text-decoration: underline; }
+        .register-fields { display: none; }
+        .register-fields.visible { display: block; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <h1>cultiv<span>OS</span></h1>
+            <p>Inteligencia agricola de precision</p>
+        </div>
+        <div class="login-card">
+            <h2 id="login-title">Iniciar Sesion</h2>
+            <form id="login-form" autocomplete="on">
+                <div class="login-field">
+                    <label for="login-username">Usuario</label>
+                    <input type="text" id="login-username" name="username" required autocomplete="username" placeholder="Tu nombre de usuario">
+                </div>
+                <div class="login-field">
+                    <label for="login-password">Contrasena</label>
+                    <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="Tu contrasena">
+                </div>
+                <div class="register-fields" id="register-fields">
+                    <div class="login-field">
+                        <label for="register-role">Rol</label>
+                        <select id="register-role" name="role">
+                            <option value="farmer">Agricultor</option>
+                            <option value="researcher">Investigador</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="login-submit" id="login-submit">Entrar</button>
+                <div class="login-error" id="login-error"></div>
+            </form>
+            <div class="login-toggle">
+                <span id="toggle-text">No tienes cuenta?</span>
+                <a id="toggle-register">Registrarse</a>
+            </div>
+        </div>
+    </div>
+    <script src="/login.js"></script>
+</body>
+</html>
