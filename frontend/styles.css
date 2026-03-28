@@ -1479,3 +1479,79 @@ nav {
     border-top: 1px solid var(--border, #333);
     font-size: 0.8rem;
 }
+
+/* -- Intervention Scores -- */
+.intervention-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.intervention-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--card-bg, #141414);
+    border: 1px solid var(--border, #333);
+    border-radius: 8px;
+}
+.intervention-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--green, #16a34a);
+    min-width: 32px;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 2px;
+}
+.intervention-body {
+    flex: 1;
+    min-width: 0;
+}
+.intervention-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.intervention-problema {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.intervention-tratamiento {
+    font-size: 0.85rem;
+    color: var(--text-dim, #aaa);
+    margin-bottom: 8px;
+}
+.intervention-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+}
+.intervention-metric {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+.intervention-metric-label {
+    color: var(--text-dim, #aaa);
+    white-space: nowrap;
+}
+.intervention-metric-value {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.intervention-score-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border, #333);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.intervention-score-fill {
+    height: 100%;
+    background: var(--green, #16a34a);
+    border-radius: 3px;
+    transition: width 0.3s;
+}

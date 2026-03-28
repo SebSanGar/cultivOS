@@ -46,7 +46,7 @@ async function loadFieldDetail() {
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
-           missionPlan] = await Promise.all([
+           missionPlan, interventionScores] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -63,6 +63,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/regenerative-score`),
         fetchJSON(`${base}/seasonal-comparison`),
         fetchJSON(`${base}/mission-plan`),
+        fetchJSON(`${base}/intervention-scores`),
     ]);
 
     // Find this field
@@ -134,6 +135,9 @@ async function loadFieldDetail() {
 
     // Mission plan
     renderMissionPlan(missionPlan);
+
+    // Intervention scores
+    renderInterventionScores(interventionScores);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -698,6 +702,59 @@ function renderMissionPlan(plan) {
                 <span class="campo-data-label">Espaciado: ${plan.line_spacing_m} m</span>
             </div>
         </div>`;
+}
+
+// -- Intervention Scores --
+function renderInterventionScores(scores) {
+    const el = document.getElementById('interventions-content');
+    if (!scores || scores.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin intervenciones disponibles</div>';
+        return;
+    }
+
+    const urgencyCls = (u) => {
+        if (u === 'alta') return 'critical';
+        if (u === 'media') return 'warning';
+        return 'good';
+    };
+
+    el.innerHTML = `<div class="intervention-list">
+        ${scores.map((s, i) => {
+            const scorePct = Math.min(100, Math.round(s.intervention_score * 5));
+            const probPct = Math.round(s.success_probability * 100);
+            return `<div class="intervention-card">
+                <div class="intervention-rank">#${i + 1}</div>
+                <div class="intervention-body">
+                    <div class="intervention-header">
+                        <span class="intervention-problema">${esc(s.problema)}</span>
+                        <span class="health-badge ${urgencyCls(s.urgencia)}">${esc(s.urgencia)}</span>
+                    </div>
+                    <div class="intervention-tratamiento">${esc(s.tratamiento)}</div>
+                    <div class="intervention-metrics">
+                        <div class="intervention-metric">
+                            <span class="intervention-metric-label">Puntaje</span>
+                            <div class="intervention-score-bar">
+                                <div class="intervention-score-fill" style="width:${scorePct}%"></div>
+                            </div>
+                            <span class="intervention-metric-value">${s.intervention_score}</span>
+                        </div>
+                        <div class="intervention-metric">
+                            <span class="intervention-metric-label">Probabilidad</span>
+                            <span class="intervention-metric-value">${probPct}%</span>
+                        </div>
+                        <div class="intervention-metric">
+                            <span class="intervention-metric-label">Mejora esperada</span>
+                            <span class="intervention-metric-value">+${s.expected_health_delta}</span>
+                        </div>
+                        <div class="intervention-metric">
+                            <span class="intervention-metric-label">Costo/ha</span>
+                            <span class="intervention-metric-value">$${s.cost_per_hectare.toLocaleString()} MXN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('')}
+    </div>`;
 }
 
 // -- PDF Download --
