@@ -203,6 +203,169 @@ def generate_farm_report_pdf(
     return buf.getvalue()
 
 
+# -- Portfolio Report --
+
+
+def generate_portfolio_report_pdf(
+    farms_summary: dict,
+    farm_details: list[dict],
+    carbon_summary: dict,
+    economic_summary: dict,
+) -> bytes:
+    """Generate a multi-farm portfolio summary PDF.
+
+    Args:
+        farms_summary: dict with total_farms, total_hectares, avg_health_score, total_fields
+        farm_details: list of dicts per farm with name, municipality, state, hectares,
+                      avg_health, health_trend, field_count, treatment_count
+        carbon_summary: dict with total_co2e_tonnes, avg_soc_tonnes_per_ha
+        economic_summary: dict with total_savings_mxn, water_savings_mxn,
+                          fertilizer_savings_mxn, yield_improvement_mxn
+
+    Returns:
+        PDF file content as bytes.
+    """
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buf, pagesize=letter,
+        leftMargin=2 * cm, rightMargin=2 * cm,
+        topMargin=2 * cm, bottomMargin=2 * cm,
+        pageCompression=0,
+    )
+    styles = _build_styles()
+    story = []
+
+    # -- Title --
+    story.append(Paragraph("Reporte de Portafolio", styles["title"]))
+    story.append(Paragraph(
+        f"Generado: {datetime.utcnow().strftime('%d/%m/%Y')}  |  cultivOS - Agricultura de Precision",
+        styles["subtitle"],
+    ))
+
+    # -- Executive Summary --
+    story.append(Paragraph("Resumen Ejecutivo", styles["heading"]))
+
+    total_farms = farms_summary.get("total_farms", 0)
+
+    if total_farms == 0:
+        story.append(Paragraph("Sin granjas registradas en el portafolio.", styles["normal"]))
+    else:
+        summary_data = [
+            ["Total de Granjas", str(total_farms)],
+            ["Total de Parcelas", str(farms_summary.get("total_fields", 0))],
+            ["Superficie Total", f"{farms_summary.get('total_hectares', 0):.1f} hectareas"],
+            ["Salud Promedio", f"{farms_summary.get('avg_health_score', 0):.1f} ({_health_label(farms_summary.get('avg_health_score', 0))})"],
+        ]
+        summary_table = Table(summary_data, colWidths=[3.5 * inch, 3.5 * inch])
+        summary_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+            ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+        ]))
+        story.append(summary_table)
+        story.append(Spacer(1, 16))
+
+        # -- Per-farm health scores --
+        story.append(Paragraph("Salud por Granja", styles["heading"]))
+
+        farm_header = ["Granja", "Municipio", "Hectareas", "Parcelas", "Salud", "Tendencia", "Tratamientos"]
+        farm_rows = [farm_header]
+        for fd in farm_details:
+            score = fd.get("avg_health", 0)
+            score_str = f"{score:.1f}" if score else "—"
+            trend = fd.get("health_trend", "—")
+            trend_str = _trend_label(trend) if trend and trend != "—" else "—"
+            farm_rows.append([
+                fd.get("name", "—"),
+                fd.get("municipality", "—") or "—",
+                f"{fd.get('hectares', 0):.0f}",
+                str(fd.get("field_count", 0)),
+                score_str,
+                trend_str,
+                str(fd.get("treatment_count", 0)),
+            ])
+
+        farm_table = Table(farm_rows, colWidths=[1.4 * inch, 1.1 * inch, 0.8 * inch, 0.7 * inch, 0.9 * inch, 0.9 * inch, 1.0 * inch])
+        farm_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), _GREEN),
+            ("TEXTCOLOR", (0, 0), (-1, 0), _WHITE),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+            ("ALIGN", (2, 0), (-1, -1), "CENTER"),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [_WHITE, _LIGHT_BG]),
+        ]))
+        story.append(farm_table)
+        story.append(Spacer(1, 16))
+
+        # -- Treatments aggregate --
+        story.append(Paragraph("Tratamientos Aplicados", styles["heading"]))
+        total_treatments = sum(fd.get("treatment_count", 0) for fd in farm_details)
+        story.append(Paragraph(
+            f"Total de tratamientos aplicados en el portafolio: <b>{total_treatments}</b>",
+            styles["normal"],
+        ))
+        story.append(Spacer(1, 16))
+
+        # -- Carbon sequestration --
+        story.append(Paragraph("Carbono Secuestrado", styles["heading"]))
+        co2e = carbon_summary.get("total_co2e_tonnes", 0)
+        avg_soc = carbon_summary.get("avg_soc_tonnes_per_ha", 0)
+        carbon_data = [
+            ["CO<sub>2</sub>e Total Secuestrado", f"{co2e:,.1f} toneladas"],
+            ["SOC Promedio por Hectarea", f"{avg_soc:,.1f} ton/ha"],
+        ]
+        carbon_table = Table(carbon_data, colWidths=[3.5 * inch, 3.5 * inch])
+        carbon_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+            ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+        ]))
+        story.append(carbon_table)
+        story.append(Spacer(1, 16))
+
+        # -- Economic impact --
+        story.append(Paragraph("Impacto Economico Estimado", styles["heading"]))
+        eco = economic_summary
+        econ_data = [
+            ["Ahorro en Agua", f"${eco.get('water_savings_mxn', 0):,} MXN"],
+            ["Ahorro en Fertilizante", f"${eco.get('fertilizer_savings_mxn', 0):,} MXN"],
+            ["Mejora en Rendimiento", f"${eco.get('yield_improvement_mxn', 0):,} MXN"],
+            ["Ahorro Total Anual", f"${eco.get('total_savings_mxn', 0):,} MXN"],
+        ]
+        econ_table = Table(econ_data, colWidths=[3.5 * inch, 3.5 * inch])
+        econ_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+            ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+            ("BACKGROUND", (-1, -1), (-1, -1), _GREEN),
+            ("TEXTCOLOR", (-1, -1), (-1, -1), _WHITE),
+            ("FONTSIZE", (-1, -1), (-1, -1), 12),
+        ]))
+        story.append(econ_table)
+
+    # -- Footer --
+    story.append(Spacer(1, 30))
+    story.append(Paragraph(
+        "Este reporte fue generado automaticamente por cultivOS. "
+        "Los datos reflejan las mediciones mas recientes disponibles.",
+        styles["small"],
+    ))
+
+    doc.build(story)
+    return buf.getvalue()
+
+
 # -- CSV Export --
 
 _CSV_HEADERS = [
