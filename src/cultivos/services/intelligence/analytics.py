@@ -507,3 +507,83 @@ def compute_batch_health(db: Session, field_ids: list[int]) -> dict:
         })
 
     return {"results": results}
+
+
+def compute_economics_summary(db: Session) -> dict:
+    """Aggregate economic impact across all farms."""
+    from cultivos.services.intelligence.economics import calculate_farm_savings
+
+    farms = db.query(Farm).all()
+    if not farms:
+        return {
+            "total_farms": 0,
+            "total_hectares": 0,
+            "water_savings_mxn": 0,
+            "fertilizer_savings_mxn": 0,
+            "yield_improvement_mxn": 0,
+            "total_savings_mxn": 0,
+            "farms": [],
+        }
+
+    farm_entries = []
+    agg_water = 0
+    agg_fert = 0
+    agg_yield = 0
+    total_hectares = 0.0
+
+    for farm in farms:
+        fields = db.query(Field).filter(Field.farm_id == farm.id).all()
+        ha = sum(f.hectares or 0 for f in fields)
+        total_hectares += ha
+        field_ids = [f.id for f in fields]
+
+        # Average health score
+        health_scores = []
+        for fid in field_ids:
+            latest = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id == fid)
+                .order_by(HealthScore.scored_at.desc())
+                .first()
+            )
+            if latest:
+                health_scores.append(float(latest.score))
+        avg_health = sum(health_scores) / len(health_scores) if health_scores else 50.0
+
+        treatment_count = (
+            db.query(func.count(TreatmentRecord.id))
+            .filter(TreatmentRecord.field_id.in_(field_ids))
+            .scalar()
+        ) if field_ids else 0
+        treatment_count = treatment_count or 0
+
+        result = calculate_farm_savings(
+            health_score=avg_health,
+            hectares=ha,
+            treatment_count=treatment_count,
+            irrigation_efficiency=None,
+        )
+
+        agg_water += result["water_savings_mxn"]
+        agg_fert += result["fertilizer_savings_mxn"]
+        agg_yield += result["yield_improvement_mxn"]
+
+        farm_entries.append({
+            "farm_id": farm.id,
+            "farm_name": farm.name,
+            "hectares": ha,
+            "water_savings_mxn": result["water_savings_mxn"],
+            "fertilizer_savings_mxn": result["fertilizer_savings_mxn"],
+            "yield_improvement_mxn": result["yield_improvement_mxn"],
+            "total_savings_mxn": result["total_savings_mxn"],
+        })
+
+    return {
+        "total_farms": len(farms),
+        "total_hectares": total_hectares,
+        "water_savings_mxn": agg_water,
+        "fertilizer_savings_mxn": agg_fert,
+        "yield_improvement_mxn": agg_yield,
+        "total_savings_mxn": agg_water + agg_fert + agg_yield,
+        "farms": farm_entries,
+    }

@@ -14,6 +14,7 @@ from cultivos.models.intel import (
     BatchHealthOut,
     BatchHealthRequestIn,
     FarmCompareOut,
+    IntelEconomicsOut,
     IntelSummaryOut,
     SeasonalOut,
     SoilTrendsOut,
@@ -26,6 +27,7 @@ from cultivos.services.intelligence.analytics import (
     compare_farms,
     compute_anomalies,
     compute_batch_health,
+    compute_economics_summary,
     compute_seasonal_performance,
     compute_soil_trends,
     compute_summary,
@@ -63,6 +65,15 @@ def intel_summary(
 ):
     """Return a high-level intelligence summary across all farms, including health stats and alert counts."""
     return compute_summary(db)
+
+
+@router.get("/economics", response_model=IntelEconomicsOut)
+def intel_economics(
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate economic impact across all farms — total and per-farm savings in MXN."""
+    return compute_economics_summary(db)
 
 
 @router.get("/soil-trends", response_model=SoilTrendsOut)

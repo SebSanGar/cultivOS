@@ -144,3 +144,26 @@ class FarmCompareEntry(BaseModel):
 
 class FarmCompareOut(BaseModel):
     farms: list[FarmCompareEntry]
+
+
+# ── Aggregate economics ─────────────────────────────────────────────
+
+
+class FarmEconomicsEntry(BaseModel):
+    farm_id: int
+    farm_name: str
+    hectares: float
+    water_savings_mxn: int = 0
+    fertilizer_savings_mxn: int = 0
+    yield_improvement_mxn: int = 0
+    total_savings_mxn: int = 0
+
+
+class IntelEconomicsOut(BaseModel):
+    total_farms: int
+    total_hectares: float
+    water_savings_mxn: int = 0
+    fertilizer_savings_mxn: int = 0
+    yield_improvement_mxn: int = 0
+    total_savings_mxn: int = 0
+    farms: list[FarmEconomicsEntry] = []

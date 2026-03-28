@@ -212,6 +212,64 @@ async function loadTreatmentReport() {
     }).join('');
 }
 
+// ── Economic Impact ──
+async function loadEconomics() {
+    const container = document.getElementById('intel-economics');
+    const data = await fetchJSON(API + '/economics');
+
+    if (!data || data.total_farms === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos economicos</div>';
+        return;
+    }
+
+    const fmt = (n) => '$' + Number(n).toLocaleString('es-MX') + ' MXN';
+
+    container.innerHTML = `
+        <div class="economics-summary">
+            <div class="economics-total">
+                <span class="economics-total-label">Ahorro Total Estimado</span>
+                <span class="economics-total-value">${fmt(data.total_savings_mxn)}</span>
+            </div>
+            <div class="economics-meta">
+                ${data.total_farms} granjas — ${data.total_hectares} ha
+            </div>
+            <div class="economics-breakdown">
+                <div class="economics-row">
+                    <span class="economics-row-label">Agua</span>
+                    <div class="economics-row-bar">
+                        <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.water_savings_mxn / data.total_savings_mxn * 100))}%"></div>
+                    </div>
+                    <span class="economics-row-value">${fmt(data.water_savings_mxn)}</span>
+                </div>
+                <div class="economics-row">
+                    <span class="economics-row-label">Fertilizante</span>
+                    <div class="economics-row-bar">
+                        <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.fertilizer_savings_mxn / data.total_savings_mxn * 100))}%"></div>
+                    </div>
+                    <span class="economics-row-value">${fmt(data.fertilizer_savings_mxn)}</span>
+                </div>
+                <div class="economics-row">
+                    <span class="economics-row-label">Rendimiento</span>
+                    <div class="economics-row-bar">
+                        <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.yield_improvement_mxn / data.total_savings_mxn * 100))}%"></div>
+                    </div>
+                    <span class="economics-row-value">${fmt(data.yield_improvement_mxn)}</span>
+                </div>
+            </div>
+        </div>
+        ${data.farms.length > 0 ? `
+        <div class="economics-farms">
+            ${data.farms.map(f => `
+                <div class="economics-farm-row">
+                    <span class="economics-farm-name">${esc(f.farm_name)}</span>
+                    <span class="economics-farm-ha">${f.hectares} ha</span>
+                    <span class="economics-farm-savings">${fmt(f.total_savings_mxn)}</span>
+                </div>
+            `).join('')}
+        </div>` : ''}
+    `;
+}
+
 async function loadCropTypeOptions() {
     const filter = document.getElementById('treatment-crop-filter');
     if (!filter) return;
@@ -254,6 +312,7 @@ async function init() {
         loadSummary(),
         loadAnomalies(),
         loadSoilTrends(),
+        loadEconomics(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
 }
