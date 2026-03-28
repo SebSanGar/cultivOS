@@ -322,6 +322,42 @@ async function loadCarbon() {
     `;
 }
 
+// ── TEK Validation ──
+async function loadTEKValidation() {
+    const container = document.getElementById('intel-tek-validation');
+    const data = await fetchJSON(API + '/tek-validation');
+
+    if (!data || data.methods.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de validacion TEK</div>';
+        return;
+    }
+
+    container.innerHTML = data.methods.map(m => {
+        const trustWidth = Math.min(Math.round(m.trust_score), 100);
+        const trustCls = trustWidth > 60 ? 'good' : trustWidth >= 30 ? 'warning' : 'critical';
+
+        return `
+        <div class="tek-method-card">
+            <div class="tek-method-header">
+                <span class="tek-method-name">${esc(m.method_name)}</span>
+                <span class="tek-method-feedback">${m.total_feedback} reportes</span>
+            </div>
+            <div class="tek-method-score-row">
+                <span class="tek-method-label">Confianza</span>
+                <div class="tek-method-score-bar">
+                    <div class="score-bar-fill ${trustCls}" style="width:${trustWidth}%"></div>
+                </div>
+                <span class="tek-method-score-val">${m.trust_score.toFixed(1)}</span>
+            </div>
+            <div class="tek-method-counts">
+                <span class="tek-count-positive">${m.positive_count} positivos</span>
+                <span class="tek-count-negative">${m.negative_count} negativos</span>
+                <span class="tek-method-rating">${m.average_rating.toFixed(1)}/5</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 // ── Farm Comparison ──
 async function loadFarmSelectOptions() {
     const select = document.getElementById('farm-compare-select');
@@ -441,6 +477,7 @@ async function init() {
         loadSoilTrends(),
         loadEconomics(),
         loadCarbon(),
+        loadTEKValidation(),
         loadFarmSelectOptions(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
