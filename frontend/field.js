@@ -240,6 +240,40 @@ function renderSoil(soil) {
 
 function renderDisease(risk) {
     const riskCls = risk.risk_level === 'alto' ? 'critical' : risk.risk_level === 'medio' ? 'warning' : 'good';
+    const urgencyLabel = {'critico': 'Critico', 'alto': 'Alto', 'medio': 'Medio', 'bajo': 'Bajo'};
+
+    // Risk items from the risks array
+    let risksHtml = '';
+    if (risk.risks && risk.risks.length > 0) {
+        risksHtml = `<div class="disease-risks-list">
+            ${risk.risks.map(r => {
+                const urgCls = r.urgencia === 'critico' || r.urgencia === 'alto' ? 'critical'
+                    : r.urgencia === 'medio' ? 'warning' : 'good';
+                return `<div class="disease-riesgo-item">
+                    <div class="disease-riesgo-header">
+                        <span class="disease-riesgo-tipo">${esc(r.tipo)}</span>
+                        <span class="health-badge ${urgCls}">${esc(urgencyLabel[r.urgencia] || r.urgencia)}</span>
+                        ${r.organico ? '<span class="disease-organic-badge">Organico</span>' : ''}
+                    </div>
+                    <div class="disease-riesgo-desc">${esc(r.descripcion)}</div>
+                    <div class="disease-riesgo-rec">
+                        <span class="campo-data-label">Recomendacion:</span> ${esc(r.recomendacion)}
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>`;
+    }
+
+    // Weather context
+    let weatherHtml = '';
+    if (risk.weather_context) {
+        const wc = risk.weather_context;
+        weatherHtml = `<div class="disease-weather-ctx">
+            <span class="campo-data-label">Contexto climatico:</span>
+            ${wc.temp_c.toFixed(1)} C | ${wc.humidity_pct.toFixed(0)}% humedad | ${wc.rainfall_mm.toFixed(1)} mm lluvia
+        </div>`;
+    }
+
     document.getElementById('disease-content').innerHTML = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
@@ -247,15 +281,13 @@ function renderDisease(risk) {
                 <span class="campo-data-value health-badge ${riskCls}">${esc(risk.risk_level || '--')}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Tipo</span>
-                <span class="campo-data-value">${esc(risk.risk_type || '--')}</span>
+                <span class="campo-data-label">Evaluacion</span>
+                <span class="campo-data-value">${esc(risk.mensaje || '--')}</span>
             </div>
         </div>
-        ${risk.description ? `<div class="campo-risk-desc">${esc(risk.description)}</div>` : ''}
-        ${risk.recommendations && risk.recommendations.length > 0 ? `
-            <div class="campo-risk-recs">
-                ${risk.recommendations.map(r => `<div class="campo-risk-rec">${esc(r)}</div>`).join('')}
-            </div>` : ''}`;
+        ${risksHtml}
+        ${weatherHtml}
+        ${risk.nota ? `<div class="disease-nota">${esc(risk.nota)}</div>` : ''}`;
 }
 
 function renderIrrigation(irrigation) {

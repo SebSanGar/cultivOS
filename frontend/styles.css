@@ -463,6 +463,40 @@ nav {
 }
 .campo-risk-rec:last-child { border-bottom: none; }
 
+/* Disease panel — expanded risk items */
+.disease-risks-list { margin-top: 12px; }
+.disease-riesgo-item {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-bottom: 8px;
+}
+.disease-riesgo-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.disease-riesgo-tipo {
+    font-weight: 600; font-size: 0.9rem; color: var(--text);
+    text-transform: capitalize;
+}
+.disease-organic-badge {
+    font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;
+    background: var(--green-light, #065f46); color: #34d399;
+    font-weight: 600;
+}
+.disease-riesgo-desc {
+    font-size: 0.82rem; color: var(--text-muted); line-height: 1.4;
+}
+.disease-riesgo-rec {
+    font-size: 0.82rem; color: var(--text); margin-top: 6px;
+    padding-top: 6px; border-top: 1px solid var(--border);
+}
+.disease-weather-ctx {
+    margin-top: 10px; font-size: 0.82rem; color: var(--text-muted);
+    padding: 8px 12px; background: var(--bg); border-radius: 6px;
+}
+.disease-nota {
+    margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);
+    font-style: italic;
+}
+
 .campo-treatment-card {
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 8px; padding: 12px; margin-bottom: 8px;
