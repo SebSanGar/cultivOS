@@ -576,6 +576,84 @@ async function loadAlertHistory(farmId) {
     }).join('');
 }
 
+// ── Alert check trigger ──
+const ALERT_CHECK_TYPES = {
+    health: { label: 'Salud', icon: '\u2764', endpoint: 'check' },
+    irrigation: { label: 'Riego', icon: '\u{1F4A7}', endpoint: 'check-irrigation' },
+    anomalies: { label: 'Anomalias', icon: '\u26A0', endpoint: 'check-anomalies' },
+};
+
+async function checkAlerts() {
+    if (!selectedFarmId) return;
+    const btn = document.getElementById('btn-check-alerts');
+    const results = document.getElementById('alert-check-results');
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+    results.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Ejecutando verificaciones...</div>';
+
+    const responses = await Promise.all(
+        Object.entries(ALERT_CHECK_TYPES).map(async ([key, cfg]) => {
+            try {
+                const resp = await fetch(`${API}/farms/${selectedFarmId}/alerts/${cfg.endpoint}`, { method: 'POST' });
+                if (!resp.ok) return { key, cfg, data: null, error: resp.status };
+                return { key, cfg, data: await resp.json(), error: null };
+            } catch {
+                return { key, cfg, data: null, error: 'network' };
+            }
+        })
+    );
+
+    let totalAlerts = 0;
+    let totalFields = 0;
+    const cards = responses.map(({ key, cfg, data, error }) => {
+        if (error) {
+            return `<div class="alert-check-card info">
+                <div class="alert-check-icon">${cfg.icon}</div>
+                <div class="alert-check-body">
+                    <div class="alert-check-card-title">${esc(cfg.label)}</div>
+                    <div class="alert-check-card-msg">No se pudo verificar</div>
+                </div>
+            </div>`;
+        }
+        const alerts = data.alerts_created || [];
+        totalAlerts += alerts.length;
+        totalFields = Math.max(totalFields, data.fields_checked || 0);
+
+        if (alerts.length === 0) {
+            return `<div class="alert-check-card ok">
+                <div class="alert-check-icon">${cfg.icon}</div>
+                <div class="alert-check-body">
+                    <div class="alert-check-card-title">${esc(cfg.label)} — Sin problemas</div>
+                    <div class="alert-check-card-msg">${data.fields_checked} campo(s) revisado(s), todo en orden</div>
+                </div>
+            </div>`;
+        }
+
+        const severity = alerts.length >= 3 ? 'critical' : alerts.length >= 1 ? 'warning' : 'ok';
+        const msgs = alerts.map(a => esc(a.message)).join('<br>');
+        return `<div class="alert-check-card ${severity}">
+            <div class="alert-check-icon">${cfg.icon}</div>
+            <div class="alert-check-body">
+                <div class="alert-check-card-title">${esc(cfg.label)} — ${alerts.length} alerta(s)</div>
+                <div class="alert-check-card-msg">${msgs}</div>
+            </div>
+        </div>`;
+    });
+
+    const summaryText = totalAlerts === 0
+        ? `${totalFields} campo(s) verificado(s) — sin alertas activas`
+        : `${totalAlerts} alerta(s) encontrada(s) en ${totalFields} campo(s)`;
+
+    results.innerHTML = cards.join('') +
+        `<div class="alert-check-summary">${summaryText}</div>`;
+
+    btn.disabled = false;
+    btn.textContent = 'Verificar Alertas';
+
+    // Refresh alert history to show newly created alerts
+    loadAlertHistory(selectedFarmId);
+}
+
 // ── Seasonal TEK calendar ──
 const ALERT_TYPE_LABELS = {
     preparacion: 'Preparacion',
@@ -864,6 +942,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
+    document.getElementById('alert-check-panel').style.display = '';
     await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId), loadCarbonSummary(farmId), loadFieldComparison(farmId)]);
     renderFields(farmId);
     updateStats();
@@ -883,6 +962,7 @@ function closeFarmDetail() {
     document.getElementById('economic-impact-panel').style.display = 'none';
     document.getElementById('carbon-summary-panel').style.display = 'none';
     document.getElementById('field-comparison-panel').style.display = 'none';
+    document.getElementById('alert-check-panel').style.display = 'none';
 }
 
 // ── Escape HTML ──

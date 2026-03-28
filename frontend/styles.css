@@ -1373,6 +1373,100 @@ nav {
     color: var(--text-muted);
 }
 
+/* ── ALERT CHECK PANEL ── */
+.alert-check-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.alert-check-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.alert-check-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+.alert-check-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.alert-check-btn:hover { opacity: 0.85; }
+.alert-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.alert-check-results {
+    display: grid;
+    gap: 10px;
+}
+.alert-check-card {
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.alert-check-card.critical {
+    background: var(--red-light);
+    border: 1px solid rgba(220,38,38,0.2);
+}
+.alert-check-card.warning {
+    background: var(--yellow-light);
+    border: 1px solid rgba(217,119,6,0.2);
+}
+.alert-check-card.info {
+    background: var(--blue-light);
+    border: 1px solid rgba(37,99,235,0.2);
+}
+.alert-check-card.ok {
+    background: rgba(22,163,74,0.08);
+    border: 1px solid rgba(22,163,74,0.2);
+}
+.alert-check-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.alert-check-card.critical .alert-check-icon { color: #991b1b; }
+.alert-check-card.warning .alert-check-icon { color: #92400e; }
+.alert-check-card.info .alert-check-icon { color: var(--blue); }
+.alert-check-card.ok .alert-check-icon { color: var(--green); }
+.alert-check-body {
+    flex: 1;
+}
+.alert-check-card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.alert-check-card.critical .alert-check-card-title { color: #991b1b; }
+.alert-check-card.warning .alert-check-card-title { color: #92400e; }
+.alert-check-card.info .alert-check-card-title { color: var(--blue); }
+.alert-check-card.ok .alert-check-card-title { color: var(--green); }
+.alert-check-card-msg {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.alert-check-summary {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
 /* ── SEASONAL TEK CALENDAR ── */
 .seasonal-calendar {
     background: var(--surface);
