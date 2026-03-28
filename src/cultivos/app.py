@@ -188,6 +188,11 @@ def create_app() -> FastAPI:
             """Login and registration page."""
             return FileResponse(frontend_dir / "login.html")
 
+        @app.get("/gestion")
+        async def serve_management():
+            """Farm and field management — CRUD operations for farms and fields."""
+            return FileResponse(frontend_dir / "management.html")
+
         @app.get("/recomendaciones")
         async def serve_recommendations():
             """Farm recommendations — Cerebro treatment recommendations per field."""

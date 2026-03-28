@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Gestion de Granjas</title>
+    <meta name="description" content="Administra granjas y parcelas — crear, editar, eliminar granjas y sus parcelas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/gestion" class="nav-tab intel-tab active">Gestion</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- MANAGEMENT DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Gestion de Granjas y Parcelas</h1>
+            <p class="intel-subtitle">Crear, editar y eliminar granjas y sus parcelas</p>
+        </div>
+    </div>
+
+    <!-- Farm Create Form -->
+    <section class="mgmt-section">
+        <h2 class="mgmt-section-title">Nueva Granja</h2>
+        <div class="mgmt-form" id="mgmt-farm-form">
+            <div class="mgmt-form-row">
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-name">Nombre *</label>
+                    <input type="text" id="mgmt-farm-name" placeholder="Nombre de la granja" required>
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-owner">Propietario</label>
+                    <input type="text" id="mgmt-farm-owner" placeholder="Nombre del propietario">
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-state">Estado</label>
+                    <input type="text" id="mgmt-farm-state" value="Jalisco" placeholder="Estado">
+                </div>
+            </div>
+            <div class="mgmt-form-row">
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-municipality">Municipio</label>
+                    <input type="text" id="mgmt-farm-municipality" placeholder="Municipio">
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-hectares">Hectareas totales</label>
+                    <input type="number" id="mgmt-farm-hectares" value="0" min="0" step="0.1">
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-farm-country">Pais</label>
+                    <select id="mgmt-farm-country">
+                        <option value="MX" selected>Mexico</option>
+                        <option value="CA">Canada</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mgmt-form-actions">
+                <button class="mgmt-btn mgmt-btn-primary" onclick="createFarm()">Crear Granja</button>
+                <span id="mgmt-farm-error" class="mgmt-error"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farms Table -->
+    <section class="mgmt-section">
+        <h2 class="mgmt-section-title">Granjas Registradas</h2>
+        <div class="mgmt-table-wrap">
+            <table class="mgmt-table" id="mgmt-farms-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Propietario</th>
+                        <th>Estado</th>
+                        <th>Municipio</th>
+                        <th>Hectareas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="mgmt-farms-tbody"></tbody>
+            </table>
+        </div>
+        <p id="mgmt-farms-empty" class="mgmt-empty" style="display:none">No hay granjas registradas.</p>
+    </section>
+
+    <!-- Fields Section (shown when a farm is selected) -->
+    <section class="mgmt-section" id="mgmt-fields-section" style="display:none">
+        <h2 class="mgmt-section-title">Parcelas de <span id="mgmt-fields-farm-name"></span></h2>
+
+        <!-- Field Create Form -->
+        <div class="mgmt-form" id="mgmt-field-form">
+            <div class="mgmt-form-row">
+                <div class="mgmt-form-group">
+                    <label for="mgmt-field-name">Nombre *</label>
+                    <input type="text" id="mgmt-field-name" placeholder="Nombre de la parcela" required>
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-field-crop">Cultivo</label>
+                    <select id="mgmt-field-crop">
+                        <option value="">Sin especificar</option>
+                        <option value="maize">Maiz</option>
+                        <option value="agave">Agave</option>
+                        <option value="avocado">Aguacate</option>
+                        <option value="berries">Berries</option>
+                        <option value="sugarcane">Cana de azucar</option>
+                        <option value="tomato">Tomate</option>
+                        <option value="chili">Chile</option>
+                        <option value="beans">Frijol</option>
+                        <option value="sorghum">Sorgo</option>
+                        <option value="wheat">Trigo</option>
+                        <option value="alfalfa">Alfalfa</option>
+                    </select>
+                </div>
+                <div class="mgmt-form-group">
+                    <label for="mgmt-field-hectares">Hectareas</label>
+                    <input type="number" id="mgmt-field-hectares" value="0" min="0" step="0.1">
+                </div>
+            </div>
+            <div class="mgmt-form-actions">
+                <button class="mgmt-btn mgmt-btn-primary" onclick="createField()">Agregar Parcela</button>
+                <span id="mgmt-field-error" class="mgmt-error"></span>
+            </div>
+        </div>
+
+        <!-- Fields Table -->
+        <div class="mgmt-table-wrap">
+            <table class="mgmt-table" id="mgmt-fields-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Cultivo</th>
+                        <th>Hectareas</th>
+                        <th>Creado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="mgmt-fields-tbody"></tbody>
+            </table>
+        </div>
+        <p id="mgmt-fields-empty" class="mgmt-empty" style="display:none">No hay parcelas registradas en esta granja.</p>
+    </section>
+
+    <!-- Confirmation Dialog -->
+    <div id="mgmt-confirm-dialog" class="mgmt-overlay" style="display:none">
+        <div class="mgmt-dialog">
+            <p id="mgmt-confirm-message">Esta seguro?</p>
+            <div class="mgmt-dialog-actions">
+                <button class="mgmt-btn mgmt-btn-danger" id="mgmt-confirm-yes" onclick="confirmAction()">Eliminar</button>
+                <button class="mgmt-btn mgmt-btn-secondary" onclick="closeConfirm()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inline Edit Dialog -->
+    <div id="mgmt-edit-dialog" class="mgmt-overlay" style="display:none">
+        <div class="mgmt-dialog mgmt-dialog-wide">
+            <h3 id="mgmt-edit-title">Editar</h3>
+            <div id="mgmt-edit-fields"></div>
+            <div class="mgmt-dialog-actions">
+                <button class="mgmt-btn mgmt-btn-primary" onclick="saveEdit()">Guardar</button>
+                <button class="mgmt-btn mgmt-btn-secondary" onclick="closeEdit()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/management.js"></script>
+</body>
+</html>
