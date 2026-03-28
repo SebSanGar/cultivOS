@@ -196,6 +196,28 @@
         <div class="econ-nota" id="econ-nota"></div>
     </div>
 
+    <!-- Carbon sequestration summary (shown when a farm is selected) -->
+    <div id="carbon-summary-panel" class="economic-impact-panel" style="display:none">
+        <div class="econ-header">
+            <h3 class="econ-title">Secuestro de Carbono</h3>
+        </div>
+        <div class="econ-stats">
+            <div class="econ-stat">
+                <div class="econ-stat-value" id="carbon-co2e">0</div>
+                <div class="econ-stat-label">CO2e Total (toneladas)</div>
+            </div>
+            <div class="econ-stat">
+                <div class="econ-stat-value" id="carbon-rate">0</div>
+                <div class="econ-stat-label">CO2e/ha (t/ha)</div>
+            </div>
+            <div class="econ-stat">
+                <div class="econ-stat-value" id="carbon-avg-soc">0</div>
+                <div class="econ-stat-label">SOC Promedio (t/ha)</div>
+            </div>
+        </div>
+        <div id="carbon-fields-list" class="carbon-fields-list"></div>
+    </div>
+
     <!-- Multi-field comparison table (shown when a farm is selected) -->
     <div id="field-comparison-panel" class="field-comparison-panel" style="display:none">
         <div class="comparison-header">

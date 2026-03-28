@@ -1,17 +1,35 @@
-"""Soil carbon tracking endpoints — nested under /api/farms/{farm_id}/fields/{field_id}/carbon."""
+"""Soil carbon tracking endpoints — per-field and per-farm aggregates."""
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field, SoilAnalysis
 from cultivos.db.session import get_db
-from cultivos.models.carbon import CarbonReportOut, SOCEstimateOut
+from cultivos.models.carbon import CarbonReportOut, FarmCarbonSummaryOut, SOCEstimateOut
+from cultivos.services.intelligence.analytics import compute_farm_carbon_summary
 from cultivos.services.intelligence.carbon import estimate_soc, compute_carbon_trend
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/carbon",
     tags=["carbon"],
 )
+
+farm_carbon_router = APIRouter(
+    prefix="/api/farms/{farm_id}/carbon",
+    tags=["carbon"],
+)
+
+
+@farm_carbon_router.get("", response_model=FarmCarbonSummaryOut)
+def get_farm_carbon_summary(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Aggregate carbon sequestration across all fields in a farm — SOC, CO2e, trend per field."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_farm_carbon_summary(db, farm_id)
 
 
 def _get_field(farm_id: int, field_id: int, db: Session) -> Field:

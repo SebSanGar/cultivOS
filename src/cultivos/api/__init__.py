@@ -50,6 +50,7 @@ all_routers = [
     anomalies.router,
     auth.router,
     carbon.router,
+    carbon.farm_carbon_router,
     completeness.router,
     dashboard.router,
     farm_recommendations.router,

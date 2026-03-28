@@ -668,6 +668,33 @@ async function loadEconomicImpact(farmId) {
     document.getElementById('econ-nota').textContent = data.nota || '';
 }
 
+// ── Carbon sequestration summary ──
+async function loadCarbonSummary(farmId) {
+    const container = document.getElementById('carbon-summary-panel');
+    const data = await fetchJSON(`/farms/${farmId}/carbon`);
+    if (!data || data.total_fields === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = '';
+    document.getElementById('carbon-co2e').textContent = data.total_co2e_tonnes.toFixed(1);
+    document.getElementById('carbon-rate').textContent = data.soc_per_ha_rate.toFixed(2);
+    document.getElementById('carbon-avg-soc').textContent = data.avg_soc_tonnes_per_ha.toFixed(1);
+
+    const listEl = document.getElementById('carbon-fields-list');
+    const trendIcon = { ganando: '+', estable: '=', perdiendo: '-', datos_insuficientes: '?' };
+    const trendColor = { ganando: 'var(--accent)', estable: 'var(--text-muted)', perdiendo: '#e74c3c', datos_insuficientes: 'var(--text-muted)' };
+    listEl.innerHTML = data.fields.map(f => `
+        <div class="carbon-field-row">
+            <span class="carbon-field-name">${esc(f.field_name)}</span>
+            <span class="carbon-field-soc">${f.soc_tonnes_per_ha} t/ha</span>
+            <span class="carbon-field-co2e">${f.co2e_tonnes} t CO2e</span>
+            <span class="carbon-field-trend" style="color:${trendColor[f.tendencia] || 'var(--text-muted)'}">${trendIcon[f.tendencia] || '?'} ${f.clasificacion}</span>
+        </div>
+    `).join('');
+}
+
 // ── Multi-field comparison table ──
 let comparisonSortField = 'health';
 let comparisonSortAsc = false;
@@ -837,7 +864,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId), loadFieldComparison(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId), loadCarbonSummary(farmId), loadFieldComparison(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -854,6 +881,7 @@ function closeFarmDetail() {
     document.getElementById('alert-history').style.display = 'none';
     document.getElementById('dashboard-summary').style.display = 'none';
     document.getElementById('economic-impact-panel').style.display = 'none';
+    document.getElementById('carbon-summary-panel').style.display = 'none';
     document.getElementById('field-comparison-panel').style.display = 'none';
 }
 
