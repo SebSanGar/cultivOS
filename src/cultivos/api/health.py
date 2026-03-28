@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis, ThermalResult
 from cultivos.db.session import get_db
-from cultivos.models.health import HealthHistoryOut, HealthScoreOut
-from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, ThermalInput, compute_health_score, compute_trend_from_history
+from cultivos.models.health import HealthHistoryOut, HealthScoreOut, HealthTrendOut
+from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, ThermalInput, analyze_health_trend, compute_health_score, compute_trend_from_history
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/health",
@@ -190,6 +190,30 @@ def get_health_history(
         trend=trend,
         count=len(records),
     )
+
+
+@router.get("/trend", response_model=HealthTrendOut)
+def get_health_trend(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Get health trend analysis with rate of change and linear projection.
+
+    Returns trend direction, rate of change per observation, and projected
+    next score. Requires 3+ data points for meaningful analysis.
+    """
+    _get_field(farm_id, field_id, db)
+    records = (
+        db.query(HealthScore)
+        .filter(HealthScore.field_id == field_id)
+        .order_by(HealthScore.scored_at.asc())
+        .all()
+    )
+    score_values = [r.score for r in records]
+    date_values = [r.scored_at for r in records]
+    result = analyze_health_trend(score_values, date_values)
+    return HealthTrendOut(**result)
 
 
 @router.get("/{score_id}", response_model=HealthScoreOut)

@@ -4,6 +4,7 @@ Combines NDVI stats and soil analysis into a 0-100 field health score.
 Handles partial inputs via proportional weight redistribution.
 """
 
+from datetime import datetime
 from typing import TypedDict
 
 
@@ -325,3 +326,59 @@ def compute_trend_from_history(scores: list[float]) -> str:
     elif slope < -3.0:
         return "declining"
     return "stable"
+
+
+def analyze_health_trend(
+    scores: list[float],
+    dates: list[datetime],
+) -> dict:
+    """Analyze health trend with rate of change and linear projection.
+
+    Args:
+        scores: chronological health scores (oldest first)
+        dates: corresponding timestamps
+
+    Returns:
+        dict with trend, rate_of_change, projection, data_points
+    """
+    n = len(scores)
+    if n < 3:
+        return {
+            "trend": "insufficient_data",
+            "rate_of_change": 0.0,
+            "projection": None,
+            "data_points": n,
+        }
+
+    # Linear regression: y = intercept + slope * x
+    x_mean = (n - 1) / 2
+    y_mean = sum(scores) / n
+
+    numerator = sum((i - x_mean) * (s - y_mean) for i, s in enumerate(scores))
+    denominator = sum((i - x_mean) ** 2 for i in range(n))
+
+    if denominator == 0:
+        slope = 0.0
+    else:
+        slope = numerator / denominator
+
+    intercept = y_mean - slope * x_mean
+
+    # Classify trend
+    if slope > 3.0:
+        trend = "improving"
+    elif slope < -3.0:
+        trend = "declining"
+    else:
+        trend = "stable"
+
+    # Project next observation (x = n)
+    projection = intercept + slope * n
+    projection = max(0.0, min(100.0, round(projection, 1)))
+
+    return {
+        "trend": trend,
+        "rate_of_change": round(slope, 2),
+        "projection": projection,
+        "data_points": n,
+    }

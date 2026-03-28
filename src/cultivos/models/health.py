@@ -28,3 +28,11 @@ class HealthHistoryOut(BaseModel):
     scores: list[HealthScoreOut]
     trend: str  # improving, stable, declining, insufficient_data
     count: int
+
+
+class HealthTrendOut(BaseModel):
+    """Health trend analysis with rate of change and projection."""
+    trend: str  # improving, stable, declining, insufficient_data
+    rate_of_change: float  # slope per observation interval
+    projection: float | None  # projected next score (0-100), None if insufficient data
+    data_points: int
