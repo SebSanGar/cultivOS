@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Recorrido FODECIJAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f; --surface: #14141f; --border: #2a2a3a;
+            --text: #e5e7eb; --muted: #9ca3af; --green: #16a34a; --green-light: #dcfce7;
+            --green-dark: #14532d; --amber: #d97706; --red: #dc2626; --blue: #3b82f6;
+            --purple: #7c5cfc;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        /* Header */
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+        .header-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; }
+        .header-logo span { color: var(--green); }
+        .header-badge { font-size: 0.7rem; color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: rgba(124,92,252,0.1); padding: 4px 12px; border-radius: 6px; }
+
+        /* Progress indicator */
+        .progress-bar { display: flex; align-items: center; justify-content: center; padding: 24px 16px 8px; gap: 0; max-width: 600px; margin: 0 auto; }
+        .step-indicator { display: flex; align-items: center; }
+        .step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; border: 2px solid var(--border); color: var(--muted); background: var(--bg); cursor: pointer; transition: all 0.3s; flex-shrink: 0; }
+        .step-dot.active { border-color: var(--green); color: #fff; background: var(--green); }
+        .step-dot.completed { border-color: var(--green); color: var(--green); background: var(--green-dark); }
+        .step-line { width: 40px; height: 2px; background: var(--border); transition: background 0.3s; }
+        .step-line.active { background: var(--green); }
+        .step-labels { display: flex; justify-content: space-between; max-width: 600px; margin: 4px auto 0; padding: 0 16px; }
+        .step-label { font-size: 0.65rem; color: var(--muted); text-align: center; width: 80px; }
+        .step-label.active { color: var(--green); font-weight: 600; }
+
+        /* Sections */
+        .section { display: none; max-width: 800px; margin: 0 auto; padding: 40px 24px 120px; animation: fadeIn 0.3s ease; }
+        .section.visible { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        .section-num { font-size: 0.7rem; color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .section-title { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.3; }
+        .section-body { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
+
+        /* Farm/field cards in walkthrough */
+        .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 24px 0; }
+        .demo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-decoration: none; color: var(--text); transition: border-color 0.2s, transform 0.2s; display: block; }
+        .demo-card:hover { border-color: var(--green); transform: translateY(-2px); }
+        .demo-card-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .demo-card-sub { font-size: 0.8rem; color: var(--muted); }
+        .demo-card-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+        .demo-chip { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .demo-chip.crop { background: rgba(22,163,74,0.15); color: var(--green); }
+        .demo-chip.ha { background: rgba(59,130,246,0.15); color: var(--blue); }
+        .demo-chip.score { background: rgba(217,119,6,0.15); color: var(--amber); }
+
+        /* Highlight box */
+        .highlight { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.2); border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .highlight-title { font-size: 0.8rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+        .highlight-body { font-size: 0.9rem; color: var(--text); }
+
+        /* Feature list */
+        .feature-list { list-style: none; padding: 0; margin: 16px 0; }
+        .feature-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; gap: 10px; align-items: baseline; }
+        .feature-list li:last-child { border-bottom: none; }
+        .feature-bullet { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+        /* Navigation */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .nav-btn { padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .nav-btn.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+        .nav-btn.secondary:hover { border-color: var(--text); color: var(--text); }
+        .nav-btn.primary { background: var(--green); color: #fff; }
+        .nav-btn.primary:hover { background: #15803d; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-step-text { font-size: 0.8rem; color: var(--muted); }
+
+        /* Impact metric cards */
+        .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+        .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+        .impact-value { font-size: 2rem; font-weight: 800; color: var(--green); }
+        .impact-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        @media (max-width: 640px) {
+            .section-title { font-size: 1.3rem; }
+            .step-line { width: 24px; }
+            .nav-bar { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-logo">cultiv<span>OS</span></div>
+    <div class="header-badge">Recorrido FODECIJAL</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar" id="progress-bar"></div>
+<div class="step-labels" id="step-labels"></div>
+
+<!-- SECTION 1: Datos del Campo -->
+<div class="section visible" id="section-0" data-section="datos">
+    <div class="section-num">Paso 1 de 4</div>
+    <div class="section-title">Datos del Campo</div>
+    <div class="section-body">
+        Cerebro recopila datos de drones (NDVI, térmico), sensores de suelo, clima y observaciones del agricultor.
+        Aquí están las granjas de demostración con datos reales de Jalisco.
+    </div>
+    <div class="demo-grid" id="demo-farms">
+        <div class="demo-card" style="opacity:0.5">
+            <div class="demo-card-name">Cargando granjas...</div>
+            <div class="demo-card-sub">Conectando con Cerebro</div>
+        </div>
+    </div>
+    <div class="highlight">
+        <div class="highlight-title">Lo que ve el evaluador FODECIJAL</div>
+        <div class="highlight-body">
+            Cada granja tiene campos con cultivos reales de Jalisco: agave, maíz, fresa, arándano, frambuesa, frijol.
+            Los datos de NDVI y salud se actualizan con cada vuelo de dron.
+            Haga clic en cualquier granja para ver los detalles completos.
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: Analisis de Salud -->
+<div class="section" id="section-1" data-section="salud">
+    <div class="section-num">Paso 2 de 4</div>
+    <div class="section-title">Análisis de Salud</div>
+    <div class="section-body">
+        Cerebro procesa imágenes NDVI y térmicas para calcular un puntaje de salud 0-100 para cada campo.
+        El análisis combina: vegetación (NDVI), estrés hídrico (térmico), suelo, y clima.
+    </div>
+    <ul class="feature-list">
+        <li><span class="feature-bullet">+</span> Puntaje de salud 0-100 con tendencia temporal (mejorando/estable/bajando)</li>
+        <li><span class="feature-bullet">+</span> Mapa de calor SVG — campos coloreados por salud en vista de granja</li>
+        <li><span class="feature-bullet">+</span> Sparklines de historial en cada tarjeta de campo</li>
+        <li><span class="feature-bullet">+</span> Detección de enfermedades por patrones NDVI anómalos</li>
+        <li><span class="feature-bullet">+</span> Fusión multi-sensor: NDVI + térmico + suelo + microbioma</li>
+    </ul>
+    <div id="demo-fields-health" class="demo-grid"></div>
+    <div class="highlight">
+        <div class="highlight-title">Validación TEK con datos de sensor</div>
+        <div class="highlight-body">
+            Cuando un agricultor aplica una práctica ancestral (p.ej. composta de monte),
+            Cerebro mide el impacto real en salud del campo antes y después del tratamiento.
+            Esto es el núcleo de la propuesta FODECIJAL: validar conocimiento tradicional con tecnología.
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: Recomendaciones -->
+<div class="section" id="section-2" data-section="recomendaciones">
+    <div class="section-num">Paso 3 de 4</div>
+    <div class="section-title">Recomendaciones Regenerativas</div>
+    <div class="section-body">
+        Cerebro recomienda tratamientos 100% orgánicos y regenerativos — nunca pesticidas sintéticos.
+        Combina conocimiento ancestral (TEK) con datos de sensor para intervenciones precisas.
+    </div>
+    <ul class="feature-list">
+        <li><span class="feature-bullet">+</span> Motor de recomendaciones basado en tipo de cultivo + estado de salud + suelo + clima</li>
+        <li><span class="feature-bullet">+</span> 21+ métodos orgánicos documentados (10 fertilizantes, 3 tratamientos microbioma, 8 ancestrales)</li>
+        <li><span class="feature-bullet">+</span> Calendario estacional TEK — alertas por temporada de Jalisco (temporal/secas)</li>
+        <li><span class="feature-bullet">+</span> Optimizador de timing — sugiere el mejor momento para aplicar cada tratamiento</li>
+        <li><span class="feature-bullet">+</span> Seguimiento de efectividad — mide resultado real post-tratamiento</li>
+    </ul>
+    <div id="demo-treatments" class="demo-grid"></div>
+    <div class="highlight">
+        <div class="highlight-title">Ejemplo: Milpa + Composta de Monte</div>
+        <div class="highlight-body">
+            El sistema detecta que un campo de milpa tiene NDVI bajo (0.45).
+            Recomienda aplicar composta de monte — una práctica ancestral que mejora microbioma del suelo.
+            Después de 30 días, el NDVI sube a 0.72. Cerebro registra: "Práctica TEK validada con +60% mejora."
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 4: Impacto Regenerativo -->
+<div class="section" id="section-3" data-section="impacto">
+    <div class="section-num">Paso 4 de 4</div>
+    <div class="section-title">Impacto Regenerativo</div>
+    <div class="section-body">
+        El objetivo final: medir y demostrar que las prácticas regenerativas mejoran la tierra.
+        Cerebro calcula un puntaje regenerativo por campo y rastrea carbono en suelo.
+    </div>
+    <div class="impact-grid">
+        <div class="impact-card">
+            <div class="impact-value">$414K</div>
+            <div class="impact-label">MXN ahorrados/granja/año</div>
+        </div>
+        <div class="impact-card">
+            <div class="impact-value">57%</div>
+            <div class="impact-label">Agua desperdiciada (línea base)</div>
+        </div>
+        <div class="impact-card">
+            <div class="impact-value">84%</div>
+            <div class="impact-label">Municipios en sequía (Jalisco 2024)</div>
+        </div>
+        <div class="impact-card">
+            <div class="impact-value">&lt;5%</div>
+            <div class="impact-label">Pequeñas granjas con precisión</div>
+        </div>
+    </div>
+    <ul class="feature-list">
+        <li><span class="feature-bullet">+</span> Puntaje regenerativo 0-100 por campo (diversidad + prácticas orgánicas + cobertura + rotación)</li>
+        <li><span class="feature-bullet">+</span> MRV de carbono en suelo — medición, reporte y verificación</li>
+        <li><span class="feature-bullet">+</span> Calculadora de impacto económico — ahorro en agua, fertilizantes, rendimiento</li>
+        <li><span class="feature-bullet">+</span> Comparación estacional temporal vs secas — mide mejora entre ciclos</li>
+    </ul>
+    <div id="demo-impact" class="demo-grid"></div>
+    <div class="highlight">
+        <div class="highlight-title">Próximos pasos con FODECIJAL</div>
+        <div class="highlight-body">
+            Con el apoyo de COECYTJAL, cultivOS llevará Cerebro a campo real en Valles Centrales de Jalisco.
+            Validación con ITESO + UNAM. Objetivo: 85 granjas en 3 años, datos abiertos para investigación.
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:32px;">
+        <a href="/" class="nav-btn primary" style="text-decoration:none; display:inline-block;">Explorar el Panel de Granjas</a>
+        <a href="/intel" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;">Panel de Inteligencia</a>
+    </div>
+</div>
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar">
+    <button class="nav-btn secondary" id="btn-prev" onclick="navigate(-1)">Anterior</button>
+    <span class="nav-step-text" id="nav-text">Paso 1 de 4</span>
+    <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">Siguiente</button>
+</div>
+
+<script>
+const API = '/api';
+const STEPS = ['Datos', 'Salud', 'Recomendaciones', 'Impacto'];
+let currentStep = 0;
+let demoFarms = [];
+
+function buildProgress() {
+    const bar = document.getElementById('progress-bar');
+    const labels = document.getElementById('step-labels');
+    let barHTML = '';
+    let labelsHTML = '';
+    for (let i = 0; i < STEPS.length; i++) {
+        barHTML += '<div class="step-indicator">';
+        barHTML += `<div class="step-dot ${i === 0 ? 'active' : ''}" data-step="${i}" onclick="goToStep(${i})">${i + 1}</div>`;
+        barHTML += '</div>';
+        if (i < STEPS.length - 1) barHTML += `<div class="step-line" data-line="${i}"></div>`;
+        labelsHTML += `<div class="step-label ${i === 0 ? 'active' : ''}" data-label="${i}">${STEPS[i]}</div>`;
+    }
+    bar.innerHTML = barHTML;
+    labels.innerHTML = labelsHTML;
+}
+
+function updateProgress() {
+    document.querySelectorAll('.step-dot').forEach((dot, i) => {
+        dot.className = 'step-dot';
+        if (i < currentStep) dot.classList.add('completed');
+        if (i === currentStep) dot.classList.add('active');
+    });
+    document.querySelectorAll('.step-line').forEach((line, i) => {
+        line.className = 'step-line';
+        if (i < currentStep) line.classList.add('active');
+    });
+    document.querySelectorAll('.step-label').forEach((label, i) => {
+        label.className = 'step-label';
+        if (i === currentStep) label.classList.add('active');
+    });
+}
+
+function navigate(dir) {
+    const next = currentStep + dir;
+    if (next < 0 || next >= STEPS.length) return;
+    goToStep(next);
+}
+
+function goToStep(step) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.getElementById('section-' + step).classList.add('visible');
+    currentStep = step;
+    updateProgress();
+    document.getElementById('btn-prev').disabled = step === 0;
+    document.getElementById('btn-next').disabled = step === STEPS.length - 1;
+    document.getElementById('nav-text').textContent = `Paso ${step + 1} de ${STEPS.length}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function fetchJSON(path) {
+    try {
+        const resp = await fetch(API + path);
+        if (!resp.ok) return null;
+        return await resp.json();
+    } catch { return null; }
+}
+
+function renderFarmCards(farms) {
+    const grid = document.getElementById('demo-farms');
+    if (!farms || farms.length === 0) {
+        grid.innerHTML = '<div class="demo-card"><div class="demo-card-name">Sin granjas de demostración</div><div class="demo-card-sub">Ejecute seed_demo.py para cargar datos</div></div>';
+        return;
+    }
+    grid.innerHTML = farms.map(f => {
+        const cleanName = f.name.replace(' [DEMO]', '');
+        return `<a href="/?farm=${f.id}" class="demo-card">
+            <div class="demo-card-name">${cleanName}</div>
+            <div class="demo-card-sub">${f.municipality || 'Jalisco'} — ${f.owner_name || ''}</div>
+            <div class="demo-card-meta">
+                <span class="demo-chip ha">${f.total_hectares} ha</span>
+                <span class="demo-chip crop">${f.fields.length} campos</span>
+                ${f.fields.map(fl => `<span class="demo-chip crop">${fl.crop_type}</span>`).join('')}
+            </div>
+        </a>`;
+    }).join('');
+}
+
+function renderFieldHealth(farms) {
+    const grid = document.getElementById('demo-fields-health');
+    const fields = farms.flatMap(f => f.fields.map(fl => ({...fl, farm_id: f.id, farm_name: f.name.replace(' [DEMO]', '')})));
+    if (!fields.length) return;
+    grid.innerHTML = fields.slice(0, 6).map(f =>
+        `<a href="/campo?farm=${f.farm_id}&field=${f.id}" class="demo-card">
+            <div class="demo-card-name">${f.name}</div>
+            <div class="demo-card-sub">${f.farm_name} — ${f.crop_type}</div>
+            <div class="demo-card-meta">
+                <span class="demo-chip ha">${f.hectares} ha</span>
+                <span class="demo-chip crop">${f.crop_type}</span>
+            </div>
+        </a>`
+    ).join('');
+}
+
+function renderTreatmentLinks(farms) {
+    const grid = document.getElementById('demo-treatments');
+    if (!farms.length) return;
+    const f = farms[0];
+    grid.innerHTML = `
+        <a href="/intel" class="demo-card">
+            <div class="demo-card-name">Reporte de Efectividad</div>
+            <div class="demo-card-sub">Ver análisis cruzado de tratamientos entre todas las granjas</div>
+        </a>
+        <a href="/campo?farm=${f.id}&field=${f.fields[0]?.id || 1}" class="demo-card">
+            <div class="demo-card-name">Historial de Tratamientos</div>
+            <div class="demo-card-sub">Ver tratamientos aplicados y sus resultados por campo</div>
+        </a>`;
+}
+
+function renderImpactLinks(farms) {
+    const grid = document.getElementById('demo-impact');
+    if (!farms.length) return;
+    grid.innerHTML = farms.map(f => {
+        const cleanName = f.name.replace(' [DEMO]', '');
+        return `<a href="/?farm=${f.id}" class="demo-card">
+            <div class="demo-card-name">${cleanName}</div>
+            <div class="demo-card-sub">Ver puntaje regenerativo y comparación estacional</div>
+        </a>`;
+    }).join('');
+}
+
+async function init() {
+    buildProgress();
+    document.getElementById('btn-prev').disabled = true;
+
+    const farms = await fetchJSON('/demo/farms');
+    demoFarms = farms || [];
+    renderFarmCards(demoFarms);
+    renderFieldHealth(demoFarms);
+    renderTreatmentLinks(demoFarms);
+    renderImpactLinks(demoFarms);
+}
+
+init();
+</script>
+</body>
+</html>

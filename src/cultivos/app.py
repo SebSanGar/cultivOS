@@ -115,6 +115,7 @@ def create_app() -> FastAPI:
             {"name": "seasonal-alerts", "description": "Season-specific agricultural alerts and calendar"},
             {"name": "seasonal-comparison", "description": "Temporal vs dry season performance comparison"},
             {"name": "reports", "description": "PDF reports and CSV data exports"},
+            {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
         ],
     )
 
@@ -172,6 +173,11 @@ def create_app() -> FastAPI:
         @app.get("/demo")
         async def serve_demo():
             return FileResponse(frontend_dir / "demo.html")
+
+        @app.get("/recorrido")
+        async def serve_walkthrough():
+            """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""
+            return FileResponse(frontend_dir / "walkthrough.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
