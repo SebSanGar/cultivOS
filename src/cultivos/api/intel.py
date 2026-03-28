@@ -11,6 +11,8 @@ from cultivos.db.session import get_db
 from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut
 from cultivos.models.intel import (
     AnomaliesOut,
+    BatchHealthOut,
+    BatchHealthRequestIn,
     FarmCompareOut,
     IntelSummaryOut,
     SeasonalOut,
@@ -23,6 +25,7 @@ from cultivos.models.intel import (
 from cultivos.services.intelligence.analytics import (
     compare_farms,
     compute_anomalies,
+    compute_batch_health,
     compute_seasonal_performance,
     compute_soil_trends,
     compute_summary,
@@ -145,6 +148,19 @@ def treatment_timing(body: TimingRequestIn):
     """Recommend optimal day and time to apply a treatment based on weather forecast."""
     forecast = [f.model_dump() for f in body.forecast_3day]
     return optimize_treatment_timing(body.treatment_type, forecast)
+
+
+@router.post("/batch-health", response_model=BatchHealthOut)
+def batch_field_health(
+    body: BatchHealthRequestIn,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Compute health score + trend for multiple fields in one call.
+
+    Optimized for dashboard map rendering. Invalid IDs return null entries.
+    """
+    return compute_batch_health(db, body.field_ids)
 
 
 seasonal_router = APIRouter(

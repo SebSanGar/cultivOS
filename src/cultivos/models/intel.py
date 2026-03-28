@@ -111,6 +111,27 @@ class TreatmentEffectivenessReportOut(BaseModel):
     treatments: list[TreatmentEffectivenessReportEntry]
 
 
+# ── Batch health assessment ──────────────────────────────────────────
+
+
+class BatchHealthRequestIn(BaseModel):
+    field_ids: list[int]
+
+
+class BatchHealthEntry(BaseModel):
+    field_id: int
+    field_name: Optional[str] = None
+    farm_name: Optional[str] = None
+    score: Optional[float] = None
+    trend: Optional[str] = None
+    sources: Optional[list[str]] = None
+    breakdown: Optional[dict[str, float]] = None
+
+
+class BatchHealthOut(BaseModel):
+    results: list[BatchHealthEntry]
+
+
 class FarmCompareEntry(BaseModel):
     farm_id: int
     farm_name: str

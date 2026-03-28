@@ -11,8 +11,18 @@ from cultivos.db.models import (
     FarmerFeedback,
     Field,
     HealthScore,
+    MicrobiomeRecord,
+    NDVIResult,
     SoilAnalysis,
+    ThermalResult,
     TreatmentRecord,
+)
+from cultivos.services.crop.health import (
+    MicrobiomeInput,
+    NDVIInput,
+    SoilInput,
+    ThermalInput,
+    compute_health_score,
 )
 
 
@@ -364,3 +374,136 @@ def compute_seasonal_performance(
         })
 
     return {"seasons": seasons}
+
+
+def compute_batch_health(db: Session, field_ids: list[int]) -> dict:
+    """Compute health score + trend for multiple fields in one call.
+
+    Returns a result entry for every requested field_id.
+    Fields that don't exist or have no data get null score/trend.
+    """
+    if not field_ids:
+        return {"results": []}
+
+    # Bulk-fetch fields with their farms
+    fields = (
+        db.query(Field, Farm.name)
+        .join(Farm, Field.farm_id == Farm.id)
+        .filter(Field.id.in_(field_ids))
+        .all()
+    )
+    field_map = {f.id: (f, farm_name) for f, farm_name in fields}
+
+    results = []
+    for fid in field_ids:
+        if fid not in field_map:
+            # Field doesn't exist
+            results.append({
+                "field_id": fid,
+                "field_name": None,
+                "farm_name": None,
+                "score": None,
+                "trend": None,
+                "sources": None,
+                "breakdown": None,
+            })
+            continue
+
+        field, farm_name = field_map[fid]
+
+        # Fetch latest data sources
+        latest_ndvi = (
+            db.query(NDVIResult)
+            .filter(NDVIResult.field_id == fid)
+            .order_by(NDVIResult.analyzed_at.desc())
+            .first()
+        )
+        latest_soil = (
+            db.query(SoilAnalysis)
+            .filter(SoilAnalysis.field_id == fid)
+            .order_by(SoilAnalysis.sampled_at.desc())
+            .first()
+        )
+        latest_microbiome = (
+            db.query(MicrobiomeRecord)
+            .filter(MicrobiomeRecord.field_id == fid)
+            .order_by(MicrobiomeRecord.sampled_at.desc())
+            .first()
+        )
+        latest_thermal = (
+            db.query(ThermalResult)
+            .filter(ThermalResult.field_id == fid)
+            .order_by(ThermalResult.analyzed_at.desc())
+            .first()
+        )
+
+        if not any([latest_ndvi, latest_soil, latest_microbiome, latest_thermal]):
+            # Field exists but has no data
+            results.append({
+                "field_id": fid,
+                "field_name": field.name,
+                "farm_name": farm_name,
+                "score": None,
+                "trend": None,
+                "sources": None,
+                "breakdown": None,
+            })
+            continue
+
+        # Build inputs
+        ndvi_input = NDVIInput(
+            ndvi_mean=latest_ndvi.ndvi_mean,
+            ndvi_std=latest_ndvi.ndvi_std,
+            stress_pct=latest_ndvi.stress_pct,
+        ) if latest_ndvi else None
+
+        soil_input = SoilInput(
+            ph=latest_soil.ph,
+            organic_matter_pct=latest_soil.organic_matter_pct,
+            nitrogen_ppm=latest_soil.nitrogen_ppm,
+            phosphorus_ppm=latest_soil.phosphorus_ppm,
+            potassium_ppm=latest_soil.potassium_ppm,
+            moisture_pct=latest_soil.moisture_pct,
+        ) if latest_soil else None
+
+        microbiome_input = MicrobiomeInput(
+            respiration_rate=latest_microbiome.respiration_rate,
+            microbial_biomass_carbon=latest_microbiome.microbial_biomass_carbon,
+            fungi_bacteria_ratio=latest_microbiome.fungi_bacteria_ratio,
+            classification=latest_microbiome.classification,
+        ) if latest_microbiome else None
+
+        thermal_input = ThermalInput(
+            stress_pct=latest_thermal.stress_pct,
+            temp_mean=latest_thermal.temp_mean,
+            irrigation_deficit=latest_thermal.irrigation_deficit,
+        ) if latest_thermal else None
+
+        # Previous score for trend
+        previous = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == fid)
+            .order_by(HealthScore.scored_at.desc())
+            .first()
+        )
+        previous_score = previous.score if previous else None
+
+        health = compute_health_score(
+            ndvi=ndvi_input,
+            soil=soil_input,
+            previous_score=previous_score,
+            microbiome=microbiome_input,
+            thermal=thermal_input,
+        )
+
+        results.append({
+            "field_id": fid,
+            "field_name": field.name,
+            "farm_name": farm_name,
+            "score": health["score"],
+            "trend": health["trend"],
+            "sources": health["sources"],
+            "breakdown": health["breakdown"],
+        })
+
+    return {"results": results}
