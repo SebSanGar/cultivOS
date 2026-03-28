@@ -773,6 +773,33 @@ async function exportFarmCSV() {
     }
 }
 
+// ── PDF Report Download ──
+async function downloadFarmPDF() {
+    if (!selectedFarmId) return;
+    const btn = document.getElementById('btn-farm-pdf');
+    btn.disabled = true;
+    btn.textContent = 'Generando...';
+    try {
+        const resp = await fetch(`/api/farms/${selectedFarmId}/report`, { method: 'POST' });
+        if (!resp.ok) throw new Error(`Error ${resp.status}`);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_granja_${selectedFarmId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        console.error('PDF download failed:', e);
+        alert('No se pudo generar el reporte. Intente de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Descargar Reporte PDF';
+    }
+}
+
 // ── Init ──
 async function init() {
     await loadFarms();
