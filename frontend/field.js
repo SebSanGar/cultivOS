@@ -45,7 +45,7 @@ async function loadFieldDetail() {
     // Fetch field info and all intelligence in parallel
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
-           actionTimeline, intelligence, regenScore] = await Promise.all([
+           actionTimeline, intelligence, regenScore, seasonalData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -60,6 +60,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/action-timeline`),
         fetchJSON(`${base}/intelligence`),
         fetchJSON(`${base}/regenerative-score`),
+        fetchJSON(`${base}/seasonal-comparison`),
     ]);
 
     // Find this field
@@ -125,6 +126,9 @@ async function loadFieldDetail() {
 
     // Regenerative score
     renderRegenerativeScore(regenScore);
+
+    // Seasonal comparison
+    renderSeasonalComparison(seasonalData);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -521,6 +525,68 @@ function renderCerebro(intel) {
                 ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Etapa</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
                 ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Riesgo</span><span class="health-badge ${drCls}">${esc(dr.risk_level)}</span></div>` : ''}
                 ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Tratamientos</span><span class="campo-data-value">${treatCount} activos</span></div>` : ''}
+            </div>
+        </div>`;
+}
+
+function renderSeasonalComparison(data) {
+    const el = document.getElementById('seasonal-content');
+    if (!data) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de comparacion estacional</div>';
+        return;
+    }
+
+    const temporal = data.temporal || {};
+    const secas = data.secas || {};
+
+    // Check if both seasons have no data
+    if (temporal.avg_health_score == null && secas.avg_health_score == null) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos suficientes para comparar estaciones</div>';
+        return;
+    }
+
+    function barPct(val, max) {
+        if (val == null) return 0;
+        return Math.min(100, Math.round((val / max) * 100));
+    }
+
+    function metricRow(label, tVal, sVal, max, unit) {
+        const tPct = barPct(tVal, max);
+        const sPct = barPct(sVal, max);
+        const tDisplay = tVal != null ? tVal + (unit || '') : '--';
+        const sDisplay = sVal != null ? sVal + (unit || '') : '--';
+        return `
+            <div class="seasonal-metric">
+                <div class="seasonal-metric-label">${esc(label)}</div>
+                <div class="seasonal-bars">
+                    <div class="seasonal-bar-row">
+                        <span class="seasonal-season-label">Temporal</span>
+                        <div class="seasonal-bar-track">
+                            <div class="seasonal-bar-fill seasonal-temporal" style="width:${tPct}%"></div>
+                        </div>
+                        <span class="seasonal-bar-value">${tDisplay}</span>
+                    </div>
+                    <div class="seasonal-bar-row">
+                        <span class="seasonal-season-label">Secas</span>
+                        <div class="seasonal-bar-track">
+                            <div class="seasonal-bar-fill seasonal-secas" style="width:${sPct}%"></div>
+                        </div>
+                        <span class="seasonal-bar-value">${sDisplay}</span>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    const maxTreatments = Math.max(temporal.treatment_count || 0, secas.treatment_count || 0, 1);
+
+    el.innerHTML = `
+        <div class="seasonal-card">
+            ${metricRow('Salud Promedio', temporal.avg_health_score, secas.avg_health_score, 100, '')}
+            ${metricRow('NDVI Promedio', temporal.avg_ndvi, secas.avg_ndvi, 1, '')}
+            ${metricRow('Tratamientos', temporal.treatment_count, secas.treatment_count, maxTreatments, '')}
+            <div class="seasonal-meta">
+                <span class="seasonal-meta-item">Temporal (Jun-Oct): ${temporal.data_points || 0} registros</span>
+                <span class="seasonal-meta-item">Secas (Nov-May): ${secas.data_points || 0} registros</span>
             </div>
         </div>`;
 }
