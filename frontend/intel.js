@@ -358,6 +358,72 @@ async function loadTEKValidation() {
     }).join('');
 }
 
+// ── Sensor Fusion Overview ──
+async function loadSensorFusion() {
+    const container = document.getElementById('intel-sensor-fusion');
+    const badge = document.getElementById('intel-fusion-confidence');
+    const data = await fetchJSON(API + '/sensor-fusion');
+
+    if (!data || data.fields_with_data === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de fusion de sensores</div>';
+        if (badge) badge.textContent = '--';
+        return;
+    }
+
+    if (badge) badge.textContent = Math.round(data.avg_confidence * 100) + '%';
+
+    const sensorLabels = { ndvi: 'NDVI', thermal: 'Termico', soil: 'Suelo', weather: 'Clima' };
+
+    const summaryHtml = `
+        <div class="fusion-overview-summary">
+            <div class="fusion-overview-stat">
+                <span class="fusion-overview-stat-value">${data.fields_with_data}/${data.total_fields}</span>
+                <span class="fusion-overview-stat-label">Campos con datos</span>
+            </div>
+            <div class="fusion-overview-stat">
+                <span class="fusion-overview-stat-value">${Math.round(data.avg_confidence * 100)}%</span>
+                <span class="fusion-overview-stat-label">Confianza promedio</span>
+            </div>
+            <div class="fusion-overview-stat">
+                <span class="fusion-overview-stat-value ${data.total_contradictions > 0 ? 'negative' : ''}">${data.total_contradictions}</span>
+                <span class="fusion-overview-stat-label">Inconsistencias</span>
+            </div>
+        </div>
+    `;
+
+    const fieldsHtml = data.fields.map(f => {
+        const confPct = Math.round(f.confidence * 100);
+        const confCls = confPct >= 60 ? 'good' : confPct >= 30 ? 'warning' : 'critical';
+        const sensors = ['ndvi', 'thermal', 'soil', 'weather'].map(s => {
+            const active = f.sensors_used.includes(s);
+            return '<span class="fusion-sensor-badge ' + (active ? 'active' : 'inactive') + '">' + sensorLabels[s] + '</span>';
+        }).join('');
+
+        let contradictionsHtml = '';
+        if (f.contradictions.length > 0) {
+            contradictionsHtml = f.contradictions.map(c =>
+                '<div class="fusion-overview-contradiction">' +
+                '<span class="fusion-overview-contradiction-tag">' + c.sensors.map(s => sensorLabels[s] || s).join(' vs ') + '</span> ' +
+                '<span class="fusion-overview-contradiction-desc">' + esc(c.description) + '</span>' +
+                '</div>'
+            ).join('');
+        }
+
+        return `
+        <div class="fusion-overview-field">
+            <div class="fusion-overview-field-header">
+                <span class="fusion-overview-field-name">${esc(f.field_name)}</span>
+                <span class="fusion-overview-field-farm">${esc(f.farm_name)}</span>
+                <span class="health-badge ${confCls}">${confPct}%</span>
+            </div>
+            <div class="fusion-overview-field-sensors">${sensors}</div>
+            ${contradictionsHtml}
+        </div>`;
+    }).join('');
+
+    container.innerHTML = summaryHtml + '<div class="fusion-overview-fields">' + fieldsHtml + '</div>';
+}
+
 // ── Farm Comparison ──
 async function loadFarmSelectOptions() {
     const select = document.getElementById('farm-compare-select');
@@ -477,6 +543,7 @@ async function init() {
         loadSoilTrends(),
         loadEconomics(),
         loadCarbon(),
+        loadSensorFusion(),
         loadTEKValidation(),
         loadFarmSelectOptions(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),

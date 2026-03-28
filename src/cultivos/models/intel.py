@@ -188,3 +188,30 @@ class IntelCarbonSummaryOut(BaseModel):
     avg_soc_tonnes_per_ha: float = 0
     total_sequestration_tonnes: float = 0  # CO2e = SOC * 3.67 * hectares
     fields: list[CarbonFieldEntry] = []
+
+
+# ── Sensor fusion overview ────────────────────────────────────────────
+
+
+class FusionContradictionEntry(BaseModel):
+    tag: str
+    sensors: list[str]
+    description: str
+
+
+class FusionFieldEntry(BaseModel):
+    field_id: int
+    field_name: str
+    farm_name: str
+    confidence: float
+    sensors_used: list[str]
+    contradictions: list[FusionContradictionEntry]
+    assessment: str
+
+
+class SensorFusionOverviewOut(BaseModel):
+    total_fields: int
+    fields_with_data: int
+    avg_confidence: float = 0
+    total_contradictions: int = 0
+    fields: list[FusionFieldEntry] = []

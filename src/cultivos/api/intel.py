@@ -18,6 +18,7 @@ from cultivos.models.intel import (
     IntelEconomicsOut,
     IntelSummaryOut,
     SeasonalOut,
+    SensorFusionOverviewOut,
     SoilTrendsOut,
     TimingOut,
     TimingRequestIn,
@@ -31,6 +32,7 @@ from cultivos.services.intelligence.analytics import (
     compute_carbon_summary,
     compute_economics_summary,
     compute_seasonal_performance,
+    compute_sensor_fusion_overview,
     compute_soil_trends,
     compute_summary,
     compute_treatment_effectiveness,
@@ -85,6 +87,15 @@ def intel_carbon(
 ):
     """Aggregate carbon sequestration metrics across all fields — SOC, CO2e, trend per field."""
     return compute_carbon_summary(db)
+
+
+@router.get("/sensor-fusion", response_model=SensorFusionOverviewOut)
+def intel_sensor_fusion(
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Cross-field sensor fusion validation — confidence scores and contradiction flags per field."""
+    return compute_sensor_fusion_overview(db)
 
 
 @router.get("/soil-trends", response_model=SoilTrendsOut)

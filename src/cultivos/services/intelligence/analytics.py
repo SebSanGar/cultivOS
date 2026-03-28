@@ -770,3 +770,82 @@ def compute_farm_carbon_summary(db: Session, farm_id: int) -> dict:
         "soc_per_ha_rate": soc_per_ha_rate,
         "fields": field_entries,
     }
+
+
+def compute_sensor_fusion_overview(db: Session) -> dict:
+    """Cross-field sensor fusion validation — run fusion per field, aggregate.
+
+    For each field with at least one sensor reading (NDVI, thermal, soil),
+    call validate_sensor_fusion and collect results into a summary.
+    """
+    from cultivos.services.crop.fusion import validate_sensor_fusion
+
+    fields = db.query(Field).all()
+    total_fields = len(fields)
+    field_entries = []
+
+    for field in fields:
+        farm = db.query(Farm).filter(Farm.id == field.farm_id).first()
+        farm_name = farm.name if farm else "Desconocida"
+
+        latest_ndvi = (
+            db.query(NDVIResult).filter(NDVIResult.field_id == field.id)
+            .order_by(NDVIResult.analyzed_at.desc()).first()
+        )
+        latest_thermal = (
+            db.query(ThermalResult).filter(ThermalResult.field_id == field.id)
+            .order_by(ThermalResult.analyzed_at.desc()).first()
+        )
+        latest_soil = (
+            db.query(SoilAnalysis).filter(SoilAnalysis.field_id == field.id)
+            .order_by(SoilAnalysis.sampled_at.desc()).first()
+        )
+
+        if not any([latest_ndvi, latest_thermal, latest_soil]):
+            continue
+
+        result = validate_sensor_fusion(
+            ndvi={
+                "ndvi_mean": latest_ndvi.ndvi_mean,
+                "ndvi_std": latest_ndvi.ndvi_std,
+                "stress_pct": latest_ndvi.stress_pct,
+            } if latest_ndvi else None,
+            thermal={
+                "stress_pct": latest_thermal.stress_pct,
+                "temp_mean": latest_thermal.temp_mean,
+                "irrigation_deficit": latest_thermal.irrigation_deficit,
+            } if latest_thermal else None,
+            soil={
+                "ph": latest_soil.ph,
+                "organic_matter_pct": latest_soil.organic_matter_pct,
+                "nitrogen_ppm": latest_soil.nitrogen_ppm,
+                "phosphorus_ppm": latest_soil.phosphorus_ppm,
+                "potassium_ppm": latest_soil.potassium_ppm,
+                "moisture_pct": latest_soil.moisture_pct,
+            } if latest_soil else None,
+        )
+
+        field_entries.append({
+            "field_id": field.id,
+            "field_name": field.name,
+            "farm_name": farm_name,
+            "confidence": result["confidence"],
+            "sensors_used": result["sensors_used"],
+            "contradictions": result["contradictions"],
+            "assessment": result["assessment"],
+        })
+
+    fields_with_data = len(field_entries)
+    avg_confidence = (
+        round(sum(f["confidence"] for f in field_entries) / fields_with_data, 2)
+        if fields_with_data > 0 else 0
+    )
+    total_contradictions = sum(len(f["contradictions"]) for f in field_entries)
+
+    return {
+        "total_fields": total_fields,
+        "fields_with_data": fields_with_data,
+        "avg_confidence": avg_confidence,
+        "total_contradictions": total_contradictions,
+        "fields": field_entries,
+    }

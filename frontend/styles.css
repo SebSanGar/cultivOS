@@ -2461,6 +2461,35 @@ nav {
     font-size: 0.8rem; color: var(--text); line-height: 1.4;
 }
 
+/* ── Fusion Overview (Intel Dashboard) ── */
+.fusion-overview-summary {
+    display: flex; gap: 24px; padding: 12px 0; border-bottom: 1px solid var(--border); margin-bottom: 12px;
+}
+.fusion-overview-stat { display: flex; flex-direction: column; align-items: center; }
+.fusion-overview-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+.fusion-overview-stat-value.negative { color: #dc2626; }
+.fusion-overview-stat-label { font-size: 0.75rem; color: var(--text-muted); }
+.fusion-overview-fields { display: flex; flex-direction: column; gap: 10px; }
+.fusion-overview-field {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+}
+.fusion-overview-field-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.fusion-overview-field-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+.fusion-overview-field-farm { font-size: 0.8rem; color: var(--text-muted); flex: 1; }
+.fusion-overview-field-sensors { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.fusion-overview-contradiction {
+    background: rgba(220, 38, 38, 0.08); border-left: 3px solid #dc2626;
+    padding: 6px 10px; border-radius: 4px; margin-top: 6px;
+}
+.fusion-overview-contradiction-tag {
+    font-size: 0.75rem; font-weight: 600; color: #991b1b;
+}
+.fusion-overview-contradiction-desc {
+    font-size: 0.8rem; color: var(--text); line-height: 1.4;
+}
+
 /* ── Dashboard Summary Panel ── */
 .dashboard-summary {
     background: var(--surface);
