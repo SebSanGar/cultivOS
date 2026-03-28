@@ -98,3 +98,21 @@ class FieldOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# ── Heatmap ──────────────────────────────────────────────────────────
+
+class FieldHeatmapPoint(BaseModel):
+    field_id: int
+    field_name: str
+    crop_type: str | None
+    centroid_lat: float | None
+    centroid_lon: float | None
+    health_score: float | None
+    health_trend: str | None
+
+
+class HeatmapResponse(BaseModel):
+    farm_id: int
+    farm_name: str
+    fields: list[FieldHeatmapPoint]

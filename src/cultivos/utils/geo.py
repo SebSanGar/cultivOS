@@ -45,3 +45,21 @@ def calculate_polygon_area_hectares(coordinates: list[list[float]]) -> float:
 
     # Convert m² to hectares (1 ha = 10,000 m²)
     return round(area / 10_000.0, 2)
+
+
+def calculate_centroid(coordinates: list[list[float]] | None) -> tuple[float, float] | None:
+    """Calculate centroid of a GPS polygon as (latitude, longitude).
+
+    Args:
+        coordinates: List of [longitude, latitude] pairs (GeoJSON order),
+                     or None/empty.
+
+    Returns:
+        (latitude, longitude) tuple, or None if no coordinates.
+    """
+    if not coordinates:
+        return None
+    n = len(coordinates)
+    avg_lon = sum(c[0] for c in coordinates) / n
+    avg_lat = sum(c[1] for c in coordinates) / n
+    return (round(avg_lat, 6), round(avg_lon, 6))

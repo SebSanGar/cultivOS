@@ -9,6 +9,7 @@ from cultivos.db.session import get_db
 from cultivos.models.farm import (
     FarmCreate, FarmUpdate, FarmOut,
     FieldCreate, FieldUpdate, FieldOut,
+    HeatmapResponse, FieldHeatmapPoint,
 )
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
@@ -71,6 +72,45 @@ def delete_farm(farm_id: int, db: Session = Depends(get_db)):
     db.delete(farm)
     db.commit()
     return Response(status_code=204)
+
+
+# ── Heatmap ──────────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/heatmap", response_model=HeatmapResponse)
+def farm_heatmap(farm_id: int, db: Session = Depends(get_db)):
+    """Return all fields with centroid + latest health score for map rendering."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+
+    from cultivos.db.models import HealthScore
+    from cultivos.utils.geo import calculate_centroid
+
+    fields = db.query(Field).filter(Field.farm_id == farm_id).all()
+    points = []
+    for field in fields:
+        centroid = calculate_centroid(field.boundary_coordinates)
+        centroid_lat = centroid[0] if centroid else None
+        centroid_lon = centroid[1] if centroid else None
+
+        latest_hs = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == field.id)
+            .order_by(HealthScore.scored_at.desc())
+            .first()
+        )
+
+        points.append(FieldHeatmapPoint(
+            field_id=field.id,
+            field_name=field.name,
+            crop_type=field.crop_type,
+            centroid_lat=centroid_lat,
+            centroid_lon=centroid_lon,
+            health_score=latest_hs.score if latest_hs else None,
+            health_trend=latest_hs.trend if latest_hs else None,
+        ))
+
+    return HeatmapResponse(farm_id=farm.id, farm_name=farm.name, fields=points)
 
 
 # ── Field CRUD (nested under farm) ───────────────────────────────────
