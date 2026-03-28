@@ -329,6 +329,28 @@ nav {
 .rotation-reason {
     font-size: 0.75rem; color: var(--text-muted);
 }
+.rotation-current {
+    margin-bottom: 10px; font-size: 0.9rem;
+}
+.rotation-label {
+    color: var(--text-muted);
+}
+.rotation-value {
+    font-weight: 600; text-transform: capitalize;
+}
+.rotation-purpose {
+    font-size: 0.8rem; color: var(--green-dark); font-style: italic;
+}
+.rotation-meta {
+    display: flex; gap: 8px; font-size: 0.75rem; margin-top: 2px;
+}
+.rotation-months {
+    color: var(--text-muted);
+}
+.rotation-season-label {
+    background: var(--green-light); color: var(--green-dark);
+    padding: 1px 6px; border-radius: 4px; font-size: 0.7rem;
+}
 
 /* ── FERTILIZER CARDS ── */
 .fert-card {

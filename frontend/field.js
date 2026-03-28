@@ -137,7 +137,7 @@ async function loadFieldDetail() {
     if (treatments && treatments.length > 0) renderTreatments(treatments);
 
     // Rotation
-    if (rotation && rotation.seasons) renderRotation(rotation);
+    if (rotation && rotation.plan && rotation.plan.length) renderRotation(rotation);
 
     // Regional context
     renderRegionalCard(regionalData, parseInt(fieldId));
@@ -573,13 +573,22 @@ function renderTreatmentHistory(history) {
 
 function renderRotation(rotation) {
     document.getElementById('rotation-content').innerHTML = `
+        <div class="rotation-current">
+            <span class="rotation-label">Cultivo actual:</span>
+            <span class="rotation-value">${esc(rotation.last_crop)}</span>
+        </div>
         <div class="rotation-timeline">
-            ${rotation.seasons.map((s, i) => `
+            ${rotation.plan.map((s, i) => `
                 <div class="rotation-season">
                     <div class="rotation-num">${i + 1}</div>
                     <div>
-                        <div class="rotation-crop">${esc(s.crop || s.cultivo || '')}</div>
-                        <div class="rotation-reason">${esc(s.reason || s.razon || '')}</div>
+                        <div class="rotation-crop">${esc(s.crop)}</div>
+                        <div class="rotation-purpose">${esc(s.purpose)}</div>
+                        <div class="rotation-meta">
+                            <span class="rotation-months">${esc(s.months)}</span>
+                            <span class="rotation-season-label">${esc(s.season)}</span>
+                        </div>
+                        <div class="rotation-reason">${esc(s.reason)}</div>
                     </div>
                 </div>
             `).join('')}
