@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -60,6 +62,13 @@
             <div class="stat-value" id="campo-crop">--</div>
             <div class="stat-label">Cultivo</div>
         </div>
+    </div>
+
+    <!-- Field Boundary Map -->
+    <div class="campo-section" id="section-map">
+        <div class="campo-section-title">Mapa del Campo</div>
+        <div id="field-map" class="field-map"></div>
+        <div id="map-placeholder" class="campo-placeholder" style="display:none">Sin coordenadas de limite disponibles</div>
     </div>
 
     <!-- Cerebro Intelligence Summary — the brain overview -->

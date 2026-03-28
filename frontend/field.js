@@ -96,6 +96,9 @@ async function loadFieldDetail() {
         window.location.href = '/';
     };
 
+    // Field boundary map
+    renderFieldMap(field);
+
     // Cerebro intelligence summary
     renderCerebro(intelligence);
 
@@ -1986,6 +1989,34 @@ function renderWeatherCard(weatherRecords) {
     }
 
     el.innerHTML = `${currentHtml}${forecastHtml}`;
+}
+
+// -- Field boundary map --
+function renderFieldMap(field) {
+    const mapEl = document.getElementById('field-map');
+    const placeholder = document.getElementById('map-placeholder');
+    if (!field || !field.boundary_coordinates || field.boundary_coordinates.length < 3) {
+        if (mapEl) mapEl.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'block';
+        return;
+    }
+
+    // Leaflet expects [lat, lng] but boundary_coordinates are [lon, lat]
+    const latlngs = field.boundary_coordinates.map(c => [c[1], c[0]]);
+    const map = L.map('field-map', { zoomControl: true, attributionControl: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'OpenStreetMap'
+    }).addTo(map);
+
+    const polygon = L.polygon(latlngs, {
+        color: '#00c896',
+        weight: 2,
+        fillOpacity: 0.15,
+        fillColor: '#00c896'
+    }).addTo(map);
+
+    map.fitBounds(polygon.getBounds(), { padding: [30, 30] });
 }
 
 // -- Init --
