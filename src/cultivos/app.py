@@ -174,6 +174,11 @@ def create_app() -> FastAPI:
         async def serve_demo():
             return FileResponse(frontend_dir / "demo.html")
 
+        @app.get("/conocimiento")
+        async def serve_knowledge():
+            """Ancestral knowledge base — methods, crops, and natural fertilizers."""
+            return FileResponse(frontend_dir / "knowledge.html")
+
         @app.get("/recorrido")
         async def serve_walkthrough():
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""

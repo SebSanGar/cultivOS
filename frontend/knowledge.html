@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Base de Conocimiento</title>
+    <meta name="description" content="Conocimiento ancestral, cultivos y fertilizantes naturales — la sabiduria agricola de generaciones amplificada por tecnologia.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="knowledge-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab active">Conocimiento</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main class="knowledge-dashboard">
+    <!-- Header -->
+    <div class="knowledge-header">
+        <div>
+            <h1 class="knowledge-title">Base de Conocimiento</h1>
+            <p class="knowledge-subtitle">Sabiduria ancestral + ciencia moderna — metodos, cultivos y fertilizantes naturales</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="knowledge-search-bar">
+        <input type="text" id="knowledge-search" placeholder="Buscar metodos, cultivos, fertilizantes..." class="knowledge-search-input">
+    </div>
+
+    <!-- Ancestral Methods -->
+    <section class="knowledge-section">
+        <h2 class="knowledge-section-title">Metodos Ancestrales</h2>
+        <div id="ancestral-cards" class="knowledge-grid">
+            <p class="knowledge-placeholder">Cargando metodos ancestrales...</p>
+        </div>
+    </section>
+
+    <!-- Crop Types -->
+    <section class="knowledge-section">
+        <h2 class="knowledge-section-title">Cultivos</h2>
+        <div id="crop-cards" class="knowledge-grid">
+            <p class="knowledge-placeholder">Cargando cultivos...</p>
+        </div>
+    </section>
+
+    <!-- Natural Fertilizers -->
+    <section class="knowledge-section">
+        <h2 class="knowledge-section-title">Fertilizantes Naturales</h2>
+        <div id="fertilizer-cards" class="knowledge-grid">
+            <p class="knowledge-placeholder">Cargando fertilizantes...</p>
+        </div>
+    </section>
+</main>
+
+<script src="/knowledge.js"></script>
+</body>
+</html>
