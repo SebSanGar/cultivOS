@@ -351,6 +351,19 @@ nav {
     display: flex; align-items: center; gap: 16px;
     margin-bottom: 24px;
 }
+.campo-download-btn {
+    margin-left: auto;
+    padding: 8px 18px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--surface); cursor: pointer;
+    font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+    transition: all 0.2s; white-space: nowrap;
+}
+.campo-download-btn:hover {
+    border-color: var(--green); color: var(--green);
+}
+.campo-download-btn:disabled {
+    opacity: 0.5; cursor: wait;
+}
 
 .campo-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

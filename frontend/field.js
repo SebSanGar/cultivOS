@@ -591,5 +591,31 @@ function renderSeasonalComparison(data) {
         </div>`;
 }
 
+// -- PDF Download --
+async function downloadReport() {
+    if (!farmId) return;
+    const btn = document.getElementById('btn-download-report');
+    btn.textContent = 'Generando...';
+    btn.disabled = true;
+    try {
+        const resp = await fetch(API + `/farms/${farmId}/report`, { method: 'POST' });
+        if (!resp.ok) throw new Error('Error generando reporte');
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_granja_${farmId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('No se pudo generar el reporte. Intente de nuevo.');
+    } finally {
+        btn.textContent = 'Descargar Reporte';
+        btn.disabled = false;
+    }
+}
+
 // -- Init --
 loadFieldDetail();
