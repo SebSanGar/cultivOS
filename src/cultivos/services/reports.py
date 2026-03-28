@@ -214,6 +214,8 @@ _CSV_HEADERS = [
     "NDVI Promedio",
     "pH Suelo",
     "Materia Organica %",
+    "Tratamientos",
+    "Ultimo Tratamiento",
 ]
 
 
@@ -249,6 +251,10 @@ def generate_farm_export_csv(fields: list[dict]) -> str:
         om = f.get("soil_organic_matter_pct")
         om_str = f"{om:.1f}" if om is not None else ""
 
+        treatment_count = f.get("treatment_count", 0) or 0
+        last_date = f.get("last_treatment_date")
+        last_date_str = last_date.strftime("%Y-%m-%d") if last_date else ""
+
         writer.writerow([
             f.get("name", ""),
             f.get("crop_type", "") or "",
@@ -258,6 +264,8 @@ def generate_farm_export_csv(fields: list[dict]) -> str:
             ndvi_str,
             ph_str,
             om_str,
+            treatment_count,
+            last_date_str,
         ])
 
     return buf.getvalue()

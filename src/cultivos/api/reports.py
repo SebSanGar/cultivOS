@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
+from sqlalchemy import func
+
 from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.services.reports import generate_farm_export_csv, generate_farm_report_pdf
@@ -114,6 +116,18 @@ def export_farm_data(
             .first()
         )
 
+        treatment_count = (
+            db.query(func.count(TreatmentRecord.id))
+            .filter(TreatmentRecord.field_id == field.id)
+            .scalar()
+        )
+        last_treatment = (
+            db.query(TreatmentRecord)
+            .filter(TreatmentRecord.field_id == field.id)
+            .order_by(TreatmentRecord.applied_at.desc())
+            .first()
+        )
+
         fields_data.append({
             "name": field.name,
             "crop_type": field.crop_type,
@@ -123,6 +137,8 @@ def export_farm_data(
             "ndvi_mean": latest_ndvi.ndvi_mean if latest_ndvi else None,
             "soil_ph": latest_soil.ph if latest_soil else None,
             "soil_organic_matter_pct": latest_soil.organic_matter_pct if latest_soil else None,
+            "treatment_count": treatment_count,
+            "last_treatment_date": last_treatment.applied_at if last_treatment and last_treatment.applied_at else None,
         })
 
     csv_content = generate_farm_export_csv(fields_data)
