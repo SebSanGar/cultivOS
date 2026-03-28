@@ -2291,6 +2291,74 @@ nav {
     margin-top: 10px; font-size: 0.82rem; color: var(--text-muted, #aaa);
 }
 
+/* ── WEATHER FORECAST CARD ── */
+.weather-current {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+.weather-current-temp {
+    font-size: 2rem; font-weight: 800; color: var(--green-dark, #14532d);
+    font-family: monospace;
+}
+.weather-current-desc {
+    font-size: 0.95rem; color: var(--text-muted, #888);
+}
+.weather-current-details {
+    display: flex; gap: 14px; width: 100%; font-size: 0.82rem;
+    color: var(--text-muted, #888);
+}
+.weather-detail { white-space: nowrap; }
+.weather-rain { color: var(--blue, #2563eb); font-weight: 600; }
+.weather-forecast-title {
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 10px;
+}
+.weather-forecast-days {
+    display: flex; flex-direction: column; gap: 8px;
+}
+.weather-day {
+    display: grid; grid-template-columns: 80px 1fr 50px auto auto;
+    align-items: center; gap: 8px; font-size: 0.82rem;
+    padding: 6px 8px; border-radius: 6px;
+    background: var(--bg-alt, #f9fafb);
+}
+.weather-day-rain {
+    background: var(--blue-light, #dbeafe);
+}
+.weather-day-label {
+    font-weight: 600; color: var(--text, #333);
+}
+.weather-day-bar-track {
+    height: 6px; background: var(--border, #e5e7eb); border-radius: 3px;
+    overflow: hidden;
+}
+.weather-day-bar {
+    height: 100%; background: var(--yellow, #d97706); border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.weather-day-rain .weather-day-bar {
+    background: var(--blue, #2563eb);
+}
+.weather-day-temp {
+    font-family: monospace; font-weight: 700; text-align: right;
+}
+.weather-day-desc {
+    color: var(--text-muted, #888); font-size: 0.78rem;
+}
+.weather-day-rain-amt {
+    color: var(--blue, #2563eb); font-weight: 600; font-size: 0.78rem;
+}
+.weather-day-humidity {
+    color: var(--text-muted, #888); font-size: 0.75rem;
+}
+@media (max-width: 600px) {
+    .weather-day {
+        grid-template-columns: 70px 1fr 40px;
+    }
+    .weather-day-desc, .weather-day-humidity { display: none; }
+}
+
 /* ── KNOWLEDGE BASE PAGE ── */
 .knowledge-body { background: var(--bg); }
 .knowledge-dashboard {
@@ -2914,3 +2982,34 @@ nav {
 }
 .status-ep-ok { background: rgba(0,200,150,0.15); color: var(--play-green, #00c896); }
 .status-ep-err { background: rgba(231,76,60,0.15); color: #e74c3c; }
+
+/* -- Weather Forecast Card -- */
+.weather-current {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+}
+.weather-current-temp { font-size: 2rem; font-weight: 700; color: #f3f4f6; }
+.weather-current-desc { font-size: 1rem; color: #9ca3af; }
+.weather-current-details { display: flex; gap: 14px; width: 100%; margin-top: 4px; }
+.weather-detail { font-size: 0.82rem; color: #9ca3af; }
+.weather-rain { color: #60a5fa; font-weight: 600; }
+.weather-forecast-title { font-size: 0.82rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+.weather-forecast-days { display: flex; flex-direction: column; gap: 6px; }
+.weather-day {
+    display: grid; grid-template-columns: 80px 1fr 50px 120px auto auto;
+    align-items: center; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.weather-day-label { font-weight: 600; color: #e5e7eb; font-size: 0.85rem; }
+.weather-day-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.weather-day-bar { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); border-radius: 3px; transition: width 0.3s; }
+.weather-day-temp { font-weight: 600; color: #f3f4f6; font-size: 0.88rem; text-align: right; }
+.weather-day-desc { color: #9ca3af; font-size: 0.82rem; }
+.weather-day-rain-amt { color: #60a5fa; font-size: 0.78rem; font-weight: 600; }
+.weather-day-humidity { color: #6b7280; font-size: 0.78rem; }
+.weather-day-rain { background: rgba(96,165,250,0.06); border-radius: 4px; padding: 6px 4px; }
+@media (max-width: 700px) {
+    .weather-day { grid-template-columns: 60px 1fr 40px; gap: 4px; }
+    .weather-day-desc, .weather-day-rain-amt, .weather-day-humidity { display: none; }
+}

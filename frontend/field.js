@@ -177,6 +177,9 @@ async function loadFieldDetail() {
     // Growth stage
     renderGrowthStage(growthStage);
 
+    // Weather forecast card
+    renderWeatherCard(weatherRecords);
+
     // Treatment history timeline
     renderTreatmentHistory(treatmentHistory);
 
@@ -1880,6 +1883,58 @@ function renderTreatmentTiming(timingData, forecast) {
     }).join('');
 
     el.innerHTML = `${rainWarningHtml}${forecastHtml}${cardsHtml}`;
+}
+
+// -- Weather Forecast Card --
+function renderWeatherCard(weatherRecords) {
+    const el = document.getElementById('weather-content');
+    if (!el) return;
+    if (!weatherRecords || weatherRecords.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de clima</div>';
+        return;
+    }
+    const w = weatherRecords[0];
+    const dayLabels = ['Manana', 'Pasado', 'En 3 dias'];
+
+    // Current conditions
+    const currentHtml = `
+    <div class="weather-current">
+        <div class="weather-current-temp">${Math.round(w.temp_c)}°C</div>
+        <div class="weather-current-desc">${esc(w.description)}</div>
+        <div class="weather-current-details">
+            <span class="weather-detail">Humedad: ${Math.round(w.humidity_pct)}%</span>
+            <span class="weather-detail">Viento: ${Math.round(w.wind_kmh)} km/h</span>
+            ${w.rainfall_mm > 0 ? `<span class="weather-detail weather-rain">Lluvia: ${w.rainfall_mm.toFixed(1)} mm</span>` : ''}
+        </div>
+    </div>`;
+
+    // 3-day forecast bars
+    let forecastHtml = '';
+    if (w.forecast_3day && w.forecast_3day.length > 0) {
+        const maxTemp = Math.max(...w.forecast_3day.map(d => d.temp_c));
+        const minTemp = Math.min(...w.forecast_3day.map(d => d.temp_c));
+        const range = maxTemp - minTemp || 1;
+
+        forecastHtml = `<div class="weather-forecast">
+            <div class="weather-forecast-title">Pronostico 3 dias</div>
+            <div class="weather-forecast-days">${w.forecast_3day.map((d, i) => {
+                const barPct = Math.round(((d.temp_c - minTemp) / range) * 60 + 30);
+                const hasRain = d.rainfall_mm > 0;
+                return `<div class="weather-day ${hasRain ? 'weather-day-rain' : ''}">
+                    <span class="weather-day-label">${dayLabels[i] || 'Dia ' + (i + 1)}</span>
+                    <div class="weather-day-bar-track">
+                        <div class="weather-day-bar" style="width:${barPct}%"></div>
+                    </div>
+                    <span class="weather-day-temp">${Math.round(d.temp_c)}°C</span>
+                    <span class="weather-day-desc">${esc(d.description)}</span>
+                    ${hasRain ? `<span class="weather-day-rain-amt">${d.rainfall_mm.toFixed(1)} mm</span>` : ''}
+                    <span class="weather-day-humidity">${Math.round(d.humidity_pct)}%</span>
+                </div>`;
+            }).join('')}</div>
+        </div>`;
+    }
+
+    el.innerHTML = `${currentHtml}${forecastHtml}`;
 }
 
 // -- Init --
