@@ -14,6 +14,7 @@ from cultivos.models.intel import (
     BatchHealthOut,
     BatchHealthRequestIn,
     FarmCompareOut,
+    IntelCarbonSummaryOut,
     IntelEconomicsOut,
     IntelSummaryOut,
     SeasonalOut,
@@ -27,6 +28,7 @@ from cultivos.services.intelligence.analytics import (
     compare_farms,
     compute_anomalies,
     compute_batch_health,
+    compute_carbon_summary,
     compute_economics_summary,
     compute_seasonal_performance,
     compute_soil_trends,
@@ -74,6 +76,15 @@ def intel_economics(
 ):
     """Aggregate economic impact across all farms — total and per-farm savings in MXN."""
     return compute_economics_summary(db)
+
+
+@router.get("/carbon", response_model=IntelCarbonSummaryOut)
+def intel_carbon(
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate carbon sequestration metrics across all fields — SOC, CO2e, trend per field."""
+    return compute_carbon_summary(db)
 
 
 @router.get("/soil-trends", response_model=SoilTrendsOut)

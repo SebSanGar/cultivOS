@@ -167,3 +167,24 @@ class IntelEconomicsOut(BaseModel):
     yield_improvement_mxn: int = 0
     total_savings_mxn: int = 0
     farms: list[FarmEconomicsEntry] = []
+
+
+# ── Aggregate carbon sequestration ─────────────────────────────────
+
+
+class CarbonFieldEntry(BaseModel):
+    field_id: int
+    field_name: str
+    farm_name: str
+    hectares: float
+    soc_tonnes_per_ha: float
+    clasificacion: str
+    tendencia: str
+
+
+class IntelCarbonSummaryOut(BaseModel):
+    total_fields: int
+    total_hectares: float = 0
+    avg_soc_tonnes_per_ha: float = 0
+    total_sequestration_tonnes: float = 0  # CO2e = SOC * 3.67 * hectares
+    fields: list[CarbonFieldEntry] = []

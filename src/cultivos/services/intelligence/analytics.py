@@ -587,3 +587,97 @@ def compute_economics_summary(db: Session) -> dict:
         "total_savings_mxn": agg_water + agg_fert + agg_yield,
         "farms": farm_entries,
     }
+
+
+# SOC to CO2e conversion factor (molecular weight ratio CO2/C)
+_SOC_TO_CO2E = 3.67
+
+
+def compute_carbon_summary(db: Session) -> dict:
+    """Aggregate carbon sequestration metrics across all fields with soil data."""
+    from cultivos.services.intelligence.carbon import estimate_soc, compute_carbon_trend
+
+    # Find all fields that have soil analyses with organic_matter_pct
+    fields_with_soil = (
+        db.query(Field)
+        .join(SoilAnalysis, SoilAnalysis.field_id == Field.id)
+        .filter(SoilAnalysis.organic_matter_pct.isnot(None))
+        .distinct()
+        .all()
+    )
+
+    if not fields_with_soil:
+        return {
+            "total_fields": 0,
+            "total_hectares": 0,
+            "avg_soc_tonnes_per_ha": 0,
+            "total_sequestration_tonnes": 0,
+            "fields": [],
+        }
+
+    field_entries = []
+    total_soc = 0.0
+    total_ha = 0.0
+    total_co2e = 0.0
+
+    for field in fields_with_soil:
+        soil_records = (
+            db.query(SoilAnalysis)
+            .filter(
+                SoilAnalysis.field_id == field.id,
+                SoilAnalysis.organic_matter_pct.isnot(None),
+            )
+            .order_by(SoilAnalysis.sampled_at.asc())
+            .all()
+        )
+        if not soil_records:
+            continue
+
+        latest = soil_records[-1]
+        soc = estimate_soc(
+            organic_matter_pct=float(latest.organic_matter_pct),
+            depth_cm=float(latest.depth_cm or 30.0),
+        )
+
+        # Trend from history
+        trend_records = [
+            {
+                "organic_matter_pct": float(r.organic_matter_pct),
+                "depth_cm": float(r.depth_cm or 30.0),
+                "sampled_at": r.sampled_at.isoformat() if hasattr(r.sampled_at, "isoformat") else str(r.sampled_at),
+            }
+            for r in soil_records
+        ]
+        trend = compute_carbon_trend(trend_records)
+
+        ha = float(field.hectares or 0)
+        soc_per_ha = soc["soc_tonnes_per_ha"]
+        co2e = soc_per_ha * ha * _SOC_TO_CO2E
+
+        # Get farm name
+        farm = db.query(Farm).filter(Farm.id == field.farm_id).first()
+        farm_name = farm.name if farm else "Desconocida"
+
+        total_soc += soc_per_ha
+        total_ha += ha
+        total_co2e += co2e
+
+        field_entries.append({
+            "field_id": field.id,
+            "field_name": field.name,
+            "farm_name": farm_name,
+            "hectares": ha,
+            "soc_tonnes_per_ha": soc_per_ha,
+            "clasificacion": soc["clasificacion"],
+            "tendencia": trend["tendencia"],
+        })
+
+    avg_soc = round(total_soc / len(field_entries), 2) if field_entries else 0
+
+    return {
+        "total_fields": len(field_entries),
+        "total_hectares": total_ha,
+        "avg_soc_tonnes_per_ha": avg_soc,
+        "total_sequestration_tonnes": round(total_co2e, 2),
+        "fields": field_entries,
+    }

@@ -270,6 +270,58 @@ async function loadEconomics() {
     `;
 }
 
+// ── Carbon Sequestration ──
+async function loadCarbon() {
+    const container = document.getElementById('intel-carbon');
+    const data = await fetchJSON(API + '/carbon');
+
+    if (!data || data.total_fields === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de carbono</div>';
+        return;
+    }
+
+    const tendenciaLabel = {
+        ganando: 'Ganando',
+        estable: 'Estable',
+        perdiendo: 'Perdiendo',
+        datos_insuficientes: 'Sin tendencia',
+    };
+
+    const tendenciaClass = {
+        ganando: 'positive',
+        estable: '',
+        perdiendo: 'negative',
+        datos_insuficientes: '',
+    };
+
+    container.innerHTML = `
+        <div class="carbon-summary">
+            <div class="carbon-total">
+                <span class="carbon-total-label">Secuestro Total Estimado</span>
+                <span class="carbon-total-value">${Number(data.total_sequestration_tonnes).toLocaleString('es-MX', {maximumFractionDigits: 1})} t CO2e</span>
+            </div>
+            <div class="carbon-meta">
+                ${data.total_fields} campos — ${data.total_hectares} ha — SOC promedio ${data.avg_soc_tonnes_per_ha} t/ha
+            </div>
+            <div class="carbon-fields">
+                ${data.fields.map(f => {
+                    const cls = tendenciaClass[f.tendencia] || '';
+                    const label = tendenciaLabel[f.tendencia] || f.tendencia;
+                    return `
+                    <div class="carbon-field-row">
+                        <div class="carbon-field-info">
+                            <span class="carbon-field-name">${esc(f.field_name)}</span>
+                            <span class="carbon-field-farm">${esc(f.farm_name)}</span>
+                        </div>
+                        <span class="carbon-field-soc">${f.soc_tonnes_per_ha} t/ha</span>
+                        <span class="carbon-field-trend ${cls}">${label}</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
 async function loadCropTypeOptions() {
     const filter = document.getElementById('treatment-crop-filter');
     if (!filter) return;
@@ -313,6 +365,7 @@ async function init() {
         loadAnomalies(),
         loadSoilTrends(),
         loadEconomics(),
+        loadCarbon(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
 }
