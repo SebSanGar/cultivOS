@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Historial de Salud</title>
+    <meta name="description" content="Historial cronologico de salud del campo — puntuaciones, tratamientos y alertas en una linea de tiempo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab active">Historial</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- TIMELINE DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Historial de Salud</h1>
+            <p class="intel-subtitle">Linea de tiempo cronologica — puntuaciones de salud y tratamientos aplicados</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="tl-farm-select" class="intel-select" onchange="loadFieldsForTimeline()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="tl-field-select" class="intel-select" onchange="loadTimeline()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadTimeline()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tl-score-count">--</div>
+            <div class="intel-stat-label">Puntuaciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tl-trend">--</div>
+            <div class="intel-stat-label">Tendencia</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tl-treatment-count">--</div>
+            <div class="intel-stat-label">Tratamientos aplicados</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tl-latest-score">--</div>
+            <div class="intel-stat-label">Ultima puntuacion</div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="tl-legend">
+        <span class="tl-legend-item"><span class="tl-dot tl-dot-health"></span> Puntuacion de Salud</span>
+        <span class="tl-legend-item"><span class="tl-dot tl-dot-treatment"></span> Tratamiento aplicado</span>
+    </div>
+
+    <!-- Empty state -->
+    <div id="tl-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver el historial de salud.
+    </div>
+
+    <!-- Timeline -->
+    <div id="tl-timeline" class="tl-timeline"></div>
+</main>
+
+<script src="/timeline.js"></script>
+</body>
+</html>

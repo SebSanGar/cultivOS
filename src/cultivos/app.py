@@ -228,6 +228,11 @@ def create_app() -> FastAPI:
             """Branded API reference page — links to Swagger, ReDoc, and OpenAPI."""
             return FileResponse(frontend_dir / "api-docs.html")
 
+        @app.get("/historial")
+        async def serve_timeline():
+            """Field health history timeline — chronological health scores and treatments."""
+            return FileResponse(frontend_dir / "timeline.html")
+
         @app.get("/onboarding")
         async def serve_onboarding():
             """Onboarding wizard — create a new farm with fields in 3 steps."""
