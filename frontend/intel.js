@@ -322,6 +322,81 @@ async function loadCarbon() {
     `;
 }
 
+// ── Farm Comparison ──
+async function loadFarmSelectOptions() {
+    const select = document.getElementById('farm-compare-select');
+    if (!select) return;
+    const data = await fetchJSON('/api/farms');
+    if (!data) return;
+    const farms = Array.isArray(data) ? data : (data.data || data.farms || []);
+    select.innerHTML = '';
+    farms.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        select.appendChild(opt);
+    });
+    // Auto-select all if 5 or fewer farms
+    if (farms.length <= 5) {
+        Array.from(select.options).forEach(o => { o.selected = true; });
+        loadFarmComparison();
+    }
+}
+
+async function loadFarmComparison() {
+    const container = document.getElementById('intel-farm-compare');
+    const select = document.getElementById('farm-compare-select');
+    if (!container || !select) return;
+
+    const ids = Array.from(select.selectedOptions).map(o => o.value);
+    if (ids.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Seleccione granjas para comparar</div>';
+        return;
+    }
+
+    container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando...</div>';
+    const data = await fetchJSON(API + '/compare?farm_ids=' + ids.join(','));
+
+    if (!data || !data.farms || data.farms.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de comparacion</div>';
+        return;
+    }
+
+    const maxYield = Math.max(...data.farms.map(f => f.yield_total_kg || 0), 1);
+
+    container.innerHTML = `
+        <div class="compare-table">
+            <div class="compare-header-row">
+                <span class="compare-cell compare-cell-name">Granja</span>
+                <span class="compare-cell">Campos</span>
+                <span class="compare-cell">Hectareas</span>
+                <span class="compare-cell">Salud</span>
+                <span class="compare-cell">Rendimiento (kg)</span>
+                <span class="compare-cell">Tratamientos</span>
+            </div>
+            ${data.farms.map(f => {
+                const cls = healthClass(f.avg_health);
+                const healthVal = f.avg_health != null ? Math.round(f.avg_health) : '--';
+                const yieldWidth = Math.min(100, Math.round((f.yield_total_kg || 0) / maxYield * 100));
+                return `
+                <div class="compare-row">
+                    <span class="compare-cell compare-cell-name">${esc(f.farm_name)}</span>
+                    <span class="compare-cell">${f.field_count}</span>
+                    <span class="compare-cell">${f.total_hectares}</span>
+                    <span class="compare-cell"><span class="health-badge ${cls}">${healthVal}</span></span>
+                    <span class="compare-cell compare-cell-yield">
+                        <div class="compare-yield-bar">
+                            <div class="score-bar-fill good" style="width:${yieldWidth}%"></div>
+                        </div>
+                        <span>${Number(f.yield_total_kg || 0).toLocaleString('es-MX')}</span>
+                    </span>
+                    <span class="compare-cell">${f.treatment_count}</span>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
 async function loadCropTypeOptions() {
     const filter = document.getElementById('treatment-crop-filter');
     if (!filter) return;
@@ -366,6 +441,7 @@ async function init() {
         loadSoilTrends(),
         loadEconomics(),
         loadCarbon(),
+        loadFarmSelectOptions(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
 }
