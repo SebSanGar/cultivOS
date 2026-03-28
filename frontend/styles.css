@@ -1770,3 +1770,29 @@ nav {
     .knowledge-grid { grid-template-columns: 1fr; }
     .knowledge-title { font-size: 1.25rem; }
 }
+
+/* ── Feedback ── */
+.feedback-form { padding: 12px 0; display: flex; flex-direction: column; gap: 10px; }
+.feedback-form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.feedback-label { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: var(--text-muted); }
+.feedback-wide { flex: 1; min-width: 180px; }
+.feedback-input {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); padding: 6px 8px; font-size: 0.85rem;
+}
+.feedback-input:focus { border-color: var(--accent); outline: none; }
+.feedback-check { flex-direction: row; align-items: center; gap: 6px; padding-bottom: 4px; }
+.feedback-submit {
+    align-self: flex-start; background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; padding: 8px 16px; font-size: 0.85rem; cursor: pointer;
+}
+.feedback-submit:hover { opacity: 0.9; }
+.feedback-entry {
+    border-bottom: 1px solid var(--border); padding: 10px 0;
+}
+.feedback-entry:last-child { border-bottom: none; }
+.feedback-entry-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.feedback-stars { color: #f0b429; font-size: 1rem; }
+.feedback-date { font-size: 0.75rem; color: var(--text-muted); margin-left: auto; }
+.feedback-notes { font-size: 0.85rem; color: var(--text); margin-top: 4px; }
+.feedback-alt { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; font-style: italic; }

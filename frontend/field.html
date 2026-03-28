@@ -194,6 +194,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Farmer Feedback -->
+    <div class="campo-section" id="section-feedback">
+        <div class="campo-section-title">Retroalimentacion</div>
+        <form id="feedback-form" class="feedback-form" onsubmit="submitFeedback(event)">
+            <div class="feedback-form-row">
+                <label class="feedback-label">Tratamiento
+                    <select id="feedback-treatment" class="feedback-input" required>
+                        <option value="">Seleccionar...</option>
+                    </select>
+                </label>
+                <label class="feedback-label">Calificacion (1-5)
+                    <input type="number" id="feedback-rating" class="feedback-input" min="1" max="5" required>
+                </label>
+                <label class="feedback-label feedback-check">
+                    <input type="checkbox" id="feedback-worked"> Funciono
+                </label>
+            </div>
+            <div class="feedback-form-row">
+                <label class="feedback-label feedback-wide">Notas
+                    <input type="text" id="feedback-notes" class="feedback-input" placeholder="Observaciones del agricultor...">
+                </label>
+                <label class="feedback-label">Metodo alternativo
+                    <input type="text" id="feedback-alt" class="feedback-input" placeholder="Metodo tradicional...">
+                </label>
+            </div>
+            <button type="submit" class="feedback-submit">Enviar Retroalimentacion</button>
+        </form>
+        <div id="feedback-content" class="campo-section-body">
+            <div class="campo-placeholder">Sin retroalimentacion</div>
+        </div>
+    </div>
 </main>
 
 <script src="/field.js"></script>

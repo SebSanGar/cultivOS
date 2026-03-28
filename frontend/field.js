@@ -46,7 +46,8 @@ async function loadFieldDetail() {
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
-           missionPlan, interventionScores, microbiomeList, growthStage] = await Promise.all([
+           missionPlan, interventionScores, microbiomeList, growthStage,
+           feedbackList] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -66,6 +67,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/intervention-scores`),
         fetchJSON(`${base}/microbiome`),
         fetchJSON(`${base}/growth-stage`),
+        fetchJSON(`${base}/feedback`),
     ]);
 
     // Find this field
@@ -146,6 +148,9 @@ async function loadFieldDetail() {
 
     // Growth stage
     renderGrowthStage(growthStage);
+
+    // Feedback — populate treatment dropdown and render entries
+    renderFeedback(feedbackList, treatments);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -862,6 +867,74 @@ function renderGrowthStage(data) {
         <div class="growth-nutrient-focus">
             <span class="campo-data-label">Enfoque nutricional:</span> ${esc(data.nutrient_focus)}
         </div>`;
+}
+
+// -- Feedback --
+
+function renderFeedback(feedbackList, treatments) {
+    // Populate treatment dropdown
+    const sel = document.getElementById('feedback-treatment');
+    if (sel && treatments && treatments.length > 0) {
+        treatments.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.id;
+            opt.textContent = esc(t.tratamiento ? t.tratamiento.substring(0, 60) : `Tratamiento #${t.id}`);
+            sel.appendChild(opt);
+        });
+    }
+
+    const el = document.getElementById('feedback-content');
+    if (!feedbackList || feedbackList.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin retroalimentacion</div>';
+        return;
+    }
+
+    el.innerHTML = feedbackList.map(fb => {
+        const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
+        const workedCls = fb.worked ? 'good' : 'critical';
+        const workedLabel = fb.worked ? 'Funciono' : 'No funciono';
+        const date = fb.created_at ? new Date(fb.created_at).toLocaleDateString('es-MX') : '';
+        return `<div class="feedback-entry">
+            <div class="feedback-entry-header">
+                <span class="feedback-stars">${stars}</span>
+                <span class="health-badge ${workedCls}">${workedLabel}</span>
+                <span class="feedback-date">${date}</span>
+            </div>
+            ${fb.farmer_notes ? `<div class="feedback-notes">${esc(fb.farmer_notes)}</div>` : ''}
+            ${fb.alternative_method ? `<div class="feedback-alt">Metodo alternativo: ${esc(fb.alternative_method)}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+async function submitFeedback(e) {
+    e.preventDefault();
+    const treatmentId = document.getElementById('feedback-treatment').value;
+    const rating = parseInt(document.getElementById('feedback-rating').value);
+    const worked = document.getElementById('feedback-worked').checked;
+    const notes = document.getElementById('feedback-notes').value || null;
+    const alt = document.getElementById('feedback-alt').value || null;
+
+    if (!treatmentId || !rating || rating < 1 || rating > 5) return;
+
+    const base = `/farms/${farmId}/fields/${fieldId}/feedback`;
+    try {
+        const resp = await fetch(API + base, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                treatment_id: parseInt(treatmentId),
+                rating: rating,
+                worked: worked,
+                farmer_notes: notes,
+                alternative_method: alt,
+            }),
+        });
+        if (resp.ok) {
+            document.getElementById('feedback-form').reset();
+            const updated = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/feedback`);
+            renderFeedback(updated, null);
+        }
+    } catch { /* silent */ }
 }
 
 // -- PDF Download --
