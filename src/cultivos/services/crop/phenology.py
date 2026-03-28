@@ -48,6 +48,46 @@ _CROP_STAGE_DAYS: dict[str, list[int]] = {
 _DEFAULT_STAGE_DAYS = [15, 50, 75, 110, 140]
 
 
+class StageInfo(TypedDict):
+    name: str
+    name_es: str
+    start_day: int
+    end_day: int
+    water_multiplier: float
+    nutrient_focus: str
+    is_current: bool
+
+
+def get_all_stages_info(
+    crop_type: str,
+    current_stage: str | None = None,
+) -> list[StageInfo]:
+    """Return all 5 growth stages with day ranges for a crop type.
+
+    Args:
+        crop_type: Crop being grown (maiz, frijol, etc.)
+        current_stage: If provided, marks that stage as is_current=True.
+
+    Returns:
+        List of 5 StageInfo dicts with contiguous day ranges.
+    """
+    stage_days = _CROP_STAGE_DAYS.get((crop_type or "").lower(), _DEFAULT_STAGE_DAYS)
+    stages: list[StageInfo] = []
+    for i, (name, name_es, water_mult, nutrient_focus) in enumerate(_STAGE_DEFS):
+        start = stage_days[i - 1] if i > 0 else 0
+        end = stage_days[i]
+        stages.append(StageInfo(
+            name=name,
+            name_es=name_es,
+            start_day=start,
+            end_day=end,
+            water_multiplier=water_mult,
+            nutrient_focus=nutrient_focus,
+            is_current=(name == current_stage) if current_stage else False,
+        ))
+    return stages
+
+
 def compute_growth_stage(
     crop_type: str,
     planted_at: datetime | None,

@@ -2273,22 +2273,76 @@ nav {
 .growth-crop {
     color: var(--muted, #888); font-size: 0.85rem;
 }
-.growth-progress { margin-bottom: 16px; }
-.growth-progress-track {
-    height: 8px; background: var(--bg-alt, #1a1a2e); border-radius: 4px;
-    overflow: hidden; margin-bottom: 6px;
+.growth-day-count {
+    margin-left: auto; font-family: monospace; font-size: 0.85rem;
+    font-weight: 700; color: var(--accent, #16a34a);
 }
-.growth-progress-fill {
-    height: 100%; background: var(--accent, #4ade80); border-radius: 4px;
-    transition: width 0.4s ease;
+.growth-timeline {
+    position: relative; margin-bottom: 20px; padding-bottom: 8px;
 }
-.growth-progress-labels {
-    display: flex; justify-content: space-between; font-size: 0.65rem;
-    color: var(--muted, #888);
+.growth-timeline-bar {
+    display: flex; height: 32px; border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--border, #e5e7eb);
 }
-.growth-stage-dot.active { color: var(--accent, #4ade80); font-weight: 600; }
-.growth-nutrient-focus {
-    margin-top: 10px; font-size: 0.82rem; color: var(--text-muted, #aaa);
+.growth-timeline-segment {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; font-size: 0.65rem; gap: 1px;
+    transition: opacity 0.3s ease;
+}
+.growth-timeline-segment.past {
+    background: var(--green-light, #dcfce7); color: var(--green-dark, #14532d);
+}
+.growth-timeline-segment.current {
+    background: var(--green, #16a34a); color: #fff; font-weight: 700;
+}
+.growth-timeline-segment.future {
+    background: var(--bg-alt, #f9fafb); color: var(--muted, #888);
+}
+.growth-timeline-label {
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.03em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 90%; line-height: 1;
+}
+.growth-timeline-days {
+    font-family: monospace; font-size: 0.6rem; opacity: 0.8; line-height: 1;
+}
+.growth-timeline-needle {
+    position: absolute; bottom: 0; width: 2px; height: 40px;
+    background: var(--red, #dc2626); border-radius: 1px;
+    transform: translateX(-1px);
+}
+.growth-timeline-needle::after {
+    content: ''; position: absolute; bottom: -4px; left: -3px;
+    width: 8px; height: 8px; background: var(--red, #dc2626);
+    border-radius: 50%;
+}
+.growth-timeline-details {
+    display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px;
+}
+.growth-timeline-detail {
+    display: grid; grid-template-columns: 100px 40px 1fr;
+    gap: 8px; font-size: 0.78rem; padding: 4px 8px; border-radius: 4px;
+    align-items: center;
+}
+.growth-timeline-detail.current {
+    background: var(--green-light, #dcfce7);
+    border-left: 3px solid var(--green, #16a34a);
+}
+.growth-timeline-detail-name { font-weight: 600; }
+.growth-timeline-detail-water {
+    font-family: monospace; font-weight: 700; text-align: center;
+    padding: 1px 4px; border-radius: 3px; font-size: 0.72rem;
+}
+.growth-timeline-detail-water.high { color: var(--blue, #2563eb); background: var(--blue-light, #dbeafe); }
+.growth-timeline-detail-water.low { color: var(--yellow, #d97706); background: var(--yellow-light, #fef3c7); }
+.growth-timeline-detail-water.mid { color: var(--green-dark, #14532d); background: var(--green-light, #dcfce7); }
+.growth-timeline-detail-nutrient {
+    color: var(--text-muted, #888); font-size: 0.72rem;
+}
+@media (max-width: 600px) {
+    .growth-timeline-label { font-size: 0.5rem; }
+    .growth-timeline-detail { grid-template-columns: 80px 35px 1fr; font-size: 0.7rem; }
+    .growth-timeline-detail-nutrient { display: none; }
 }
 
 /* ── WEATHER FORECAST CARD ── */

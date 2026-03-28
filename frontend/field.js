@@ -1435,37 +1435,58 @@ function renderGrowthStage(data) {
     const el = document.getElementById('growth-content');
     if (!data) return;
 
-    const stageLabels = {
-        siembra: 'Siembra',
-        vegetativo: 'Vegetativo',
-        floracion: 'Floracion',
-        fructificacion: 'Fructificacion',
-        cosecha: 'Cosecha',
-    };
     const stageOrder = ['siembra', 'vegetativo', 'floracion', 'fructificacion', 'cosecha'];
     const stageIdx = stageOrder.indexOf(data.stage);
-    const progressPct = stageIdx >= 0 ? Math.round(((stageIdx + 1) / stageOrder.length) * 100) : 0;
-
     const stageCls = stageIdx <= 0 ? 'warning' : stageIdx >= 4 ? 'good' : 'none';
 
-    el.innerHTML = `
+    const headerHtml = `
         <div class="growth-stage-header">
             <span class="health-badge ${stageCls}">${esc(data.stage_es)}</span>
             <span class="growth-crop">${esc(data.crop_type)}</span>
-        </div>
-        <div class="growth-progress">
-            <div class="growth-progress-track">
-                <div class="growth-progress-fill" style="width:${progressPct}%"></div>
-            </div>
-            <div class="growth-progress-labels">
-                ${stageOrder.map((s, i) => `<span class="growth-stage-dot ${i <= stageIdx ? 'active' : ''}">${stageLabels[s]}</span>`).join('')}
-            </div>
-        </div>
+            <span class="growth-day-count">Dia ${data.days_since_planting}</span>
+        </div>`;
+
+    let timelineHtml = '';
+    if (data.all_stages && data.all_stages.length > 0) {
+        const totalDays = data.all_stages[data.all_stages.length - 1].end_day;
+        const progressPct = totalDays > 0 ? Math.min(100, Math.round((data.days_since_planting / totalDays) * 100)) : 0;
+
+        const segmentsHtml = data.all_stages.map((s, i) => {
+            const duration = s.end_day - s.start_day;
+            const widthPct = totalDays > 0 ? (duration / totalDays) * 100 : 20;
+            const isCurrent = s.is_current;
+            const isPast = stageIdx > i;
+            const cls = isCurrent ? 'current' : isPast ? 'past' : 'future';
+            return `<div class="growth-timeline-segment ${cls}" style="width:${widthPct.toFixed(1)}%" title="${esc(s.name_es)}: ${duration} dias, Riego ${s.water_multiplier}x">
+                <span class="growth-timeline-label">${esc(s.name_es)}</span>
+                <span class="growth-timeline-days">${duration}d</span>
+            </div>`;
+        }).join('');
+
+        timelineHtml = `
+        <div class="growth-timeline">
+            <div class="growth-timeline-bar">${segmentsHtml}</div>
+            <div class="growth-timeline-needle" style="left:${progressPct}%"></div>
+        </div>`;
+    }
+
+    let detailsHtml = '';
+    if (data.all_stages && data.all_stages.length > 0) {
+        detailsHtml = `<div class="growth-timeline-details">
+            ${data.all_stages.map(s => {
+                const cls = s.is_current ? 'current' : '';
+                const waterCls = s.water_multiplier >= 1.2 ? 'high' : s.water_multiplier <= 0.6 ? 'low' : 'mid';
+                return `<div class="growth-timeline-detail ${cls}">
+                    <span class="growth-timeline-detail-name">${esc(s.name_es)}</span>
+                    <span class="growth-timeline-detail-water ${waterCls}">${s.water_multiplier}x</span>
+                    <span class="growth-timeline-detail-nutrient">${esc(s.nutrient_focus)}</span>
+                </div>`;
+            }).join('')}
+        </div>`;
+    }
+
+    const summaryHtml = `
         <div class="campo-data-grid">
-            <div class="campo-data-item">
-                <span class="campo-data-label">Dias desde siembra</span>
-                <span class="campo-data-value">${data.days_since_planting}</span>
-            </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">Dias en etapa</span>
                 <span class="campo-data-value">${data.days_in_stage}</span>
@@ -1475,13 +1496,12 @@ function renderGrowthStage(data) {
                 <span class="campo-data-value">${data.days_until_next_stage != null ? data.days_until_next_stage + ' dias' : 'Ultima etapa'}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Multiplicador de riego</span>
+                <span class="campo-data-label">Riego actual</span>
                 <span class="campo-data-value">${data.water_multiplier}x</span>
             </div>
-        </div>
-        <div class="growth-nutrient-focus">
-            <span class="campo-data-label">Enfoque nutricional:</span> ${esc(data.nutrient_focus)}
         </div>`;
+
+    el.innerHTML = `${headerHtml}${timelineHtml}${detailsHtml}${summaryHtml}`;
 }
 
 // -- Feedback --

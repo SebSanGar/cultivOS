@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.growth_stage import GrowthStageOut
-from cultivos.services.crop.phenology import compute_growth_stage
+from cultivos.services.crop.phenology import compute_growth_stage, get_all_stages_info
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/growth-stage",
@@ -34,10 +34,12 @@ def get_growth_stage(
             detail="No planted_at date set for this field. Update the field with a planting date.",
         )
 
-    result = compute_growth_stage(field.crop_type or "desconocido", field.planted_at)
+    crop = field.crop_type or "desconocido"
+    result = compute_growth_stage(crop, field.planted_at)
+    all_stages = get_all_stages_info(crop, current_stage=result["stage"])
 
     return GrowthStageOut(
-        crop_type=field.crop_type or "desconocido",
+        crop_type=crop,
         stage=result["stage"],
         stage_es=result["stage_es"],
         days_since_planting=result["days_since_planting"],
@@ -45,4 +47,5 @@ def get_growth_stage(
         days_until_next_stage=result["days_until_next_stage"],
         water_multiplier=result["water_multiplier"],
         nutrient_focus=result["nutrient_focus"],
+        all_stages=all_stages,
     )

@@ -54,10 +54,10 @@ def test_field_js_shows_days_since_planting(client):
 
 
 def test_field_js_shows_progress_bar(client):
-    """field.js renders a progress bar for stage progress."""
+    """field.js renders a timeline bar for stage progress."""
     resp = client.get("/field.js")
     assert resp.status_code == 200
-    assert "growth-progress" in resp.text
+    assert "growth-timeline" in resp.text
 
 
 def test_field_js_shows_water_and_nutrient(client):
