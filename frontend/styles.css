@@ -1148,6 +1148,106 @@ nav {
     text-align: center;
 }
 
+/* ── ALERT HISTORY TIMELINE ── */
+.alert-history {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.alert-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.alert-history-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.alert-history-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--border);
+    color: var(--text-muted);
+}
+.alert-history-empty {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 12px 0;
+    text-align: center;
+}
+.alert-history-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+.alert-history-item:last-child {
+    border-bottom: none;
+}
+.alert-history-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+.alert-history-dot.alert-type-health { background: var(--red); }
+.alert-history-dot.alert-type-irrigation { background: var(--blue); }
+.alert-history-dot.alert-type-anomaly { background: var(--yellow); }
+.alert-history-dot.alert-type-default { background: var(--text-muted); }
+.alert-history-content {
+    flex: 1;
+    min-width: 0;
+}
+.alert-history-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.alert-history-type-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.alert-history-type-badge.alert-type-health {
+    background: var(--red-light); color: var(--red);
+}
+.alert-history-type-badge.alert-type-irrigation {
+    background: var(--blue-light); color: var(--blue);
+}
+.alert-history-type-badge.alert-type-anomaly {
+    background: var(--yellow-light); color: var(--yellow);
+}
+.alert-history-type-badge.alert-type-default {
+    background: var(--border); color: var(--text-muted);
+}
+.alert-history-status {
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+.alert-status-sent { color: var(--green); }
+.alert-status-pending { color: var(--text-muted); }
+.alert-history-message {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+.alert-history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
 /* ── SEASONAL TEK CALENDAR ── */
 .seasonal-calendar {
     background: var(--surface);

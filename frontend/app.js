@@ -533,6 +533,49 @@ async function saveAlertConfig() {
     document.getElementById('alert-config-form').style.display = 'none';
 }
 
+// ── Alert history timeline ──
+const ALERT_TYPE_MAP = {
+    low_health: { label: 'Salud Baja', cls: 'alert-type-health' },
+    irrigation: { label: 'Riego', cls: 'alert-type-irrigation' },
+    anomaly_health_drop: { label: 'Anomalia Salud', cls: 'alert-type-anomaly' },
+    anomaly_ndvi_drop: { label: 'Anomalia NDVI', cls: 'alert-type-anomaly' },
+};
+
+async function loadAlertHistory(farmId) {
+    const panel = document.getElementById('alert-history');
+    const list = document.getElementById('alert-history-list');
+    const countEl = document.getElementById('alert-history-count');
+    const alerts = await fetchJSON(`/farms/${farmId}/alerts`) || [];
+    if (alerts.length === 0) {
+        panel.style.display = '';
+        countEl.textContent = '';
+        list.innerHTML = '<div class="alert-history-empty">Sin alertas registradas</div>';
+        return;
+    }
+    panel.style.display = '';
+    countEl.textContent = alerts.length;
+    list.innerHTML = alerts.map(a => {
+        const dt = new Date(a.sent_at);
+        const dateStr = dt.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = dt.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        const typeInfo = ALERT_TYPE_MAP[a.alert_type] || { label: a.alert_type, cls: 'alert-type-default' };
+        const statusCls = a.status === 'sent' ? 'alert-status-sent' : 'alert-status-pending';
+        const statusLabel = a.status === 'sent' ? 'Enviado' : 'Pendiente';
+        return `
+        <div class="alert-history-item">
+            <div class="alert-history-dot ${typeInfo.cls}"></div>
+            <div class="alert-history-content">
+                <div class="alert-history-top">
+                    <span class="alert-history-type-badge ${typeInfo.cls}">${esc(typeInfo.label)}</span>
+                    <span class="alert-history-status ${statusCls}">${statusLabel}</span>
+                </div>
+                <div class="alert-history-message">${esc(a.message)}</div>
+                <div class="alert-history-date">${dateStr} &middot; ${timeStr}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 // ── Seasonal TEK calendar ──
 const ALERT_TYPE_LABELS = {
     preparacion: 'Preparacion',
@@ -606,7 +649,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -620,6 +663,7 @@ function closeFarmDetail() {
     document.getElementById('heatmap-container').style.display = 'none';
     document.getElementById('notification-panel').style.display = 'none';
     document.getElementById('seasonal-calendar').style.display = 'none';
+    document.getElementById('alert-history').style.display = 'none';
 }
 
 // ── Escape HTML ──
