@@ -610,15 +610,70 @@ function renderYield(yieldData) {
 }
 
 function renderTreatments(treatments) {
-    document.getElementById('treatments-content').innerHTML = treatments.map(t => `
-        <div class="campo-treatment-card">
+    document.getElementById('treatments-content').innerHTML = treatments.map(t => {
+        const isApplied = !!t.applied_at;
+        const appliedDate = isApplied ? new Date(t.applied_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        return `
+        <div class="campo-treatment-card ${isApplied ? 'treatment-applied' : ''}">
+            ${isApplied ? `<div class="treatment-applied-badge">Aplicado ${appliedDate}</div>` : ''}
             ${t.problema ? `<div class="campo-treatment-row"><strong>Problema:</strong> ${esc(t.problema)}</div>` : ''}
             ${t.tratamiento ? `<div class="campo-treatment-row"><strong>Tratamiento:</strong> ${esc(t.tratamiento)}</div>` : ''}
             ${t.costo_estimado_mxn ? `<div class="campo-treatment-row"><strong>Costo:</strong> $${t.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
             ${t.urgencia ? `<div class="campo-treatment-row"><span class="campo-alert-badge ${t.urgencia.toLowerCase() === 'inmediata' ? 'critical' : 'warning'}">${esc(t.urgencia)}</span></div>` : ''}
             ${t.prevencion ? `<div class="campo-treatment-row"><strong>Prevencion:</strong> ${esc(t.prevencion)}</div>` : ''}
-        </div>
-    `).join('');
+            ${isApplied ? `
+                ${t.applied_notes ? `<div class="campo-treatment-row treatment-notes"><strong>Notas:</strong> ${esc(t.applied_notes)}</div>` : ''}
+            ` : `
+                <div class="treatment-apply-section" id="apply-section-${t.id}">
+                    <button class="treatment-apply-btn" onclick="toggleApplyForm(${t.id})">Marcar como aplicado</button>
+                    <div class="treatment-apply-form" id="apply-form-${t.id}" style="display:none">
+                        <label>Fecha de aplicacion:
+                            <input type="date" id="apply-date-${t.id}" value="${new Date().toISOString().split('T')[0]}">
+                        </label>
+                        <label>Notas (opcional):
+                            <textarea id="apply-notes-${t.id}" rows="2" placeholder="Observaciones de campo..."></textarea>
+                        </label>
+                        <div class="treatment-apply-actions">
+                            <button class="treatment-confirm-btn" onclick="markTreatmentApplied(${t.id})">Confirmar</button>
+                            <button class="treatment-cancel-btn" onclick="toggleApplyForm(${t.id})">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            `}
+        </div>`;
+    }).join('');
+}
+
+function toggleApplyForm(treatmentId) {
+    const form = document.getElementById(`apply-form-${treatmentId}`);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function markTreatmentApplied(treatmentId) {
+    const dateVal = document.getElementById(`apply-date-${treatmentId}`).value;
+    const notes = document.getElementById(`apply-notes-${treatmentId}`).value.trim();
+    if (!dateVal) return;
+
+    const btn = document.querySelector(`#apply-section-${treatmentId} .treatment-confirm-btn`);
+    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+
+    try {
+        const resp = await fetch(`${API}/farms/${farmId}/fields/${fieldId}/treatments/${treatmentId}/applied`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ applied_at: new Date(dateVal).toISOString(), notes: notes || null }),
+        });
+        if (!resp.ok) throw new Error('Error al marcar tratamiento');
+        // Refresh treatments list
+        const treatments = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/treatments`);
+        if (treatments) renderTreatments(treatments);
+        // Refresh treatment history
+        const history = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/treatments/treatment-history`);
+        renderTreatmentHistory(history);
+    } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Confirmar'; }
+        alert('Error al registrar la aplicacion del tratamiento');
+    }
 }
 
 function renderTreatmentHistory(history) {
