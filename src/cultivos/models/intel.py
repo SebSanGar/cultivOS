@@ -89,3 +89,20 @@ class TimingOut(BaseModel):
     best_time: str
     reason: str
     avoid_days: list[int]
+
+
+# ── Farm comparison ───────────────────────────────────────────────────
+
+
+class FarmCompareEntry(BaseModel):
+    farm_id: int
+    farm_name: str
+    field_count: int
+    total_hectares: float
+    avg_health: Optional[float] = None
+    yield_total_kg: float = 0
+    treatment_count: int = 0
+
+
+class FarmCompareOut(BaseModel):
+    farms: list[FarmCompareEntry]

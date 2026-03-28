@@ -24,6 +24,69 @@ def _classify_season(dt: datetime) -> tuple[str, int]:
         return "secas", dt.year - 1
 
 
+def compare_farms(db: Session, farm_ids: list[int]) -> dict:
+    """Compare health, yield, and treatments across multiple farms.
+
+    Returns a list of farm summaries with avg health (from latest score per field),
+    total yield prediction, and treatment count. Raises ValueError if any farm_id
+    is not found.
+    """
+    from cultivos.services.intelligence.yield_model import predict_yield
+
+    results = []
+    for fid in farm_ids:
+        farm = db.query(Farm).filter(Farm.id == fid).first()
+        if not farm:
+            raise ValueError(f"Farm {fid} not found")
+
+        fields = db.query(Field).filter(Field.farm_id == fid).all()
+
+        latest_scores: list[float] = []
+        total_yield = 0.0
+        total_treatment_count = 0
+        total_hectares = 0.0
+
+        for field in fields:
+            total_hectares += field.hectares or 0
+
+            # Latest health score for this field
+            latest_hs = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id == field.id)
+                .order_by(HealthScore.scored_at.desc())
+                .first()
+            )
+            if latest_hs:
+                latest_scores.append(latest_hs.score)
+                # Yield prediction using latest health score
+                yp = predict_yield(
+                    crop_type=field.crop_type or "maiz",
+                    hectares=field.hectares or 0,
+                    health_score=latest_hs.score,
+                )
+                total_yield += yp["total_kg"]
+
+            # Treatment count
+            tc = db.query(func.count(TreatmentRecord.id)).filter(
+                TreatmentRecord.field_id == field.id
+            ).scalar() or 0
+            total_treatment_count += tc
+
+        avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
+
+        results.append({
+            "farm_id": fid,
+            "farm_name": farm.name,
+            "field_count": len(fields),
+            "total_hectares": round(total_hectares, 1),
+            "avg_health": avg_health,
+            "yield_total_kg": round(total_yield, 1),
+            "treatment_count": total_treatment_count,
+        })
+
+    return {"farms": results}
+
+
 def compute_summary(db: Session) -> dict:
     """Compute cross-farm summary: total farms, fields, avg health, worst field."""
     total_farms = db.query(func.count(Farm.id)).scalar() or 0

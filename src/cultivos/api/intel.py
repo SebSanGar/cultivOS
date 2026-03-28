@@ -11,6 +11,7 @@ from cultivos.db.session import get_db
 from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut
 from cultivos.models.intel import (
     AnomaliesOut,
+    FarmCompareOut,
     IntelSummaryOut,
     SeasonalOut,
     SoilTrendsOut,
@@ -19,6 +20,7 @@ from cultivos.models.intel import (
     TreatmentEffectivenessOut,
 )
 from cultivos.services.intelligence.analytics import (
+    compare_farms,
     compute_anomalies,
     compute_seasonal_performance,
     compute_soil_trends,
@@ -30,6 +32,23 @@ from cultivos.services.intelligence.recommendations import optimize_treatment_ti
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
 _admin_or_researcher = require_role("admin", "researcher")
+
+
+@router.get("/compare", response_model=FarmCompareOut)
+def intel_compare(
+    farm_ids: str,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Compare health, yield, and treatments across selected farms."""
+    try:
+        ids = [int(x.strip()) for x in farm_ids.split(",")]
+    except ValueError:
+        raise HTTPException(status_code=422, detail="farm_ids must be comma-separated integers")
+    try:
+        return compare_farms(db, ids)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get("/summary", response_model=IntelSummaryOut)
