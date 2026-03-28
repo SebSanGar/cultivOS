@@ -188,6 +188,11 @@ def create_app() -> FastAPI:
             """Login and registration page."""
             return FileResponse(frontend_dir / "login.html")
 
+        @app.get("/vuelos")
+        async def serve_flights():
+            """Drone flight log — mission history, fleet stats, and field coverage."""
+            return FileResponse(frontend_dir / "flights.html")
+
         @app.get("/notificaciones")
         async def serve_notifications():
             """Notification history — alerts and recommendations across all farms."""

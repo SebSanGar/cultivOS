@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Registro de Vuelos</title>
+    <meta name="description" content="Registro de vuelos de drones — historial de misiones, estadisticas de flota, y cobertura de campos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab active">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- FLIGHTS DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Registro de Vuelos</h1>
+            <p class="intel-subtitle">Historial de misiones de drones en todas las granjas</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="flights-filter-drone" class="intel-select" onchange="applyFilters()">
+                <option value="">Todos los drones</option>
+                <option value="mavic_multispectral">Mavic 3 Multispectral</option>
+                <option value="mavic_thermal">Mavic 3 Thermal</option>
+                <option value="agras_t100">Agras T100</option>
+            </select>
+            <select id="flights-filter-mission" class="intel-select" onchange="applyFilters()">
+                <option value="">Todas las misiones</option>
+                <option value="health_scan">Escaneo de salud</option>
+                <option value="thermal_check">Revision termica</option>
+                <option value="spray">Aplicacion</option>
+            </select>
+            <button class="intel-btn" onclick="loadFlights()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="flights-total">--</div>
+            <div class="intel-stat-label">Vuelos totales</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="flights-hours">--</div>
+            <div class="intel-stat-label">Horas de vuelo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="flights-hectares">--</div>
+            <div class="intel-stat-label">Hectareas cubiertas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="flights-images">--</div>
+            <div class="intel-stat-label">Imagenes capturadas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="flights-drones">--</div>
+            <div class="intel-stat-label">Drones activos</div>
+        </div>
+    </div>
+
+    <!-- Flight table -->
+    <div class="intel-card" style="padding: 0; overflow-x: auto;">
+        <table class="flights-table">
+            <thead>
+                <tr>
+                    <th onclick="sortBy('flight_date')" class="sortable">Fecha</th>
+                    <th onclick="sortBy('farm_name')" class="sortable">Granja</th>
+                    <th onclick="sortBy('field_name')" class="sortable">Campo</th>
+                    <th onclick="sortBy('drone_type')" class="sortable">Drone</th>
+                    <th onclick="sortBy('mission_type')" class="sortable">Mision</th>
+                    <th onclick="sortBy('duration_minutes')" class="sortable">Duracion</th>
+                    <th onclick="sortBy('altitude_m')" class="sortable">Altitud</th>
+                    <th onclick="sortBy('coverage_pct')" class="sortable">Cobertura</th>
+                    <th onclick="sortBy('images_count')" class="sortable">Imagenes</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="flights-table-body">
+                <tr><td colspan="10" class="flights-loading">Cargando vuelos...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/flights.js"></script>
+</body>
+</html>

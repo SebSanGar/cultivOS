@@ -3169,3 +3169,33 @@ nav {
 /* ── Field Boundary Map ── */
 #field-map { height: 320px; width: 100%; border-radius: 8px; z-index: 0; }
 @media (max-width: 640px) { #field-map { height: 220px; } }
+
+/* ── Drone Flight Log Table ── */
+.flights-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.flights-table thead th {
+    text-align: left; padding: 12px 14px; color: #888; font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; text-transform: uppercase;
+    letter-spacing: 0.04em; white-space: nowrap;
+}
+.flights-table thead th.sortable { cursor: pointer; user-select: none; }
+.flights-table thead th.sortable:hover { color: #ccc; }
+.flights-table tbody td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d4d4d4;
+}
+.flights-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.flights-cell-date { white-space: nowrap; font-weight: 500; color: #e5e5e5; }
+.flights-cell-mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; }
+.flights-drone-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem;
+    background: rgba(77, 166, 255, 0.12); color: #4da6ff; white-space: nowrap;
+}
+.flights-field-link { color: var(--play-green, #00c896); text-decoration: none; }
+.flights-field-link:hover { text-decoration: underline; }
+.flights-status { font-weight: 500; font-size: 0.82rem; }
+.flights-loading, .flights-empty {
+    text-align: center; color: #888; padding: 40px 20px; font-size: 0.9rem;
+}
+@media (max-width: 640px) {
+    .flights-table { font-size: 0.78rem; }
+    .flights-table thead th, .flights-table tbody td { padding: 8px 6px; }
+}
