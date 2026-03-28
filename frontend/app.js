@@ -645,6 +645,29 @@ async function loadSeasonalCalendar(farmId) {
 }
 
 // ── Navigation ──
+// ── Economic Impact card ──
+function formatMXN(n) {
+    if (n == null) return '$0';
+    return '$' + Number(n).toLocaleString('es-MX');
+}
+
+async function loadEconomicImpact(farmId) {
+    const container = document.getElementById('economic-impact-panel');
+    const data = await fetchJSON(`/farms/${farmId}/economic-impact`);
+    if (!data) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = '';
+    document.getElementById('econ-farm-name').textContent = '';
+    document.getElementById('econ-water').textContent = formatMXN(data.water_savings_mxn);
+    document.getElementById('econ-fertilizer').textContent = formatMXN(data.fertilizer_savings_mxn);
+    document.getElementById('econ-yield').textContent = formatMXN(data.yield_improvement_mxn);
+    document.getElementById('econ-total').textContent = formatMXN(data.total_savings_mxn) + ' MXN';
+    document.getElementById('econ-nota').textContent = data.nota || '';
+}
+
 // ── Dashboard summary panel ──
 async function loadDashboardSummary(farmId) {
     const container = document.getElementById('dashboard-summary');
@@ -694,7 +717,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -710,6 +733,7 @@ function closeFarmDetail() {
     document.getElementById('seasonal-calendar').style.display = 'none';
     document.getElementById('alert-history').style.display = 'none';
     document.getElementById('dashboard-summary').style.display = 'none';
+    document.getElementById('economic-impact-panel').style.display = 'none';
 }
 
 // ── Escape HTML ──
