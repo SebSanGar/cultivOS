@@ -47,7 +47,8 @@ async function loadFieldDetail() {
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
-           feedbackList, treatmentHistory, flightsList, flightStats] = await Promise.all([
+           feedbackList, treatmentHistory, flightsList, flightStats,
+           anomaliesData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -71,6 +72,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/treatments/treatment-history`),
         fetchJSON(`${base}/flights`),
         fetchJSON(`${base}/flights/stats`),
+        fetchJSON(`${base}/anomalies`),
     ]);
 
     // Find this field
@@ -160,6 +162,9 @@ async function loadFieldDetail() {
 
     // Feedback — populate treatment dropdown and render entries
     renderFeedback(feedbackList, treatments);
+
+    // Anomaly detection
+    renderAnomalies(anomaliesData);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -1093,6 +1098,52 @@ async function downloadReport() {
         btn.textContent = 'Descargar Reporte';
         btn.disabled = false;
     }
+}
+
+// -- Anomaly Detection --
+function renderAnomalies(data) {
+    const el = document.getElementById('anomalies-content');
+    if (!data || ((!data.health_anomalies || data.health_anomalies.length === 0) &&
+                  (!data.ndvi_anomalies || data.ndvi_anomalies.length === 0))) {
+        el.innerHTML = '<div class="campo-placeholder">Sin anomalias detectadas</div>';
+        return;
+    }
+
+    const all = [];
+
+    if (data.health_anomalies) {
+        data.health_anomalies.forEach(a => {
+            all.push(`<div class="anomaly-card anomaly-health">
+                <div class="anomaly-card-header">
+                    <span class="campo-alert-badge critical">Salud</span>
+                    <span class="anomaly-type">${esc(a.type === 'health_drop' ? 'Caida de Salud' : a.type)}</span>
+                </div>
+                <div class="anomaly-card-detail">
+                    <span class="anomaly-metric">${a.previous_score} → ${a.current_score}</span>
+                    <span class="anomaly-drop">-${a.drop} pts</span>
+                </div>
+                <div class="anomaly-card-rec">${esc(a.recommendation)}</div>
+            </div>`);
+        });
+    }
+
+    if (data.ndvi_anomalies) {
+        data.ndvi_anomalies.forEach(a => {
+            all.push(`<div class="anomaly-card anomaly-ndvi">
+                <div class="anomaly-card-header">
+                    <span class="campo-alert-badge warning">NDVI</span>
+                    <span class="anomaly-type">${esc(a.type === 'ndvi_drop' ? 'Caida de NDVI' : a.type)}</span>
+                </div>
+                <div class="anomaly-card-detail">
+                    <span class="anomaly-metric">${a.historical_avg.toFixed(2)} → ${a.current_ndvi.toFixed(2)}</span>
+                    <span class="anomaly-drop">-${a.drop_pct}%</span>
+                </div>
+                <div class="anomaly-card-rec">${esc(a.recommendation)}</div>
+            </div>`);
+        });
+    }
+
+    el.innerHTML = all.join('');
 }
 
 // -- Init --

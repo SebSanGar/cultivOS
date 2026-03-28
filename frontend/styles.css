@@ -541,6 +541,29 @@ nav {
     background: #166534; color: #bbf7d0;
 }
 
+/* ── ANOMALY CARDS ── */
+.anomaly-card {
+    padding: 12px; border-bottom: 1px solid var(--border);
+}
+.anomaly-card:last-child { border-bottom: none; }
+.anomaly-card-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.anomaly-type { font-weight: 600; font-size: 0.9rem; }
+.anomaly-card-detail {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+    font-size: 0.85rem;
+}
+.anomaly-metric { color: var(--text-muted); }
+.anomaly-drop { font-weight: 700; color: var(--critical); }
+.anomaly-card-rec {
+    font-size: 0.82rem; line-height: 1.4; color: var(--text);
+    background: var(--card-bg); padding: 8px 10px; border-radius: 6px;
+    border-left: 3px solid var(--critical);
+}
+.anomaly-ndvi .anomaly-drop { color: var(--warning, #f59e0b); }
+.anomaly-ndvi .anomaly-card-rec { border-left-color: var(--warning, #f59e0b); }
+
 /* ── ACTION TIMELINE ── */
 .timeline-weather {
     display: flex; gap: 12px; flex-wrap: wrap;

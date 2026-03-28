@@ -115,6 +115,7 @@ def create_app() -> FastAPI:
             {"name": "seasonal-alerts", "description": "Season-specific agricultural alerts and calendar"},
             {"name": "seasonal-comparison", "description": "Temporal vs dry season performance comparison"},
             {"name": "reports", "description": "PDF reports and CSV data exports"},
+            {"name": "anomalies", "description": "Field-level anomaly detection for health and NDVI drops"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
         ],
     )
