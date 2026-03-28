@@ -310,6 +310,22 @@ class WeatherRecord(Base):
     farm = relationship("Farm", back_populates="weather_records")
 
 
+class AlertLog(Base):
+    __tablename__ = "alert_logs"
+
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=True)
+    alert_type = Column(String(50), nullable=False)  # health, irrigation, pest, recommendation
+    message = Column(Text, nullable=False)
+    severity = Column(String(20), nullable=False, default="info")  # info, warning, critical
+    acknowledged = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    farm = relationship("Farm")
+    field = relationship("Field")
+
+
 class AlertConfig(Base):
     __tablename__ = "alert_configs"
 

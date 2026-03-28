@@ -23,3 +23,23 @@ class AlertCheckResponse(BaseModel):
     farm_id: int
     alerts_created: list[AlertOut]
     fields_checked: int
+
+
+class AlertLogCreate(BaseModel):
+    field_id: int | None = None
+    alert_type: str
+    message: str
+    severity: str = "info"
+
+
+class AlertLogOut(BaseModel):
+    id: int
+    farm_id: int
+    field_id: int | None
+    alert_type: str
+    message: str
+    severity: str
+    acknowledged: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
