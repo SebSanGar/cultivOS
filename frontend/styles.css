@@ -947,3 +947,91 @@ nav {
 @media (max-width: 480px) {
     .heatmap-legend { flex-wrap: wrap; gap: 8px; }
 }
+
+/* ── NOTIFICATION PANEL ── */
+.notification-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.notification-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    transition: opacity 0.2s;
+}
+.notification-item.acknowledged {
+    opacity: 0.5;
+}
+.notification-severity {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+}
+.notification-severity.severity-alta,
+.notification-severity.severity-critical { background: var(--red); }
+.notification-severity.severity-media,
+.notification-severity.severity-warning { background: var(--yellow); }
+.notification-severity.severity-baja,
+.notification-severity.severity-info { background: var(--green); }
+.notification-body {
+    flex: 1;
+    min-width: 0;
+}
+.notification-message {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.4;
+}
+.notification-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.notification-ack-btn {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.notification-ack-btn:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+.notification-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 12px 0;
+    text-align: center;
+}

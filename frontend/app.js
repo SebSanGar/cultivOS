@@ -393,6 +393,7 @@ async function showFertilizers() {
     document.getElementById('tab-fertilizantes').classList.add('active');
     farmGrid.style.display = 'none';
     fieldPanel.style.display = 'none';
+    document.getElementById('notification-panel').style.display = 'none';
     fertPanel.style.display = 'block';
 
     fertList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando...</div>';
@@ -456,12 +457,53 @@ async function loadWeather(farmId) {
     }
 }
 
+// ── Notification panel ──
+async function loadNotifications(farmId) {
+    const panel = document.getElementById('notification-panel');
+    const list = document.getElementById('notification-list');
+    const items = await fetchJSON(`/farms/${farmId}/notifications`) || [];
+    if (items.length === 0) {
+        panel.style.display = 'none';
+        return;
+    }
+    panel.style.display = '';
+    renderNotifications(items, farmId);
+}
+
+function renderNotifications(items, farmId) {
+    const list = document.getElementById('notification-list');
+    list.innerHTML = items.map(n => {
+        const date = new Date(n.created_at);
+        const dateStr = date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        const acked = n.acknowledged ? ' acknowledged' : '';
+        return `
+        <div class="notification-item${acked}" data-id="${n.id}">
+            <div class="notification-severity severity-${n.severity}"></div>
+            <div class="notification-body">
+                <div class="notification-message">${esc(n.message)}</div>
+                <div class="notification-meta">${esc(n.alert_type)} &middot; ${dateStr}</div>
+            </div>
+            ${!n.acknowledged ? `<button class="notification-ack-btn" onclick="acknowledgeNotification(${farmId}, ${n.id}, event)">Confirmar</button>` : ''}
+        </div>`;
+    }).join('');
+}
+
+async function acknowledgeNotification(farmId, notifId, event) {
+    event.stopPropagation();
+    const resp = await fetch(API + `/farms/${farmId}/notifications/${notifId}/acknowledge`, {
+        method: 'POST'
+    });
+    if (resp.ok) {
+        await loadNotifications(farmId);
+    }
+}
+
 // ── Navigation ──
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -473,6 +515,7 @@ function closeFarmDetail() {
     fieldPanel.style.display = 'none';
     document.getElementById('weather-widget').style.display = 'none';
     document.getElementById('heatmap-container').style.display = 'none';
+    document.getElementById('notification-panel').style.display = 'none';
 }
 
 // ── Escape HTML ──
