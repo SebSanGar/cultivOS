@@ -16,6 +16,29 @@
     const usernameInput = document.getElementById('login-username');
     const passwordInput = document.getElementById('login-password');
     const roleSelect = document.getElementById('register-role');
+    const confirmPasswordInput = document.getElementById('register-confirm-password');
+    const farmSelect = document.getElementById('register-farm');
+
+    // Fetch farms for the registration dropdown
+    (async function loadFarms() {
+        try {
+            var resp = await fetch(API + '/api/farms', {
+                headers: { 'Authorization': 'Bearer anonymous' }
+            });
+            if (resp.ok) {
+                var data = await resp.json();
+                var farms = data.items || data || [];
+                farms.forEach(function (farm) {
+                    var opt = document.createElement('option');
+                    opt.value = farm.id;
+                    opt.textContent = farm.name;
+                    farmSelect.appendChild(opt);
+                });
+            }
+        } catch (e) {
+            // Farm list unavailable — user can register without farm
+        }
+    })();
 
     function showError(msg) {
         errorDiv.textContent = msg;
@@ -69,11 +92,25 @@
 
         try {
             if (isRegisterMode) {
+                var confirmPassword = confirmPasswordInput.value.trim();
+                if (password !== confirmPassword) {
+                    showError('Las contrasenas no coinciden.');
+                    setLoading(false);
+                    return;
+                }
+                if (password.length < 6) {
+                    showError('La contrasena debe tener al menos 6 caracteres.');
+                    setLoading(false);
+                    return;
+                }
                 var role = roleSelect.value;
+                var farmId = farmSelect.value ? parseInt(farmSelect.value, 10) : null;
+                var regBody = { username: username, password: password, role: role };
+                if (farmId) { regBody.farm_id = farmId; }
                 var regResp = await fetch(API + '/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username, password: password, role: role })
+                    body: JSON.stringify(regBody)
                 });
 
                 if (!regResp.ok) {
