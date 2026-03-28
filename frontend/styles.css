@@ -1083,6 +1083,73 @@ nav {
     text-align: center;
 }
 
+/* ── ALERT CONFIG FORM ── */
+.alert-config-btn {
+    background: none;
+    border: 1px solid var(--border, #333);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+}
+.alert-config-btn:hover {
+    color: var(--green);
+    border-color: var(--green);
+}
+.alert-config-form {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border, #333);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.alert-config-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.alert-config-row label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex: 1;
+}
+.alert-config-row input {
+    width: 80px;
+    padding: 4px 8px;
+    border: 1px solid var(--border, #333);
+    border-radius: 4px;
+    background: var(--bg, #0a0a0a);
+    color: var(--text, #e5e5e5);
+    font-size: 0.85rem;
+    text-align: right;
+}
+.alert-config-save {
+    align-self: flex-end;
+    padding: 6px 16px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.alert-config-save:hover {
+    opacity: 0.85;
+}
+.alert-config-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* ── Regenerative Score Card ── */
 .regen-card {
     display: flex;

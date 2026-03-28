@@ -498,12 +498,47 @@ async function acknowledgeNotification(farmId, notifId, event) {
     }
 }
 
+// ── Alert config form ──
+async function loadAlertConfig(farmId) {
+    const cfg = await fetchJSON(`/farms/${farmId}/alert-config`);
+    if (cfg) {
+        document.getElementById('cfg-health-floor').value = cfg.health_score_floor;
+        document.getElementById('cfg-ndvi-min').value = cfg.ndvi_minimum;
+        document.getElementById('cfg-temp-max').value = cfg.temp_max_c;
+    }
+}
+
+function toggleAlertConfig() {
+    const form = document.getElementById('alert-config-form');
+    form.style.display = form.style.display === 'none' ? '' : 'none';
+}
+
+async function saveAlertConfig() {
+    if (!selectedFarmId) return;
+    const btn = document.getElementById('alert-config-save');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+    const body = {
+        health_score_floor: parseFloat(document.getElementById('cfg-health-floor').value),
+        ndvi_minimum: parseFloat(document.getElementById('cfg-ndvi-min').value),
+        temp_max_c: parseFloat(document.getElementById('cfg-temp-max').value),
+    };
+    await fetch(API + `/farms/${selectedFarmId}/alert-config`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body),
+    });
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    document.getElementById('alert-config-form').style.display = 'none';
+}
+
 // ── Navigation ──
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();

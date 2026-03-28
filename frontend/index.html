@@ -86,6 +86,22 @@
     <div id="notification-panel" class="notification-panel" style="display:none">
         <div class="notification-header">
             <h3 class="notification-title">Notificaciones</h3>
+            <button id="alert-config-btn" class="alert-config-btn" onclick="toggleAlertConfig()" title="Configurar umbrales de alerta">&#9881;</button>
+        </div>
+        <div id="alert-config-form" class="alert-config-form" style="display:none">
+            <div class="alert-config-row">
+                <label for="cfg-health-floor">Salud minima (0-100)</label>
+                <input type="number" id="cfg-health-floor" min="0" max="100" step="1" value="40">
+            </div>
+            <div class="alert-config-row">
+                <label for="cfg-ndvi-min">NDVI minimo (0-1)</label>
+                <input type="number" id="cfg-ndvi-min" min="0" max="1" step="0.05" value="0.3">
+            </div>
+            <div class="alert-config-row">
+                <label for="cfg-temp-max">Temperatura maxima (C)</label>
+                <input type="number" id="cfg-temp-max" min="-50" max="70" step="1" value="45">
+            </div>
+            <button id="alert-config-save" class="alert-config-save" onclick="saveAlertConfig()">Guardar</button>
         </div>
         <div id="notification-list" class="notification-list"></div>
     </div>
