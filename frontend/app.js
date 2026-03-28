@@ -132,7 +132,7 @@ function renderFarms() {
             <div class="empty-state">
                 <div class="empty-state-icon">&#x1f33e;</div>
                 <div class="empty-state-title">Sin granjas registradas</div>
-                <div class="empty-state-text">Usa la API para crear tu primera granja: POST /api/farms</div>
+                <div class="empty-state-text">Crea una granja con "+ Nueva Granja" o carga datos de ejemplo con "Cargar datos de ejemplo"</div>
             </div>`;
         return;
     }
@@ -1035,6 +1035,31 @@ function getAuthHeaders() {
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
+}
+
+async function seedDemoData() {
+    const btn = document.getElementById('btn-seed-demo');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+    try {
+        const resp = await fetch(API + '/demo/seed', { method: 'POST' });
+        const data = await resp.json();
+        if (resp.status === 201) {
+            btn.textContent = 'Datos cargados';
+            await loadFarms();
+            await Promise.all(farms.map(f => loadFieldsForFarm(f.id)));
+            updateStats();
+            renderFarms();
+        } else {
+            btn.textContent = 'Ya existen datos demo';
+        }
+    } catch {
+        btn.textContent = 'Error al cargar';
+    }
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Cargar datos de ejemplo';
+    }, 3000);
 }
 
 function toggleFarmForm() {
