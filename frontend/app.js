@@ -331,6 +331,62 @@ function renderFields(farmId) {
     }).join('');
 }
 
+// ── Heatmap rendering ──
+async function loadHeatmap(farmId) {
+    const data = await fetchJSON(`/farms/${farmId}/heatmap`);
+    if (!data || !data.fields || data.fields.length === 0) {
+        document.getElementById('heatmap-container').style.display = 'none';
+        return;
+    }
+    renderHeatmap(data.fields, farmId);
+}
+
+function renderHeatmap(fields, farmId) {
+    const container = document.getElementById('heatmap-container');
+    const canvas = document.getElementById('heatmap-canvas');
+    container.style.display = '';
+
+    // Filter fields with valid centroids
+    const mapped = fields.filter(f => f.centroid_lat != null && f.centroid_lon != null);
+    if (mapped.length === 0) {
+        canvas.innerHTML = '<div class="heatmap-empty">Sin coordenadas de campo disponibles</div>';
+        return;
+    }
+
+    // Compute bounds
+    const lats = mapped.map(f => f.centroid_lat);
+    const lons = mapped.map(f => f.centroid_lon);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+
+    const w = 400, h = 280, pad = 40;
+    const latRange = maxLat - minLat || 0.01;
+    const lonRange = maxLon - minLon || 0.01;
+
+    const dots = mapped.map(f => {
+        const x = pad + ((f.centroid_lon - minLon) / lonRange) * (w - 2 * pad);
+        const y = pad + ((maxLat - f.centroid_lat) / latRange) * (h - 2 * pad);
+        const cls = heatmapColorClass(f.health_score);
+        const label = f.health_score != null ? Math.round(f.health_score) : '--';
+        return `<g class="heatmap-field" onclick="window.location.href='/campo?farm=${farmId}&field=${f.field_id}'" style="cursor:pointer">
+            <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" class="heatmap-circle ${cls}"/>
+            <text x="${x.toFixed(1)}" y="${(y + 1).toFixed(1)}" class="heatmap-label">${label}</text>
+            <text x="${x.toFixed(1)}" y="${(y + 14).toFixed(1)}" class="heatmap-name">${esc(f.field_name)}</text>
+        </g>`;
+    });
+
+    canvas.innerHTML = `<svg class="heatmap-svg" viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="xMidYMid meet">
+        ${dots.join('')}
+    </svg>`;
+}
+
+function heatmapColorClass(score) {
+    if (score == null) return 'heatmap-none';
+    if (score > 75) return 'heatmap-good';
+    if (score >= 50) return 'heatmap-warning';
+    return 'heatmap-critical';
+}
+
 // ── Fertilizer knowledge base ──
 async function showFertilizers() {
     document.getElementById('tab-granjas').classList.remove('active');
@@ -405,7 +461,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -416,6 +472,7 @@ function closeFarmDetail() {
     selectedFarmId = null;
     fieldPanel.style.display = 'none';
     document.getElementById('weather-widget').style.display = 'none';
+    document.getElementById('heatmap-container').style.display = 'none';
 }
 
 // ── Escape HTML ──

@@ -82,6 +82,20 @@
         <div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>
     </div>
 
+    <!-- Heatmap panel (shown when a farm is selected) -->
+    <div id="heatmap-container" class="heatmap-container" style="display:none">
+        <div class="heatmap-header">
+            <h3 class="heatmap-title">Mapa de Salud</h3>
+        </div>
+        <div id="heatmap-canvas" class="heatmap-canvas"></div>
+        <div class="heatmap-legend">
+            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-good"></span> &gt;75</span>
+            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-warning"></span> 50-75</span>
+            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-critical"></span> &lt;50</span>
+            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-none"></span> Sin datos</span>
+        </div>
+    </div>
+
     <!-- Field detail panel (hidden by default) -->
     <div id="field-panel" class="field-panel" style="display:none">
         <div class="field-panel-header">

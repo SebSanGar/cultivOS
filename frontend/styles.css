@@ -862,3 +862,88 @@ nav {
     .weather-forecast { grid-template-columns: 1fr; gap: 8px; }
     .weather-temp { font-size: 1.8rem; }
 }
+
+/* ── HEATMAP ── */
+.heatmap-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.heatmap-header {
+    margin-bottom: 12px;
+}
+.heatmap-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.heatmap-canvas {
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.heatmap-svg {
+    max-width: 100%;
+    height: auto;
+}
+.heatmap-circle {
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+.heatmap-circle:hover {
+    opacity: 1;
+}
+.heatmap-circle.heatmap-good { fill: var(--green); }
+.heatmap-circle.heatmap-warning { fill: var(--yellow); }
+.heatmap-circle.heatmap-critical { fill: var(--red); }
+.heatmap-circle.heatmap-none { fill: #9ca3af; }
+.heatmap-label {
+    fill: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+}
+.heatmap-name {
+    fill: var(--text-muted);
+    font-size: 9px;
+    text-anchor: middle;
+    pointer-events: none;
+}
+.heatmap-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+.heatmap-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.heatmap-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.heatmap-dot.heatmap-good { background: var(--green); }
+.heatmap-dot.heatmap-warning { background: var(--yellow); }
+.heatmap-dot.heatmap-critical { background: var(--red); }
+.heatmap-dot.heatmap-none { background: #9ca3af; }
+.heatmap-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 24px;
+    text-align: center;
+}
+.heatmap-field { cursor: pointer; }
+@media (max-width: 480px) {
+    .heatmap-legend { flex-wrap: wrap; gap: 8px; }
+}
