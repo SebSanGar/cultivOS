@@ -118,6 +118,7 @@ def create_app() -> FastAPI:
             {"name": "anomalies", "description": "Field-level anomaly detection for health and NDVI drops"},
             {"name": "completeness", "description": "Data completeness scoring per farm and field"},
             {"name": "status", "description": "Platform status, uptime, and data freshness overview"},
+            {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
         ],
     )

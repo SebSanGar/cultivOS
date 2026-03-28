@@ -47,11 +47,22 @@ class WeatherInput(TypedDict, total=False):
     forecast_3day: list[ForecastInput]
 
 
+class RegionInput(TypedDict, total=False):
+    region_name: str
+    climate_zone: str
+    soil_type: str
+    growing_season: str
+    key_crops: list[str]
+    currency: str
+    seasonal_notes: str
+
+
 class Treatment(TypedDict, total=False):
     problema: str
     causa_probable: str
     tratamiento: str
     costo_estimado_mxn: int
+    costo_estimado_cad: float | None
     urgencia: str  # alta, media, baja
     prevencion: str
     organic: bool
@@ -59,6 +70,7 @@ class Treatment(TypedDict, total=False):
     base_cientifica: str | None
     razon_match: str | None
     timing_consejo: str | None
+    contexto_regional: str | None
 
 
 _NO_TREATMENT = Treatment(
@@ -226,6 +238,7 @@ def recommend_treatment(
     ancestral_methods: list[AncestralMethodData] | None = None,
     weather: WeatherInput | None = None,
     growth_stage: str | None = None,
+    region: RegionInput | None = None,
 ) -> list[Treatment]:
     """Generate organic treatment recommendations based on health score, soil, microbiome, and weather.
 
@@ -429,7 +442,53 @@ def recommend_treatment(
                 existing = rec.get("prevencion", "")
                 rec["prevencion"] = f"{guidance}. {existing}"
 
+    # Add region-specific context to each recommendation
+    _enrich_with_region(recommendations, region)
+
     return recommendations
+
+
+# ── Region enrichment ─────────────────────────────────────────────────
+
+
+# MXN to CAD approximate conversion factor
+_MXN_TO_CAD = 0.075
+
+
+def _enrich_with_region(
+    recommendations: list[Treatment],
+    region: RegionInput | None,
+) -> None:
+    """Inject region metadata into each recommendation (mutates in place)."""
+    if not region:
+        for rec in recommendations:
+            rec["contexto_regional"] = None
+            rec["costo_estimado_cad"] = None
+        return
+
+    climate = region.get("climate_zone", "")
+    soil_type = region.get("soil_type", "")
+    seasonal = region.get("seasonal_notes", "")
+    currency = region.get("currency", "MXN")
+
+    for rec in recommendations:
+        # Build regional context note
+        parts: list[str] = []
+        if climate and climate != "generic":
+            parts.append(f"Zona climatica: {climate}")
+        if soil_type:
+            parts.append(f"Suelo: {soil_type}")
+        if seasonal:
+            parts.append(f"Nota estacional: {seasonal}")
+
+        rec["contexto_regional"] = " | ".join(parts) if parts else None
+
+        # Add CAD cost estimate for Canadian regions
+        if currency == "CAD":
+            mxn_cost = rec.get("costo_estimado_mxn", 0)
+            rec["costo_estimado_cad"] = round(mxn_cost * _MXN_TO_CAD, 2) if mxn_cost else None
+        else:
+            rec["costo_estimado_cad"] = None
 
 
 # ── Treatment timing optimizer ─────────────────────────────────────────
