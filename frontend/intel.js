@@ -505,6 +505,10 @@ async function loadBatchHealth() {
 }
 
 // ── Farm Comparison ──
+let _compareFarms = []; // cached for sorting and CSV export
+let _compareSortKey = null;
+let _compareSortAsc = true;
+
 async function loadFarmSelectOptions() {
     const select = document.getElementById('farm-compare-select');
     if (!select) return;
@@ -525,6 +529,55 @@ async function loadFarmSelectOptions() {
     }
 }
 
+function renderSparkline(history) {
+    if (!history || history.length < 2) return '<span class="compare-sparkline">--</span>';
+    const min = Math.min(...history);
+    const max = Math.max(...history);
+    const range = max - min || 1;
+    const h = 24;
+    const w = 60;
+    const step = w / (history.length - 1);
+    const points = history.map((v, i) => {
+        const x = Math.round(i * step);
+        const y = Math.round(h - ((v - min) / range) * h);
+        return x + ',' + y;
+    }).join(' ');
+    const last = history[history.length - 1];
+    const cls = healthClass(last);
+    return '<span class="compare-sparkline"><svg width="' + w + '" height="' + (h + 2) + '" viewBox="0 0 ' + w + ' ' + (h + 2) + '"><polyline points="' + points + '" fill="none" stroke="currentColor" stroke-width="1.5" class="sparkline-line ' + cls + '"/></svg></span>';
+}
+
+function renderCompareRows(farms) {
+    const maxYield = Math.max(...farms.map(f => f.yield_total_kg || 0), 1);
+    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const trendIcons = { improving: '&#x25B2;', stable: '&#x25AC;', declining: '&#x25BC;' };
+
+    return farms.map(f => {
+        const cls = healthClass(f.avg_health);
+        const healthVal = f.avg_health != null ? Math.round(f.avg_health) : '--';
+        const yieldWidth = Math.min(100, Math.round((f.yield_total_kg || 0) / maxYield * 100));
+        const trendText = f.trend ? (trendLabels[f.trend] || f.trend) : '';
+        const trendIcon = f.trend ? (trendIcons[f.trend] || '') : '';
+        const trendCls = f.trend === 'declining' ? 'critical' : (f.trend === 'improving' ? 'good' : '');
+
+        return `
+        <div class="compare-row">
+            <span class="compare-cell compare-cell-name">${esc(f.farm_name)}</span>
+            <span class="compare-cell">${f.field_count}</span>
+            <span class="compare-cell">${f.total_hectares}</span>
+            <span class="compare-cell"><span class="health-badge ${cls}">${healthVal}</span></span>
+            <span class="compare-cell compare-cell-trend">${renderSparkline(f.health_history)} <span class="compare-trend-label ${trendCls}">${trendIcon} ${trendText}</span></span>
+            <span class="compare-cell compare-cell-yield">
+                <div class="compare-yield-bar">
+                    <div class="score-bar-fill good" style="width:${yieldWidth}%"></div>
+                </div>
+                <span>${Number(f.yield_total_kg || 0).toLocaleString('es-MX')}</span>
+            </span>
+            <span class="compare-cell">${f.treatment_count}</span>
+        </div>`;
+    }).join('');
+}
+
 async function loadFarmComparison() {
     const container = document.getElementById('intel-farm-compare');
     const select = document.getElementById('farm-compare-select');
@@ -533,6 +586,7 @@ async function loadFarmComparison() {
     const ids = Array.from(select.selectedOptions).map(o => o.value);
     if (ids.length === 0) {
         container.innerHTML = '<div class="intel-empty">Seleccione granjas para comparar</div>';
+        _compareFarms = [];
         return;
     }
 
@@ -541,42 +595,94 @@ async function loadFarmComparison() {
 
     if (!data || !data.farms || data.farms.length === 0) {
         container.innerHTML = '<div class="intel-empty">Sin datos de comparacion</div>';
+        _compareFarms = [];
         return;
     }
 
-    const maxYield = Math.max(...data.farms.map(f => f.yield_total_kg || 0), 1);
+    _compareFarms = data.farms;
+    _compareSortKey = null;
+    _compareSortAsc = true;
 
     container.innerHTML = `
-        <div class="compare-table">
+        <div class="compare-table compare-table-sortable">
             <div class="compare-header-row">
-                <span class="compare-cell compare-cell-name">Granja</span>
-                <span class="compare-cell">Campos</span>
-                <span class="compare-cell">Hectareas</span>
-                <span class="compare-cell">Salud</span>
-                <span class="compare-cell">Rendimiento (kg)</span>
-                <span class="compare-cell">Tratamientos</span>
+                <span class="compare-cell compare-cell-name compare-sortable" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Granja</span>
+                <span class="compare-cell compare-sortable" data-sort="field_count" onclick="sortCompareTable('field_count')">Campos</span>
+                <span class="compare-cell compare-sortable" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectareas</span>
+                <span class="compare-cell compare-sortable" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Salud</span>
+                <span class="compare-cell compare-sparkline-header">Tendencia</span>
+                <span class="compare-cell compare-sortable" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Rendimiento (kg)</span>
+                <span class="compare-cell compare-sortable" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Tratamientos</span>
             </div>
-            ${data.farms.map(f => {
-                const cls = healthClass(f.avg_health);
-                const healthVal = f.avg_health != null ? Math.round(f.avg_health) : '--';
-                const yieldWidth = Math.min(100, Math.round((f.yield_total_kg || 0) / maxYield * 100));
-                return `
-                <div class="compare-row">
-                    <span class="compare-cell compare-cell-name">${esc(f.farm_name)}</span>
-                    <span class="compare-cell">${f.field_count}</span>
-                    <span class="compare-cell">${f.total_hectares}</span>
-                    <span class="compare-cell"><span class="health-badge ${cls}">${healthVal}</span></span>
-                    <span class="compare-cell compare-cell-yield">
-                        <div class="compare-yield-bar">
-                            <div class="score-bar-fill good" style="width:${yieldWidth}%"></div>
-                        </div>
-                        <span>${Number(f.yield_total_kg || 0).toLocaleString('es-MX')}</span>
-                    </span>
-                    <span class="compare-cell">${f.treatment_count}</span>
-                </div>`;
-            }).join('')}
+            ${renderCompareRows(_compareFarms)}
         </div>
     `;
+}
+
+function sortCompareTable(key) {
+    if (_compareSortKey === key) {
+        _compareSortAsc = !_compareSortAsc;
+    } else {
+        _compareSortKey = key;
+        _compareSortAsc = true;
+    }
+
+    const sorted = [..._compareFarms].sort((a, b) => {
+        let va = a[key], vb = b[key];
+        if (va == null) va = key === 'farm_name' ? '' : -Infinity;
+        if (vb == null) vb = key === 'farm_name' ? '' : -Infinity;
+        if (typeof va === 'string') {
+            return _compareSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+        }
+        return _compareSortAsc ? va - vb : vb - va;
+    });
+
+    const container = document.getElementById('intel-farm-compare');
+    const table = container.querySelector('.compare-table');
+    if (!table) return;
+
+    // Remove existing rows, keep header
+    const rows = table.querySelectorAll('.compare-row');
+    rows.forEach(r => r.remove());
+
+    // Re-render sorted rows
+    table.insertAdjacentHTML('beforeend', renderCompareRows(sorted));
+
+    // Update sort indicators
+    table.querySelectorAll('.compare-header-row [data-sort]').forEach(el => {
+        el.classList.remove('sort-asc', 'sort-desc');
+        if (el.dataset.sort === key) {
+            el.classList.add(_compareSortAsc ? 'sort-asc' : 'sort-desc');
+        }
+    });
+}
+
+function exportCompareCSV() {
+    if (!_compareFarms || _compareFarms.length === 0) {
+        alert('No hay datos de comparacion para exportar');
+        return;
+    }
+    const headers = ['Granja', 'Campos', 'Hectareas', 'Salud', 'Tendencia', 'Rendimiento (kg)', 'Tratamientos'];
+    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const rows = _compareFarms.map(f => [
+        f.farm_name,
+        f.field_count,
+        f.total_hectares,
+        f.avg_health != null ? Math.round(f.avg_health) : '',
+        f.trend ? (trendLabels[f.trend] || f.trend) : '',
+        Math.round(f.yield_total_kg || 0),
+        f.treatment_count,
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cultivOS_comparacion_granjas.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 async function loadCropTypeOptions() {

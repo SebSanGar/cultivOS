@@ -63,6 +63,17 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
         total_treatment_count = 0
         total_hectares = 0.0
 
+        # Collect all health scores across fields for history/trend
+        field_ids = [f.id for f in fields]
+        all_scores = []
+        if field_ids:
+            all_scores = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id.in_(field_ids))
+                .order_by(HealthScore.scored_at.asc())
+                .all()
+            )
+
         for field in fields:
             total_hectares += field.hectares or 0
 
@@ -91,6 +102,28 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
 
         avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
 
+        # Build health history: avg score per scored_at date, last 10
+        history_by_date: dict[str, list[float]] = {}
+        for hs in all_scores:
+            date_key = str(hs.scored_at.date()) if hs.scored_at else "unknown"
+            history_by_date.setdefault(date_key, []).append(hs.score)
+        health_history = [
+            round(sum(scores) / len(scores), 1)
+            for _, scores in sorted(history_by_date.items())
+        ][-10:]
+
+        # Compute trend from history
+        trend = None
+        if len(health_history) >= 2:
+            recent = health_history[-3:] if len(health_history) >= 3 else health_history
+            delta = recent[-1] - recent[0]
+            if delta > 3:
+                trend = "improving"
+            elif delta < -3:
+                trend = "declining"
+            else:
+                trend = "stable"
+
         results.append({
             "farm_id": fid,
             "farm_name": farm.name,
@@ -99,6 +132,8 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
             "avg_health": avg_health,
             "yield_total_kg": round(total_yield, 1),
             "treatment_count": total_treatment_count,
+            "health_history": health_history,
+            "trend": trend,
         })
 
     return {"farms": results}

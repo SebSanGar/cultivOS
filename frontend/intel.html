@@ -153,12 +153,29 @@
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
                 <h2 class="intel-panel-title">Comparacion de Granjas</h2>
-                <select id="farm-compare-select" class="intel-filter-select" multiple onchange="loadFarmComparison()">
-                </select>
+                <div class="intel-header-actions-inline">
+                    <select id="farm-compare-select" class="intel-filter-select" multiple onchange="loadFarmComparison()">
+                    </select>
+                    <button id="compare-csv-btn" class="intel-btn intel-btn-sm" onclick="exportCompareCSV()">Exportar CSV</button>
+                </div>
             </div>
             <div id="intel-farm-compare" class="intel-panel-body">
                 <div class="intel-empty">Seleccione granjas para comparar</div>
             </div>
+            <!-- Sortable table template with sparkline containers -->
+            <template id="compare-table-template">
+                <div class="compare-table compare-table-sortable">
+                    <div class="compare-header-row">
+                        <span class="compare-cell compare-cell-name" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Granja</span>
+                        <span class="compare-cell" data-sort="field_count" onclick="sortCompareTable('field_count')">Campos</span>
+                        <span class="compare-cell" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectareas</span>
+                        <span class="compare-cell" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Salud</span>
+                        <span class="compare-cell compare-sparkline-header">Tendencia</span>
+                        <span class="compare-cell" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Rendimiento (kg)</span>
+                        <span class="compare-cell" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Tratamientos</span>
+                    </div>
+                </div>
+            </template>
         </div>
 
         <!-- Batch Health Portfolio Grid -->

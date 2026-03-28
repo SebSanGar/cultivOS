@@ -2141,7 +2141,7 @@ nav {
 }
 .compare-header-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1fr;
+    grid-template-columns: 2fr 0.8fr 1fr 0.8fr 1.2fr 1.5fr 0.8fr;
     gap: 8px;
     padding: 8px 0;
     border-bottom: 2px solid var(--intel-border, #333);
@@ -2151,9 +2151,26 @@ nav {
     letter-spacing: 0.5px;
     color: var(--intel-muted, #9ca3af);
 }
+.compare-header-row [data-sort],
+.compare-sortable {
+    cursor: pointer;
+    user-select: none;
+}
+.compare-header-row [data-sort]:hover,
+.compare-sortable:hover {
+    color: #e5e7eb;
+}
+.compare-header-row [data-sort].sort-asc::after {
+    content: " \25B2";
+    font-size: 0.6rem;
+}
+.compare-header-row [data-sort].sort-desc::after {
+    content: " \25BC";
+    font-size: 0.6rem;
+}
 .compare-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1fr;
+    grid-template-columns: 2fr 0.8fr 1fr 0.8fr 1.2fr 1.5fr 0.8fr;
     gap: 8px;
     padding: 10px 0;
     border-bottom: 1px solid var(--intel-border, #333);
@@ -2168,6 +2185,30 @@ nav {
 .compare-cell-name {
     font-weight: 600;
 }
+.compare-sortable {
+    cursor: pointer;
+    user-select: none;
+}
+.compare-sortable:hover {
+    color: var(--intel-accent, #4da6ff);
+}
+.compare-sortable.sort-asc::after { content: ' \25B2'; font-size: 0.6rem; }
+.compare-sortable.sort-desc::after { content: ' \25BC'; font-size: 0.6rem; }
+.compare-cell-trend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.compare-trend-label {
+    font-size: 0.75rem;
+}
+.compare-trend-label.good { color: #16a34a; }
+.compare-trend-label.critical { color: #ef4444; }
+.compare-sparkline svg { display: block; }
+.sparkline-line.good { color: #16a34a; }
+.sparkline-line.warning { color: #f0b429; }
+.sparkline-line.critical { color: #ef4444; }
+.sparkline-line.none { color: #666; }
 .compare-cell-yield {
     display: flex;
     flex-direction: column;
@@ -2179,6 +2220,15 @@ nav {
     background: var(--intel-border, #333);
     border-radius: 3px;
     overflow: hidden;
+}
+.intel-header-actions-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.intel-btn-sm {
+    padding: 4px 10px;
+    font-size: 0.75rem;
 }
 #farm-compare-select {
     min-width: 160px;

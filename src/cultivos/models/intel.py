@@ -140,6 +140,8 @@ class FarmCompareEntry(BaseModel):
     avg_health: Optional[float] = None
     yield_total_kg: float = 0
     treatment_count: int = 0
+    health_history: list[float] = []
+    trend: Optional[str] = None
 
 
 class FarmCompareOut(BaseModel):
