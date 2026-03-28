@@ -1029,6 +1029,106 @@ async function downloadFarmPDF() {
     }
 }
 
+// ── Farm & Field Creation ──
+function getAuthHeaders() {
+    const token = localStorage.getItem('cultivOS_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return headers;
+}
+
+function toggleFarmForm() {
+    const form = document.getElementById('farm-create-form');
+    form.style.display = form.style.display === 'none' ? 'grid' : 'none';
+    document.getElementById('farm-create-error').style.display = 'none';
+}
+
+function toggleFieldForm() {
+    const form = document.getElementById('field-create-form');
+    form.style.display = form.style.display === 'none' ? 'grid' : 'none';
+    document.getElementById('field-create-error').style.display = 'none';
+}
+
+async function createFarm(event) {
+    event.preventDefault();
+    const btn = document.getElementById('btn-create-farm');
+    const errEl = document.getElementById('farm-create-error');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+
+    const body = {
+        name: document.getElementById('farm-name').value.trim(),
+        owner_name: document.getElementById('farm-owner').value.trim() || null,
+        total_hectares: parseFloat(document.getElementById('farm-hectares').value) || 0,
+        municipality: document.getElementById('farm-municipality').value.trim() || null,
+        state: document.getElementById('farm-state').value.trim() || 'Jalisco',
+    };
+
+    try {
+        const resp = await fetch(API + '/farms', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(body),
+        });
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: 'Error desconocido' }));
+            throw new Error(err.detail || JSON.stringify(err));
+        }
+        document.getElementById('farm-create-form').reset();
+        document.getElementById('farm-state').value = 'Jalisco';
+        toggleFarmForm();
+        await loadFarms();
+        await Promise.all(farms.map(f => loadFieldsForFarm(f.id)));
+        updateStats();
+        renderFarms();
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Crear Granja';
+    }
+}
+
+async function createField(event) {
+    event.preventDefault();
+    if (!selectedFarmId) return;
+    const btn = document.getElementById('btn-create-field');
+    const errEl = document.getElementById('field-create-error');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+
+    const body = {
+        name: document.getElementById('field-name').value.trim(),
+        crop_type: document.getElementById('field-crop-type').value.trim() || null,
+        hectares: parseFloat(document.getElementById('field-hectares').value) || 0,
+    };
+
+    try {
+        const resp = await fetch(API + `/farms/${selectedFarmId}/fields`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(body),
+        });
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: 'Error desconocido' }));
+            throw new Error(err.detail || JSON.stringify(err));
+        }
+        document.getElementById('field-create-form').reset();
+        toggleFieldForm();
+        delete fieldsByFarm[selectedFarmId];
+        await selectFarm(selectedFarmId);
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Crear Campo';
+    }
+}
+
 // ── Init ──
 async function init() {
     await loadFarms();

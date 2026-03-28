@@ -81,6 +81,38 @@
         <div class="weather-forecast" id="weather-forecast"></div>
     </div>
 
+    <!-- Farm creation -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:0.75rem">
+        <button class="export-csv-btn" onclick="toggleFarmForm()">+ Nueva Granja</button>
+    </div>
+    <form id="farm-create-form" class="soil-entry-form" style="display:none" onsubmit="createFarm(event)">
+        <div class="form-field">
+            <label for="farm-name">Nombre *</label>
+            <input type="text" id="farm-name" required minlength="1" maxlength="100" placeholder="Ej: Rancho El Sol">
+        </div>
+        <div class="form-field">
+            <label for="farm-owner">Propietario</label>
+            <input type="text" id="farm-owner" placeholder="Ej: Juan Garcia">
+        </div>
+        <div class="form-field">
+            <label for="farm-hectares">Hectareas</label>
+            <input type="number" id="farm-hectares" min="0" step="0.1" value="0" placeholder="0">
+        </div>
+        <div class="form-field">
+            <label for="farm-municipality">Municipio</label>
+            <input type="text" id="farm-municipality" placeholder="Ej: Tequila">
+        </div>
+        <div class="form-field">
+            <label for="farm-state">Estado</label>
+            <input type="text" id="farm-state" value="Jalisco" placeholder="Jalisco">
+        </div>
+        <div class="form-field" style="grid-column:1/-1;display:flex;gap:0.5rem;justify-content:flex-end">
+            <button type="button" class="field-panel-back" onclick="toggleFarmForm()">Cancelar</button>
+            <button type="submit" class="export-csv-btn" id="btn-create-farm">Crear Granja</button>
+        </div>
+        <div id="farm-create-error" style="grid-column:1/-1;color:#ff6b6b;display:none"></div>
+    </form>
+
     <!-- Farm cards grid -->
     <div id="farm-grid" class="farm-grid">
         <div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>
@@ -249,6 +281,28 @@
                 <button class="field-panel-back" onclick="closeFarmDetail()">Volver</button>
             </div>
         </div>
+        <div style="margin:0.75rem 0">
+            <button class="export-csv-btn" onclick="toggleFieldForm()">+ Nuevo Campo</button>
+        </div>
+        <form id="field-create-form" class="soil-entry-form" style="display:none" onsubmit="createField(event)">
+            <div class="form-field">
+                <label for="field-name">Nombre *</label>
+                <input type="text" id="field-name" required minlength="1" maxlength="100" placeholder="Ej: Campo Norte">
+            </div>
+            <div class="form-field">
+                <label for="field-crop-type">Tipo de cultivo</label>
+                <input type="text" id="field-crop-type" placeholder="Ej: maiz, agave, aguacate">
+            </div>
+            <div class="form-field">
+                <label for="field-hectares">Hectareas</label>
+                <input type="number" id="field-hectares" min="0" step="0.1" value="0" placeholder="0">
+            </div>
+            <div class="form-field" style="grid-column:1/-1;display:flex;gap:0.5rem;justify-content:flex-end">
+                <button type="button" class="field-panel-back" onclick="toggleFieldForm()">Cancelar</button>
+                <button type="submit" class="export-csv-btn" id="btn-create-field">Crear Campo</button>
+            </div>
+            <div id="field-create-error" style="grid-column:1/-1;color:#ff6b6b;display:none"></div>
+        </form>
         <div id="field-list" class="field-list"></div>
     </div>
 
