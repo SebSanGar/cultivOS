@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Alert, Farm, Field, HealthScore, NDVIResult, SoilAnalysis, ThermalResult, WeatherRecord
+from cultivos.db.models import Alert, AlertConfig, Farm, Field, HealthScore, NDVIResult, SoilAnalysis, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.alert import AlertCheckResponse, AlertOut
 from cultivos.services.alerts.sms import HEALTH_THRESHOLD, format_anomaly_sms, format_irrigation_sms, format_sms_message, should_send_alert
@@ -36,6 +36,10 @@ def check_and_create_alerts(
     farm = _get_farm(farm_id, db)
     fields = db.query(Field).filter(Field.farm_id == farm_id).all()
 
+    # Use custom threshold if configured, otherwise default
+    config = db.query(AlertConfig).filter(AlertConfig.farm_id == farm_id).first()
+    threshold = config.health_score_floor if config else HEALTH_THRESHOLD
+
     alerts_created = []
     for field in fields:
         latest_score = (
@@ -44,7 +48,7 @@ def check_and_create_alerts(
             .order_by(HealthScore.scored_at.desc())
             .first()
         )
-        if not latest_score or latest_score.score >= HEALTH_THRESHOLD:
+        if not latest_score or latest_score.score >= threshold:
             continue
 
         if not should_send_alert(db, farm_id, field.id, "low_health"):

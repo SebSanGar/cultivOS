@@ -1,6 +1,7 @@
 """API router registry — import modules, not individual routers."""
 
 from cultivos.api import (
+    alert_config,
     alerts,
     auth,
     carbon,
@@ -32,6 +33,7 @@ from cultivos.api import (
 
 # Flat list of every APIRouter that app.py should mount.
 all_routers = [
+    alert_config.router,
     alerts.router,
     auth.router,
     carbon.router,

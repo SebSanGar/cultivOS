@@ -308,3 +308,17 @@ class WeatherRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     farm = relationship("Farm", back_populates="weather_records")
+
+
+class AlertConfig(Base):
+    __tablename__ = "alert_configs"
+
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False, unique=True)
+    health_score_floor = Column(Float, nullable=False, default=40.0)
+    ndvi_minimum = Column(Float, nullable=False, default=0.3)
+    temp_max_c = Column(Float, nullable=False, default=45.0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    farm = relationship("Farm")
