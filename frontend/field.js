@@ -48,7 +48,7 @@ async function loadFieldDetail() {
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
-           anomaliesData] = await Promise.all([
+           anomaliesData, completenessData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -73,6 +73,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/flights`),
         fetchJSON(`${base}/flights/stats`),
         fetchJSON(`${base}/anomalies`),
+        fetchJSON(`/farms/${farmId}/data-completeness`),
     ]);
 
     // Find this field
@@ -168,6 +169,9 @@ async function loadFieldDetail() {
 
     // Anomaly detection
     renderAnomalies(anomaliesData);
+
+    // Data completeness
+    renderDataCompleteness(completenessData, parseInt(fieldId));
 
     // Sensor fusion quality
     renderFusion(intelligence ? intelligence.fusion : null);
@@ -1434,6 +1438,44 @@ function renderAnomalies(data) {
     }
 
     el.innerHTML = all.join('');
+}
+
+function renderDataCompleteness(data, currentFieldId) {
+    const el = document.getElementById('completeness-content');
+    if (!data || !data.fields || data.fields.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de completitud</div>';
+        return;
+    }
+
+    const fieldData = data.fields.find(f => f.field_id === currentFieldId);
+    if (!fieldData) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de completitud para este campo</div>';
+        return;
+    }
+
+    const sensors = [
+        { key: 'has_soil', label: 'Suelo', present: fieldData.has_soil },
+        { key: 'has_ndvi', label: 'NDVI', present: fieldData.has_ndvi },
+        { key: 'has_thermal', label: 'Termico', present: fieldData.has_thermal },
+        { key: 'has_treatments', label: 'Tratamientos', present: fieldData.has_treatments },
+        { key: 'has_weather', label: 'Clima', present: fieldData.has_weather },
+    ];
+
+    const scoreCls = fieldData.score >= 80 ? 'good' : fieldData.score >= 40 ? 'warning' : 'critical';
+
+    el.innerHTML = `
+        <div class="completeness-header">
+            <span class="completeness-score completeness-${scoreCls}">${fieldData.score}%</span>
+            <span class="completeness-label">datos disponibles</span>
+        </div>
+        <div class="completeness-sensors">
+            ${sensors.map(s => `
+                <div class="completeness-sensor ${s.present ? 'completeness-present' : 'completeness-missing'}">
+                    <span class="completeness-dot"></span>
+                    <span class="completeness-sensor-label">${s.label}</span>
+                </div>
+            `).join('')}
+        </div>`;
 }
 
 // -- Init --

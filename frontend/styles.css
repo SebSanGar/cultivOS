@@ -667,6 +667,36 @@ nav {
     font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
 }
 
+/* ── DATA COMPLETENESS WIDGET ── */
+.completeness-header {
+    display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;
+}
+.completeness-score {
+    font-size: 1.6rem; font-weight: 700;
+}
+.completeness-good { color: var(--green); }
+.completeness-warning { color: var(--yellow); }
+.completeness-critical { color: var(--red); }
+.completeness-label {
+    font-size: 0.85rem; color: var(--text-muted);
+}
+.completeness-sensors {
+    display: flex; flex-wrap: wrap; gap: 10px;
+}
+.completeness-sensor {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 500;
+    background: var(--card-bg); border: 1px solid var(--border);
+}
+.completeness-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.completeness-present .completeness-dot { background: var(--green); }
+.completeness-missing .completeness-dot { background: var(--red); }
+.completeness-missing { opacity: 0.6; }
+.completeness-sensor-label { color: var(--text); }
+
 /* ── CEREBRO INTELLIGENCE SUMMARY ── */
 .cerebro-grid {
     display: flex; gap: 20px; align-items: flex-start;
