@@ -102,3 +102,94 @@ def test_dashboard_spanish_labels(client):
     assert "Granjas" in html or "granjas" in html
     assert "Campos" in html or "campos" in html
     assert "Salud" in html or "salud" in html
+
+
+# ── Sparkline tests ──
+
+def test_sparkline_trend_data_available(client, farm_with_data):
+    """Health trend endpoint returns trend direction for sparkline coloring."""
+    farm = farm_with_data["farm"]
+    field = farm_with_data["fields"][0]
+    # Compute additional health scores to get meaningful trend data
+    # (first score was added in fixture)
+    client.post(f"/api/farms/{farm['id']}/fields/{field['id']}/health")
+    client.post(f"/api/farms/{farm['id']}/fields/{field['id']}/health")
+
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/health/trend"
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["trend"] in ("improving", "stable", "declining", "insufficient_data")
+    assert data["data_points"] >= 1
+
+
+def test_sparkline_history_scores(client, farm_with_data):
+    """Health history returns chronological scores the sparkline will plot."""
+    farm = farm_with_data["farm"]
+    field = farm_with_data["fields"][0]
+    # Add more health scores to have enough history for a sparkline
+    for _ in range(4):
+        client.post(f"/api/farms/{farm['id']}/fields/{field['id']}/health")
+
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{field['id']}/health/history"
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["count"] >= 5
+    # Scores are chronological (oldest first)
+    assert len(data["scores"]) >= 5
+    for s in data["scores"]:
+        assert 0 <= s["score"] <= 100
+
+
+def test_sparkline_handles_insufficient_data(client, admin_headers):
+    """Trend returns insufficient_data when field has <3 health scores."""
+    farm = client.post("/api/farms", json={
+        "name": "Rancho Nuevo",
+        "owner_name": "Maria",
+        "location_lat": 20.5,
+        "location_lon": -103.2,
+        "total_hectares": 10,
+        "municipality": "Tlajomulco",
+        "state": "Jalisco",
+        "country": "MX",
+    }, headers=admin_headers).json()
+    f = client.post(f"/api/farms/{farm['id']}/fields", json={
+        "name": "Campo Chico",
+        "crop_type": "frijol",
+        "hectares": 5,
+    }).json()
+    # Add NDVI so health can be computed
+    client.post(f"/api/farms/{farm['id']}/fields/{f['id']}/ndvi", json={
+        "nir_band": [[0.5, 0.6], [0.55, 0.58]],
+        "red_band": [[0.1, 0.08], [0.09, 0.07]],
+    })
+    # Only one health score — not enough for trend
+    client.post(f"/api/farms/{farm['id']}/fields/{f['id']}/health")
+
+    resp = client.get(
+        f"/api/farms/{farm['id']}/fields/{f['id']}/health/trend"
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["trend"] == "insufficient_data"
+    assert data["data_points"] == 1
+
+
+def test_dashboard_contains_sparkline_code(client):
+    """Dashboard JS includes the sparkline rendering function."""
+    resp = client.get("/app.js")
+    assert resp.status_code == 200
+    js = resp.text
+    assert "buildSparkline" in js
+    assert "<svg" in js.lower() or "svg" in js
+
+
+def test_dashboard_contains_sparkline_styles(client):
+    """Dashboard CSS includes sparkline styling."""
+    resp = client.get("/styles.css")
+    assert resp.status_code == 200
+    css = resp.text
+    assert "sparkline" in css

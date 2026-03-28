@@ -206,6 +206,14 @@ nav {
 .health-bar-fill.warning { background: var(--yellow); }
 .health-bar-fill.critical { background: var(--red); }
 
+/* ── SPARKLINE ── */
+.sparkline {
+    display: inline-block; vertical-align: middle; margin-left: 6px;
+}
+.sparkline-improving { color: var(--green); }
+.sparkline-stable { color: var(--yellow); }
+.sparkline-declining { color: var(--red); }
+
 /* ── EMPTY STATE ── */
 .empty-state {
     text-align: center; padding: 60px 20px;

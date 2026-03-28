@@ -11,6 +11,8 @@ let ndviByField = {};
 let soilByField = {};
 let treatmentsByField = {};
 let rotationByField = {};
+let healthHistoryByField = {};
+let trendByField = {};
 
 // ── DOM refs ──
 const farmGrid = document.getElementById('farm-grid');
@@ -70,12 +72,14 @@ async function loadFieldsForFarm(farmId) {
 
     // Load all data for each field in parallel
     await Promise.all(fields.map(async (f) => {
-        const [healthList, ndviList, soilList, treatmentList, rotation] = await Promise.all([
+        const [healthList, ndviList, soilList, treatmentList, rotation, history, trend] = await Promise.all([
             fetchJSON(`/farms/${farmId}/fields/${f.id}/health`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/ndvi`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/soil`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/treatments`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/rotation`),
+            fetchJSON(`/farms/${farmId}/fields/${f.id}/health/history`),
+            fetchJSON(`/farms/${farmId}/fields/${f.id}/health/trend`),
         ]);
         if (healthList && healthList.length > 0) {
             healthByField[f.id] = healthList[healthList.length - 1];
@@ -91,6 +95,12 @@ async function loadFieldsForFarm(farmId) {
         }
         if (rotation) {
             rotationByField[f.id] = rotation;
+        }
+        if (history && history.scores) {
+            healthHistoryByField[f.id] = history.scores.map(s => s.score);
+        }
+        if (trend) {
+            trendByField[f.id] = trend.trend;
         }
     }));
 
@@ -160,6 +170,30 @@ function renderFarms() {
     }).join('');
 }
 
+// ── Sparkline builder ──
+function buildSparkline(scores, trend) {
+    if (!scores || scores.length < 2) return '';
+    const recent = scores.slice(-5);
+    const w = 60, h = 20, pad = 2;
+    const min = Math.min(...recent);
+    const max = Math.max(...recent);
+    const range = max - min || 1;
+
+    const points = recent.map((v, i) => {
+        const x = pad + (i / (recent.length - 1)) * (w - 2 * pad);
+        const y = pad + (1 - (v - min) / range) * (h - 2 * pad);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+
+    let colorClass = 'sparkline-stable';
+    if (trend === 'improving') colorClass = 'sparkline-improving';
+    else if (trend === 'declining') colorClass = 'sparkline-declining';
+
+    return `<svg class="sparkline ${colorClass}" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+        <polyline points="${points.join(' ')}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+}
+
 // ── Field panel rendering — the brain view ──
 function renderFields(farmId) {
     const farm = farms.find(f => f.id === farmId);
@@ -185,6 +219,7 @@ function renderFields(farmId) {
         const score = health ? health.score : null;
         const cls = healthClass(score);
         const ndviVal = ndvi ? ndvi.ndvi_mean.toFixed(2) : '--';
+        const sparkHtml = buildSparkline(healthHistoryByField[f.id], trendByField[f.id]);
 
         // Soil section
         let soilHtml = '';
@@ -273,6 +308,7 @@ function renderFields(farmId) {
                     <div class="field-stat-label">Salud</div>
                     <div class="field-stat-value">
                         <span class="health-badge ${cls}">${healthLabel(score)}</span>
+                        ${sparkHtml}
                     </div>
                 </div>
                 <div>
