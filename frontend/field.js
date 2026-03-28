@@ -47,7 +47,7 @@ async function loadFieldDetail() {
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
-           feedbackList] = await Promise.all([
+           feedbackList, treatmentHistory] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -68,6 +68,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/microbiome`),
         fetchJSON(`${base}/growth-stage`),
         fetchJSON(`${base}/feedback`),
+        fetchJSON(`${base}/treatments/treatment-history`),
     ]);
 
     // Find this field
@@ -148,6 +149,9 @@ async function loadFieldDetail() {
 
     // Growth stage
     renderGrowthStage(growthStage);
+
+    // Treatment history timeline
+    renderTreatmentHistory(treatmentHistory);
 
     // Feedback — populate treatment dropdown and render entries
     renderFeedback(feedbackList, treatments);
@@ -373,6 +377,32 @@ function renderTreatments(treatments) {
             ${t.prevencion ? `<div class="campo-treatment-row"><strong>Prevencion:</strong> ${esc(t.prevencion)}</div>` : ''}
         </div>
     `).join('');
+}
+
+function renderTreatmentHistory(history) {
+    const el = document.getElementById('treatment-history-content');
+    if (!history || history.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin historial de tratamientos aplicados</div>';
+        return;
+    }
+    el.innerHTML = `<div class="treatment-timeline">
+        ${history.map(h => {
+            const date = h.applied_at ? new Date(h.applied_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
+            const urgCls = h.urgencia === 'alta' ? 'critical' : (h.urgencia === 'media' ? 'warning' : 'good');
+            return `<div class="treatment-timeline-item">
+                <div class="treatment-timeline-date">${date}</div>
+                <div class="treatment-timeline-body">
+                    <div class="treatment-timeline-header">
+                        <strong>${esc(h.problema)}</strong>
+                        <span class="campo-alert-badge ${urgCls}">${esc(h.urgencia)}</span>
+                        ${h.organic ? '<span class="organic-badge">Organico</span>' : ''}
+                    </div>
+                    <div class="treatment-timeline-detail">${esc(h.tratamiento)}</div>
+                    ${h.applied_notes ? `<div class="treatment-timeline-notes">${esc(h.applied_notes)}</div>` : ''}
+                </div>
+            </div>`;
+        }).join('')}
+    </div>`;
 }
 
 function renderRotation(rotation) {

@@ -203,6 +203,7 @@ def treatment_history(
             problema=r.problema,
             tratamiento=r.tratamiento,
             urgencia=r.urgencia,
+            organic=r.organic,
             applied_at=r.applied_at,
             applied_notes=r.applied_notes,
             health_score_used=r.health_score_used,

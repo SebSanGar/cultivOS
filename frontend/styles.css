@@ -514,6 +514,33 @@ nav {
 .campo-schedule-date { color: var(--text-muted); }
 .campo-schedule-liters { font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* ── TREATMENT HISTORY TIMELINE ── */
+.treatment-timeline { display: flex; flex-direction: column; gap: 0; }
+.treatment-timeline-item {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.treatment-timeline-item:last-child { border-bottom: none; }
+.treatment-timeline-date {
+    min-width: 80px; font-size: 0.78rem; color: var(--text-muted);
+    font-weight: 600; padding-top: 2px;
+}
+.treatment-timeline-body { flex: 1; }
+.treatment-timeline-header {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+.treatment-timeline-detail { font-size: 0.85rem; line-height: 1.4; color: var(--text); }
+.treatment-timeline-notes {
+    font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
+    font-style: italic;
+}
+.organic-badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px;
+    background: #166534; color: #bbf7d0;
+}
+
 /* ── ACTION TIMELINE ── */
 .timeline-weather {
     display: flex; gap: 12px; flex-wrap: wrap;

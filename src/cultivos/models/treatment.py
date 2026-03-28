@@ -49,6 +49,7 @@ class TreatmentTimelineEntry(BaseModel):
     problema: str
     tratamiento: str
     urgencia: str
+    organic: bool = True
     applied_at: Optional[datetime] = None
     applied_notes: Optional[str] = None
     health_score_used: float
