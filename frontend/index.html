@@ -128,6 +128,33 @@
         </div>
     </div>
 
+    <!-- Dashboard summary panel (shown when a farm is selected) -->
+    <div id="dashboard-summary" class="dashboard-summary" style="display:none">
+        <div class="dashboard-summary-header">
+            <h3 class="dashboard-summary-title">Resumen de Granja</h3>
+            <span class="dashboard-summary-farm-name" id="summary-farm-name"></span>
+        </div>
+        <div class="dashboard-summary-stats">
+            <div class="summary-stat">
+                <div class="summary-stat-value" id="summary-fields">--</div>
+                <div class="summary-stat-label">Campos</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-stat-value" id="summary-hectares">--</div>
+                <div class="summary-stat-label">Hectareas</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-stat-value" id="summary-health">--</div>
+                <div class="summary-stat-label">Salud Promedio</div>
+            </div>
+            <div class="summary-stat">
+                <div class="summary-stat-value" id="summary-crops">--</div>
+                <div class="summary-stat-label">Cultivos</div>
+            </div>
+        </div>
+        <div class="dashboard-summary-alerts" id="summary-alerts"></div>
+    </div>
+
     <!-- Heatmap panel (shown when a farm is selected) -->
     <div id="heatmap-container" class="heatmap-container" style="display:none">
         <div class="heatmap-header">

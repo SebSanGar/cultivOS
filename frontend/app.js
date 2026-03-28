@@ -645,11 +645,56 @@ async function loadSeasonalCalendar(farmId) {
 }
 
 // ── Navigation ──
+// ── Dashboard summary panel ──
+async function loadDashboardSummary(farmId) {
+    const container = document.getElementById('dashboard-summary');
+    const data = await fetchJSON(`/farms/${farmId}/dashboard`);
+    if (!data) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = '';
+    document.getElementById('summary-farm-name').textContent = data.farm.name || '';
+    document.getElementById('summary-fields').textContent = data.fields.length;
+
+    const totalHa = data.fields.reduce((s, f) => s + (f.hectares || 0), 0);
+    document.getElementById('summary-hectares').textContent = Math.round(totalHa);
+
+    const healthEl = document.getElementById('summary-health');
+    if (data.overall_health != null) {
+        healthEl.textContent = Math.round(data.overall_health);
+        healthEl.className = 'summary-stat-value health-' + healthClass(data.overall_health);
+    } else {
+        healthEl.textContent = '--';
+        healthEl.className = 'summary-stat-value';
+    }
+
+    const crops = [...new Set(data.fields.map(f => f.crop_type).filter(Boolean))];
+    document.getElementById('summary-crops').textContent = crops.length;
+
+    // Show urgent fields (health < 50) as alerts
+    const alertsEl = document.getElementById('summary-alerts');
+    const urgentFields = data.fields.filter(f => f.latest_health_score && f.latest_health_score.score < 50);
+    if (urgentFields.length > 0) {
+        alertsEl.innerHTML = '<div class="summary-alerts-title">Campos que necesitan atencion</div>' +
+            urgentFields.map(f => `
+                <div class="summary-alert-item">
+                    <span class="summary-alert-name">${esc(f.name)}</span>
+                    <span class="summary-alert-score health-badge critical">${Math.round(f.latest_health_score.score)}</span>
+                    <span class="summary-alert-trend">${f.latest_health_score.trend === 'declining' ? 'En declive' : f.latest_health_score.trend === 'improving' ? 'Mejorando' : 'Estable'}</span>
+                </div>
+            `).join('');
+    } else {
+        alertsEl.innerHTML = '';
+    }
+}
+
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -664,6 +709,7 @@ function closeFarmDetail() {
     document.getElementById('notification-panel').style.display = 'none';
     document.getElementById('seasonal-calendar').style.display = 'none';
     document.getElementById('alert-history').style.display = 'none';
+    document.getElementById('dashboard-summary').style.display = 'none';
 }
 
 // ── Escape HTML ──
