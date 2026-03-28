@@ -48,7 +48,7 @@ async function loadFieldDetail() {
            actionTimeline, intelligence, regenScore, seasonalData,
            missionPlan, interventionScores, microbiomeList, growthStage,
            feedbackList, treatmentHistory, flightsList, flightStats,
-           anomaliesData, completenessData, regionalData] = await Promise.all([
+           anomaliesData, completenessData, regionalData, carbonData] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -75,6 +75,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/anomalies`),
         fetchJSON(`/farms/${farmId}/data-completeness`),
         fetchJSON(`/farms/${farmId}/recommendations`),
+        fetchJSON(`${base}/carbon`),
     ]);
 
     // Find this field
@@ -146,6 +147,9 @@ async function loadFieldDetail() {
 
     // Regenerative score
     renderRegenerativeScore(regenScore);
+
+    // Soil carbon
+    renderCarbon(carbonData);
 
     // Seasonal comparison
     renderSeasonalComparison(seasonalData);
@@ -743,6 +747,72 @@ function renderRegenerativeScore(data) {
             </div>
             <div class="regen-components">${barsHtml}</div>
             ${recsHtml}
+        </div>`;
+}
+
+function renderCarbon(data) {
+    const el = document.getElementById('carbon-content');
+    if (!data || !data.soc_actual) {
+        el.innerHTML = `<div class="campo-placeholder">${data && data.resumen ? esc(data.resumen) : 'Sin datos de carbono del suelo'}</div>`;
+        return;
+    }
+
+    const soc = data.soc_actual;
+    const tendencia = data.tendencia;
+    const co2e = (soc.soc_tonnes_per_ha * 3.67).toFixed(1);
+
+    const trendIcons = { ganando: '+', estable: '=', perdiendo: '-', datos_insuficientes: '?' };
+    const trendLabels = { ganando: 'Ganando carbono', estable: 'Estable', perdiendo: 'Perdiendo carbono', datos_insuficientes: 'Datos insuficientes' };
+    const trendCls = tendencia === 'ganando' ? 'good' : tendencia === 'estable' ? 'warning' : tendencia === 'perdiendo' ? 'critical' : '';
+
+    const classCls = soc.clasificacion === 'alto' ? 'good' : soc.clasificacion === 'adecuado' ? 'warning' : 'critical';
+    const classLabels = { bajo: 'Bajo', adecuado: 'Adecuado', alto: 'Alto' };
+
+    const cambioHtml = data.cambio_soc_tonnes_per_ha !== 0
+        ? `<div class="campo-data-row">
+               <span class="campo-data-label">Cambio SOC</span>
+               <span class="campo-data-value">${data.cambio_soc_tonnes_per_ha > 0 ? '+' : ''}${data.cambio_soc_tonnes_per_ha.toFixed(2)} t/ha</span>
+           </div>`
+        : '';
+
+    const recsHtml = data.recomendaciones && data.recomendaciones.length > 0
+        ? `<div class="carbon-recs">
+               ${data.recomendaciones.map(r => `<div class="carbon-rec-item">${esc(r)}</div>`).join('')}
+           </div>`
+        : '';
+
+    el.innerHTML = `
+        <div class="carbon-card">
+            <div class="carbon-hero">
+                <div class="carbon-soc-value">${soc.soc_tonnes_per_ha.toFixed(1)}</div>
+                <div class="carbon-soc-unit">t SOC/ha</div>
+                <div class="health-badge ${classCls}" style="margin-top:4px">${classLabels[soc.clasificacion] || soc.clasificacion}</div>
+            </div>
+            <div class="carbon-details">
+                <div class="campo-data-row">
+                    <span class="campo-data-label">CO2 equivalente</span>
+                    <span class="campo-data-value">${co2e} t CO2e/ha</span>
+                </div>
+                <div class="campo-data-row">
+                    <span class="campo-data-label">Materia organica</span>
+                    <span class="campo-data-value">${soc.organic_matter_pct.toFixed(1)}%</span>
+                </div>
+                <div class="campo-data-row">
+                    <span class="campo-data-label">Profundidad</span>
+                    <span class="campo-data-value">${soc.depth_cm} cm</span>
+                </div>
+                <div class="campo-data-row">
+                    <span class="campo-data-label">Tendencia</span>
+                    <span class="campo-data-value carbon-trend-${trendCls}">${trendIcons[tendencia]} ${trendLabels[tendencia]}</span>
+                </div>
+                ${cambioHtml}
+                <div class="campo-data-row">
+                    <span class="campo-data-label">Registros</span>
+                    <span class="campo-data-value">${data.registros}</span>
+                </div>
+            </div>
+            ${recsHtml}
+            <div class="carbon-summary">${esc(data.resumen)}</div>
         </div>`;
 }
 
