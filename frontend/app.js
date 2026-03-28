@@ -533,12 +533,80 @@ async function saveAlertConfig() {
     document.getElementById('alert-config-form').style.display = 'none';
 }
 
+// ── Seasonal TEK calendar ──
+const ALERT_TYPE_LABELS = {
+    preparacion: 'Preparacion',
+    siembra: 'Siembra',
+    cosecha: 'Cosecha',
+    mantenimiento: 'Mantenimiento',
+};
+
+async function loadSeasonalCalendar(farmId) {
+    const container = document.getElementById('seasonal-calendar');
+    const groups = document.getElementById('seasonal-groups');
+    const badge = document.getElementById('seasonal-season-badge');
+
+    const data = await fetchJSON(`/farms/${farmId}/seasonal-alerts`);
+    if (!data || !data.alerts || data.alerts.length === 0) {
+        groups.innerHTML = '<div class="seasonal-empty">Sin alertas estacionales activas para este periodo.</div>';
+        badge.textContent = '';
+        badge.className = 'seasonal-season-badge';
+        container.style.display = '';
+        return;
+    }
+
+    // Season badge
+    badge.textContent = data.season === 'temporal' ? 'Temporal (lluvias)' : 'Secas';
+    badge.className = 'seasonal-season-badge ' + data.season;
+
+    // Group alerts by type
+    const grouped = {};
+    for (const alert of data.alerts) {
+        if (!grouped[alert.alert_type]) grouped[alert.alert_type] = [];
+        grouped[alert.alert_type].push(alert);
+    }
+
+    // Render order: preparacion, siembra, cosecha, mantenimiento
+    const order = ['preparacion', 'siembra', 'cosecha', 'mantenimiento'];
+    let html = '';
+    for (const type of order) {
+        const items = grouped[type];
+        if (!items || items.length === 0) continue;
+        html += `<div class="seasonal-group">
+            <div class="seasonal-group-label">${esc(ALERT_TYPE_LABELS[type] || type)}</div>`;
+        for (const a of items) {
+            html += `<div class="seasonal-card">
+                <div class="seasonal-type-dot ${a.alert_type}"></div>
+                <div class="seasonal-card-body">
+                    <div class="seasonal-card-header">
+                        <span class="seasonal-crop-name">${esc(a.crop)}</span>
+                        <span class="seasonal-month-range">${esc(a.month_range)}</span>
+                    </div>
+                    <div class="seasonal-message">${esc(a.message)}</div>
+                </div>
+            </div>`;
+        }
+        html += '</div>';
+    }
+
+    // Legend
+    html += `<div class="seasonal-legend">
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot preparacion"></span> Preparacion</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot siembra"></span> Siembra</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot cosecha"></span> Cosecha</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot mantenimiento"></span> Mantenimiento</span>
+    </div>`;
+
+    groups.innerHTML = html;
+    container.style.display = '';
+}
+
 // ── Navigation ──
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -551,6 +619,7 @@ function closeFarmDetail() {
     document.getElementById('weather-widget').style.display = 'none';
     document.getElementById('heatmap-container').style.display = 'none';
     document.getElementById('notification-panel').style.display = 'none';
+    document.getElementById('seasonal-calendar').style.display = 'none';
 }
 
 // ── Escape HTML ──

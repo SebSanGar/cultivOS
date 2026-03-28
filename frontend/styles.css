@@ -1110,6 +1110,130 @@ nav {
     text-align: center;
 }
 
+/* ── SEASONAL TEK CALENDAR ── */
+.seasonal-calendar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.seasonal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.seasonal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.seasonal-season-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.seasonal-season-badge.temporal {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+.seasonal-season-badge.secas {
+    background: var(--yellow-light);
+    color: var(--yellow);
+}
+.seasonal-group {
+    margin-bottom: 14px;
+}
+.seasonal-group:last-child {
+    margin-bottom: 0;
+}
+.seasonal-group-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+.seasonal-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    margin-bottom: 6px;
+}
+.seasonal-card:last-child {
+    margin-bottom: 0;
+}
+.seasonal-type-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+}
+.seasonal-type-dot.preparacion { background: var(--yellow); }
+.seasonal-type-dot.siembra { background: var(--green); }
+.seasonal-type-dot.cosecha { background: var(--red); }
+.seasonal-type-dot.mantenimiento { background: var(--blue); }
+.seasonal-card-body {
+    flex: 1;
+    min-width: 0;
+}
+.seasonal-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.seasonal-crop-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.seasonal-month-range {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.seasonal-message {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.seasonal-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 12px 0;
+    text-align: center;
+}
+.seasonal-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+.seasonal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
 /* ── ALERT CONFIG FORM ── */
 .alert-config-btn {
     background: none;
