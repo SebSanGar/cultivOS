@@ -1654,6 +1654,31 @@ nav {
     margin-left: auto;
 }
 
+/* ── GROWTH STAGE ── */
+.growth-stage-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.growth-crop {
+    color: var(--muted, #888); font-size: 0.85rem;
+}
+.growth-progress { margin-bottom: 16px; }
+.growth-progress-track {
+    height: 8px; background: var(--bg-alt, #1a1a2e); border-radius: 4px;
+    overflow: hidden; margin-bottom: 6px;
+}
+.growth-progress-fill {
+    height: 100%; background: var(--accent, #4ade80); border-radius: 4px;
+    transition: width 0.4s ease;
+}
+.growth-progress-labels {
+    display: flex; justify-content: space-between; font-size: 0.65rem;
+    color: var(--muted, #888);
+}
+.growth-stage-dot.active { color: var(--accent, #4ade80); font-weight: 600; }
+.growth-nutrient-focus {
+    margin-top: 10px; font-size: 0.82rem; color: var(--text-muted, #aaa);
+}
+
 /* ── KNOWLEDGE BASE PAGE ── */
 .knowledge-body { background: var(--bg); }
 .knowledge-dashboard {

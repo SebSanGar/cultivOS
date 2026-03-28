@@ -46,7 +46,7 @@ async function loadFieldDetail() {
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
            irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
            actionTimeline, intelligence, regenScore, seasonalData,
-           missionPlan, interventionScores, microbiomeList] = await Promise.all([
+           missionPlan, interventionScores, microbiomeList, growthStage] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -65,6 +65,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/mission-plan`),
         fetchJSON(`${base}/intervention-scores`),
         fetchJSON(`${base}/microbiome`),
+        fetchJSON(`${base}/growth-stage`),
     ]);
 
     // Find this field
@@ -142,6 +143,9 @@ async function loadFieldDetail() {
 
     // Microbiome
     renderMicrobiome(microbiomeList);
+
+    // Growth stage
+    renderGrowthStage(growthStage);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -805,6 +809,59 @@ function renderMicrobiome(data) {
                 </div>`;
             }).join('')}
         </div>` : ''}`;
+}
+
+function renderGrowthStage(data) {
+    const el = document.getElementById('growth-content');
+    if (!data) return;
+
+    const stageLabels = {
+        siembra: 'Siembra',
+        vegetativo: 'Vegetativo',
+        floracion: 'Floracion',
+        fructificacion: 'Fructificacion',
+        cosecha: 'Cosecha',
+    };
+    const stageOrder = ['siembra', 'vegetativo', 'floracion', 'fructificacion', 'cosecha'];
+    const stageIdx = stageOrder.indexOf(data.stage);
+    const progressPct = stageIdx >= 0 ? Math.round(((stageIdx + 1) / stageOrder.length) * 100) : 0;
+
+    const stageCls = stageIdx <= 0 ? 'warning' : stageIdx >= 4 ? 'good' : 'none';
+
+    el.innerHTML = `
+        <div class="growth-stage-header">
+            <span class="health-badge ${stageCls}">${esc(data.stage_es)}</span>
+            <span class="growth-crop">${esc(data.crop_type)}</span>
+        </div>
+        <div class="growth-progress">
+            <div class="growth-progress-track">
+                <div class="growth-progress-fill" style="width:${progressPct}%"></div>
+            </div>
+            <div class="growth-progress-labels">
+                ${stageOrder.map((s, i) => `<span class="growth-stage-dot ${i <= stageIdx ? 'active' : ''}">${stageLabels[s]}</span>`).join('')}
+            </div>
+        </div>
+        <div class="campo-data-grid">
+            <div class="campo-data-item">
+                <span class="campo-data-label">Dias desde siembra</span>
+                <span class="campo-data-value">${data.days_since_planting}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Dias en etapa</span>
+                <span class="campo-data-value">${data.days_in_stage}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Siguiente etapa</span>
+                <span class="campo-data-value">${data.days_until_next_stage != null ? data.days_until_next_stage + ' dias' : 'Ultima etapa'}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Multiplicador de riego</span>
+                <span class="campo-data-value">${data.water_multiplier}x</span>
+            </div>
+        </div>
+        <div class="growth-nutrient-focus">
+            <span class="campo-data-label">Enfoque nutricional:</span> ${esc(data.nutrient_focus)}
+        </div>`;
 }
 
 // -- PDF Download --
