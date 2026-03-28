@@ -33,6 +33,7 @@ def create_weather_record(
         temp_c=body.temp_c,
         humidity_pct=body.humidity_pct,
         wind_kmh=body.wind_kmh,
+        rainfall_mm=body.rainfall_mm,
         description=body.description,
         forecast_3day=[day.model_dump() for day in body.forecast_3day],
     )

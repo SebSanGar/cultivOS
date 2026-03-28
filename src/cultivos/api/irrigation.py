@@ -60,7 +60,7 @@ def get_irrigation_schedule(
         weather_dict = {
             "temp_c": weather_record.temp_c,
             "humidity_pct": weather_record.humidity_pct,
-            "recent_rainfall_mm": 0.0,  # WeatherRecord doesn't store rainfall yet
+            "recent_rainfall_mm": weather_record.rainfall_mm,
         }
 
     # Fetch latest thermal result for this field

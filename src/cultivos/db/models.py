@@ -301,6 +301,7 @@ class WeatherRecord(Base):
     temp_c = Column(Float, nullable=False)
     humidity_pct = Column(Float, nullable=False)
     wind_kmh = Column(Float, nullable=False)
+    rainfall_mm = Column(Float, nullable=False, default=0.0)
     description = Column(String(200), nullable=False)
     forecast_3day = Column(JSON, nullable=False, default=list)
     recorded_at = Column(DateTime, default=datetime.utcnow)

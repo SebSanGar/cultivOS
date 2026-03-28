@@ -34,17 +34,25 @@ def fetch_weather(lat: float, lon: float, api_key: str | None) -> dict:
 
     forecast_3day = []
     for entry in forecast_data.get("list", []):
+        rain_entry = entry.get("rain", {})
+        forecast_rainfall = rain_entry.get("3h", rain_entry.get("1h", 0.0))
         forecast_3day.append({
             "temp_c": entry["main"]["temp"],
             "humidity_pct": entry["main"]["humidity"],
             "wind_kmh": round(entry["wind"]["speed"] * 3.6, 2),
             "description": entry["weather"][0]["description"],
+            "rainfall_mm": forecast_rainfall,
         })
+
+    # Current weather: rain.1h or rain.3h (only present when raining)
+    rain_data = current.get("rain", {})
+    rainfall_mm = rain_data.get("1h", rain_data.get("3h", 0.0))
 
     return {
         "temp_c": current["main"]["temp"],
         "humidity_pct": current["main"]["humidity"],
         "wind_kmh": round(current["wind"]["speed"] * 3.6, 2),
         "description": current["weather"][0]["description"],
+        "rainfall_mm": rainfall_mm,
         "forecast_3day": forecast_3day,
     }

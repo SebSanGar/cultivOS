@@ -10,6 +10,7 @@ class ForecastDay(BaseModel):
     humidity_pct: float
     wind_kmh: float
     description: str
+    rainfall_mm: float = 0.0
 
 
 class WeatherRecordCreate(BaseModel):
@@ -17,6 +18,7 @@ class WeatherRecordCreate(BaseModel):
     humidity_pct: float
     wind_kmh: float
     description: str
+    rainfall_mm: float = 0.0
     forecast_3day: list[ForecastDay] = []
 
 
@@ -26,6 +28,7 @@ class WeatherRecordOut(BaseModel):
     temp_c: float
     humidity_pct: float
     wind_kmh: float
+    rainfall_mm: float
     description: str
     forecast_3day: list[ForecastDay]
     recorded_at: datetime
