@@ -166,6 +166,9 @@ async function loadFieldDetail() {
     // Anomaly detection
     renderAnomalies(anomaliesData);
 
+    // Sensor fusion quality
+    renderFusion(intelligence ? intelligence.fusion : null);
+
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
         renderHealthChart(healthHistory);
@@ -625,6 +628,61 @@ function renderCerebro(intel) {
                 ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Riesgo</span><span class="health-badge ${drCls}">${esc(dr.risk_level)}</span></div>` : ''}
                 ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Tratamientos</span><span class="campo-data-value">${treatCount} activos</span></div>` : ''}
             </div>
+        </div>`;
+}
+
+function renderFusion(fusion) {
+    const el = document.getElementById('fusion-content');
+    if (!fusion) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos de fusion disponibles</div>';
+        return;
+    }
+
+    const conf = fusion.confidence;
+    const confPct = Math.round(conf * 100);
+    const confCls = conf >= 0.7 ? 'good' : conf >= 0.4 ? 'warning' : 'critical';
+
+    // Sensor badges
+    const sensorLabels = {ndvi: 'NDVI', thermal: 'Termico', soil: 'Suelo', weather: 'Clima'};
+    const allSensors = ['ndvi', 'thermal', 'soil', 'weather'];
+    const sensorBadgesHtml = allSensors.map(s => {
+        const active = fusion.sensors_used.includes(s);
+        return `<span class="fusion-sensor-badge ${active ? 'active' : 'inactive'}">${sensorLabels[s]}</span>`;
+    }).join('');
+
+    // Contradiction cards
+    let contradictionsHtml = '';
+    if (fusion.contradictions && fusion.contradictions.length > 0) {
+        contradictionsHtml = `<div class="fusion-contradictions">
+            <div class="fusion-contradictions-title">Inconsistencias Detectadas</div>
+            ${fusion.contradictions.map(c => `
+                <div class="fusion-contradiction-card">
+                    <div class="fusion-contradiction-header">
+                        <span class="fusion-contradiction-sensors">${c.sensors.map(s => sensorLabels[s] || s).join(' vs ')}</span>
+                    </div>
+                    <div class="fusion-contradiction-desc">${esc(c.description)}</div>
+                </div>
+            `).join('')}
+        </div>`;
+    }
+
+    el.innerHTML = `
+        <div class="fusion-panel">
+            <div class="fusion-confidence-section">
+                <div class="fusion-confidence-header">
+                    <span class="fusion-confidence-label">Confianza</span>
+                    <span class="fusion-confidence-value health-badge ${confCls}">${confPct}%</span>
+                </div>
+                <div class="fusion-confidence-track">
+                    <div class="fusion-confidence-fill ${confCls}" style="width:${confPct}%"></div>
+                </div>
+                <div class="fusion-sensors">
+                    <span class="fusion-sensors-label">${fusion.sensors_used.length}/4 sensores</span>
+                    ${sensorBadgesHtml}
+                </div>
+            </div>
+            <div class="fusion-assessment">${esc(fusion.assessment)}</div>
+            ${contradictionsHtml}
         </div>`;
 }
 
