@@ -668,6 +668,126 @@ async function loadEconomicImpact(farmId) {
     document.getElementById('econ-nota').textContent = data.nota || '';
 }
 
+// ── Multi-field comparison table ──
+let comparisonSortField = 'health';
+let comparisonSortAsc = false;
+let comparisonData = [];
+
+async function loadFieldComparison(farmId) {
+    const container = document.getElementById('field-comparison-panel');
+    const fields = fieldsByFarm[farmId] || [];
+    if (fields.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    const completeness = await fetchJSON(`/farms/${farmId}/data-completeness`);
+    const completenessMap = {};
+    if (completeness && completeness.fields) {
+        completeness.fields.forEach(f => { completenessMap[f.field_id] = f; });
+    }
+
+    comparisonData = fields.map(f => {
+        const health = healthByField[f.id];
+        const ndvi = ndviByField[f.id];
+        const soil = soilByField[f.id];
+        const comp = completenessMap[f.id];
+        const treatments = treatmentsByField[f.id];
+        return {
+            field_id: f.id,
+            name: f.name,
+            crop_type: f.crop_type || '--',
+            hectares: f.hectares || 0,
+            health_score: health ? health.score : null,
+            health_trend: health ? (health.trend || trendByField[f.id]) : null,
+            ndvi_mean: ndvi ? ndvi.ndvi_mean : null,
+            soil_ph: soil ? soil.ph : null,
+            treatment_count: treatments ? 1 : 0,
+            completeness_score: comp ? comp.score : 0,
+        };
+    });
+
+    comparisonSortField = 'health';
+    comparisonSortAsc = false;
+    renderFieldComparison(farmId);
+    container.style.display = '';
+}
+
+function sortComparison(field) {
+    if (comparisonSortField === field) {
+        comparisonSortAsc = !comparisonSortAsc;
+    } else {
+        comparisonSortField = field;
+        comparisonSortAsc = false;
+    }
+    renderFieldComparison(selectedFarmId);
+}
+
+function renderFieldComparison(farmId) {
+    const content = document.getElementById('field-comparison-content');
+    const sorted = [...comparisonData].sort((a, b) => {
+        let va, vb;
+        switch (comparisonSortField) {
+            case 'name': va = a.name.toLowerCase(); vb = b.name.toLowerCase(); break;
+            case 'health': va = a.health_score ?? -1; vb = b.health_score ?? -1; break;
+            case 'ndvi': va = a.ndvi_mean ?? -1; vb = b.ndvi_mean ?? -1; break;
+            case 'soil': va = a.soil_ph ?? -1; vb = b.soil_ph ?? -1; break;
+            case 'treatments': va = a.treatment_count; vb = b.treatment_count; break;
+            case 'completeness': va = a.completeness_score; vb = b.completeness_score; break;
+            default: va = a.health_score ?? -1; vb = b.health_score ?? -1;
+        }
+        if (typeof va === 'string') return comparisonSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+        return comparisonSortAsc ? va - vb : vb - va;
+    });
+
+    const arrow = (field) => comparisonSortField === field ? (comparisonSortAsc ? ' ▲' : ' ▼') : '';
+    const trendIcon = (t) => {
+        if (t === 'improving') return '<span style="color:var(--play-green)">↑</span>';
+        if (t === 'declining') return '<span style="color:#e74c3c">↓</span>';
+        if (t === 'stable') return '<span style="color:var(--watch-yellow)">→</span>';
+        return '';
+    };
+
+    content.innerHTML = `
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th onclick="sortComparison('name')" class="comparison-sortable">Campo${arrow('name')}</th>
+                    <th onclick="sortComparison('health')" class="comparison-sortable">Salud${arrow('health')}</th>
+                    <th onclick="sortComparison('ndvi')" class="comparison-sortable">NDVI${arrow('ndvi')}</th>
+                    <th onclick="sortComparison('soil')" class="comparison-sortable">pH${arrow('soil')}</th>
+                    <th onclick="sortComparison('treatments')" class="comparison-sortable">Tratamientos${arrow('treatments')}</th>
+                    <th onclick="sortComparison('completeness')" class="comparison-sortable">Datos${arrow('completeness')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sorted.map(f => `
+                    <tr class="comparison-row" onclick="window.location.href='/campo?farm=${farmId}&field=${f.field_id}'" style="cursor:pointer">
+                        <td>
+                            <div class="comparison-field-name">${esc(f.name)}</div>
+                            <div class="comparison-field-crop">${esc(f.crop_type)}</div>
+                        </td>
+                        <td>
+                            <span class="health-badge ${healthClass(f.health_score)}">${healthLabel(f.health_score)}</span>
+                            ${trendIcon(f.health_trend)}
+                        </td>
+                        <td>${f.ndvi_mean != null ? f.ndvi_mean.toFixed(2) : '--'}</td>
+                        <td>${f.soil_ph != null ? f.soil_ph.toFixed(1) : '--'}</td>
+                        <td>${f.treatment_count}</td>
+                        <td>
+                            <div class="comparison-completeness">
+                                <div class="comparison-completeness-bar">
+                                    <div class="comparison-completeness-fill" style="width:${Math.round(f.completeness_score)}%"></div>
+                                </div>
+                                <span class="comparison-completeness-pct">${Math.round(f.completeness_score)}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>`;
+}
+
 // ── Dashboard summary panel ──
 async function loadDashboardSummary(farmId) {
     const container = document.getElementById('dashboard-summary');
@@ -717,7 +837,7 @@ async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
     fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
-    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId)]);
+    await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId), loadFieldComparison(farmId)]);
     renderFields(farmId);
     updateStats();
     renderFarms();
@@ -734,6 +854,7 @@ function closeFarmDetail() {
     document.getElementById('alert-history').style.display = 'none';
     document.getElementById('dashboard-summary').style.display = 'none';
     document.getElementById('economic-impact-panel').style.display = 'none';
+    document.getElementById('field-comparison-panel').style.display = 'none';
 }
 
 // ── Escape HTML ──
