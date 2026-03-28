@@ -18,6 +18,7 @@ from cultivos.models.intel import (
     TimingOut,
     TimingRequestIn,
     TreatmentEffectivenessOut,
+    TreatmentEffectivenessReportOut,
 )
 from cultivos.services.intelligence.analytics import (
     compare_farms,
@@ -26,6 +27,7 @@ from cultivos.services.intelligence.analytics import (
     compute_soil_trends,
     compute_summary,
     compute_treatment_effectiveness,
+    compute_treatment_effectiveness_report,
 )
 from cultivos.services.intelligence.recommendations import optimize_treatment_timing
 
@@ -73,6 +75,16 @@ def intel_treatments(
     user=Depends(_admin_or_researcher),
 ):
     return compute_treatment_effectiveness(db)
+
+
+@router.get("/treatment-effectiveness-report", response_model=TreatmentEffectivenessReportOut)
+def intel_treatment_effectiveness_report(
+    crop_type: Optional[str] = None,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate treatment effectiveness ranked by composite score."""
+    return compute_treatment_effectiveness_report(db, crop_type=crop_type)
 
 
 @router.get("/anomalies", response_model=AnomaliesOut)

@@ -94,6 +94,23 @@ class TimingOut(BaseModel):
 # ── Farm comparison ───────────────────────────────────────────────────
 
 
+# ── Treatment effectiveness report ───────────────────────────────────
+
+
+class TreatmentEffectivenessReportEntry(BaseModel):
+    tratamiento: str
+    total_applications: int
+    feedback_count: int
+    feedback_success_rate: Optional[float] = None  # % of feedback where worked=True
+    avg_rating: Optional[float] = None
+    avg_health_delta: Optional[float] = None
+    composite_score: float  # weighted combo of success rate + delta
+
+
+class TreatmentEffectivenessReportOut(BaseModel):
+    treatments: list[TreatmentEffectivenessReportEntry]
+
+
 class FarmCompareEntry(BaseModel):
     farm_id: int
     farm_name: str

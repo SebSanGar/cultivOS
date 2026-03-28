@@ -6,7 +6,14 @@ from typing import Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, SoilAnalysis, TreatmentRecord
+from cultivos.db.models import (
+    Farm,
+    FarmerFeedback,
+    Field,
+    HealthScore,
+    SoilAnalysis,
+    TreatmentRecord,
+)
 
 
 def _classify_season(dt: datetime) -> tuple[str, int]:
@@ -236,6 +243,94 @@ def compute_anomalies(db: Session) -> dict:
             })
 
     return {"anomalies": anomalies}
+
+
+def compute_treatment_effectiveness_report(
+    db: Session, crop_type: Optional[str] = None
+) -> dict:
+    """Aggregate treatment effectiveness across all farms/fields.
+
+    Groups treatments by name, computes:
+    - total applications
+    - feedback count, success rate (% worked=True), avg rating
+    - avg health delta (next health score - health_score_used)
+    - composite score: 60% feedback success rate + 40% normalized delta
+
+    Returns treatments ranked by composite score descending.
+    """
+    # Build base query for treatments, optionally filtered by crop_type
+    query = db.query(TreatmentRecord).join(Field, TreatmentRecord.field_id == Field.id)
+    if crop_type:
+        query = query.filter(Field.crop_type == crop_type)
+    treatments = query.all()
+
+    # Group by treatment name
+    groups: dict[str, list[TreatmentRecord]] = {}
+    for tr in treatments:
+        groups.setdefault(tr.tratamiento, []).append(tr)
+
+    results = []
+    for name, records in groups.items():
+        total_applications = len(records)
+
+        # Gather feedback for these treatment records
+        tr_ids = [r.id for r in records]
+        feedbacks = (
+            db.query(FarmerFeedback)
+            .filter(FarmerFeedback.treatment_id.in_(tr_ids))
+            .all()
+        )
+        feedback_count = len(feedbacks)
+        feedback_success_rate = None
+        avg_rating = None
+        if feedback_count > 0:
+            positive = sum(1 for f in feedbacks if f.worked)
+            feedback_success_rate = round((positive / feedback_count) * 100, 1)
+            avg_rating = round(sum(f.rating for f in feedbacks) / feedback_count, 2)
+
+        # Compute avg health delta from health scores after treatment
+        deltas: list[float] = []
+        for tr in records:
+            if tr.created_at:
+                next_hs = (
+                    db.query(HealthScore)
+                    .filter(
+                        HealthScore.field_id == tr.field_id,
+                        HealthScore.scored_at > tr.created_at,
+                    )
+                    .order_by(HealthScore.scored_at.asc())
+                    .first()
+                )
+                if next_hs:
+                    deltas.append(next_hs.score - tr.health_score_used)
+
+        avg_health_delta = round(sum(deltas) / len(deltas), 1) if deltas else None
+
+        # Composite score: 60% feedback success + 40% normalized delta
+        # Feedback success: 0-100 → use directly as 0-100
+        # Delta: normalize to 0-100 scale (clamp -50..+50 → 0..100)
+        fb_component = feedback_success_rate if feedback_success_rate is not None else 50.0
+        if avg_health_delta is not None:
+            clamped = max(-50, min(50, avg_health_delta))
+            delta_normalized = (clamped + 50)  # -50→0, 0→50, +50→100
+        else:
+            delta_normalized = 50.0  # neutral when no data
+
+        composite_score = round(fb_component * 0.6 + delta_normalized * 0.4, 1)
+
+        results.append({
+            "tratamiento": name,
+            "total_applications": total_applications,
+            "feedback_count": feedback_count,
+            "feedback_success_rate": feedback_success_rate,
+            "avg_rating": avg_rating,
+            "avg_health_delta": avg_health_delta,
+            "composite_score": composite_score,
+        })
+
+    # Sort by composite score descending
+    results.sort(key=lambda x: x["composite_score"], reverse=True)
+    return {"treatments": results}
 
 
 def compute_seasonal_performance(
