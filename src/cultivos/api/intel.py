@@ -1,12 +1,16 @@
 """Intelligence dashboard API — cross-farm analytics for admin/research team."""
 
+import csv
+import io
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from cultivos.auth import require_role
-from cultivos.db.models import Farm, FarmerFeedback, Field, TreatmentRecord
+from cultivos.db.models import Farm, FarmerFeedback, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut
 from cultivos.models.intel import (
@@ -198,6 +202,102 @@ def batch_field_health(
     Optimized for dashboard map rendering. Invalid IDs return null entries.
     """
     return compute_batch_health(db, body.field_ids)
+
+
+_INTEL_CSV_HEADERS = [
+    "Granja",
+    "Parcela",
+    "Cultivo",
+    "Hectareas",
+    "Salud",
+    "Tendencia",
+    "NDVI Promedio",
+    "pH Suelo",
+    "Materia Organica %",
+    "Tratamientos",
+    "Ultimo Tratamiento",
+]
+
+_TREND_MAP = {
+    "improving": "Mejorando",
+    "stable": "Estable",
+    "declining": "Declinando",
+}
+
+
+@router.get("/export")
+def intel_export(
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Export all field data across all farms as CSV for researchers and grant reviewers."""
+    farms = db.query(Farm).order_by(Farm.name).all()
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(_INTEL_CSV_HEADERS)
+
+    for farm in farms:
+        fields = db.query(Field).filter(Field.farm_id == farm.id).order_by(Field.name).all()
+        for field in fields:
+            latest_hs = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id == field.id)
+                .order_by(HealthScore.scored_at.desc())
+                .first()
+            )
+            latest_ndvi = (
+                db.query(NDVIResult)
+                .filter(NDVIResult.field_id == field.id)
+                .order_by(NDVIResult.analyzed_at.desc())
+                .first()
+            )
+            latest_soil = (
+                db.query(SoilAnalysis)
+                .filter(SoilAnalysis.field_id == field.id)
+                .order_by(SoilAnalysis.sampled_at.desc())
+                .first()
+            )
+            treatment_count = (
+                db.query(func.count(TreatmentRecord.id))
+                .filter(TreatmentRecord.field_id == field.id)
+                .scalar()
+            )
+            last_treatment = (
+                db.query(TreatmentRecord)
+                .filter(TreatmentRecord.field_id == field.id)
+                .order_by(TreatmentRecord.applied_at.desc())
+                .first()
+            )
+
+            score = latest_hs.score if latest_hs else None
+            trend = latest_hs.trend if latest_hs else None
+            ndvi = latest_ndvi.ndvi_mean if latest_ndvi else None
+            ph = latest_soil.ph if latest_soil else None
+            om = latest_soil.organic_matter_pct if latest_soil else None
+            last_date = last_treatment.applied_at if last_treatment and last_treatment.applied_at else None
+
+            writer.writerow([
+                farm.name,
+                field.name,
+                field.crop_type or "",
+                field.hectares,
+                f"{score:.1f}" if score is not None else "",
+                _TREND_MAP.get(trend, trend) if trend else "",
+                f"{ndvi:.3f}" if ndvi is not None else "",
+                f"{ph:.1f}" if ph is not None else "",
+                f"{om:.1f}" if om is not None else "",
+                treatment_count,
+                last_date.strftime("%Y-%m-%d") if last_date else "",
+            ])
+
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": 'attachment; filename="cultivOS_intel_export.csv"',
+        },
+    )
 
 
 seasonal_router = APIRouter(

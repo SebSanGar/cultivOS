@@ -534,6 +534,32 @@ function applyRoleVisibility() {
     }
 }
 
+// ── CSV Export ──
+function exportIntelCSV() {
+    const token = localStorage.getItem('cultivOS_token');
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    fetch('/api/intel/export', { headers })
+        .then(resp => {
+            if (!resp.ok) throw new Error('Export failed');
+            return resp.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cultivOS_intel_export.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
+        .catch(() => {
+            alert('Error al exportar datos');
+        });
+}
+
 // ── Init ──
 async function init() {
     applyRoleVisibility();

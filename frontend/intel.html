@@ -35,8 +35,11 @@
             <h1 class="intel-title">Panel de Inteligencia</h1>
             <p class="intel-subtitle">Analisis cruzado de granjas — vista admin/investigador</p>
         </div>
-        <div class="admin-only">
-            <button class="intel-btn" onclick="window.location.href='/'">Agregar Granja</button>
+        <div class="intel-header-actions">
+            <button class="intel-btn intel-btn-export" onclick="exportIntelCSV()">Exportar CSV</button>
+            <div class="admin-only">
+                <button class="intel-btn" onclick="window.location.href='/'">Agregar Granja</button>
+            </div>
         </div>
     </div>
 
