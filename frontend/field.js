@@ -118,6 +118,9 @@ async function loadFieldDetail() {
     const latestSoil = soilList && soilList.length > 0 ? soilList[soilList.length - 1] : null;
     if (latestSoil) renderSoil(latestSoil);
 
+    // Soil history timeline
+    renderSoilHistory(soilList);
+
     // Disease risk
     if (diseaseRisk) renderDisease(diseaseRisk);
 
@@ -275,6 +278,43 @@ function renderSoil(soil) {
             </div>
         </div>
         ${soil.recommendations ? `<div class="campo-data-item" style="margin-top:0.75rem;grid-column:1/-1"><span class="campo-data-label">Recomendaciones</span><p class="campo-data-value">${esc(soil.recommendations)}</p></div>` : ''}`;
+}
+
+function renderSoilHistory(list) {
+    const el = document.getElementById('soil-history-content');
+    if (!list || list.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin historial de suelo</div>';
+        return;
+    }
+    el.innerHTML = `<div class="soil-timeline">
+        ${list.map((s, i) => {
+            const date = s.sampled_at ? new Date(s.sampled_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
+            const phCls = (s.ph >= 6.0 && s.ph <= 7.0) ? 'good' : (s.ph >= 5.5 && s.ph <= 7.5) ? 'warning' : 'critical';
+            return `<div class="soil-timeline-item">
+                <div class="soil-timeline-date">${date}</div>
+                <div class="soil-timeline-body">
+                    <div class="soil-timeline-header" onclick="this.parentElement.querySelector('.soil-timeline-detail').classList.toggle('open')">
+                        <span class="health-badge ${phCls}">pH ${s.ph != null ? s.ph : '--'}</span>
+                        <span class="soil-timeline-om">${s.organic_matter_pct != null ? s.organic_matter_pct + '% MO' : ''}</span>
+                        <span class="soil-timeline-texture">${esc(s.texture || '')}</span>
+                        <span class="soil-timeline-expand">&#9660;</span>
+                    </div>
+                    <div class="soil-timeline-detail">
+                        <div class="campo-data-grid">
+                            ${s.nitrogen_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">N</span><span class="campo-data-value">${s.nitrogen_ppm} ppm</span></div>` : ''}
+                            ${s.phosphorus_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">P</span><span class="campo-data-value">${s.phosphorus_ppm} ppm</span></div>` : ''}
+                            ${s.potassium_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">K</span><span class="campo-data-value">${s.potassium_ppm} ppm</span></div>` : ''}
+                            ${s.moisture_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Humedad</span><span class="campo-data-value">${s.moisture_pct}%</span></div>` : ''}
+                            ${s.electrical_conductivity != null ? `<div class="campo-data-item"><span class="campo-data-label">CE</span><span class="campo-data-value">${s.electrical_conductivity} dS/m</span></div>` : ''}
+                            ${s.depth_cm != null ? `<div class="campo-data-item"><span class="campo-data-label">Prof.</span><span class="campo-data-value">${s.depth_cm} cm</span></div>` : ''}
+                        </div>
+                        ${s.recommendations ? `<div class="soil-timeline-rec">${esc(s.recommendations)}</div>` : ''}
+                        ${s.notes ? `<div class="soil-timeline-notes">${esc(s.notes)}</div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('')}
+    </div>`;
 }
 
 function renderDisease(risk) {

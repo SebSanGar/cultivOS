@@ -556,6 +556,39 @@ nav {
     background: #166534; color: #bbf7d0;
 }
 
+/* ── SOIL HISTORY TIMELINE ── */
+.soil-timeline { display: flex; flex-direction: column; gap: 0; }
+.soil-timeline-item {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.soil-timeline-item:last-child { border-bottom: none; }
+.soil-timeline-date {
+    min-width: 80px; font-size: 0.78rem; color: var(--text-muted);
+    font-weight: 600; padding-top: 2px;
+}
+.soil-timeline-body { flex: 1; }
+.soil-timeline-header {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    cursor: pointer; user-select: none;
+}
+.soil-timeline-om { font-size: 0.82rem; color: var(--text-muted); }
+.soil-timeline-texture { font-size: 0.82rem; color: var(--text-muted); font-style: italic; }
+.soil-timeline-expand { font-size: 0.65rem; color: var(--text-muted); transition: transform 0.2s; }
+.soil-timeline-detail {
+    display: none; margin-top: 8px;
+}
+.soil-timeline-detail.open { display: block; }
+.soil-timeline-rec {
+    font-size: 0.82rem; color: var(--text); margin-top: 8px;
+    padding: 6px 10px; border-left: 3px solid var(--accent, #00c896);
+    background: rgba(255,255,255,0.03);
+}
+.soil-timeline-notes {
+    font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
+    font-style: italic;
+}
+
 /* ── ANOMALY CARDS ── */
 .anomaly-card {
     padding: 12px; border-bottom: 1px solid var(--border);
