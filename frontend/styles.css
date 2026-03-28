@@ -1122,6 +1122,64 @@ nav {
 .intel-treatment-urgency.urgency-esta-semana { background: rgba(217,119,6,0.2); color: var(--yellow); }
 .intel-treatment-urgency.urgency-preventiva { background: rgba(22,163,74,0.2); color: var(--green); }
 
+/* Batch Health Portfolio Grid */
+.batch-health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+.batch-health-card {
+    background: var(--intel-card, #1a1a2e);
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+    border-left: 3px solid var(--intel-muted, #555);
+    transition: transform 0.15s;
+}
+.batch-health-card:hover { transform: translateY(-2px); }
+.batch-health-card.good { border-left-color: var(--color-good, #22c55e); }
+.batch-health-card.warning { border-left-color: var(--color-warning, #f0b429); }
+.batch-health-card.critical { border-left-color: var(--color-critical, #ef4444); }
+.batch-health-score {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.batch-health-field {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--intel-text, #e0e0e0);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.batch-health-farm {
+    font-size: 0.75rem;
+    color: var(--intel-muted, #888);
+    margin-bottom: 4px;
+}
+.batch-health-trend {
+    font-size: 0.75rem;
+    color: var(--intel-muted, #888);
+    margin-top: 4px;
+}
+.batch-health-trend.good { color: var(--color-good, #22c55e); }
+.batch-health-trend.critical { color: var(--color-critical, #ef4444); }
+.batch-health-sources {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+.batch-health-source {
+    font-size: 0.65rem;
+    background: rgba(255,255,255,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--intel-muted, #888);
+}
+
 /* Map placeholder */
 .intel-map-placeholder {
     text-align: center; padding: 40px 20px; color: var(--intel-muted);

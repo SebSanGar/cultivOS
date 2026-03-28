@@ -424,6 +424,86 @@ async function loadSensorFusion() {
     container.innerHTML = summaryHtml + '<div class="fusion-overview-fields">' + fieldsHtml + '</div>';
 }
 
+// ── Batch Health Portfolio Grid ──
+async function loadBatchHealth() {
+    const container = document.getElementById('intel-batch-health');
+    if (!container) return;
+
+    // Fetch all farms to collect field IDs
+    const farmsData = await fetchJSON('/api/farms');
+    if (!farmsData) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        return;
+    }
+    const farms = Array.isArray(farmsData) ? farmsData : (farmsData.data || farmsData.farms || []);
+    if (farms.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        return;
+    }
+
+    // Fetch fields for each farm
+    const fieldIds = [];
+    for (const farm of farms) {
+        const fields = await fetchJSON('/api/farms/' + farm.id + '/fields');
+        if (fields && Array.isArray(fields)) {
+            fields.forEach(f => fieldIds.push(f.id));
+        }
+    }
+
+    if (fieldIds.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        return;
+    }
+
+    // POST to batch-health
+    const token = localStorage.getItem('cultivOS_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    let data;
+    try {
+        const resp = await fetch(API + '/batch-health', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ field_ids: fieldIds }),
+        });
+        if (!resp.ok) {
+            container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+            return;
+        }
+        data = await resp.json();
+    } catch {
+        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        return;
+    }
+
+    const results = data.results || [];
+    document.getElementById('intel-batch-count').textContent = results.length;
+
+    if (results.length === 0) {
+        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        return;
+    }
+
+    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const trendIcons = { improving: '&#x25B2;', stable: '&#x25AC;', declining: '&#x25BC;' };
+
+    container.innerHTML = '<div class="batch-health-grid">' + results.map(r => {
+        const cls = healthClass(r.score);
+        const scoreText = r.score != null ? Math.round(r.score) : '--';
+        const trendText = r.trend ? (trendLabels[r.trend] || r.trend) : '';
+        const trendIcon = r.trend ? (trendIcons[r.trend] || '') : '';
+        const trendCls = r.trend === 'declining' ? 'critical' : (r.trend === 'improving' ? 'good' : '');
+        return `
+        <div class="batch-health-card ${cls}">
+            <div class="batch-health-score health-badge ${cls}">${scoreText}</div>
+            <div class="batch-health-field">${esc(r.field_name || 'Campo ' + r.field_id)}</div>
+            <div class="batch-health-farm">${esc(r.farm_name || '')}</div>
+            ${trendText ? `<div class="batch-health-trend ${trendCls}"><span>${trendIcon}</span> ${trendText}</div>` : ''}
+            ${r.sources ? `<div class="batch-health-sources">${r.sources.map(s => `<span class="batch-health-source">${esc(s)}</span>`).join('')}</div>` : ''}
+        </div>`;
+    }).join('') + '</div>';
+}
+
 // ── Farm Comparison ──
 async function loadFarmSelectOptions() {
     const select = document.getElementById('farm-compare-select');
@@ -572,6 +652,7 @@ async function init() {
         loadSensorFusion(),
         loadTEKValidation(),
         loadFarmSelectOptions(),
+        loadBatchHealth(),
         loadCropTypeOptions().then(() => loadTreatmentReport()),
     ]);
 }
