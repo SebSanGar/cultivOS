@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Historial de Suelo</title>
+    <meta name="description" content="Historial de analisis de suelo — pH, materia organica y nutrientes NPK a lo largo del tiempo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab">Historial</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab active">Suelo</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- SOIL DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Historial de Suelo</h1>
+            <p class="intel-subtitle">Tendencias de pH, materia organica y nutrientes NPK por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="soil-farm-select" class="intel-select" onchange="loadFieldsForSoil()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="soil-field-select" class="intel-select" onchange="loadSoilData()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadSoilData()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="soil-sample-count">--</div>
+            <div class="intel-stat-label">Muestras</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="soil-latest-ph">--</div>
+            <div class="intel-stat-label">Ultimo pH</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="soil-latest-om">--</div>
+            <div class="intel-stat-label">Materia Organica %</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="soil-latest-n">--</div>
+            <div class="intel-stat-label">Nitrogeno (ppm)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="soil-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver el historial de suelo.
+    </div>
+
+    <!-- Charts -->
+    <div class="soil-charts" id="soil-charts-section" style="display:none;">
+        <div class="soil-chart-row">
+            <div class="soil-chart-card">
+                <h3 class="soil-chart-title">pH del Suelo</h3>
+                <canvas id="soil-ph-chart"></canvas>
+            </div>
+            <div class="soil-chart-card">
+                <h3 class="soil-chart-title">Materia Organica (%)</h3>
+                <canvas id="soil-om-chart"></canvas>
+            </div>
+        </div>
+        <div class="soil-chart-row">
+            <div class="soil-chart-card soil-chart-wide">
+                <h3 class="soil-chart-title">Nutrientes NPK (ppm)</h3>
+                <canvas id="soil-npk-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data table -->
+    <div id="soil-table" class="soil-table-container" style="display:none;">
+        <h3 class="soil-section-title">Registros de Analisis</h3>
+        <table class="soil-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>pH</th>
+                    <th>M.O. %</th>
+                    <th>N (ppm)</th>
+                    <th>P (ppm)</th>
+                    <th>K (ppm)</th>
+                    <th>Textura</th>
+                    <th>Humedad %</th>
+                </tr>
+            </thead>
+            <tbody id="soil-table-body"></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/soil-history.js"></script>
+</body>
+</html>

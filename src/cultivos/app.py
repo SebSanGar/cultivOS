@@ -228,6 +228,11 @@ def create_app() -> FastAPI:
             """Branded API reference page — links to Swagger, ReDoc, and OpenAPI."""
             return FileResponse(frontend_dir / "api-docs.html")
 
+        @app.get("/suelo")
+        async def serve_soil_history():
+            """Soil analysis history — pH, organic matter, NPK trends over time."""
+            return FileResponse(frontend_dir / "soil-history.html")
+
         @app.get("/historial")
         async def serve_timeline():
             """Field health history timeline — chronological health scores and treatments."""
