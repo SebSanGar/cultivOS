@@ -2305,3 +2305,47 @@ nav {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ── SENSOR HISTORY TIMELINE (NDVI, thermal, health drill-down) ── */
+.sensor-timeline { display: flex; flex-direction: column; gap: 0; }
+.sensor-timeline-item {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.sensor-timeline-item:last-child { border-bottom: none; }
+.sensor-timeline-date {
+    min-width: 80px; font-size: 0.78rem; color: var(--text-muted);
+    font-weight: 600; padding-top: 2px;
+}
+.sensor-timeline-body { flex: 1; }
+.sensor-timeline-header {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    cursor: pointer; user-select: none;
+}
+.sensor-timeline-header:hover { opacity: 0.85; }
+.sensor-timeline-summary { font-size: 0.82rem; color: var(--text-muted); }
+.sensor-timeline-expand {
+    font-size: 0.65rem; color: var(--text-muted); transition: transform 0.2s;
+    margin-left: auto;
+}
+.sensor-timeline-detail {
+    display: none; margin-top: 8px;
+}
+.sensor-timeline-detail.open { display: block; }
+.sensor-timeline-zones {
+    margin-top: 8px;
+}
+.sensor-timeline-alert {
+    font-size: 0.8rem; margin-top: 6px;
+    padding: 4px 8px; border-radius: 4px;
+    display: inline-block;
+}
+.sensor-latest-label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-muted); margin-bottom: 8px;
+}
+.sensor-history-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-muted); margin-top: 16px; margin-bottom: 4px;
+    border-top: 1px solid var(--border); padding-top: 12px;
+}

@@ -107,12 +107,12 @@ async function loadFieldDetail() {
     const latestNdvi = ndviList && ndviList.length > 0 ? ndviList[ndviList.length - 1] : null;
     if (latestNdvi) {
         document.getElementById('campo-ndvi').textContent = latestNdvi.ndvi_mean.toFixed(2);
-        renderNdvi(latestNdvi);
     }
+    renderNdviHistory(ndviList);
 
     // Thermal
     const latestThermal = thermalList && thermalList.length > 0 ? thermalList[thermalList.length - 1] : null;
-    if (latestThermal) renderThermal(latestThermal);
+    renderThermalHistory(thermalList);
 
     // Soil
     const latestSoil = soilList && soilList.length > 0 ? soilList[soilList.length - 1] : null;
@@ -176,13 +176,16 @@ async function loadFieldDetail() {
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
         renderHealthChart(healthHistory);
     }
+
+    // Health drill-down records
+    renderHealthHistory(healthList);
 }
 
 // -- Render functions --
 
-function renderNdvi(ndvi) {
+function renderNdviDetail(ndvi) {
     const zones = ndvi.zones || {};
-    document.getElementById('ndvi-content').innerHTML = `
+    return `
         <div class="campo-data-grid">
             <div class="campo-data-item">
                 <span class="campo-data-label">NDVI Promedio</span>
@@ -197,8 +200,16 @@ function renderNdvi(ndvi) {
                 <span class="campo-data-value">${ndvi.ndvi_max.toFixed(3)}</span>
             </div>
             <div class="campo-data-item">
+                <span class="campo-data-label">Desv. Estandar</span>
+                <span class="campo-data-value">${ndvi.ndvi_std != null ? ndvi.ndvi_std.toFixed(3) : '--'}</span>
+            </div>
+            <div class="campo-data-item">
                 <span class="campo-data-label">Estres</span>
                 <span class="campo-data-value">${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
+            </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Pixeles Total</span>
+                <span class="campo-data-value">${ndvi.pixels_total != null ? ndvi.pixels_total.toLocaleString() : '--'}</span>
             </div>
         </div>
         ${Object.keys(zones).length > 0 ? `
@@ -210,15 +221,56 @@ function renderNdvi(ndvi) {
                     <div class="campo-zone-track">
                         <div class="campo-zone-fill zone-${zone.toLowerCase().replace(/\s+/g, '-')}" style="width:${pct}%"></div>
                     </div>
-                    <span class="campo-zone-pct">${pct.toFixed(0)}%</span>
+                    <span class="campo-zone-pct">${typeof pct === 'number' ? pct.toFixed(0) : pct}%</span>
                 </div>
             `).join('')}
         </div>` : ''}`;
 }
 
-function renderThermal(thermal) {
+function renderNdviHistory(list) {
+    const el = document.getElementById('ndvi-content');
+    if (!list || list.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos NDVI</div>';
+        return;
+    }
+    // Show latest as primary view, then historical records below
+    const latest = list[list.length - 1];
+    const older = list.slice(0, -1).reverse(); // newest first (excluding latest)
+
+    let html = '<div class="sensor-latest-label">Ultimo analisis</div>';
+    html += renderNdviDetail(latest);
+
+    if (older.length > 0) {
+        html += '<div class="sensor-history-label">Historial de analisis NDVI</div>';
+        html += '<div class="sensor-timeline">';
+        html += older.map(ndvi => {
+            const date = ndvi.analyzed_at
+                ? new Date(ndvi.analyzed_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                : '--';
+            const statusCls = ndvi.ndvi_mean >= 0.6 ? 'good' : ndvi.ndvi_mean >= 0.3 ? 'warning' : 'critical';
+            const statusLabel = ndvi.ndvi_mean >= 0.6 ? 'Saludable' : ndvi.ndvi_mean >= 0.3 ? 'Moderado' : 'Estresado';
+            return `<div class="sensor-timeline-item">
+                <div class="sensor-timeline-date">${date}</div>
+                <div class="sensor-timeline-body">
+                    <div class="sensor-timeline-header" onclick="this.parentElement.querySelector('.sensor-timeline-detail').classList.toggle('open')">
+                        <span class="health-badge ${statusCls}">${statusLabel}</span>
+                        <span class="sensor-timeline-summary">NDVI ${ndvi.ndvi_mean.toFixed(3)} | Estres ${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
+                        <span class="sensor-timeline-expand">&#9660;</span>
+                    </div>
+                    <div class="sensor-timeline-detail">
+                        ${renderNdviDetail(ndvi)}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        html += '</div>';
+    }
+    el.innerHTML = html;
+}
+
+function renderThermalDetail(thermal) {
     const stressCls = thermal.stress_pct > 30 ? 'critical' : thermal.stress_pct > 10 ? 'warning' : 'good';
-    document.getElementById('thermal-content').innerHTML = `
+    return `
         <div class="campo-data-grid">
             <div class="campo-data-item">
                 <span class="campo-data-label">Temp Promedio</span>
@@ -233,11 +285,60 @@ function renderThermal(thermal) {
                 <span class="campo-data-value">${thermal.temp_max.toFixed(1)}C</span>
             </div>
             <div class="campo-data-item">
+                <span class="campo-data-label">Desv. Estandar</span>
+                <span class="campo-data-value">${thermal.temp_std != null ? thermal.temp_std.toFixed(1) + 'C' : '--'}</span>
+            </div>
+            <div class="campo-data-item">
                 <span class="campo-data-label">Pixeles Estresados</span>
                 <span class="campo-data-value health-badge ${stressCls}">${thermal.stress_pct.toFixed(1)}%</span>
             </div>
+            <div class="campo-data-item">
+                <span class="campo-data-label">Pixeles Total</span>
+                <span class="campo-data-value">${thermal.pixels_total != null ? thermal.pixels_total.toLocaleString() : '--'}</span>
+            </div>
         </div>
         ${thermal.irrigation_deficit ? '<div class="campo-alert-badge critical">Deficit de riego detectado</div>' : ''}`;
+}
+
+function renderThermalHistory(list) {
+    const el = document.getElementById('thermal-content');
+    if (!list || list.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin datos termicos</div>';
+        return;
+    }
+    const latest = list[list.length - 1];
+    const older = list.slice(0, -1).reverse();
+
+    let html = '<div class="sensor-latest-label">Ultimo analisis</div>';
+    html += renderThermalDetail(latest);
+
+    if (older.length > 0) {
+        html += '<div class="sensor-history-label">Historial de analisis termico</div>';
+        html += '<div class="sensor-timeline">';
+        html += older.map(t => {
+            const date = t.analyzed_at
+                ? new Date(t.analyzed_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                : '--';
+            const stCls = t.stress_pct > 30 ? 'critical' : t.stress_pct > 10 ? 'warning' : 'good';
+            const stLabel = t.stress_pct > 30 ? 'Alto estres' : t.stress_pct > 10 ? 'Estres moderado' : 'Normal';
+            return `<div class="sensor-timeline-item">
+                <div class="sensor-timeline-date">${date}</div>
+                <div class="sensor-timeline-body">
+                    <div class="sensor-timeline-header" onclick="this.parentElement.querySelector('.sensor-timeline-detail').classList.toggle('open')">
+                        <span class="health-badge ${stCls}">${stLabel}</span>
+                        <span class="sensor-timeline-summary">${t.temp_mean.toFixed(1)}C prom | Estres ${t.stress_pct.toFixed(1)}%</span>
+                        ${t.irrigation_deficit ? '<span class="campo-alert-badge critical" style="font-size:0.7rem;padding:1px 6px">Deficit</span>' : ''}
+                        <span class="sensor-timeline-expand">&#9660;</span>
+                    </div>
+                    <div class="sensor-timeline-detail">
+                        ${renderThermalDetail(t)}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        html += '</div>';
+    }
+    el.innerHTML = html;
 }
 
 function renderSoil(soil) {
@@ -614,6 +715,72 @@ function renderHealthChart(history) {
             }
         }
     });
+}
+
+function renderHealthHistory(list) {
+    // Health drill-down records below the chart
+    const section = document.getElementById('section-health');
+    if (!section || !list || list.length === 0) return;
+
+    // Create a container for records below the chart
+    let container = document.getElementById('health-drilldown');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'health-drilldown';
+        section.appendChild(container);
+    }
+
+    const records = [...list].reverse(); // newest first
+    let html = '<div class="sensor-history-label">Detalle por evaluacion</div>';
+    html += '<div class="sensor-timeline">';
+    html += records.map(h => {
+        const date = h.scored_at
+            ? new Date(h.scored_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+            : '--';
+        const cls = healthClass(h.score);
+        const trendLabel = h.trend === 'improving' ? 'Mejorando' : h.trend === 'declining' ? 'Declinando' : 'Estable';
+        const trendSymbol = h.trend === 'improving' ? ' &#x25B2;' : h.trend === 'declining' ? ' &#x25BC;' : ' &#x25CF;';
+
+        // Breakdown components
+        const bd = h.breakdown || {};
+        const bdHtml = Object.keys(bd).length > 0
+            ? `<div class="campo-data-grid" style="margin-top:8px">
+                ${Object.entries(bd).map(([k, v]) => `
+                    <div class="campo-data-item">
+                        <span class="campo-data-label">${esc(k.replace(/_/g, ' '))}</span>
+                        <span class="campo-data-value">${typeof v === 'number' ? v.toFixed(1) : v}</span>
+                    </div>`).join('')}
+               </div>`
+            : '';
+
+        // Sources
+        const srcHtml = h.sources && h.sources.length > 0
+            ? `<div style="margin-top:6px"><span class="campo-data-label">Fuentes:</span> <span class="sensor-timeline-summary">${h.sources.join(', ')}</span></div>`
+            : '';
+
+        return `<div class="sensor-timeline-item">
+            <div class="sensor-timeline-date">${date}</div>
+            <div class="sensor-timeline-body">
+                <div class="sensor-timeline-header" onclick="this.parentElement.querySelector('.sensor-timeline-detail').classList.toggle('open')">
+                    <span class="health-badge ${cls}">${Math.round(h.score)}</span>
+                    <span class="sensor-timeline-summary">${trendLabel}${trendSymbol}</span>
+                    <span class="sensor-timeline-expand">&#9660;</span>
+                </div>
+                <div class="sensor-timeline-detail">
+                    <div class="campo-data-grid">
+                        ${h.ndvi_mean != null ? `<div class="campo-data-item"><span class="campo-data-label">NDVI</span><span class="campo-data-value">${h.ndvi_mean.toFixed(3)}</span></div>` : ''}
+                        ${h.stress_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Estres</span><span class="campo-data-value">${h.stress_pct.toFixed(1)}%</span></div>` : ''}
+                        ${h.soil_ph != null ? `<div class="campo-data-item"><span class="campo-data-label">pH Suelo</span><span class="campo-data-value">${h.soil_ph}</span></div>` : ''}
+                        ${h.soil_organic_matter_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Materia Org.</span><span class="campo-data-value">${h.soil_organic_matter_pct}%</span></div>` : ''}
+                    </div>
+                    ${bdHtml}
+                    ${srcHtml}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 // -- Cerebro Intelligence Summary --
