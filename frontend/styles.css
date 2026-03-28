@@ -459,6 +459,55 @@ nav {
 .campo-schedule-date { color: var(--text-muted); }
 .campo-schedule-liters { font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* ── ACTION TIMELINE ── */
+.timeline-weather {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 14px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+.timeline-weather-item {
+    font-size: 0.8rem; color: var(--text-muted);
+    font-weight: 500;
+}
+.timeline-rain {
+    color: var(--blue); font-weight: 600;
+}
+.timeline-list {
+    display: flex; flex-direction: column; gap: 10px;
+}
+.timeline-action {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px;
+    transition: border-color 0.2s;
+}
+.timeline-action:hover { border-color: var(--green); }
+.timeline-action-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+}
+.timeline-priority-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.priority-alta { background: var(--red-light); color: #991b1b; }
+.priority-media { background: var(--yellow-light); color: #92400e; }
+.priority-baja { background: var(--green-light); color: var(--green-dark); }
+.timeline-action-type {
+    font-size: 0.75rem; color: var(--text-muted);
+    text-transform: capitalize;
+}
+.timeline-action-desc {
+    font-size: 0.85rem; color: var(--text); line-height: 1.5;
+}
+.timeline-weather-note {
+    font-size: 0.8rem; color: var(--blue); margin-top: 6px;
+    font-weight: 500;
+}
+.timeline-action-meta {
+    font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;
+}
+
 /* -- CAMPO RESPONSIVE -- */
 @media (max-width: 640px) {
     .campo-grid { grid-template-columns: 1fr; }

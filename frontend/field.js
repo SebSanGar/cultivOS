@@ -44,7 +44,8 @@ async function loadFieldDetail() {
 
     // Fetch field info and all intelligence in parallel
     const [fields, healthList, ndviList, thermalList, soilList, treatments,
-           irrigation, rotation, yieldPred, diseaseRisk, healthHistory] = await Promise.all([
+           irrigation, rotation, yieldPred, diseaseRisk, healthHistory,
+           actionTimeline] = await Promise.all([
         fetchJSON(`/farms/${farmId}/fields`),
         fetchJSON(`${base}/health`),
         fetchJSON(`${base}/ndvi`),
@@ -56,6 +57,7 @@ async function loadFieldDetail() {
         fetchJSON(`${base}/yield`),
         fetchJSON(`${base}/disease-risk`),
         fetchJSON(`${base}/health/history`),
+        fetchJSON(`${base}/action-timeline`),
     ]);
 
     // Find this field
@@ -112,6 +114,9 @@ async function loadFieldDetail() {
 
     // Rotation
     if (rotation && rotation.seasons) renderRotation(rotation);
+
+    // Action timeline
+    renderActionTimeline(actionTimeline);
 
     // Health history chart
     if (healthHistory && healthHistory.scores && healthHistory.scores.length > 0) {
@@ -309,6 +314,58 @@ function renderRotation(rotation) {
                         <div class="rotation-crop">${esc(s.crop || s.cultivo || '')}</div>
                         <div class="rotation-reason">${esc(s.reason || s.razon || '')}</div>
                     </div>
+                </div>
+            `).join('')}
+        </div>`;
+}
+
+function renderActionTimeline(timeline) {
+    const el = document.getElementById('timeline-content');
+    if (!timeline || !timeline.actions || timeline.actions.length === 0) {
+        el.innerHTML = '<div class="campo-placeholder">Sin acciones programadas para esta semana</div>';
+        return;
+    }
+
+    // Sort by priority (lower number = higher priority)
+    const actions = [...timeline.actions].sort((a, b) => a.priority - b.priority);
+
+    const priorityLabel = (p) => {
+        if (p <= 1) return 'alta';
+        if (p <= 2) return 'media';
+        return 'baja';
+    };
+
+    const priorityCls = (p) => {
+        if (p <= 1) return 'priority-alta';
+        if (p <= 2) return 'priority-media';
+        return 'priority-baja';
+    };
+
+    let weatherHtml = '';
+    if (timeline.weather_summary) {
+        const ws = timeline.weather_summary;
+        weatherHtml = `
+        <div class="timeline-weather">
+            <span class="timeline-weather-item">${ws.total_rainfall_mm.toFixed(0)} mm lluvia</span>
+            <span class="timeline-weather-item">${ws.min_temp_c.toFixed(0)}-${ws.max_temp_c.toFixed(0)}C</span>
+            ${ws.rainy_days > 0 ? `<span class="timeline-weather-item timeline-rain">${ws.rainy_days} dias con lluvia</span>` : ''}
+        </div>`;
+    }
+
+    el.innerHTML = `
+        ${weatherHtml}
+        <div class="timeline-list">
+            ${actions.map(a => `
+                <div class="timeline-action">
+                    <div class="timeline-action-header">
+                        <span class="timeline-priority-badge ${priorityCls(a.priority)}">${priorityLabel(a.priority)}</span>
+                        <span class="timeline-action-type">${esc(a.action_type)}</span>
+                    </div>
+                    <div class="timeline-action-desc">${esc(a.description)}</div>
+                    ${a.weather_note ? `<div class="timeline-weather-note">${esc(a.weather_note)}</div>` : ''}
+                    ${a.urgencia ? `<div class="timeline-action-meta"><strong>Urgencia:</strong> ${esc(a.urgencia)}</div>` : ''}
+                    ${a.costo_estimado_mxn ? `<div class="timeline-action-meta"><strong>Costo:</strong> $${a.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+                    ${a.stage_es ? `<div class="timeline-action-meta"><strong>Etapa:</strong> ${esc(a.stage_es)}${a.days_in_stage != null ? ' (dia ' + a.days_in_stage + ')' : ''}</div>` : ''}
                 </div>
             `).join('')}
         </div>`;
