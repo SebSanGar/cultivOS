@@ -115,6 +115,7 @@ async function loadFieldDetail() {
     if (latestNdvi) {
         document.getElementById('campo-ndvi').textContent = latestNdvi.ndvi_mean.toFixed(2);
     }
+    renderNdviChart(ndviList);
     renderNdviHistory(ndviList);
 
     // Thermal
@@ -251,6 +252,79 @@ function renderNdviDetail(ndvi) {
                 </div>
             `).join('')}
         </div>` : ''}`;
+}
+
+function renderNdviChart(list) {
+    const canvas = document.getElementById('ndvi-chart');
+    if (!canvas) return;
+    if (!list || list.length < 2) {
+        canvas.parentElement.style.display = 'none';
+        return;
+    }
+    // Sort chronologically
+    const sorted = [...list].sort((a, b) => new Date(a.analyzed_at) - new Date(b.analyzed_at));
+    const labels = sorted.map(r => {
+        const d = new Date(r.analyzed_at);
+        return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    });
+    const ndviData = sorted.map(r => r.ndvi_mean);
+    const stressData = sorted.map(r => r.stress_pct);
+
+    new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'NDVI Promedio',
+                    data: ndviData,
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#16a34a',
+                    yAxisID: 'y',
+                },
+                {
+                    label: 'Estres %',
+                    data: stressData,
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#ef4444',
+                    borderDash: [5, 3],
+                    yAxisID: 'y1',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                y: {
+                    min: 0,
+                    max: 1,
+                    ticks: { stepSize: 0.2 },
+                    title: { display: true, text: 'NDVI' },
+                },
+                y1: {
+                    min: 0,
+                    max: 100,
+                    position: 'right',
+                    ticks: { stepSize: 20, callback: v => v + '%' },
+                    title: { display: true, text: 'Estres' },
+                    grid: { drawOnChartArea: false },
+                },
+            },
+            plugins: {
+                legend: { display: true, position: 'bottom' },
+            },
+        },
+    });
 }
 
 function renderNdviHistory(list) {

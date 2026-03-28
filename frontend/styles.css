@@ -417,6 +417,9 @@ nav {
     font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.5px; color: var(--green); margin-bottom: 12px;
 }
+.campo-section-subtitle {
+    font-size: 0.7rem; color: #888; margin-bottom: 8px;
+}
 
 .campo-select {
     font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;
