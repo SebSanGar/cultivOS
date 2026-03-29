@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Comparacion Estacional</title>
+    <meta name="description" content="Comparacion lado a lado de temporada temporal (Jun-Oct) vs secas (Nov-May) — salud, NDVI, tratamientos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/estaciones" class="nav-tab intel-tab active">Estaciones</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- SEASONAL COMPARISON -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Comparacion Estacional</h1>
+            <p class="intel-subtitle">Temporal (Jun-Oct) vs Secas (Nov-May) — salud, NDVI y tratamientos lado a lado</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="seasonal-farm-select" class="intel-select" onchange="loadFieldsForSeasonal()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="seasonal-field-select" class="intel-select" onchange="loadSeasonalComparison()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <select id="seasonal-year-select" class="intel-select" onchange="loadSeasonalComparison()">
+                <option value="">Todos los anos</option>
+            </select>
+            <button class="intel-btn" onclick="loadSeasonalComparison()">Comparar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="seasonal-stat-temporal">--</div>
+            <div class="intel-stat-label">Salud Temporal</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="seasonal-stat-secas">--</div>
+            <div class="intel-stat-label">Salud Secas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="seasonal-stat-delta">--</div>
+            <div class="intel-stat-label">Diferencia</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="seasonal-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para comparar el rendimiento entre temporadas.
+    </div>
+
+    <!-- Content -->
+    <div id="seasonal-content" style="display:none;">
+        <!-- Season cards side by side -->
+        <div id="seasonal-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;margin-bottom:2rem;"></div>
+
+        <!-- Comparison table -->
+        <div id="seasonal-comparison-table" style="margin-top:1rem;"></div>
+
+        <!-- Delta section -->
+        <div id="seasonal-delta" style="margin-top:1.5rem;"></div>
+    </div>
+</main>
+
+<script src="/seasonal.js"></script>
+</body>
+</html>

@@ -313,6 +313,11 @@ def create_app() -> FastAPI:
             """Comprehensive field intelligence — all Cerebro data for a single field in one unified view."""
             return FileResponse(frontend_dir / "intelligence.html")
 
+        @app.get("/estaciones")
+        async def serve_seasonal():
+            """Seasonal comparison — temporal vs secas side-by-side metrics per field."""
+            return FileResponse(frontend_dir / "seasonal.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
