@@ -283,6 +283,11 @@ def create_app() -> FastAPI:
             """Crop rotation planner — visual rotation calendar with soil benefit notes per season."""
             return FileResponse(frontend_dir / "rotation.html")
 
+        @app.get("/mision")
+        async def serve_mission_planner():
+            """Drone mission planner — generate flight routes, waypoints, and flight parameters per field."""
+            return FileResponse(frontend_dir / "mission.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

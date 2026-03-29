@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Planificador de Mision de Dron</title>
+    <meta name="description" content="Planificador de misiones de dron — genera rutas de vuelo, waypoints y parametros de vuelo para cada campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/mision" class="nav-tab intel-tab active">Mision</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- MISSION PLANNER -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Planificador de Mision de Dron</h1>
+            <p class="intel-subtitle">Genera rutas de vuelo optimizadas con waypoints, parametros de vuelo y estimaciones de baterias</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="mission-farm-select" class="intel-select" onchange="loadFieldsForMission()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="mission-field-select" class="intel-select">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <select id="mission-type-select" class="intel-select">
+                <option value="health_scan">Escaneo de Salud</option>
+                <option value="ndvi_mapping">Mapeo NDVI</option>
+                <option value="thermal_scan">Escaneo Termico</option>
+                <option value="spray_mission">Aplicacion de Tratamiento</option>
+            </select>
+            <select id="mission-drone-select" class="intel-select">
+                <option value="mavic_multispectral">DJI Mavic 3 Multispectral</option>
+                <option value="mavic_thermal">DJI Mavic 3 Thermal</option>
+                <option value="agras_t100">DJI Agras T100</option>
+            </select>
+            <button class="intel-btn" onclick="generateMission()">Generar Mision</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="mission-duration">--</div>
+            <div class="intel-stat-label">Duracion (min)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="mission-area">--</div>
+            <div class="intel-stat-label">Area (ha)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="mission-batteries">--</div>
+            <div class="intel-stat-label">Baterias</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="mission-photos">--</div>
+            <div class="intel-stat-label">Fotos Estimadas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="mission-distance">--</div>
+            <div class="intel-stat-label">Distancia (m)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="mission-empty" class="intel-empty">
+        Seleccione una granja y un campo, luego presione "Generar Mision" para planificar el vuelo del dron.
+    </div>
+
+    <!-- Content -->
+    <div id="mission-content" style="display:none;">
+        <!-- Flight parameters -->
+        <div id="mission-results" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem;">
+            <div class="intel-card">
+                <div style="color:#4da6ff;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Altitud</div>
+                <div id="mission-altitude" style="color:#eee;font-size:1.5rem;font-weight:700;">--</div>
+                <div style="color:#666;font-size:0.8rem;">metros sobre el terreno</div>
+            </div>
+            <div class="intel-card">
+                <div style="color:#22c55e;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Velocidad</div>
+                <div id="mission-speed" style="color:#eee;font-size:1.5rem;font-weight:700;">--</div>
+                <div style="color:#666;font-size:0.8rem;">m/s</div>
+            </div>
+            <div class="intel-card">
+                <div style="color:#eab308;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Patron de Vuelo</div>
+                <div id="mission-pattern" style="color:#eee;font-size:1.5rem;font-weight:700;">--</div>
+                <div style="color:#666;font-size:0.8rem;">tipo de recorrido</div>
+            </div>
+            <div class="intel-card">
+                <div style="color:#f97316;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Traslape</div>
+                <div id="mission-overlap" style="color:#eee;font-size:1.5rem;font-weight:700;">--</div>
+                <div style="color:#666;font-size:0.8rem;">porcentaje entre lineas</div>
+            </div>
+        </div>
+
+        <!-- Waypoints table -->
+        <div class="intel-card" style="overflow-x:auto;">
+            <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;">Waypoints de la Mision</h3>
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="border-bottom:1px solid #333;">
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">#</th>
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">Latitud</th>
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">Longitud</th>
+                    </tr>
+                </thead>
+                <tbody id="mission-waypoints"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="/mission.js"></script>
+</body>
+</html>
