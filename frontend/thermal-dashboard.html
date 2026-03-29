@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Estres Termico</title>
+    <meta name="description" content="Dashboard de estres termico — analisis de temperatura, zonas de estres y deficit de riego por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab">Historial</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/termica" class="nav-tab intel-tab active">Termica</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- THERMAL DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Estres Termico</h1>
+            <p class="intel-subtitle">Analisis de temperatura, zonas de estres y deficit de riego por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="thermal-farm-select" class="intel-select" onchange="loadFieldsForThermal()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="thermal-field-select" class="intel-select" onchange="loadThermalData()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadThermalData()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="thermal-analysis-count">--</div>
+            <div class="intel-stat-label">Analisis</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="thermal-latest-stress">--</div>
+            <div class="intel-stat-label">Estres Ultimo %</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="thermal-latest-temp">--</div>
+            <div class="intel-stat-label">Temperatura Media</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="thermal-deficit-count">--</div>
+            <div class="intel-stat-label">Deficit de Riego</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="thermal-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver el analisis termico.
+    </div>
+
+    <!-- Charts -->
+    <div class="soil-charts" id="thermal-charts-section" style="display:none;">
+        <div class="soil-chart-row">
+            <div class="soil-chart-card">
+                <h3 class="soil-chart-title">Estres Termico (%)</h3>
+                <canvas id="thermal-stress-chart"></canvas>
+            </div>
+            <div class="soil-chart-card">
+                <h3 class="soil-chart-title">Temperatura Media (C)</h3>
+                <canvas id="thermal-temp-chart"></canvas>
+            </div>
+        </div>
+        <div class="soil-chart-row">
+            <div class="soil-chart-card soil-chart-wide">
+                <h3 class="soil-chart-title">Rango de Temperatura (Min / Max)</h3>
+                <canvas id="thermal-range-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data table -->
+    <div id="thermal-table" class="soil-table-container" style="display:none;">
+        <h3 class="soil-section-title">Registros de Analisis Termico</h3>
+        <table class="soil-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Temp. Media</th>
+                    <th>Temp. Min</th>
+                    <th>Temp. Max</th>
+                    <th>Desv. Est.</th>
+                    <th>Estres %</th>
+                    <th>Pixeles</th>
+                    <th>Deficit Riego</th>
+                </tr>
+            </thead>
+            <tbody id="thermal-table-body"></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/thermal-dashboard.js"></script>
+</body>
+</html>

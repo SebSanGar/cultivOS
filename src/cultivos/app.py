@@ -253,6 +253,11 @@ def create_app() -> FastAPI:
             """Alert configuration — custom thresholds per farm for health, NDVI, temperature."""
             return FileResponse(frontend_dir / "alert-config.html")
 
+        @app.get("/termica")
+        async def serve_thermal_dashboard():
+            """Thermal stress dashboard — temperature analysis, stress zones, irrigation deficit."""
+            return FileResponse(frontend_dir / "thermal-dashboard.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
