@@ -278,6 +278,11 @@ def create_app() -> FastAPI:
             """Soil microbiome health — respiration trends, fungi/bacteria ratios, biomass carbon."""
             return FileResponse(frontend_dir / "microbiome.html")
 
+        @app.get("/rotacion")
+        async def serve_rotation_planner():
+            """Crop rotation planner — visual rotation calendar with soil benefit notes per season."""
+            return FileResponse(frontend_dir / "rotation.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

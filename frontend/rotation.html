@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Plan de Rotacion de Cultivos</title>
+    <meta name="description" content="Planificador de rotacion de cultivos — calendario visual por temporada con beneficios al suelo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/rotacion" class="nav-tab intel-tab active">Rotacion</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ROTATION PLANNER -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Plan de Rotacion de Cultivos</h1>
+            <p class="intel-subtitle">Calendario de rotacion por temporada con beneficios regenerativos al suelo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="rotation-farm-select" class="intel-select" onchange="loadFieldsForRotation()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="rotation-field-select" class="intel-select" onchange="loadRotationPlan()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadRotationPlan()">Generar Plan</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="rotation-last-crop">--</div>
+            <div class="intel-stat-label">Ultimo Cultivo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="rotation-region">--</div>
+            <div class="intel-stat-label">Region</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="rotation-seasons">--</div>
+            <div class="intel-stat-label">Temporadas</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="rotation-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para generar el plan de rotacion de cultivos.
+    </div>
+
+    <!-- Content -->
+    <div id="rotation-content" style="display:none;">
+        <div id="rotation-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;"></div>
+    </div>
+</main>
+
+<script src="/rotation.js"></script>
+</body>
+</html>
