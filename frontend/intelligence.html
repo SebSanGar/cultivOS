@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Inteligencia de Campo Completa</title>
+    <meta name="description" content="Vista unificada de toda la inteligencia Cerebro para un campo — salud, NDVI, termico, suelo, microbioma, clima, crecimiento, enfermedades, rendimiento, tratamientos, carbono y fusion de sensores.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/inteligencia" class="nav-tab intel-tab active">Campo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- FIELD INTELLIGENCE -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Inteligencia de Campo Completa</h1>
+            <p class="intel-subtitle">Vista unificada de toda la inteligencia Cerebro — salud, sensores, suelo, clima, rendimiento, tratamientos y mas</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="intel-farm-select" class="intel-select" onchange="loadFieldsForIntelligence()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="intel-field-select" class="intel-select">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadFieldIntelligence()">Consultar Inteligencia</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-stat-health">--</div>
+            <div class="intel-stat-label">Salud</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-stat-ndvi">--</div>
+            <div class="intel-stat-label">NDVI</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-stat-risk">--</div>
+            <div class="intel-stat-label">Riesgo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-stat-treatments">--</div>
+            <div class="intel-stat-label">Tratamientos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="intel-stat-fusion">--</div>
+            <div class="intel-stat-label">Confianza Fusion</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="intel-page-empty" class="intel-empty">
+        Seleccione una granja y un campo, luego presione "Consultar Inteligencia" para ver toda la informacion del campo.
+    </div>
+
+    <!-- Content (hidden until data loaded) -->
+    <div id="intel-page-content" style="display:none;">
+
+        <!-- Field header card -->
+        <div id="intel-field-header" class="intel-card" style="margin-bottom:1.5rem;padding:1.2rem;">
+            <div id="intel-field-info"></div>
+        </div>
+
+        <!-- Grid of section cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.2rem;">
+
+            <!-- Health -->
+            <div id="intel-section-health" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Salud del Campo</h3>
+                <div id="intel-health-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de salud</span>
+                </div>
+            </div>
+
+            <!-- NDVI -->
+            <div id="intel-section-ndvi" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">NDVI</h3>
+                <div id="intel-ndvi-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos NDVI</span>
+                </div>
+            </div>
+
+            <!-- Thermal -->
+            <div id="intel-section-thermal" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Termico</h3>
+                <div id="intel-thermal-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos termicos</span>
+                </div>
+            </div>
+
+            <!-- Soil -->
+            <div id="intel-section-soil" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Suelo</h3>
+                <div id="intel-soil-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de suelo</span>
+                </div>
+            </div>
+
+            <!-- Microbiome -->
+            <div id="intel-section-microbiome" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Microbioma</h3>
+                <div id="intel-microbiome-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de microbioma</span>
+                </div>
+            </div>
+
+            <!-- Weather -->
+            <div id="intel-section-weather" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Clima</h3>
+                <div id="intel-weather-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de clima</span>
+                </div>
+            </div>
+
+            <!-- Growth stage -->
+            <div id="intel-section-growth" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Etapa de Crecimiento</h3>
+                <div id="intel-growth-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de crecimiento</span>
+                </div>
+            </div>
+
+            <!-- Disease risk -->
+            <div id="intel-section-disease" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Riesgo de Enfermedades</h3>
+                <div id="intel-disease-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de enfermedades</span>
+                </div>
+            </div>
+
+            <!-- Yield prediction -->
+            <div id="intel-section-yield" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Prediccion de Rendimiento</h3>
+                <div id="intel-yield-body" class="intel-section-body">
+                    <span style="color:#888;">Sin prediccion de rendimiento</span>
+                </div>
+            </div>
+
+            <!-- Treatments -->
+            <div id="intel-section-treatments" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Tratamientos Recientes</h3>
+                <div id="intel-treatments-body" class="intel-section-body">
+                    <span style="color:#888;">Sin tratamientos registrados</span>
+                </div>
+            </div>
+
+            <!-- Carbon -->
+            <div id="intel-section-carbon" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Carbono Organico</h3>
+                <div id="intel-carbon-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de carbono</span>
+                </div>
+            </div>
+
+            <!-- Sensor fusion -->
+            <div id="intel-section-fusion" class="intel-card" style="padding:1.2rem;">
+                <h3 style="margin:0 0 0.8rem;color:#00c896;">Fusion de Sensores</h3>
+                <div id="intel-fusion-body" class="intel-section-body">
+                    <span style="color:#888;">Sin datos de fusion</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script src="/intelligence-page.js"></script>
+</body>
+</html>

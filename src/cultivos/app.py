@@ -308,6 +308,11 @@ def create_app() -> FastAPI:
             """Sensor fusion validation — cross-sensor consistency matrix, contradictions, and confidence per field."""
             return FileResponse(frontend_dir / "fusion.html")
 
+        @app.get("/inteligencia")
+        async def serve_intelligence():
+            """Comprehensive field intelligence — all Cerebro data for a single field in one unified view."""
+            return FileResponse(frontend_dir / "intelligence.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
