@@ -263,6 +263,11 @@ def create_app() -> FastAPI:
             """Regenerative scorecard — practice score, breakdown, and recommendations per field."""
             return FileResponse(frontend_dir / "regenerative.html")
 
+        @app.get("/carbono")
+        async def serve_carbon_report():
+            """Soil carbon sequestration report — SOC, CO2e, trends, and per-field breakdown."""
+            return FileResponse(frontend_dir / "carbon.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Carbono del Suelo</title>
+    <meta name="description" content="Reporte de secuestro de carbono — SOC, CO2e equivalente, tendencias y desglose por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/carbono" class="nav-tab intel-tab active">Carbono</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- CARBON REPORT -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Carbono del Suelo</h1>
+            <p class="intel-subtitle">Secuestro de carbono organico del suelo (SOC) y equivalente de CO2 por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="carbon-farm-select" class="intel-select" onchange="loadFieldsForCarbon()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="carbon-field-select" class="intel-select" onchange="loadCarbonReport()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadCarbonReport()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="carbon-soc-value">--</div>
+            <div class="intel-stat-label">SOC (t/ha)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="carbon-co2e-value">--</div>
+            <div class="intel-stat-label">CO2e Total (t)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="carbon-trend-value">--</div>
+            <div class="intel-stat-label">Tendencia</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="carbon-records-value">--</div>
+            <div class="intel-stat-label">Registros</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="carbon-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver el reporte de carbono del suelo.
+    </div>
+
+    <!-- Content -->
+    <div id="carbon-content" style="display:none;">
+        <!-- Carbon trend chart -->
+        <div class="intel-card" style="margin-bottom:1.5rem;">
+            <h2 class="intel-card-title">Tendencia de Carbono Organico del Suelo</h2>
+            <div style="position:relative;height:300px;">
+                <canvas id="carbon-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="intel-card" id="carbon-summary" style="margin-bottom:1.5rem;">
+            <h2 class="intel-card-title">Resumen</h2>
+            <p id="carbon-summary-text" class="intel-card-text" style="line-height:1.6;color:#ccc;"></p>
+            <div id="carbon-recommendations" style="margin-top:1rem;"></div>
+        </div>
+
+        <!-- Farm-level breakdown table -->
+        <div class="intel-card">
+            <h2 class="intel-card-title">Desglose por Campo (Nivel Granja)</h2>
+            <div style="overflow-x:auto;">
+                <table id="carbon-fields-table" class="intel-table" style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;padding:0.75rem;border-bottom:1px solid #333;color:#999;">Campo</th>
+                            <th style="text-align:right;padding:0.75rem;border-bottom:1px solid #333;color:#999;">Hectareas</th>
+                            <th style="text-align:right;padding:0.75rem;border-bottom:1px solid #333;color:#999;">SOC (t/ha)</th>
+                            <th style="text-align:right;padding:0.75rem;border-bottom:1px solid #333;color:#999;">CO2e (t)</th>
+                            <th style="text-align:center;padding:0.75rem;border-bottom:1px solid #333;color:#999;">Nivel</th>
+                            <th style="text-align:center;padding:0.75rem;border-bottom:1px solid #333;color:#999;">Tendencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carbon-fields-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/carbon.js"></script>
+</body>
+</html>
