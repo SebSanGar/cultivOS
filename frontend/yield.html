@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Prediccion de Rendimiento</title>
+    <meta name="description" content="Prediccion de rendimiento por campo — kg/ha estimado con banda de incertidumbre y factores contribuyentes.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/rendimiento" class="nav-tab intel-tab active">Rendimiento</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- YIELD PREDICTION -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Prediccion de Rendimiento</h1>
+            <p class="intel-subtitle">Estimacion de cosecha por campo — kg/ha con banda de incertidumbre y factores contribuyentes</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="yield-farm-select" class="intel-select" onchange="loadFieldsForYield()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="yield-field-select" class="intel-select" onchange="loadYieldPrediction()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadYieldPrediction()">Predecir</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="yield-stat-estimate">--</div>
+            <div class="intel-stat-label">Estimacion (kg/ha)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="yield-stat-range">--</div>
+            <div class="intel-stat-label">Rango (min — max)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="yield-stat-total">--</div>
+            <div class="intel-stat-label">Total Estimado (kg)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="yield-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver la prediccion de rendimiento.
+    </div>
+
+    <!-- Content -->
+    <div id="yield-content" style="display:none;">
+        <!-- Yield estimate card -->
+        <div id="yield-card" style="margin-bottom:2rem;"></div>
+
+        <!-- Contributing factors -->
+        <div id="yield-factors" style="margin-bottom:2rem;"></div>
+
+        <!-- Confidence level -->
+        <div id="yield-confidence" style="margin-bottom:2rem;"></div>
+
+        <!-- Nota / recommendation -->
+        <div id="yield-nota" style="margin-bottom:1rem;"></div>
+    </div>
+</main>
+
+<script src="/yield.js"></script>
+</body>
+</html>

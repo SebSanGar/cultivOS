@@ -318,6 +318,11 @@ def create_app() -> FastAPI:
             """Seasonal comparison — temporal vs secas side-by-side metrics per field."""
             return FileResponse(frontend_dir / "seasonal.html")
 
+        @app.get("/rendimiento")
+        async def serve_yield():
+            """Yield prediction — estimated harvest per field with uncertainty band."""
+            return FileResponse(frontend_dir / "yield.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
