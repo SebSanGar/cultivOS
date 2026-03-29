@@ -258,6 +258,11 @@ def create_app() -> FastAPI:
             """Thermal stress dashboard — temperature analysis, stress zones, irrigation deficit."""
             return FileResponse(frontend_dir / "thermal-dashboard.html")
 
+        @app.get("/regenerativo")
+        async def serve_regenerative_scorecard():
+            """Regenerative scorecard — practice score, breakdown, and recommendations per field."""
+            return FileResponse(frontend_dir / "regenerative.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

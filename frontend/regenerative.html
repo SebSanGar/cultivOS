@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Scorecard Regenerativo</title>
+    <meta name="description" content="Scorecard de practicas regenerativas — puntuacion, desglose y recomendaciones por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab">Historial</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab active">Regenerativo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- REGENERATIVE SCORECARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Scorecard Regenerativo</h1>
+            <p class="intel-subtitle">Evaluacion de practicas regenerativas, organicas y ancestrales por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="regen-farm-select" class="intel-select" onchange="loadFieldsForRegen()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="regen-field-select" class="intel-select" onchange="loadRegenScore()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadRegenScore()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regen-total-score">--</div>
+            <div class="intel-stat-label">Puntuacion Total</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regen-treatments-count">--</div>
+            <div class="intel-stat-label">Tratamientos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regen-recs-count">--</div>
+            <div class="intel-stat-label">Recomendaciones</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="regen-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver el scorecard regenerativo.
+    </div>
+
+    <!-- Score gauge + breakdown section -->
+    <div id="regen-content" style="display:none;">
+        <!-- Gauge -->
+        <div id="regen-gauge" class="regen-gauge-container">
+            <div class="regen-gauge">
+                <svg viewBox="0 0 200 120" class="regen-gauge-svg">
+                    <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="#2a2a3a" stroke-width="14" stroke-linecap="round"/>
+                    <path id="regen-gauge-arc" d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 251.33"/>
+                </svg>
+                <div class="regen-gauge-text">
+                    <span id="regen-score-value" class="regen-score-number">0</span>
+                    <span class="regen-score-max">/100</span>
+                </div>
+                <div id="regen-score-label" class="regen-score-label">Sin datos</div>
+            </div>
+        </div>
+
+        <!-- Breakdown cards -->
+        <div class="regen-breakdown">
+            <h2 class="regen-section-title">Desglose de Componentes</h2>
+            <div class="regen-cards">
+                <div class="regen-card" id="regen-organic">
+                    <div class="regen-card-icon">&#9752;</div>
+                    <div class="regen-card-label">Tratamientos Organicos</div>
+                    <div class="regen-card-value" id="regen-organic-val">0</div>
+                    <div class="regen-card-max">/25</div>
+                    <div class="regen-card-bar"><div class="regen-card-fill" id="regen-organic-bar"></div></div>
+                </div>
+                <div class="regen-card" id="regen-ancestral">
+                    <div class="regen-card-icon">&#127807;</div>
+                    <div class="regen-card-label">Metodos Ancestrales</div>
+                    <div class="regen-card-value" id="regen-ancestral-val">0</div>
+                    <div class="regen-card-max">/20</div>
+                    <div class="regen-card-bar"><div class="regen-card-fill" id="regen-ancestral-bar"></div></div>
+                </div>
+                <div class="regen-card" id="regen-soil">
+                    <div class="regen-card-icon">&#127793;</div>
+                    <div class="regen-card-label">Tendencia de Suelo</div>
+                    <div class="regen-card-value" id="regen-soil-val">0</div>
+                    <div class="regen-card-max">/25</div>
+                    <div class="regen-card-bar"><div class="regen-card-fill" id="regen-soil-bar"></div></div>
+                </div>
+                <div class="regen-card" id="regen-microbiome">
+                    <div class="regen-card-icon">&#129440;</div>
+                    <div class="regen-card-label">Salud del Microbioma</div>
+                    <div class="regen-card-value" id="regen-microbiome-val">0</div>
+                    <div class="regen-card-max">/20</div>
+                    <div class="regen-card-bar"><div class="regen-card-fill" id="regen-microbiome-bar"></div></div>
+                </div>
+                <div class="regen-card" id="regen-diversity">
+                    <div class="regen-card-icon">&#127806;</div>
+                    <div class="regen-card-label">Diversidad de Practicas</div>
+                    <div class="regen-card-value" id="regen-diversity-val">0</div>
+                    <div class="regen-card-max">/10</div>
+                    <div class="regen-card-bar"><div class="regen-card-fill" id="regen-diversity-bar"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Recomendaciones para Mejorar</h2>
+            <div id="regen-recommendations" class="regen-recommendations"></div>
+            <div id="regen-no-recs" class="regen-no-recs" style="display:none;">
+                Excelente - no hay recomendaciones pendientes. Sus practicas regenerativas son solidas.
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/regenerative.js"></script>
+</body>
+</html>
