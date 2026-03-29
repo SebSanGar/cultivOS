@@ -288,6 +288,11 @@ def create_app() -> FastAPI:
             """Drone mission planner — generate flight routes, waypoints, and flight parameters per field."""
             return FileResponse(frontend_dir / "mission.html")
 
+        @app.get("/riego")
+        async def serve_irrigation():
+            """Irrigation scheduling — optimized watering calendar based on soil, weather, and thermal stress."""
+            return FileResponse(frontend_dir / "irrigation.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

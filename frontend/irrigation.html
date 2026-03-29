@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Programacion de Riego</title>
+    <meta name="description" content="Programacion de riego optimizada — calendario de riego, indicadores de urgencia y ahorro de agua por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/riego" class="nav-tab intel-tab active">Riego</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- IRRIGATION SCHEDULING -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Programacion de Riego</h1>
+            <p class="intel-subtitle">Calendario de riego optimizado basado en suelo, clima y estres termico — ahorro de agua cuantificable</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="irrigation-farm-select" class="intel-select" onchange="loadFieldsForIrrigation()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="irrigation-field-select" class="intel-select">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadIrrigation()">Consultar Riego</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="irrigation-total-liters">--</div>
+            <div class="intel-stat-label">Litros/ha Total</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="irrigation-urgency">--</div>
+            <div class="intel-stat-label">Urgencia</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="irrigation-crop">--</div>
+            <div class="intel-stat-label">Cultivo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="irrigation-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="irrigation-days">--</div>
+            <div class="intel-stat-label">Dias Programados</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="irrigation-empty" class="intel-empty">
+        Seleccione una granja y un campo, luego presione "Consultar Riego" para ver el calendario de riego optimizado.
+    </div>
+
+    <!-- Content -->
+    <div id="irrigation-content" style="display:none;">
+        <!-- Recommendation card -->
+        <div class="intel-card" style="margin-bottom:1.5rem;border-left:3px solid #4da6ff;">
+            <div style="color:#4da6ff;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Recomendacion</div>
+            <div id="irrigation-recommendation" style="color:#ccc;font-size:0.95rem;line-height:1.5;"></div>
+        </div>
+
+        <!-- Schedule table -->
+        <div id="irrigation-schedule" class="intel-card" style="overflow-x:auto;">
+            <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;">Calendario de Riego Semanal</h3>
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="border-bottom:1px solid #333;">
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">Dia</th>
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">Litros/ha</th>
+                        <th style="padding:0.5rem;text-align:left;color:#888;font-size:0.8rem;">Nota</th>
+                    </tr>
+                </thead>
+                <tbody id="irrigation-schedule-body"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="/irrigation.js"></script>
+</body>
+</html>
