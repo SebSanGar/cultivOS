@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Salud del Microbioma</title>
+    <meta name="description" content="Indicadores de microbioma del suelo — respiracion, biomasa, relacion hongos/bacterias por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab">Historial</a></li>
+            <li><a href="/microbioma" class="nav-tab intel-tab active">Microbioma</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- MICROBIOME HEALTH PAGE -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Salud del Microbioma</h1>
+            <p class="intel-subtitle">Respiracion del suelo, biomasa microbiana y relacion hongos/bacterias por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="micro-farm-select" class="intel-select" onchange="loadFieldsForMicro()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="micro-field-select" class="intel-select" onchange="loadMicrobiome()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadMicrobiome()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="micro-avg-respiration">--</div>
+            <div class="intel-stat-label">Respiracion Promedio (mg CO2/kg/dia)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="micro-avg-ratio">--</div>
+            <div class="intel-stat-label">Relacion Hongos/Bacterias Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="micro-record-count">--</div>
+            <div class="intel-stat-label">Muestras Registradas</div>
+        </div>
+    </div>
+
+    <!-- Classification legend -->
+    <div class="intel-stats-strip" style="justify-content:center;gap:2rem;padding:0.5rem 1rem;">
+        <span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#ccc;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#00c896;"></span> Saludable (&gt;50 mg CO2/kg/dia)
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#ccc;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f0b429;"></span> Moderado (20-50)
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#ccc;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ef4444;"></span> Degradado (&lt;20)
+        </span>
+    </div>
+
+    <!-- Empty state -->
+    <div id="micro-empty" class="intel-empty">
+        Seleccione una granja y un campo para ver los indicadores de microbioma del suelo.
+    </div>
+
+    <!-- No data state -->
+    <div id="micro-none" class="intel-empty" style="display:none;">
+        Sin registros de microbioma para este campo. Importe datos de laboratorio o registre muestras.
+    </div>
+
+    <!-- Charts section -->
+    <div id="micro-content" style="display:none;">
+        <!-- Respiration trend chart -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Tendencia de Respiracion del Suelo</h2>
+            <p class="intel-subtitle">Tasa de respiracion (mg CO2/kg/dia) — indicador de actividad biologica</p>
+            <div style="max-width:800px;margin:0 auto;">
+                <canvas id="micro-respiration-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Fungi/Bacteria ratio chart -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Relacion Hongos/Bacterias</h2>
+            <p class="intel-subtitle">Relacion ideal: 1.0-2.0 para suelos agricolas saludables</p>
+            <div style="max-width:800px;margin:0 auto;">
+                <canvas id="micro-ratio-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Biomasa microbiana (carbono) trend -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Carbono de Biomasa Microbiana</h2>
+            <p class="intel-subtitle">mg C/kg suelo — indica la cantidad total de microorganismos</p>
+            <div style="max-width:800px;margin:0 auto;">
+                <canvas id="micro-biomass-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Data table -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Historial de Muestras</h2>
+            <div style="overflow-x:auto;">
+                <table class="intel-table" style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Respiracion</th>
+                            <th>Biomasa C</th>
+                            <th>H/B Ratio</th>
+                            <th>Clasificacion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="micro-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/microbiome.js"></script>
+</body>
+</html>

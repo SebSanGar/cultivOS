@@ -273,6 +273,11 @@ def create_app() -> FastAPI:
             """Anomaly detection center — health drops, NDVI drops, severity badges per field."""
             return FileResponse(frontend_dir / "anomalies.html")
 
+        @app.get("/microbioma")
+        async def serve_microbiome_health():
+            """Soil microbiome health — respiration trends, fungi/bacteria ratios, biomass carbon."""
+            return FileResponse(frontend_dir / "microbiome.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
