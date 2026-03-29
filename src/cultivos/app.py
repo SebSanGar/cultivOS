@@ -293,6 +293,11 @@ def create_app() -> FastAPI:
             """Irrigation scheduling — optimized watering calendar based on soil, weather, and thermal stress."""
             return FileResponse(frontend_dir / "irrigation.html")
 
+        @app.get("/enfermedades")
+        async def serve_disease():
+            """Disease risk assessment — field-level risk from NDVI, thermal, and weather data with symptom identification."""
+            return FileResponse(frontend_dir / "disease.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

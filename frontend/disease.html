@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Evaluacion de Riesgo de Enfermedades</title>
+    <meta name="description" content="Evaluacion de riesgo de enfermedades por campo — riesgos basados en NDVI, termico y clima con identificacion de sintomas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/enfermedades" class="nav-tab intel-tab active">Enfermedades</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- DISEASE RISK ASSESSMENT -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Evaluacion de Riesgo de Enfermedades</h1>
+            <p class="intel-subtitle">Riesgos detectados a partir de datos NDVI, termicos y climaticos — identificacion de enfermedades por sintomas</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="disease-farm-select" class="intel-select" onchange="loadFieldsForDisease()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="disease-field-select" class="intel-select">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadDiseaseRisk()">Consultar Riesgo</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="disease-risk-level">--</div>
+            <div class="intel-stat-label">Nivel de Riesgo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="disease-risk-count">--</div>
+            <div class="intel-stat-label">Riesgos Detectados</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="disease-humidity">--</div>
+            <div class="intel-stat-label">Humedad %</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="disease-temp">--</div>
+            <div class="intel-stat-label">Temperatura C</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="disease-rainfall">--</div>
+            <div class="intel-stat-label">Lluvia mm</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="disease-empty" class="intel-empty">
+        Seleccione una granja y un campo, luego presione "Consultar Riesgo" para evaluar el riesgo de enfermedades.
+    </div>
+
+    <!-- Risk content -->
+    <div id="disease-risk-content" style="display:none;">
+        <!-- Message card -->
+        <div class="intel-card" style="margin-bottom:1.5rem;border-left:3px solid #ef4444;">
+            <div style="color:#ef4444;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Evaluacion</div>
+            <div id="disease-mensaje" style="color:#ccc;font-size:0.95rem;line-height:1.5;"></div>
+        </div>
+
+        <!-- Risk cards -->
+        <div id="disease-risk-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-bottom:2rem;"></div>
+    </div>
+
+    <!-- Symptom identification section -->
+    <div class="intel-card" style="margin-top:2rem;">
+        <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;">Identificacion por Sintomas</h3>
+        <p style="color:#888;font-size:0.85rem;margin-bottom:1rem;">Ingrese los sintomas observados (separados por coma) para identificar posibles enfermedades.</p>
+        <form id="disease-identify-form" onsubmit="identifyDisease(event)">
+            <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:250px;">
+                    <label style="color:#aaa;font-size:0.8rem;display:block;margin-bottom:0.3rem;">Sintomas</label>
+                    <input id="disease-symptoms-input" type="text" placeholder="hojas amarillas, manchas, marchitez..." style="width:100%;padding:0.5rem 0.75rem;background:#1a1a2e;border:1px solid #333;border-radius:6px;color:#eee;font-size:0.9rem;">
+                </div>
+                <div style="min-width:150px;">
+                    <label style="color:#aaa;font-size:0.8rem;display:block;margin-bottom:0.3rem;">Cultivo (opcional)</label>
+                    <input id="disease-crop-input" type="text" placeholder="maiz, tomate..." style="width:100%;padding:0.5rem 0.75rem;background:#1a1a2e;border:1px solid #333;border-radius:6px;color:#eee;font-size:0.9rem;">
+                </div>
+                <button type="submit" class="intel-btn">Identificar</button>
+            </div>
+        </form>
+        <div id="disease-identify-results" style="margin-top:1rem;"></div>
+    </div>
+</main>
+
+<script src="/disease.js"></script>
+</body>
+</html>
