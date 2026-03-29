@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Configuracion de Alertas</title>
+    <meta name="description" content="Configuracion de umbrales de alerta por granja — salud, NDVI, temperatura.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/alertas-config" class="nav-tab intel-tab active">Alertas</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ALERT CONFIG DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Configuracion de Alertas</h1>
+            <p class="intel-subtitle">Umbrales personalizados por granja — reciba alertas cuando los valores caigan debajo del minimo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="alert-farm-select" class="intel-select" onchange="loadAlertConfig()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Current config display -->
+    <div id="alert-current" class="intel-stats-strip" style="display:none">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="current-health">--</div>
+            <div class="intel-stat-label">Salud actual</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="current-ndvi">--</div>
+            <div class="intel-stat-label">NDVI actual</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="current-temp">--</div>
+            <div class="intel-stat-label">Temp. max actual</div>
+        </div>
+    </div>
+
+    <!-- Status message -->
+    <div id="alert-status" class="econ-nota" style="display:none"></div>
+
+    <!-- Threshold sliders -->
+    <div class="econ-cards-grid">
+        <!-- Health Score -->
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#00c896">&#9672;</div>
+            <h3 class="econ-card-title">Salud minima</h3>
+            <p class="econ-card-desc">Alerta cuando el puntaje de salud del campo baje de este valor (0-100).</p>
+            <div class="alert-slider-group">
+                <input type="range" id="slider-health" min="0" max="100" step="1" value="40" class="alert-slider">
+                <span id="slider-health-val" class="alert-slider-val">40</span>
+            </div>
+        </div>
+
+        <!-- NDVI -->
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#4da6ff">&#9672;</div>
+            <h3 class="econ-card-title">NDVI minimo</h3>
+            <p class="econ-card-desc">Alerta cuando el indice de vegetacion (NDVI) baje de este valor (0.0-1.0).</p>
+            <div class="alert-slider-group">
+                <input type="range" id="slider-ndvi" min="0" max="1" step="0.01" value="0.3" class="alert-slider">
+                <span id="slider-ndvi-val" class="alert-slider-val">0.30</span>
+            </div>
+        </div>
+
+        <!-- Temperature -->
+        <div class="econ-card">
+            <div class="econ-card-icon" style="color:#f0b429">&#9672;</div>
+            <h3 class="econ-card-title">Temperatura maxima</h3>
+            <p class="econ-card-desc">Alerta cuando la temperatura del campo supere este valor (grados C).</p>
+            <div class="alert-slider-group">
+                <input type="range" id="slider-temp" min="0" max="70" step="1" value="45" class="alert-slider">
+                <span id="slider-temp-val" class="alert-slider-val">45</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save button -->
+    <div class="alert-save-section">
+        <button id="alert-save-btn" class="intel-btn" onclick="saveAlertConfig()">Guardar configuracion</button>
+    </div>
+</main>
+
+<script src="/alert-config.js"></script>
+</body>
+</html>

@@ -248,6 +248,11 @@ def create_app() -> FastAPI:
             """FODECIJAL demo walkthrough — guided tour of Cerebro capabilities."""
             return FileResponse(frontend_dir / "walkthrough.html")
 
+        @app.get("/alertas-config")
+        async def serve_alert_config():
+            """Alert configuration — custom thresholds per farm for health, NDVI, temperature."""
+            return FileResponse(frontend_dir / "alert-config.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

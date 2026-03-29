@@ -3649,6 +3649,13 @@ nav {
 .econ-card-title { font-size: 1rem; font-weight: 600; color: var(--text-primary, #fff); margin: 0 0 8px 0; }
 .econ-card-desc { font-size: 0.85rem; color: var(--text-muted, #888); line-height: 1.5; margin: 0 0 16px 0; }
 .econ-card-value { font-size: 1.4rem; font-weight: 700; font-family: 'Courier New', monospace; color: #00c896; }
+
+/* Alert config sliders */
+.alert-slider-group { display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; }
+.alert-slider { flex: 1; accent-color: #00c896; height: 6px; cursor: pointer; }
+.alert-slider-val { font-size: 1.3rem; font-weight: 700; font-family: 'Courier New', monospace; color: #fff; min-width: 3rem; text-align: right; }
+.alert-save-section { text-align: center; margin: 2rem 0; }
+
 .econ-reference { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-top: 8px; }
 .econ-reference p { font-size: 0.8rem; color: var(--text-muted, #888); margin: 0; line-height: 1.5; }
 
