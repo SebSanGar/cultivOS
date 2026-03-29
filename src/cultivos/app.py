@@ -298,6 +298,11 @@ def create_app() -> FastAPI:
             """Disease risk assessment — field-level risk from NDVI, thermal, and weather data with symptom identification."""
             return FileResponse(frontend_dir / "disease.html")
 
+        @app.get("/tek")
+        async def serve_tek():
+            """TEK ancestral knowledge validation — method trust scores from farmer feedback."""
+            return FileResponse(frontend_dir / "tek.html")
+
         @app.get("/fusion")
         async def serve_fusion():
             """Sensor fusion validation — cross-sensor consistency matrix, contradictions, and confidence per field."""

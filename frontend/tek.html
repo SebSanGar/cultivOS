@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Validacion de Conocimiento Ancestral (TEK)</title>
+    <meta name="description" content="Validacion de metodos tradicionales y ancestrales con datos de retroalimentacion de agricultores — puntajes de confianza y efectividad.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/tek" class="nav-tab intel-tab active">TEK</a></li>
+            <li><a href="/fusion" class="nav-tab intel-tab">Sensores</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- TEK VALIDATION -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Validacion de Conocimiento Ancestral (TEK)</h1>
+            <p class="intel-subtitle">Metodos tradicionales validados con retroalimentacion de agricultores — puntajes de confianza, conteos de uso y efectividad regional</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="tek-filter" class="intel-select" onchange="filterMethods()">
+                <option value="all">Todos los metodos</option>
+                <option value="high">Alta confianza (>70)</option>
+                <option value="medium">Media confianza (40-70)</option>
+                <option value="low">Baja confianza (<40)</option>
+            </select>
+            <button class="intel-btn" onclick="loadTEKData()">Consultar Metodos</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tek-total-methods">--</div>
+            <div class="intel-stat-label">Metodos Totales</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tek-avg-trust">--</div>
+            <div class="intel-stat-label">Confianza Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tek-total-feedback">--</div>
+            <div class="intel-stat-label">Retroalimentaciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="tek-top-method">--</div>
+            <div class="intel-stat-label">Metodo Mejor Valorado</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="tek-empty" class="intel-empty">
+        Presione "Consultar Metodos" para cargar la validacion de conocimiento ancestral.
+    </div>
+
+    <!-- Methods content (hidden until data loads) -->
+    <div id="tek-content" style="display:none;">
+        <div id="tek-methods" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;margin-bottom:2rem;"></div>
+    </div>
+</main>
+
+<script src="/tek-page.js"></script>
+</body>
+</html>
