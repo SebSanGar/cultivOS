@@ -298,6 +298,11 @@ def create_app() -> FastAPI:
             """Disease risk assessment — field-level risk from NDVI, thermal, and weather data with symptom identification."""
             return FileResponse(frontend_dir / "disease.html")
 
+        @app.get("/fusion")
+        async def serve_fusion():
+            """Sensor fusion validation — cross-sensor consistency matrix, contradictions, and confidence per field."""
+            return FileResponse(frontend_dir / "fusion.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

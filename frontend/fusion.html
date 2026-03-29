@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Validacion de Fusion de Sensores</title>
+    <meta name="description" content="Validacion cruzada de datos NDVI, termicos, suelo y clima — deteccion de contradicciones y confianza por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/fusion" class="nav-tab intel-tab active">Sensores</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- SENSOR FUSION VALIDATION -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Validacion de Fusion de Sensores</h1>
+            <p class="intel-subtitle">Consistencia cruzada de datos NDVI, termicos, suelo y clima — deteccion de contradicciones y niveles de confianza por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <button class="intel-btn" onclick="loadFusionData()">Analizar Sensores</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="fusion-total-fields">--</div>
+            <div class="intel-stat-label">Campos Totales</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="fusion-fields-with-data">--</div>
+            <div class="intel-stat-label">Campos con Datos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="fusion-avg-confidence">--</div>
+            <div class="intel-stat-label">Confianza Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="fusion-total-contradictions">--</div>
+            <div class="intel-stat-label">Contradicciones</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="fusion-empty" class="intel-empty">
+        Presione "Analizar Sensores" para ejecutar la validacion cruzada de datos de todos los campos.
+    </div>
+
+    <!-- Fusion content (hidden until data loads) -->
+    <div id="fusion-content" style="display:none;">
+
+        <!-- Sensor consistency matrix -->
+        <div class="intel-card" style="margin-bottom:1.5rem;">
+            <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;">Matriz de Consistencia de Sensores</h3>
+            <div id="fusion-matrix" style="overflow-x:auto;"></div>
+        </div>
+
+        <!-- Contradictions section -->
+        <div class="intel-card" style="margin-bottom:1.5rem;border-left:3px solid #ef4444;">
+            <div style="color:#ef4444;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Contradicciones Detectadas</div>
+            <div id="fusion-contradictions"></div>
+        </div>
+
+        <!-- Per-field cards -->
+        <h3 style="color:#eee;font-size:1rem;margin:1.5rem 0 1rem 0;">Detalle por Campo</h3>
+        <div id="fusion-field-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;margin-bottom:2rem;"></div>
+    </div>
+</main>
+
+<script src="/fusion-page.js"></script>
+</body>
+</html>
