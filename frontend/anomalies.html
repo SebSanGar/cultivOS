@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Centro de Anomalias</title>
+    <meta name="description" content="Deteccion de anomalias — caidas de salud, NDVI y estres termico por campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/historial" class="nav-tab intel-tab">Historial</a></li>
+            <li><a href="/anomalias" class="nav-tab intel-tab active">Anomalias</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ANOMALY DETECTION CENTER -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Centro de Anomalias</h1>
+            <p class="intel-subtitle">Deteccion proactiva de caidas de salud, NDVI y estres termico por campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="anom-farm-select" class="intel-select" onchange="loadFieldsForAnom()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="anom-field-select" class="intel-select" onchange="loadAnomalies()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadAnomalies()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="anom-total-count">--</div>
+            <div class="intel-stat-label">Anomalias Totales</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="anom-health-count">--</div>
+            <div class="intel-stat-label">Caidas de Salud</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="anom-ndvi-count">--</div>
+            <div class="intel-stat-label">Caidas NDVI</div>
+        </div>
+    </div>
+
+    <!-- Severity legend -->
+    <div class="intel-stats-strip" style="justify-content:center;gap:2rem;padding:0.5rem 1rem;">
+        <span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#ccc;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ef4444;"></span> Critica (&gt;25 pts / &gt;30%)
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:#ccc;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f97316;"></span> Moderada (15-25 pts / 20-30%)
+        </span>
+    </div>
+
+    <!-- Empty state -->
+    <div id="anom-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para detectar anomalias.
+    </div>
+
+    <!-- No anomalies state -->
+    <div id="anom-none" class="intel-empty" style="display:none;">
+        Sin anomalias detectadas — este campo esta estable.
+    </div>
+
+    <!-- Anomaly timeline -->
+    <div id="anom-content" style="display:none;">
+        <!-- Health anomalies section -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Anomalias de Salud</h2>
+            <p class="intel-subtitle">Caidas mayores a 15 puntos entre lecturas consecutivas</p>
+            <div id="anom-health-cards" class="regen-recommendations"></div>
+            <div id="anom-health-none" class="regen-no-recs" style="display:none;">
+                Sin caidas de salud detectadas.
+            </div>
+        </div>
+
+        <!-- NDVI anomalies section -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Anomalias NDVI</h2>
+            <p class="intel-subtitle">Caidas mayores al 20% respecto al promedio historico</p>
+            <div id="anom-ndvi-cards" class="regen-recommendations"></div>
+            <div id="anom-ndvi-none" class="regen-no-recs" style="display:none;">
+                Sin caidas de NDVI detectadas.
+            </div>
+        </div>
+
+        <!-- Recommendations summary -->
+        <div class="regen-recommendations-section">
+            <h2 class="regen-section-title">Recomendaciones</h2>
+            <div id="anom-recommendations" class="regen-recommendations"></div>
+        </div>
+    </div>
+
+    <!-- Timeline container for JS rendering -->
+    <div id="anom-timeline" style="display:none;"></div>
+</main>
+
+<script src="/anomalies.js"></script>
+</body>
+</html>

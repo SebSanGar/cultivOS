@@ -268,6 +268,11 @@ def create_app() -> FastAPI:
             """Soil carbon sequestration report — SOC, CO2e, trends, and per-field breakdown."""
             return FileResponse(frontend_dir / "carbon.html")
 
+        @app.get("/anomalias")
+        async def serve_anomalies_center():
+            """Anomaly detection center — health drops, NDVI drops, severity badges per field."""
+            return FileResponse(frontend_dir / "anomalies.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
