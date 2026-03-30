@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Ranking de Intervenciones</title>
+    <meta name="description" content="Ranking de tratamientos por impacto predicho — costo-efectividad, metodos organicos y ancestrales.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/acciones" class="nav-tab intel-tab">Acciones</a></li>
+            <li><a href="/intervenciones" class="nav-tab intel-tab active">Intervenciones</a></li>
+            <li><a href="/efectividad" class="nav-tab intel-tab">Efectividad</a></li>
+            <li><a href="/completitud" class="nav-tab intel-tab">Completitud</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Ranking de Intervenciones</h1>
+            <p class="intel-subtitle">Tratamientos ordenados por impacto predicho y costo-efectividad — prioriza lo que mas ayuda al campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="interv-farm-select" class="intel-select" onchange="loadFieldsForInterventions()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="interv-field-select" class="intel-select">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadInterventions()">Ver Ranking</button>
+        </div>
+    </div>
+
+    <div class="intel-empty" id="interv-empty">
+        <div class="intel-empty-icon">🏆</div>
+        <div class="intel-empty-text">Seleccione granja y campo para ver el ranking de intervenciones recomendadas</div>
+    </div>
+
+    <div id="interv-content" style="display:none;">
+        <div class="stats-strip" id="interv-stats"></div>
+        <div id="interv-cards" class="intel-grid"></div>
+    </div>
+</main>
+
+<script src="/intervenciones.js"></script>
+</body>
+</html>

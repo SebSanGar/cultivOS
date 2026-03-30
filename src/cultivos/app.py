@@ -323,6 +323,31 @@ def create_app() -> FastAPI:
             """Yield prediction — estimated harvest per field with uncertainty band."""
             return FileResponse(frontend_dir / "yield.html")
 
+        @app.get("/acciones")
+        async def serve_actions():
+            """Action timeline — unified 7-day prioritized action list per field."""
+            return FileResponse(frontend_dir / "actions.html")
+
+        @app.get("/completitud")
+        async def serve_completeness():
+            """Data completeness dashboard — coverage by data source per farm."""
+            return FileResponse(frontend_dir / "completitud.html")
+
+        @app.get("/alertas-estacionales")
+        async def serve_seasonal_alerts():
+            """Seasonal alerts — TEK calendar-based crop alerts for current season."""
+            return FileResponse(frontend_dir / "alertas-estacionales.html")
+
+        @app.get("/intervenciones")
+        async def serve_interventions():
+            """Intervention ranking — treatments sorted by predicted impact and cost-effectiveness."""
+            return FileResponse(frontend_dir / "intervenciones.html")
+
+        @app.get("/efectividad")
+        async def serve_effectiveness():
+            """Treatment effectiveness report — cross-farm before/after health deltas."""
+            return FileResponse(frontend_dir / "efectividad.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

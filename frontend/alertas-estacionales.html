@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Alertas Estacionales TEK</title>
+    <meta name="description" content="Alertas basadas en calendario ancestral TEK — preparacion, siembra, cosecha y mantenimiento por temporada.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/acciones" class="nav-tab intel-tab">Acciones</a></li>
+            <li><a href="/efectividad" class="nav-tab intel-tab">Efectividad</a></li>
+            <li><a href="/completitud" class="nav-tab intel-tab">Completitud</a></li>
+            <li><a href="/alertas-estacionales" class="nav-tab intel-tab active">Alertas TEK</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Alertas Estacionales TEK</h1>
+            <p class="intel-subtitle">Calendario ancestral conectado a alertas en tiempo real — temporal, secas, preparacion, siembra, cosecha</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="seasonal-farm-select" class="intel-select" onchange="loadSeasonalAlerts()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="intel-empty" id="seasonal-empty">
+        <div class="intel-empty-icon">🌿</div>
+        <div class="intel-empty-text">Seleccione una granja para ver alertas estacionales basadas en conocimiento ancestral</div>
+    </div>
+
+    <div id="seasonal-content" style="display:none;">
+        <div class="stats-strip" id="seasonal-stats"></div>
+        <div id="seasonal-alerts" class="intel-grid"></div>
+    </div>
+</main>
+
+<script src="/alertas-estacionales.js"></script>
+</body>
+</html>
