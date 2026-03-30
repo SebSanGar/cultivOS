@@ -2,7 +2,7 @@
 SQLAlchemy ORM models for cultivOS.
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Text, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Text, JSON, ForeignKey, Index
 from sqlalchemy.orm import DeclarativeBase, relationship
 from datetime import datetime
 
@@ -73,6 +73,9 @@ class FlightLog(Base):
 
 class HealthScore(Base):
     __tablename__ = "health_scores"
+    __table_args__ = (
+        Index("ix_health_scores_field_scored", "field_id", "scored_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
@@ -96,6 +99,9 @@ class HealthScore(Base):
 
 class SoilAnalysis(Base):
     __tablename__ = "soil_analyses"
+    __table_args__ = (
+        Index("ix_soil_analyses_field_sampled", "field_id", "sampled_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
@@ -118,6 +124,9 @@ class SoilAnalysis(Base):
 
 class NDVIResult(Base):
     __tablename__ = "ndvi_results"
+    __table_args__ = (
+        Index("ix_ndvi_results_field_analyzed", "field_id", "analyzed_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
@@ -137,6 +146,9 @@ class NDVIResult(Base):
 
 class TreatmentRecord(Base):
     __tablename__ = "treatment_records"
+    __table_args__ = (
+        Index("ix_treatment_records_field_applied", "field_id", "applied_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
@@ -161,6 +173,9 @@ class TreatmentRecord(Base):
 
 class ThermalResult(Base):
     __tablename__ = "thermal_results"
+    __table_args__ = (
+        Index("ix_thermal_results_field_analyzed", "field_id", "analyzed_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
@@ -295,6 +310,9 @@ class FarmerFeedback(Base):
 
 class WeatherRecord(Base):
     __tablename__ = "weather_records"
+    __table_args__ = (
+        Index("ix_weather_records_farm_recorded", "farm_id", "recorded_at"),
+    )
 
     id = Column(Integer, primary_key=True)
     farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False)
