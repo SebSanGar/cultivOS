@@ -12,7 +12,7 @@ class TestTEKValidationFrontend:
         assert resp.status_code == 200
         html = resp.text
         assert "intel-tek-validation" in html
-        assert "Validacion TEK" in html
+        assert "Inteligencia Ancestral" in html
 
     def test_intel_js_has_load_tek_validation(self, client, admin_headers):
         """intel.js contains the loadTEKValidation function."""
@@ -33,7 +33,7 @@ class TestTEKValidationFrontend:
         resp = client.get("/intel.js")
         assert resp.status_code == 200
         js = resp.text
-        assert "Sin datos de validacion TEK" in js
+        assert "Sin datos de validacion ancestral" in js
 
     def test_tek_validation_shows_trust_score_bar(self, client, admin_headers):
         """intel.js renders trust score as a bar for each method."""

@@ -156,7 +156,7 @@ def tek_validation(
     db: Session = Depends(get_db),
     user=Depends(_admin_or_researcher),
 ):
-    """Aggregate farmer feedback by ancestral method to see which TEK methods farmers trust."""
+    """Aggregate farmer feedback by ancestral method to see which ancestral methods farmers trust."""
     # Get all feedback joined with treatments that have an ancestral method
     results = (
         db.query(FarmerFeedback, TreatmentRecord)

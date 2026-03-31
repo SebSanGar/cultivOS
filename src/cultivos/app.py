@@ -300,7 +300,7 @@ def create_app() -> FastAPI:
 
         @app.get("/tek")
         async def serve_tek():
-            """TEK ancestral knowledge validation — method trust scores from farmer feedback."""
+            """Inteligencia Ancestral — farmer feedback validation — method trust scores from farmer feedback."""
             return FileResponse(frontend_dir / "tek.html")
 
         @app.get("/fusion")
@@ -335,7 +335,7 @@ def create_app() -> FastAPI:
 
         @app.get("/alertas-estacionales")
         async def serve_seasonal_alerts():
-            """Seasonal alerts — TEK calendar-based crop alerts for current season."""
+            """Seasonal alerts — Ancestral calendar-based crop alerts for current season."""
             return FileResponse(frontend_dir / "alertas-estacionales.html")
 
         @app.get("/intervenciones")

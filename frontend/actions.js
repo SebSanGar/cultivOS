@@ -63,7 +63,7 @@
 
     function sourceLabel(s) {
         var map = {
-            "seasonal_calendar": "Calendario TEK",
+            "seasonal_calendar": "Calendario Ancestral",
             "growth_stage": "Etapa de Crecimiento",
             "treatment": "Tratamiento Pendiente"
         };

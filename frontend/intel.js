@@ -322,13 +322,13 @@ async function loadCarbon() {
     `;
 }
 
-// ── TEK Validation ──
+// ── Inteligencia Ancestral Validation ──
 async function loadTEKValidation() {
     const container = document.getElementById('intel-tek-validation');
     const data = await fetchJSON(API + '/tek-validation');
 
     if (!data || data.methods.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de validacion TEK</div>';
+        container.innerHTML = '<div class="intel-empty">Sin datos de validacion ancestral</div>';
         return;
     }
 

@@ -1,4 +1,4 @@
-/* Seasonal alerts (TEK calendar) — /alertas-estacionales */
+/* Seasonal alerts (Inteligencia Ancestral) — /alertas-estacionales */
 (function () {
     "use strict";
     var API = "";

@@ -160,7 +160,7 @@ class TreatmentRecord(Base):
     urgencia = Column(String(20), nullable=False)  # alta, media, baja
     prevencion = Column(Text, nullable=False)
     organic = Column(Boolean, nullable=False, default=True)
-    ancestral_method_name = Column(String(100), nullable=True)  # linked TEK method
+    ancestral_method_name = Column(String(100), nullable=True)  # linked ancestral method
     ancestral_base_cientifica = Column(Text, nullable=True)  # scientific validation
     ancestral_razon_match = Column(String(300), nullable=True)  # why this method matches
     timing_consejo = Column(Text, nullable=True)  # weather-based timing advice
