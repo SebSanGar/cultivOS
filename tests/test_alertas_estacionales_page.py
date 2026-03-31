@@ -40,7 +40,7 @@ class TestAlertasEstacionalesPageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/alertas-estacionales")
-        assert "Alertas Estacionales TEK" in resp.text
+        assert "Inteligencia Ancestral" in resp.text
 
     def test_page_has_farm_selector(self, client):
         resp = client.get("/alertas-estacionales")

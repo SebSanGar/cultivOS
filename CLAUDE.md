@@ -12,11 +12,11 @@ cultivOS is the brain of precision agriculture — an AI-powered platform that t
 
 ## Key metrics
 
-- $414,000 MXN saved per farm/year
+- 15-25% input cost reduction per farm (aligned with MDPI 2025 meta-analysis of 85 PA studies)
 - 85 farms by Year 3, 170 by Year 5
-- 57% water wasted by inefficiency (CONAGUA) — we fix this
-- 84% of Jalisco municipalities in drought (2024)
-- <5% of small farms have access to precision agriculture
+- 57% water wasted by inefficiency (CONAGUA 2017-2018) — we fix this
+- 84% of Jalisco municipalities in drought (January 2024 peak, fluctuates seasonally)
+- Precision agriculture adoption near zero on small farms in Mexico (FAO, no exact figure published)
 
 ## Architecture
 
@@ -80,7 +80,7 @@ scripts/               → Deployment, data migration
 |-------|---------|------------|
 | DJI Mavic 3 Multispectral | NDVI mapping (4 bands + RGB), 200 ha/flight | $106,000 |
 | DJI Mavic 3 Thermal | Thermal stress detection, 640x512 sensor | $130,000 |
-| DJI Agras T100 | Precision spraying, 100L tank, 25 ha/hr, LiDAR | $771,000 |
+| DJI Agras T100 | Precision spraying, 100L tank, 13-25 ha/hr, LiDAR | $556,000 |
 
 4 batteries + 8-9 min charge = 10-12 productive hours/day
 
