@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis, ThermalResult
+from cultivos.db.models import Farm, Field, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis, ThermalResult, TreatmentRecord
 from cultivos.db.session import get_db
-from cultivos.models.health import HealthHistoryOut, HealthScoreOut, HealthTrendOut
-from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, ThermalInput, analyze_health_trend, compute_health_score, compute_trend_from_history
+from cultivos.models.health import HealthHistoryOut, HealthScoreOut, HealthTrajectoryOut, HealthTrendOut
+from cultivos.services.crop.health import MicrobiomeInput, NDVIInput, SoilInput, ThermalInput, analyze_health_trend, compute_health_score, compute_health_trajectory, compute_trend_from_history
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/health",
@@ -214,6 +214,55 @@ def get_health_trend(
     date_values = [r.scored_at for r in records]
     result = analyze_health_trend(score_values, date_values)
     return HealthTrendOut(**result)
+
+
+@router.get("/trajectory", response_model=HealthTrajectoryOut)
+def get_health_trajectory(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Get health trajectory analysis with treatment correlations.
+
+    Computes trend direction, rate of change, projected next score,
+    and identifies which treatments correlate with health improvements.
+    """
+    field = _get_field(farm_id, field_id, db)
+
+    records = (
+        db.query(HealthScore)
+        .filter(HealthScore.field_id == field_id)
+        .order_by(HealthScore.scored_at.asc())
+        .all()
+    )
+    health_data = [
+        {"id": r.id, "score": r.score, "scored_at": r.scored_at}
+        for r in records
+    ]
+
+    treatments = (
+        db.query(TreatmentRecord)
+        .filter(TreatmentRecord.field_id == field_id)
+        .order_by(TreatmentRecord.applied_at.asc())
+        .all()
+    )
+    treatment_data = [
+        {
+            "id": t.id,
+            "tratamiento": t.tratamiento,
+            "problema": t.problema,
+            "applied_at": t.applied_at,
+        }
+        for t in treatments
+    ]
+
+    result = compute_health_trajectory(health_data, treatment_data)
+
+    return HealthTrajectoryOut(
+        field_id=field_id,
+        scores=[HealthScoreOut.model_validate(r) for r in records],
+        **result,
+    )
 
 
 @router.get("/{score_id}", response_model=HealthScoreOut)

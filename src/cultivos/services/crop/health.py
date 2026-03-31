@@ -382,3 +382,69 @@ def analyze_health_trend(
         "projection": projection,
         "data_points": n,
     }
+
+
+def compute_health_trajectory(
+    health_records: list[dict],
+    treatment_records: list[dict],
+) -> dict:
+    """Compute health trajectory with treatment correlation.
+
+    Args:
+        health_records: list of {"id": int, "score": float, "scored_at": datetime}
+            sorted oldest-first
+        treatment_records: list of {"id": int, "tratamiento": str, "problema": str,
+            "applied_at": datetime | None} sorted by applied_at
+
+    Returns:
+        dict with trend, rate_of_change, projection, data_points,
+        current_score, score_range, treatment_links
+    """
+    scores = [r["score"] for r in health_records]
+    dates = [r["scored_at"] for r in health_records]
+
+    # Trend analysis (reuse existing function)
+    trend_result = analyze_health_trend(scores, dates)
+
+    current_score = scores[-1] if scores else None
+    score_range = {
+        "min": round(min(scores), 1) if scores else 0.0,
+        "max": round(max(scores), 1) if scores else 0.0,
+    }
+
+    # Correlate treatments with health changes
+    treatment_links = []
+    for tr in treatment_records:
+        applied = tr.get("applied_at")
+        if not applied:
+            continue
+
+        # Find closest health score BEFORE and AFTER treatment application
+        before_score = None
+        after_score = None
+        for hr in health_records:
+            if hr["scored_at"] <= applied:
+                before_score = hr["score"]
+            elif after_score is None and hr["scored_at"] > applied:
+                after_score = hr["score"]
+
+        if before_score is not None and after_score is not None:
+            treatment_links.append({
+                "treatment_id": tr["id"],
+                "tratamiento": tr["tratamiento"],
+                "problema": tr["problema"],
+                "applied_at": applied,
+                "health_before": round(before_score, 1),
+                "health_after": round(after_score, 1),
+                "delta": round(after_score - before_score, 1),
+            })
+
+    return {
+        "trend": trend_result["trend"],
+        "rate_of_change": trend_result["rate_of_change"],
+        "projection": trend_result["projection"],
+        "data_points": trend_result["data_points"],
+        "current_score": current_score,
+        "score_range": score_range,
+        "treatment_links": treatment_links,
+    }

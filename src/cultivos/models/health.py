@@ -36,3 +36,27 @@ class HealthTrendOut(BaseModel):
     rate_of_change: float  # slope per observation interval
     projection: float | None  # projected next score (0-100), None if insufficient data
     data_points: int
+
+
+class TreatmentLink(BaseModel):
+    """A treatment that correlates with a health score change."""
+    treatment_id: int
+    tratamiento: str
+    problema: str
+    applied_at: datetime | None
+    health_before: float
+    health_after: float
+    delta: float  # positive = improvement
+
+
+class HealthTrajectoryOut(BaseModel):
+    """Health trajectory analysis with trend, rate, projection, and treatment correlations."""
+    field_id: int
+    trend: str  # improving, stable, declining, insufficient_data
+    rate_of_change: float
+    projection: float | None
+    data_points: int
+    current_score: float | None
+    score_range: dict  # {"min": float, "max": float}
+    treatment_links: list[TreatmentLink]
+    scores: list[HealthScoreOut]
