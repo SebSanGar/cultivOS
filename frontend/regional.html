@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Inteligencia Regional</title>
+    <meta name="description" content="Vista regional de inteligencia agricola — agregados por estado con cultivos, tratamientos, alertas estacionales y metodos ancestrales.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/regional" class="nav-tab intel-tab active">Regional</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- REGIONAL INTELLIGENCE -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Inteligencia Regional</h1>
+            <p class="intel-subtitle">Agregados por estado — granjas, cultivos, tratamientos, alertas estacionales y metodos ancestrales</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="regional-state-filter" class="intel-select" onchange="filterByState()">
+                <option value="">Todas las regiones</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regional-stat-regions">--</div>
+            <div class="intel-stat-label">Regiones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regional-stat-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regional-stat-fields">--</div>
+            <div class="intel-stat-label">Campos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="regional-stat-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="regional-empty" class="intel-empty" style="display:none;">
+        No hay datos regionales disponibles. Agregue granjas con informacion de estado para ver la inteligencia regional.
+    </div>
+
+    <!-- Regions container -->
+    <div id="regional-regions" class="intel-grid" style="display:none;"></div>
+
+</main>
+
+<script src="/regional.js"></script>
+</body>
+</html>

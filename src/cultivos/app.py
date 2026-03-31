@@ -348,6 +348,11 @@ def create_app() -> FastAPI:
             """Treatment effectiveness report — cross-farm before/after health deltas."""
             return FileResponse(frontend_dir / "efectividad.html")
 
+        @app.get("/regional")
+        async def serve_regional():
+            """Regional intelligence — aggregated farm data by state."""
+            return FileResponse(frontend_dir / "regional.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
