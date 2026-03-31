@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Linea de Acciones</title>
+    <meta name="description" content="Linea de acciones unificada — calendario de 7 dias con acciones recomendadas por prioridad.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/acciones" class="nav-tab intel-tab active">Acciones</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ACTION TIMELINE -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Linea de Acciones</h1>
+            <p class="intel-subtitle">Calendario de acciones recomendadas — irrigacion, tratamientos, monitoreo — ordenadas por prioridad</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="actions-farm-select" class="intel-select" onchange="loadFieldsForActions()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="actions-field-select" class="intel-select" onchange="loadActionTimeline()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadActionTimeline()">Analizar</button>
+        </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <span class="stat-value" id="actions-stat-total">--</span>
+            <span class="stat-label">Acciones</span>
+        </div>
+        <div class="intel-stat">
+            <span class="stat-value" id="actions-stat-priority">--</span>
+            <span class="stat-label">Prioridad Alta</span>
+        </div>
+        <div class="intel-stat">
+            <span class="stat-value" id="actions-stat-weather">--</span>
+            <span class="stat-label">Lluvia (mm)</span>
+        </div>
+    </div>
+
+    <!-- Date display -->
+    <div style="text-align:center; margin-bottom: 1.2rem;">
+        <span id="actions-date" class="intel-subtitle" style="font-size:0.95rem;"></span>
+    </div>
+
+    <!-- Weather summary -->
+    <div id="actions-weather" class="intel-card" style="display:none; margin-bottom:1.5rem;">
+        <h3 style="margin-bottom:0.5rem;">Pronostico del Clima</h3>
+        <div id="actions-weather-body"></div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="actions-empty" class="intel-empty-state">
+        <p>Seleccione una granja y un campo para ver las acciones recomendadas.</p>
+    </div>
+
+    <!-- Action cards -->
+    <div id="actions-content" style="display:none;">
+        <div id="actions-list" class="intel-grid"></div>
+    </div>
+</main>
+
+<script src="/actions.js"></script>
+</body>
+</html>
