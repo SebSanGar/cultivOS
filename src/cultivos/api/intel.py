@@ -21,6 +21,7 @@ from cultivos.models.intel import (
     IntelCarbonSummaryOut,
     IntelEconomicsOut,
     IntelSummaryOut,
+    RegionalSummaryOut,
     SeasonalOut,
     SensorFusionOverviewOut,
     SoilTrendsOut,
@@ -35,6 +36,7 @@ from cultivos.services.intelligence.analytics import (
     compute_batch_health,
     compute_carbon_summary,
     compute_economics_summary,
+    compute_regional_summary,
     compute_seasonal_performance,
     compute_sensor_fusion_overview,
     compute_soil_trends,
@@ -137,6 +139,16 @@ def intel_anomalies(
 ):
     """Detect and return fields with anomalous health scores or unusual trend changes."""
     return compute_anomalies(db)
+
+
+@router.get("/regional-summary", response_model=RegionalSummaryOut)
+def intel_regional_summary(
+    state: Optional[str] = None,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate intelligence across all farms in a region — crop performance, treatment success, seasonal patterns."""
+    return compute_regional_summary(db, state=state)
 
 
 @router.get("/tek-validation", response_model=TEKValidationOut)

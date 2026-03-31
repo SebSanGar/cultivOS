@@ -884,3 +884,131 @@ def compute_sensor_fusion_overview(db: Session) -> dict:
         "total_contradictions": total_contradictions,
         "fields": field_entries,
     }
+
+
+def compute_regional_summary(db: Session, state: Optional[str] = None) -> dict:
+    """Aggregate intelligence by region (state).
+
+    Groups farms by state, computes per-region:
+    - Farm/field counts, total hectares
+    - Average health score (latest per field)
+    - Crop type distribution
+    - Treatment stats + top treatments
+    - Current seasonal alerts from TEK calendar
+    - Ancestral method usage count
+    """
+    from cultivos.services.intelligence.seasonal_calendar import generate_seasonal_alerts
+
+    query = db.query(Farm)
+    if state:
+        query = query.filter(Farm.state == state)
+    farms = query.all()
+
+    if not farms:
+        return {"regions": []}
+
+    # Group farms by (state, country)
+    groups: dict[tuple[str, str], list[Farm]] = {}
+    for farm in farms:
+        key = (farm.state or "Unknown", farm.country or "MX")
+        groups.setdefault(key, []).append(farm)
+
+    regions = []
+    for (region_state, country), region_farms in sorted(groups.items()):
+        farm_ids = [f.id for f in region_farms]
+        fields = db.query(Field).filter(Field.farm_id.in_(farm_ids)).all()
+        field_ids = [f.id for f in fields]
+
+        # Total hectares
+        total_hectares = round(sum(f.hectares or 0 for f in fields), 1)
+
+        # Avg health from latest score per field
+        latest_scores: list[float] = []
+        for field in fields:
+            latest_hs = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id == field.id)
+                .order_by(HealthScore.scored_at.desc())
+                .first()
+            )
+            if latest_hs:
+                latest_scores.append(latest_hs.score)
+
+        avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
+
+        # Crop distribution
+        crop_groups: dict[str, list[Field]] = {}
+        for field in fields:
+            crop = field.crop_type or "desconocido"
+            crop_groups.setdefault(crop, []).append(field)
+
+        crop_distribution = [
+            {
+                "crop_type": crop,
+                "field_count": len(crop_fields),
+                "total_hectares": round(sum(f.hectares or 0 for f in crop_fields), 1),
+            }
+            for crop, crop_fields in sorted(crop_groups.items())
+        ]
+
+        # Treatment stats
+        treatments = []
+        if field_ids:
+            treatments = (
+                db.query(TreatmentRecord)
+                .filter(TreatmentRecord.field_id.in_(field_ids))
+                .all()
+            )
+
+        treatment_count = len(treatments)
+
+        # Top treatments by frequency
+        treatment_groups: dict[str, list[TreatmentRecord]] = {}
+        for tr in treatments:
+            treatment_groups.setdefault(tr.tratamiento, []).append(tr)
+
+        top_treatments = sorted(
+            [
+                {
+                    "tratamiento": name,
+                    "application_count": len(recs),
+                    "organic": all(r.organic for r in recs),
+                }
+                for name, recs in treatment_groups.items()
+            ],
+            key=lambda x: x["application_count"],
+            reverse=True,
+        )[:5]
+
+        # Ancestral methods count
+        ancestral_methods_count = sum(
+            1 for tr in treatments if tr.ancestral_method_name
+        )
+
+        # Seasonal alerts (from TEK calendar)
+        alerts = generate_seasonal_alerts()
+        seasonal_alerts = [
+            {
+                "crop": a["crop"],
+                "alert_type": a["alert_type"],
+                "message": a["message"],
+                "season": a["season"],
+            }
+            for a in alerts
+        ]
+
+        regions.append({
+            "state": region_state,
+            "country": country,
+            "farm_count": len(region_farms),
+            "field_count": len(fields),
+            "total_hectares": total_hectares,
+            "avg_health": avg_health,
+            "crop_distribution": crop_distribution,
+            "treatment_count": treatment_count,
+            "top_treatments": top_treatments,
+            "seasonal_alerts": seasonal_alerts,
+            "ancestral_methods_count": ancestral_methods_count,
+        })
+
+    return {"regions": regions}

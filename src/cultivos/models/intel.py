@@ -217,3 +217,43 @@ class SensorFusionOverviewOut(BaseModel):
     avg_confidence: float = 0
     total_contradictions: int = 0
     fields: list[FusionFieldEntry] = []
+
+
+# ── Regional intelligence summary ───────────────────────────────────
+
+
+class CropDistributionEntry(BaseModel):
+    crop_type: str
+    field_count: int
+    total_hectares: float
+
+
+class TopTreatmentEntry(BaseModel):
+    tratamiento: str
+    application_count: int
+    organic: bool
+
+
+class SeasonalAlertEntry(BaseModel):
+    crop: str
+    alert_type: str
+    message: str
+    season: str
+
+
+class RegionalSummaryEntry(BaseModel):
+    state: str
+    country: str
+    farm_count: int
+    field_count: int
+    total_hectares: float
+    avg_health: Optional[float] = None
+    crop_distribution: list[CropDistributionEntry] = []
+    treatment_count: int = 0
+    top_treatments: list[TopTreatmentEntry] = []
+    seasonal_alerts: list[SeasonalAlertEntry] = []
+    ancestral_methods_count: int = 0
+
+
+class RegionalSummaryOut(BaseModel):
+    regions: list[RegionalSummaryEntry] = []
