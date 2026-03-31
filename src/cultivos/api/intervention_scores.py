@@ -61,6 +61,8 @@ def get_intervention_scores(
             "costo_estimado_mxn": t.costo_estimado_mxn,
             "urgencia": t.urgencia,
             "health_score_used": t.health_score_used,
+            "ancestral_method_name": t.ancestral_method_name,
+            "ancestral_base_cientifica": t.ancestral_base_cientifica,
         }
         for t in treatments
     ]

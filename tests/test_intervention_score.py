@@ -275,3 +275,134 @@ def test_api_no_treatments_returns_empty(client, db, farm_and_field):
     resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/intervention-scores")
     assert resp.status_code == 200
     assert resp.json() == []
+
+
+# --- Ancestral method matching tests (#110) ---
+
+
+def test_ancestral_treatment_ranked_higher():
+    """A treatment linked to an ancestral method should rank higher than identical without."""
+    base = {
+        "problema": "Materia organica baja",
+        "tratamiento": "Composta",
+        "costo_estimado_mxn": 2000,
+        "urgencia": "media",
+        "health_score_used": 50.0,
+    }
+    treatments = [
+        {**base, "tratamiento": "Composta convencional"},
+        {
+            **base,
+            "tratamiento": "Composta milpa (ancestral)",
+            "ancestral_method_name": "Milpa intercropping",
+            "ancestral_base_cientifica": "Polyculture nitrogen fixation",
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=5.0)
+    # Ancestral treatment should rank first due to boost
+    assert results[0]["tratamiento"] == "Composta milpa (ancestral)"
+    assert results[0]["intervention_score"] > results[1]["intervention_score"]
+
+
+def test_ancestral_fields_present_in_response():
+    """Scored treatments should include metodo_ancestral and scientific_basis fields."""
+    treatments = [
+        {
+            "problema": "pH alcalino",
+            "tratamiento": "Azufre elemental",
+            "costo_estimado_mxn": 800,
+            "urgencia": "media",
+            "health_score_used": 50.0,
+            "ancestral_method_name": "Xok k'iin calendar",
+            "ancestral_base_cientifica": "3500 years of Yucatec Maya practice",
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=5.0)
+    assert results[0]["metodo_ancestral"] == "Xok k'iin calendar"
+    assert results[0]["scientific_basis"] == "3500 years of Yucatec Maya practice"
+
+
+def test_no_ancestral_fields_are_none():
+    """Treatments without ancestral data should have None for ancestral fields."""
+    treatments = [
+        {
+            "problema": "Test",
+            "tratamiento": "Tratamiento",
+            "costo_estimado_mxn": 1000,
+            "urgencia": "media",
+            "health_score_used": 50.0,
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=5.0)
+    assert results[0]["metodo_ancestral"] is None
+    assert results[0]["scientific_basis"] is None
+
+
+def test_api_ancestral_fields_in_response(client, db, farm_and_field):
+    """API should return metodo_ancestral and scientific_basis for ancestral treatments."""
+    farm, field = farm_and_field
+
+    tr = TreatmentRecord(
+        field_id=field.id,
+        health_score_used=45.0,
+        problema="Materia organica baja",
+        causa_probable="Suelo degradado",
+        tratamiento="Milpa companion planting",
+        costo_estimado_mxn=1500,
+        urgencia="alta",
+        prevencion="Mantener cobertura vegetal",
+        organic=True,
+        ancestral_method_name="Milpa intercropping",
+        ancestral_base_cientifica="Polyculture nitrogen fixation validated by FAO",
+    )
+    db.add(tr)
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/intervention-scores")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert data[0]["metodo_ancestral"] == "Milpa intercropping"
+    assert data[0]["scientific_basis"] == "Polyculture nitrogen fixation validated by FAO"
+
+
+def test_api_ancestral_treatment_ranked_higher(client, db, farm_and_field):
+    """API: ancestral-linked treatment should rank above identical non-ancestral."""
+    farm, field = farm_and_field
+
+    # Non-ancestral treatment
+    tr1 = TreatmentRecord(
+        field_id=field.id,
+        health_score_used=50.0,
+        problema="Deficiencia de nitrogeno",
+        causa_probable="Suelo agotado",
+        tratamiento="Te de composta generico",
+        costo_estimado_mxn=2000,
+        urgencia="media",
+        prevencion="Rotar cultivos",
+        organic=True,
+    )
+    # Ancestral treatment (same cost, urgencia, health)
+    tr2 = TreatmentRecord(
+        field_id=field.id,
+        health_score_used=50.0,
+        problema="Deficiencia de nitrogeno",
+        causa_probable="Suelo agotado",
+        tratamiento="Milpa frijol-maiz (ancestral)",
+        costo_estimado_mxn=2000,
+        urgencia="media",
+        prevencion="Intercalado tradicional",
+        organic=True,
+        ancestral_method_name="Milpa intercropping",
+        ancestral_base_cientifica="Legume nitrogen fixation — 3500 years practice",
+    )
+    db.add_all([tr1, tr2])
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/intervention-scores")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 2
+    # Ancestral should be first
+    assert data[0]["metodo_ancestral"] == "Milpa intercropping"
+    assert data[1]["metodo_ancestral"] is None

@@ -24,6 +24,8 @@ class ScoredTreatment(TypedDict):
     success_probability: float
     cost_per_hectare: float
     intervention_score: float
+    metodo_ancestral: str | None
+    scientific_basis: str | None
 
 
 _URGENCY_DELTA: dict[str, float] = {
@@ -33,6 +35,7 @@ _URGENCY_DELTA: dict[str, float] = {
 }
 
 _DEFAULT_SUCCESS_PROB = 0.5
+_ANCESTRAL_BOOST = 1.25  # 25% score boost for ancestral-method-linked treatments
 
 
 def score_treatments(
@@ -47,6 +50,7 @@ def score_treatments(
     - expected_health_delta: based on urgency and how low the current health is
     - success_probability: from farmer feedback if available, else 0.5 default
     - cost_per_hectare: MXN / hectares (lower is better for the farmer)
+    - ancestral boost: treatments linked to ancestral methods get a 1.25x multiplier
 
     Returns treatments sorted by intervention_score descending.
     """
@@ -61,6 +65,8 @@ def score_treatments(
         urgencia = t.get("urgencia", "media")
         costo = t.get("costo_estimado_mxn", 0)
         health_used = t.get("health_score_used", 50.0)
+        ancestral_name = t.get("ancestral_method_name") or None
+        ancestral_science = t.get("ancestral_base_cientifica") or None
 
         # Expected health delta: based on urgency + room for improvement
         base_delta = _URGENCY_DELTA.get(urgencia, 12.0)
@@ -87,6 +93,10 @@ def score_treatments(
             expected_health_delta * success_probability * cost_factor, 2
         )
 
+        # Ancestral method boost: indigenous wisdom synergy
+        if ancestral_name:
+            intervention_score = round(intervention_score * _ANCESTRAL_BOOST, 2)
+
         scored.append(ScoredTreatment(
             problema=problema,
             tratamiento=t.get("tratamiento", ""),
@@ -97,6 +107,8 @@ def score_treatments(
             success_probability=success_probability,
             cost_per_hectare=cost_per_hectare,
             intervention_score=intervention_score,
+            metodo_ancestral=ancestral_name,
+            scientific_basis=ancestral_science,
         ))
 
     scored.sort(key=lambda x: x["intervention_score"], reverse=True)

@@ -1,5 +1,7 @@
 """Pydantic schemas for intervention scoring endpoints."""
 
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -13,3 +15,5 @@ class InterventionScoreOut(BaseModel):
     success_probability: float
     cost_per_hectare: float
     intervention_score: float
+    metodo_ancestral: Optional[str] = None
+    scientific_basis: Optional[str] = None
