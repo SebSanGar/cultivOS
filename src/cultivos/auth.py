@@ -37,6 +37,8 @@ def verify_password(password: str, hashed: str) -> bool:
 def create_access_token(user_id: int, username: str, role: str, farm_id: Optional[int] = None) -> str:
     """Create a simple JWT-like token (HS256)."""
     settings = get_settings()
+    if not settings.jwt_secret_key or len(settings.jwt_secret_key) < 16:
+        raise HTTPException(status_code=500, detail="Server misconfigured: JWT secret not set")
     payload = {
         "sub": user_id,
         "username": username,
@@ -55,6 +57,8 @@ def create_access_token(user_id: int, username: str, role: str, farm_id: Optiona
 def decode_access_token(token: str) -> dict:
     """Decode and verify a JWT token. Raises HTTPException on failure."""
     settings = get_settings()
+    if not settings.jwt_secret_key or len(settings.jwt_secret_key) < 16:
+        raise HTTPException(status_code=500, detail="Server misconfigured: JWT secret not set")
     parts = token.split(".")
     if len(parts) != 3:
         raise HTTPException(status_code=401, detail="Invalid token format")

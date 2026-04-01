@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
+from cultivos.auth import require_role
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 
@@ -11,7 +12,7 @@ router = APIRouter(prefix="/api/demo", tags=["demo"])
 
 
 @router.post("/seed")
-def seed_demo(db: Session = Depends(get_db)):
+def seed_demo(db: Session = Depends(get_db), _user=Depends(require_role("admin"))):
     """Seed the database with realistic Jalisco demo data. Idempotent."""
     from scripts.seed_demo import seed_demo_data, _demo_exists, DEMO_MARKER
 

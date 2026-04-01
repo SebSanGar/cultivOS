@@ -68,9 +68,15 @@ def test_login_js_served(client):
 
 def test_login_api_success(client, db):
     """Successful login returns a JWT token."""
-    client.post("/api/auth/register", json={
-        "username": "testuser", "password": "secret123", "role": "admin"
-    })
+    # Admin users created directly in DB (admin self-registration blocked)
+    from cultivos.db.models import User
+    from cultivos.auth import hash_password
+    # admin user created directly in DB
+
+
+    if not db.query(User).filter(User.username == "testuser").first():
+        db.add(User(username="testuser", hashed_password=hash_password("secret123"), role="admin"))
+        db.commit()
     resp = client.post("/api/auth/login", json={
         "username": "testuser", "password": "secret123"
     })

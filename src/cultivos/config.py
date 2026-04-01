@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     db_url: str = "sqlite:///cultivos.db"
 
     # Auth
-    jwt_secret_key: str = "change-me-in-production-use-a-random-32-char-string"
+    jwt_secret_key: str = ""  # MUST be set via JWT_SECRET_KEY env var in production
     auth_enabled: bool = False  # Set True in production
 
     # WhatsApp

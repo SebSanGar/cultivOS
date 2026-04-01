@@ -53,11 +53,15 @@ def client(app, db):
 
 
 @pytest.fixture
-def admin_headers(client):
-    """Register an admin user and return auth headers for test convenience."""
-    client.post("/api/auth/register", json={
-        "username": "testadmin", "password": "secret123", "role": "admin"
-    })
+def admin_headers(client, db):
+    """Create an admin user directly in DB (API registration blocks admin role) and return auth headers."""
+    from cultivos.db.models import User
+    from cultivos.auth import hash_password
+    existing = db.query(User).filter(User.username == "testadmin").first()
+    if not existing:
+        user = User(username="testadmin", hashed_password=hash_password("secret123"), role="admin")
+        db.add(user)
+        db.commit()
     resp = client.post("/api/auth/login", json={
         "username": "testadmin", "password": "secret123"
     })

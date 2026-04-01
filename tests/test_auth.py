@@ -40,8 +40,20 @@ def seed_farm_other(db):
     return farm
 
 
-def _register_user(client, username, password, role, farm_id=None):
-    """Helper: register a user and return the response."""
+def _register_user(client, username, password, role, farm_id=None, db=None):
+    """Helper: register a user and return the response.
+
+    Admin role cannot be self-registered via API (security fix), so admin
+    users are created directly in the database for tests.
+    """
+    if role == "admin" and db is not None:
+        from cultivos.db.models import User
+        from cultivos.auth import hash_password
+        if not db.query(User).filter(User.username == username).first():
+            user = User(username=username, hashed_password=hash_password(password), role="admin", farm_id=farm_id)
+            db.add(user)
+            db.commit()
+        return type("R", (), {"status_code": 201, "json": lambda: {"username": username, "role": "admin"}})()
     body = {"username": username, "password": password, "role": role}
     if farm_id is not None:
         body["farm_id"] = farm_id
@@ -62,7 +74,7 @@ def _auth_header(token):
 class TestAdminCanCreateFarm:
     def test_admin_can_create_farm(self, client, db):
         """role=admin -> POST /api/farms returns 201"""
-        _register_user(client, "admin1", "secret123", "admin")
+        _register_user(client, "admin1", "secret123", "admin", db=db)
         token = _login_user(client, "admin1", "secret123")
         resp = client.post("/api/farms", json={
             "name": "Admin Farm", "owner_name": "Admin", "location_lat": 20.6,

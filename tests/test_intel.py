@@ -17,11 +17,17 @@ def enable_auth():
 
 
 @pytest.fixture
-def admin_token(client):
+def admin_token(client, db):
     """Register admin and return token."""
-    client.post("/api/auth/register", json={
-        "username": "inteladmin", "password": "secret123", "role": "admin"
-    })
+    # Admin users created directly in DB (admin self-registration blocked)
+    from cultivos.db.models import User
+    from cultivos.auth import hash_password
+    # admin user created directly in DB
+
+
+    if not db.query(User).filter(User.username == "inteladmin").first():
+        db.add(User(username="inteladmin", hashed_password=hash_password("secret123"), role="admin"))
+        db.commit()
     resp = client.post("/api/auth/login", json={
         "username": "inteladmin", "password": "secret123"
     })

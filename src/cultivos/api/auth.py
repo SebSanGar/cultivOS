@@ -46,6 +46,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 def register(request: Request, body: UserRegister, db: Session = Depends(get_db)):
     """Register a new user account. Returns the created user or 409 if the username is taken."""
     _check_rate_limit(request, max_calls=5, window_seconds=60)
+    # Block admin self-registration — admins must be created by existing admins
+    if body.role == "admin":
+        raise HTTPException(status_code=403, detail="Admin accounts cannot be self-registered")
     existing = db.query(User).filter(User.username == body.username).first()
     if existing:
         raise HTTPException(status_code=409, detail="Username already taken")

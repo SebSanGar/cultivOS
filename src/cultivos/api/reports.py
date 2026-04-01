@@ -1,5 +1,7 @@
 """Farm report export endpoints (PDF and CSV)."""
 
+import re
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
@@ -8,6 +10,11 @@ from sqlalchemy import func
 
 from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
+
+
+def _safe_filename(name: str) -> str:
+    """Sanitize a string for use in Content-Disposition filename."""
+    return re.sub(r'[^a-zA-Z0-9_-]', '', name.replace(" ", "_"))[:50]
 from cultivos.services.reports import generate_farm_export_csv, generate_farm_report_pdf
 
 router = APIRouter(prefix="/api/farms/{farm_id}", tags=["reports"])
@@ -77,7 +84,7 @@ def generate_farm_report(farm_id: int, db: Session = Depends(get_db)):
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="reporte_{farm.name.replace(" ", "_")}.pdf"',
+            "Content-Disposition": f'attachment; filename="reporte_{_safe_filename(farm.name)}.pdf"',
         },
     )
 
