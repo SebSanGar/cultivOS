@@ -339,3 +339,15 @@ def field_seasonal(
     """Return seasonal performance breakdown for a field, optionally filtered by year."""
     field = _get_field(farm_id, field_id, db)
     return compute_seasonal_performance(db, field.id, year=year)
+
+
+@router.get("/data-completeness-global")
+def get_global_data_completeness(
+    state: Optional[str] = None,
+    db: Session = Depends(get_db),
+    _user=Depends(require_role("admin")),
+):
+    """Return data completeness summary across all farms."""
+    from cultivos.services.intelligence.completeness import compute_global_data_completeness
+
+    return compute_global_data_completeness(db, state=state)

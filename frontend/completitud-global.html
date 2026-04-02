@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Completitud Global de Datos</title>
+    <meta name="description" content="Dashboard global de completitud de datos — cobertura por fuente de datos en todas las granjas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/completitud" class="nav-tab intel-tab">Completitud</a></li>
+            <li><a href="/completitud-global" class="nav-tab intel-tab active">Completitud Global</a></li>
+            <li><a href="/regional" class="nav-tab intel-tab">Regional</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Completitud Global de Datos</h1>
+            <p class="intel-subtitle">Cobertura de datos en todas las granjas — identifique que fuentes faltan para mejorar las recomendaciones de Cerebro</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="cg-state-filter" class="intel-select" onchange="filterByState()">
+                <option value="">Todos los estados</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip" id="cg-stats">
+        <div class="stat-card"><div class="stat-value" id="cg-stat-farms">--</div><div class="stat-label">Granjas</div></div>
+        <div class="stat-card"><div class="stat-value" id="cg-stat-avg">--</div><div class="stat-label">Completitud promedio</div></div>
+        <div class="stat-card"><div class="stat-value" id="cg-stat-complete">--</div><div class="stat-label">Granjas completas (100%)</div></div>
+        <div class="stat-card"><div class="stat-value" id="cg-stat-gaps">--</div><div class="stat-label">Granjas con datos faltantes</div></div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="intel-empty" id="cg-empty" style="display:none;">
+        No hay granjas registradas. Agregue granjas para ver la completitud de datos.
+    </div>
+
+    <!-- Table -->
+    <div id="cg-table-container" class="intel-panel" style="display:none;padding:1.5rem;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead>
+                <tr style="border-bottom:1px solid #333;">
+                    <th style="text-align:left;padding:8px 12px;color:#999;">Granja</th>
+                    <th style="text-align:left;padding:8px 12px;color:#999;">Estado</th>
+                    <th style="text-align:center;padding:8px 12px;color:#999;">Suelo</th>
+                    <th style="text-align:center;padding:8px 12px;color:#999;">NDVI</th>
+                    <th style="text-align:center;padding:8px 12px;color:#999;">Termica</th>
+                    <th style="text-align:center;padding:8px 12px;color:#999;">Tratamientos</th>
+                    <th style="text-align:center;padding:8px 12px;color:#999;">Clima</th>
+                    <th style="text-align:right;padding:8px 12px;color:#999;">Puntaje</th>
+                </tr>
+            </thead>
+            <tbody id="cg-table-body"></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/completitud-global.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>

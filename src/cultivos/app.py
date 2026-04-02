@@ -333,6 +333,11 @@ def create_app() -> FastAPI:
             """Data completeness dashboard — coverage by data source per farm."""
             return FileResponse(frontend_dir / "completitud.html")
 
+        @app.get("/completitud-global")
+        async def serve_completeness_global():
+            """Global data completeness — cross-farm data gap overview."""
+            return FileResponse(frontend_dir / "completitud-global.html")
+
         @app.get("/alertas-estacionales")
         async def serve_seasonal_alerts():
             """Seasonal alerts — Ancestral calendar-based crop alerts for current season."""
