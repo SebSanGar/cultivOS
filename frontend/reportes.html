@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Reportes de Portafolio</title>
+    <meta name="description" content="Genera y descarga reportes PDF de portafolio multi-granja con salud, carbono e impacto economico.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/regional" class="nav-tab intel-tab">Regional</a></li>
+            <li><a href="/reportes" class="nav-tab intel-tab active">Reportes</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- REPORTES -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Reportes de Portafolio</h1>
+            <p class="intel-subtitle">Genera reportes PDF con datos de salud, carbono e impacto economico de tus granjas</p>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="reportes-stat-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="reportes-stat-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="reportes-stat-fields">--</div>
+            <div class="intel-stat-label">Parcelas</div>
+        </div>
+    </div>
+
+    <!-- Report Form -->
+    <div class="intel-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+        <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1.5rem;">Configurar Reporte</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: end;">
+            <!-- Farm multi-select -->
+            <div>
+                <label for="reportes-farm-select" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Granjas</label>
+                <select id="reportes-farm-select" class="intel-select" multiple style="width: 100%; min-height: 80px;">
+                    <option value="">Cargando granjas...</option>
+                </select>
+                <small style="color: var(--text-secondary, #999); font-size: 0.75rem;">Ctrl+click para seleccionar varias</small>
+            </div>
+
+            <!-- Date range -->
+            <div>
+                <label for="reportes-date-start" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Fecha inicio</label>
+                <input type="date" id="reportes-date-start" class="intel-select" style="width: 100%;">
+                <div style="margin-top: 0.75rem;">
+                    <label for="reportes-date-end" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Fecha fin</label>
+                    <input type="date" id="reportes-date-end" class="intel-select" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Generate button -->
+            <div>
+                <button id="reportes-generate-btn" onclick="generateReport()" class="intel-btn" style="width: 100%; padding: 0.75rem 1.5rem; background: var(--accent-green, #00c896); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    Generar Reporte PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download section -->
+    <div id="reportes-download" class="intel-card" style="padding: 2rem; display: none;">
+        <h3 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1rem;">Reporte Generado</h3>
+        <p id="reportes-download-status" style="color: var(--text-secondary, #999); margin-bottom: 1rem;">Tu reporte esta listo para descargar.</p>
+        <a id="reportes-download-link" href="#" download="reporte_portafolio.pdf" class="intel-btn" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent-green, #00c896); color: #000; border-radius: 8px; font-weight: 600; text-decoration: none;">
+            Descargar PDF
+        </a>
+    </div>
+
+    <!-- Empty state -->
+    <div id="reportes-empty" class="intel-empty" style="display: none; text-align: center; padding: 3rem; color: var(--text-secondary, #999);">
+        <p>No hay granjas registradas. Agrega granjas primero para generar reportes.</p>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="intel-footer" style="text-align: center; padding: 2rem; color: var(--text-secondary, #666); font-size: 0.8rem;">
+    <p>cultivOS — Inteligencia agricola para agricultura regenerativa</p>
+</footer>
+
+<script src="/reportes.js"></script>
+</body>
+</html>
