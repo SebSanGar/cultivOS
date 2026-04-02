@@ -369,6 +369,11 @@ def create_app() -> FastAPI:
             """Crop phenology calendar — Gantt-like growth stage timelines per crop."""
             return FileResponse(frontend_dir / "calendario.html")
 
+        @app.get("/mapa")
+        async def serve_mapa():
+            """Interactive field map — farm locations, field boundaries, health-coded polygons."""
+            return FileResponse(frontend_dir / "mapa.html")
+
         @app.get("/efectividad-global")
         async def serve_efectividad_global():
             """Global treatment effectiveness dashboard — bar charts, crop/region filters."""
