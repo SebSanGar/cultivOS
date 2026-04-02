@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Resumen Ejecutivo</title>
+    <meta name="description" content="Resumen ejecutivo del portafolio — hectareas totales, salud promedio, proyeccion de retorno para inversionistas y comite FODECIJAL.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/clima" class="nav-tab intel-tab">Clima</a></li>
+            <li><a href="/comparar" class="nav-tab intel-tab">Comparar</a></li>
+            <li><a href="/resumen" class="nav-tab intel-tab active">Resumen</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- EXECUTIVE PORTFOLIO SUMMARY -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Resumen Ejecutivo del Portafolio</h1>
+            <p class="intel-subtitle">Vista consolidada para inversionistas y comite FODECIJAL</p>
+        </div>
+        <div class="intel-header-actions">
+            <button class="intel-btn intel-btn-export" onclick="exportPortfolio()">Exportar CSV</button>
+            <button class="intel-btn" onclick="loadAll()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="intel-stats-strip" id="resumen-kpis">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-fields">--</div>
+            <div class="intel-stat-label">Campos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-hectares">--</div>
+            <div class="intel-stat-label">Hectareas Totales</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-health">--</div>
+            <div class="intel-stat-label">Salud Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-savings">--</div>
+            <div class="intel-stat-label">Ahorro Total (MXN)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="kpi-roi">--</div>
+            <div class="intel-stat-label">ROI Proyectado</div>
+        </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="intel-grid">
+        <!-- Health distribution -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Distribucion de Salud</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="resumen-health-dist" height="280"></canvas>
+            </div>
+        </div>
+
+        <!-- Savings breakdown -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Desglose de Ahorro (MXN)</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="resumen-savings-chart" height="280"></canvas>
+            </div>
+        </div>
+
+        <!-- ROI projection -->
+        <div class="intel-panel" style="grid-column: 1 / -1;">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Proyeccion de Retorno (3 anos)</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="resumen-roi-chart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farm portfolio table -->
+    <div class="intel-panel" style="margin-top:1.5rem;">
+        <div class="intel-panel-header">
+            <h2 class="intel-panel-title">Portafolio de Granjas</h2>
+            <span class="intel-badge" id="resumen-farm-count">0</span>
+        </div>
+        <div class="intel-panel-body" style="overflow-x:auto;">
+            <table class="intel-table" style="width:100%;" id="resumen-table">
+                <thead><tr>
+                    <th>Granja</th>
+                    <th>Municipio</th>
+                    <th>Hectareas</th>
+                    <th>Salud</th>
+                    <th>Ahorro (MXN)</th>
+                    <th>Campos</th>
+                </tr></thead>
+                <tbody id="resumen-tbody">
+                    <tr><td colspan="6"><div class="loading"><div class="loading-spinner"></div>Cargando...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="/auth-guard.js"></script>
+<script src="/resumen.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>

@@ -379,6 +379,21 @@ def create_app() -> FastAPI:
             """Global treatment effectiveness dashboard — bar charts, crop/region filters."""
             return FileResponse(frontend_dir / "efectividad-global.html")
 
+        @app.get("/clima")
+        async def serve_clima():
+            """Weather dashboard — 7-day forecast, temperature/rainfall charts, drought alerts per farm."""
+            return FileResponse(frontend_dir / "clima.html")
+
+        @app.get("/comparar")
+        async def serve_comparar():
+            """Farm comparison tool — side-by-side health, yield, soil quality for 2-3 farms."""
+            return FileResponse(frontend_dir / "comparar.html")
+
+        @app.get("/resumen")
+        async def serve_resumen():
+            """Executive portfolio summary — total hectares, avg health, ROI projection for investors."""
+            return FileResponse(frontend_dir / "resumen.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Clima</title>
+    <meta name="description" content="Panel climatico — pronostico de 7 dias, graficas de temperatura y lluvia, alertas de sequia por granja.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/clima" class="nav-tab intel-tab active">Clima</a></li>
+            <li><a href="/comparar" class="nav-tab intel-tab">Comparar</a></li>
+            <li><a href="/resumen" class="nav-tab intel-tab">Resumen</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- WEATHER DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Panel Climatico</h1>
+            <p class="intel-subtitle">Pronostico de 7 dias, temperatura, lluvia y alertas de sequia por granja</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="clima-farm-select" class="intel-select" onchange="loadWeather()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <button class="intel-btn" onclick="loadWeather()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Current conditions -->
+    <div class="intel-stats-strip" id="clima-current">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="clima-temp">--</div>
+            <div class="intel-stat-label">Temperatura (C)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="clima-humidity">--</div>
+            <div class="intel-stat-label">Humedad (%)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="clima-wind">--</div>
+            <div class="intel-stat-label">Viento (km/h)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="clima-rain">--</div>
+            <div class="intel-stat-label">Lluvia (mm)</div>
+        </div>
+    </div>
+
+    <!-- Drought alert banner -->
+    <div id="clima-drought-alert" class="intel-panel" style="display:none; border-left: 4px solid #ef4444; margin-bottom: 1.5rem;">
+        <div class="intel-panel-header">
+            <h2 class="intel-panel-title" style="color: #ef4444;">Alerta de Sequia</h2>
+        </div>
+        <div class="intel-panel-body">
+            <p id="clima-drought-msg" style="color: #fca5a5;"></p>
+        </div>
+    </div>
+
+    <!-- Charts grid -->
+    <div class="intel-grid">
+        <!-- 7-day forecast cards -->
+        <div class="intel-panel" style="grid-column: 1 / -1;">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Pronostico de 7 Dias</h2>
+            </div>
+            <div class="intel-panel-body">
+                <div id="clima-forecast" style="display:flex; gap:1rem; overflow-x:auto; padding:0.5rem 0;">
+                    <div class="loading"><div class="loading-spinner"></div>Seleccione una granja para ver el pronostico</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temperature chart -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Temperatura (7 dias)</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="clima-temp-chart" height="260"></canvas>
+            </div>
+        </div>
+
+        <!-- Rainfall chart -->
+        <div class="intel-panel">
+            <div class="intel-panel-header">
+                <h2 class="intel-panel-title">Precipitacion (7 dias)</h2>
+            </div>
+            <div class="intel-panel-body">
+                <canvas id="clima-rain-chart" height="260"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical records table -->
+    <div class="intel-panel" style="margin-top: 1.5rem;">
+        <div class="intel-panel-header">
+            <h2 class="intel-panel-title">Historial Climatico</h2>
+        </div>
+        <div class="intel-panel-body">
+            <div id="clima-history" style="overflow-x:auto;">
+                <div class="intel-empty">Seleccione una granja para ver el historial</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/auth-guard.js"></script>
+<script src="/clima.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>
