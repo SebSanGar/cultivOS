@@ -358,6 +358,11 @@ def create_app() -> FastAPI:
             """Portfolio report generation — multi-farm PDF reports with health, carbon, and economics."""
             return FileResponse(frontend_dir / "reportes.html")
 
+        @app.get("/efectividad-global")
+        async def serve_efectividad_global():
+            """Global treatment effectiveness dashboard — bar charts, crop/region filters."""
+            return FileResponse(frontend_dir / "efectividad-global.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

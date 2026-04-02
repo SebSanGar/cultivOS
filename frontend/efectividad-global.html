@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Efectividad Global de Tratamientos</title>
+    <meta name="description" content="Dashboard global de efectividad de tratamientos — comparacion antes/despues, grafica de barras por tratamiento, filtros por cultivo y region.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="intel-body">
+
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/efectividad" class="nav-tab intel-tab">Efectividad</a></li>
+            <li><a href="/efectividad-global" class="nav-tab intel-tab active">Efectividad Global</a></li>
+            <li><a href="/regional" class="nav-tab intel-tab">Regional</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Efectividad Global de Tratamientos</h1>
+            <p class="intel-subtitle">Comparacion antes/despues de salud por tratamiento — grafica de barras con delta de salud, filtros por cultivo y region</p>
+        </div>
+        <div class="intel-header-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <select id="effg-crop-filter" class="intel-select" onchange="filterEffectiveness()">
+                <option value="">Todos los cultivos</option>
+            </select>
+            <select id="effg-region-filter" class="intel-select" onchange="filterEffectiveness()">
+                <option value="">Todas las regiones</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip" id="effg-stats">
+        <div class="stat-card"><div class="stat-value" id="effg-stat-treatments">--</div><div class="stat-label">Tratamientos evaluados</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-applications">--</div><div class="stat-label">Aplicaciones totales</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-avg-delta">--</div><div class="stat-label">Delta promedio</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-best">--</div><div class="stat-label">Mejor tratamiento</div></div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="intel-empty" id="effg-empty" style="display:none;">
+        No hay datos de efectividad disponibles. Aplique tratamientos y registre resultados de salud para ver este analisis.
+    </div>
+
+    <!-- Chart -->
+    <div id="effg-chart-container" class="intel-panel" style="display:none;padding:1.5rem;margin-bottom:1.5rem;">
+        <h2 style="color:#ccc;margin:0 0 1rem 0;font-size:1rem;">Delta de Salud por Tratamiento</h2>
+        <canvas id="effg-bar-chart" height="300"></canvas>
+    </div>
+
+    <!-- Treatment cards -->
+    <div id="effg-cards" class="intel-grid" style="display:none;"></div>
+</main>
+
+<script src="/efectividad-global.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>
