@@ -119,6 +119,7 @@ def create_app() -> FastAPI:
             {"name": "completeness", "description": "Data completeness scoring per farm and field"},
             {"name": "status", "description": "Platform status, uptime, and data freshness overview"},
             {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
+            {"name": "phenology", "description": "Crop phenology calendar and growth stage timelines"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
         ],
     )
@@ -362,6 +363,11 @@ def create_app() -> FastAPI:
         async def serve_reportes():
             """Portfolio report generation — multi-farm PDF reports with health, carbon, and economics."""
             return FileResponse(frontend_dir / "reportes.html")
+
+        @app.get("/calendario")
+        async def serve_calendario():
+            """Crop phenology calendar — Gantt-like growth stage timelines per crop."""
+            return FileResponse(frontend_dir / "calendario.html")
 
         @app.get("/efectividad-global")
         async def serve_efectividad_global():

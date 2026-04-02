@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Calendario Fenologico</title>
+    <meta name="description" content="Calendario fenologico de cultivos — linea de tiempo con etapas de crecimiento por cultivo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .cal-legend {
+            display: flex; gap: 1.5rem; flex-wrap: wrap;
+            padding: 1rem 0; margin-bottom: 1rem;
+        }
+        .cal-legend-item {
+            display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;
+        }
+        .cal-legend-swatch {
+            width: 16px; height: 16px; border-radius: 3px;
+        }
+        .cal-timeline-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .cal-crop-label {
+            min-width: 100px; font-weight: 600; font-size: 0.9rem;
+            text-transform: capitalize;
+        }
+        .cal-bar-track {
+            flex: 1; display: flex; height: 32px; border-radius: 6px;
+            overflow: hidden; background: var(--bg-tertiary, #1a2332);
+        }
+        .cal-bar-segment {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 600; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 0 4px; transition: opacity 0.2s;
+        }
+        .cal-bar-segment:hover { opacity: 0.85; }
+        .cal-stage-siembra      { background: #6366f1; }
+        .cal-stage-vegetativo    { background: #22c55e; }
+        .cal-stage-floracion     { background: #f59e0b; }
+        .cal-stage-fructificacion { background: #ef4444; }
+        .cal-stage-cosecha       { background: #8b5cf6; }
+        .cal-day-axis {
+            display: flex; justify-content: space-between;
+            font-size: 0.75rem; color: var(--text-secondary, #94a3b8);
+            padding: 0.25rem 0 0; margin-left: 108px;
+        }
+        .cal-field-stage {
+            display: inline-block; padding: 0.25rem 0.75rem;
+            border-radius: 12px; font-size: 0.85rem; font-weight: 600;
+            background: var(--bg-tertiary, #1a2332);
+        }
+    </style>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/rotacion" class="nav-tab intel-tab">Rotacion</a></li>
+            <li><a href="/calendario" class="nav-tab intel-tab active">Calendario</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- CALENDARIO FENOLOGICO -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Calendario Fenologico</h1>
+            <p class="intel-subtitle">Etapas de crecimiento por cultivo — linea de tiempo visual con dias de cada fase</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="cal-farm-select" class="intel-select" onchange="loadFieldsForCalendario()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="cal-field-select" class="intel-select" onchange="loadFieldGrowthStage()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cal-crop-count">--</div>
+            <div class="intel-stat-label">Cultivos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cal-total-days">--</div>
+            <div class="intel-stat-label">Dias Max Ciclo</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cal-field-stage">--</div>
+            <div class="intel-stat-label">Etapa Actual (campo)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="cal-empty" class="intel-empty" style="display:none;">
+        Cargando calendario fenologico de todos los cultivos soportados...
+    </div>
+
+    <!-- Field growth stage detail (shown when field selected) -->
+    <div id="cal-field-detail" class="intel-card" style="display:none; margin-bottom:1.5rem;">
+        <h3>Estado del Campo Seleccionado</h3>
+        <div id="cal-field-info"></div>
+    </div>
+
+    <!-- Content -->
+    <div id="cal-content" style="display:none;">
+        <!-- Legend -->
+        <div class="cal-legend">
+            <div class="cal-legend-item"><div class="cal-legend-swatch cal-stage-siembra"></div>Siembra</div>
+            <div class="cal-legend-item"><div class="cal-legend-swatch cal-stage-vegetativo"></div>Vegetativo</div>
+            <div class="cal-legend-item"><div class="cal-legend-swatch cal-stage-floracion"></div>Floracion</div>
+            <div class="cal-legend-item"><div class="cal-legend-swatch cal-stage-fructificacion"></div>Fructificacion</div>
+            <div class="cal-legend-item"><div class="cal-legend-swatch cal-stage-cosecha"></div>Cosecha</div>
+        </div>
+
+        <!-- All crops timeline -->
+        <div id="cal-all-crops"></div>
+
+        <!-- Day axis -->
+        <div id="cal-day-axis" class="cal-day-axis"></div>
+    </div>
+
+    <!-- Timeline container (used by tests) -->
+    <div id="cal-timeline"></div>
+</main>
+
+<script src="/calendario.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>
