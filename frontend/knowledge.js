@@ -159,10 +159,34 @@ async function handleIdentify(e) {
     renderIdentifyResults(matches);
 }
 
+/* ── Stats ── */
+
+function updateStats(ancestral, crops, fertilizers, diseases) {
+    const el = id => document.getElementById(id);
+    if (el('stat-ancestrales')) el('stat-ancestrales').textContent = (ancestral || []).length;
+    if (el('stat-cultivos')) el('stat-cultivos').textContent = (crops || []).length;
+    if (el('stat-fertilizantes')) el('stat-fertilizantes').textContent = (fertilizers || []).length;
+    if (el('stat-enfermedades')) el('stat-enfermedades').textContent = (diseases || []).length;
+}
+
 /* ── Search / Filter ── */
 
-function filterCards(query) {
-    const q = query.toLowerCase().trim();
+function filterAll() {
+    const searchInput = document.getElementById('search-input');
+    const categoryFilter = document.getElementById('category-filter');
+    const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+    const cat = categoryFilter ? categoryFilter.value : '';
+
+    // Filter sections by category
+    document.querySelectorAll('.knowledge-section[data-category]').forEach(section => {
+        if (cat && section.getAttribute('data-category') !== cat) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = '';
+        }
+    });
+
+    // Filter cards by search text
     document.querySelectorAll('.knowledge-card').forEach(card => {
         const text = card.getAttribute('data-search') || '';
         card.style.display = text.includes(q) ? '' : 'none';
@@ -172,9 +196,14 @@ function filterCards(query) {
 /* ── Init ── */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const searchInput = document.getElementById('knowledge-search');
+    const searchInput = document.getElementById('search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', e => filterCards(e.target.value));
+        searchInput.addEventListener('input', filterAll);
+    }
+
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', filterAll);
     }
 
     const identifyForm = document.getElementById('identify-form');
@@ -193,4 +222,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderCrops(crops);
     renderFertilizers(fertilizers);
     renderDiseases(diseases);
+    updateStats(ancestral, crops, fertilizers, diseases);
 });

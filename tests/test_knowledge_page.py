@@ -18,7 +18,7 @@ def test_knowledge_page_has_search_input(client):
     """Knowledge page has a search input for filtering cards."""
     resp = client.get("/conocimiento")
     html = resp.text
-    assert 'id="knowledge-search"' in html
+    assert 'id="search-input"' in html
 
 
 def test_knowledge_page_has_ancestral_section(client):
@@ -75,7 +75,7 @@ def test_knowledge_js_has_search_filter(client):
     """knowledge.js has a search/filter function."""
     resp = client.get("/knowledge.js")
     js = resp.text
-    assert "filterCards" in js or "knowledge-search" in js
+    assert "filterAll" in js or "search-input" in js
 
 
 # ── CSS ──

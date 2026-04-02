@@ -40,13 +40,31 @@
         </div>
     </div>
 
-    <!-- Search -->
-    <div class="knowledge-search-bar">
-        <input type="text" id="knowledge-search" placeholder="Buscar metodos, cultivos, fertilizantes..." class="knowledge-search-input">
+    <!-- Search + Category Filter -->
+    <div class="knowledge-search-bar" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input type="text" id="search-input" placeholder="Buscar metodos, cultivos, fertilizantes..." class="knowledge-search-input" style="flex:1;min-width:220px;">
+        <select id="category-filter" class="intel-select" style="min-width:180px;">
+            <option value="">Todas las categorias</option>
+            <option value="ancestral">Metodos ancestrales</option>
+            <option value="cultivo">Cultivos</option>
+            <option value="fertilizante">Fertilizantes naturales</option>
+            <option value="enfermedad">Enfermedades y plagas</option>
+        </select>
     </div>
 
+    <!-- Stats strip -->
+    <div class="stats-strip" id="knowledge-stats">
+        <div class="stat-card"><div class="stat-value" id="stat-ancestrales">--</div><div class="stat-label">Metodos ancestrales</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-cultivos">--</div><div class="stat-label">Cultivos</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-fertilizantes">--</div><div class="stat-label">Fertilizantes</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-enfermedades">--</div><div class="stat-label">Enfermedades</div></div>
+    </div>
+
+    <!-- All knowledge cards -->
+    <div id="knowledge-cards">
+
     <!-- Ancestral Methods -->
-    <section class="knowledge-section">
+    <section class="knowledge-section" data-category="ancestral">
         <h2 class="knowledge-section-title">Metodos Ancestrales</h2>
         <div id="ancestral-cards" class="knowledge-grid">
             <p class="knowledge-placeholder">Cargando metodos ancestrales...</p>
@@ -54,7 +72,7 @@
     </section>
 
     <!-- Crop Types -->
-    <section class="knowledge-section">
+    <section class="knowledge-section" data-category="cultivo">
         <h2 class="knowledge-section-title">Cultivos</h2>
         <div id="crop-cards" class="knowledge-grid">
             <p class="knowledge-placeholder">Cargando cultivos...</p>
@@ -62,7 +80,7 @@
     </section>
 
     <!-- Natural Fertilizers -->
-    <section class="knowledge-section">
+    <section class="knowledge-section" data-category="fertilizante">
         <h2 class="knowledge-section-title">Fertilizantes Naturales</h2>
         <div id="fertilizer-cards" class="knowledge-grid">
             <p class="knowledge-placeholder">Cargando fertilizantes...</p>
@@ -70,12 +88,14 @@
     </section>
 
     <!-- Diseases -->
-    <section class="knowledge-section">
+    <section class="knowledge-section" data-category="enfermedad">
         <h2 class="knowledge-section-title">Enfermedades y Plagas</h2>
         <div id="disease-cards" class="knowledge-grid">
             <p class="knowledge-placeholder">Cargando enfermedades...</p>
         </div>
     </section>
+
+    </div><!-- /knowledge-cards -->
 
     <!-- Identify Disease Form -->
     <section class="knowledge-section">
