@@ -394,6 +394,11 @@ def create_app() -> FastAPI:
             """Executive portfolio summary — total hectares, avg health, ROI projection for investors."""
             return FileResponse(frontend_dir / "resumen.html")
 
+        @app.get("/whatsapp-demo")
+        async def serve_whatsapp_demo():
+            """WhatsApp demo simulator — mock farmer-AI chat interaction in Spanish."""
+            return FileResponse(frontend_dir / "whatsapp-demo.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

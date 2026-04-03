@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — WhatsApp Demo</title>
+    <meta name="description" content="Simulador de WhatsApp — interaccion agricultor e IA cultivOS en espanol, notas de voz, reportes de salud y tratamientos organicos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* WhatsApp chat theme — scoped to this page */
+        .whatsapp-chat {
+            max-width: 420px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0b141a;
+            border: 1px solid #233138;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .chat-header {
+            background: #1f2c33;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #233138;
+        }
+        .chat-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--accent, #00c896);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff;
+        }
+        .chat-contact-name { font-weight: 600; color: #e9edef; font-size: 15px; }
+        .chat-contact-status { font-size: 12px; color: #8696a0; }
+        .chat-messages {
+            padding: 16px 12px;
+            min-height: 400px;
+            max-height: 520px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: #0b141a;
+        }
+        .chat-bubble {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.45;
+            position: relative;
+        }
+        .msg-farmer {
+            align-self: flex-end;
+            background: #005c4b;
+            color: #e9edef;
+            border-top-right-radius: 2px;
+        }
+        .msg-ai {
+            align-self: flex-start;
+            background: #1f2c33;
+            color: #e9edef;
+            border-top-left-radius: 2px;
+        }
+        .msg-time {
+            display: block;
+            text-align: right;
+            font-size: 11px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 4px;
+        }
+        /* Voice message */
+        .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+        }
+        .voice-play {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #e9edef;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .voice-waveform {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 24px;
+        }
+        .waveform-bar {
+            width: 3px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 2px;
+        }
+        .voice-duration {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            flex-shrink: 0;
+        }
+        /* Typing indicator */
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #1f2c33;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border-top-left-radius: 2px;
+        }
+        .typing-indicator.visible { display: flex; gap: 4px; align-items: center; }
+        .typing-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #8696a0;
+            animation: typingPulse 1.2s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingPulse {
+            0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1); }
+        }
+        /* Chat input bar */
+        .chat-input {
+            background: #1f2c33;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #233138;
+        }
+        .message-input {
+            flex: 1;
+            background: #2a3942;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #e9edef;
+            outline: none;
+        }
+        .message-input::placeholder { color: #8696a0; }
+        .send-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--accent, #00c896);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .send-btn:hover { opacity: 0.85; }
+        /* Demo controls */
+        .demo-controls {
+            text-align: center;
+            margin-top: 24px;
+        }
+        .demo-controls button {
+            background: var(--accent, #00c896);
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .demo-controls button:hover { opacity: 0.85; }
+        .demo-status {
+            font-size: 13px;
+            color: #8696a0;
+            margin-top: 8px;
+        }
+        /* Explanation section */
+        .demo-explanation {
+            max-width: 420px;
+            margin: 32px auto 0;
+            padding: 20px;
+            background: #141414;
+            border-radius: 10px;
+            border: 1px solid #233138;
+        }
+        .demo-explanation h3 { color: #e9edef; margin: 0 0 12px; font-size: 15px; }
+        .demo-explanation ol { color: #8696a0; font-size: 13px; line-height: 1.8; padding-left: 20px; margin: 0; }
+        .demo-explanation li strong { color: #e9edef; }
+    </style>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/whatsapp-demo" class="nav-tab intel-tab active">WhatsApp</a></li>
+            <li><a href="/resumen" class="nav-tab intel-tab">Resumen</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- WHATSAPP DEMO -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Simulador WhatsApp</h1>
+            <p class="intel-subtitle">Interaccion entre agricultor e inteligencia artificial cultivOS — notas de voz, reportes de salud y tratamientos organicos</p>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div id="chat-container" class="whatsapp-chat">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-avatar">cO</div>
+            <div>
+                <div class="chat-contact-name">cultivOS Asistente</div>
+                <div class="chat-contact-status">En linea</div>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="chat-messages">
+            <!-- Typing indicator (hidden by default) -->
+            <div id="typing-indicator" class="typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="chat-input">
+            <input id="message-input" class="message-input" type="text" placeholder="Escribe un mensaje..." readonly>
+            <button id="send-btn" class="send-btn" onclick="runDemo()" title="Iniciar demo">&#9654;</button>
+        </div>
+    </div>
+
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <button onclick="runDemo()">Iniciar Conversacion</button>
+        <div id="demo-status" class="demo-status">Presiona para ver la interaccion completa</div>
+    </div>
+
+    <!-- Explanation -->
+    <div class="demo-explanation">
+        <h3>Flujo de la conversacion</h3>
+        <ol>
+            <li><strong>Agricultor envia nota de voz</strong> — reporta observacion del campo</li>
+            <li><strong>IA procesa y responde</strong> — genera reporte de salud del cultivo</li>
+            <li><strong>Agricultor pregunta por tratamiento</strong> — solicita recomendacion</li>
+            <li><strong>IA recomienda solucion organica</strong> — tratamiento basado en conocimiento ancestral y datos de sensores</li>
+        </ol>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="cultivos-footer">
+    <div class="footer-inner">
+        <span>cultivOS &copy; 2026 — Agricultura regenerativa con inteligencia artificial</span>
+    </div>
+</footer>
+
+<script src="/whatsapp-demo.js"></script>
+</body>
+</html>
