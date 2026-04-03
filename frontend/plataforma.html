@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Plataforma cultivOS</title>
+    <meta name="description" content="Vista general de todas las herramientas de inteligencia agricola — analisis, drones, suelo, clima, reportes y mas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/mapa" class="nav-tab intel-tab">Mapa</a></li>
+            <li><a href="/plataforma" class="nav-tab intel-tab active">Plataforma</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- PLATFORM OVERVIEW -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Plataforma cultivOS</h1>
+            <p class="intel-subtitle">Vista general de todas las herramientas de inteligencia agricola de precision</p>
+        </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div id="platform-stats" class="kpi-strip">
+        <div class="kpi-card">
+            <div class="kpi-label">Paginas</div>
+            <div class="kpi-value" id="stat-pages">50</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Endpoints API</div>
+            <div class="kpi-value" id="stat-endpoints">100+</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Tests</div>
+            <div class="kpi-value" id="stat-tests">2,067</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Fuentes de Datos</div>
+            <div class="kpi-value" id="stat-sources">6</div>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="filter-row" style="margin-bottom:1.5rem;">
+        <input type="text" id="search-input" class="filter-select" placeholder="Buscar pagina..." style="flex:1;max-width:400px;">
+        <select id="category-filter" class="filter-select" onchange="filterPages()">
+            <option value="all">Filtrar por categoria</option>
+            <option value="inteligencia">Inteligencia Cerebro</option>
+            <option value="cultivos">Cultivos y Suelo</option>
+            <option value="drone">Drone y Mapas</option>
+            <option value="alertas">Alertas y Clima</option>
+            <option value="reportes">Reportes y Datos</option>
+            <option value="operaciones">Operaciones</option>
+        </select>
+    </div>
+
+    <!-- Category Grid -->
+    <div id="category-grid">
+
+        <!-- Inteligencia Cerebro -->
+        <section class="category-section" data-category="inteligencia">
+            <h2 class="category-title">Inteligencia Cerebro</h2>
+            <p class="category-desc">Analisis de salud de cultivos impulsado por IA, deteccion de anomalias, prediccion de rendimiento y validacion de conocimiento ancestral</p>
+            <div class="page-cards">
+                <a href="/intel" class="page-card">
+                    <div class="page-card-title">Panel de Inteligencia</div>
+                    <div class="page-card-desc">Vista general de inteligencia agricola con KPIs de salud, suelo y clima</div>
+                </a>
+                <a href="/inteligencia" class="page-card">
+                    <div class="page-card-title">Inteligencia de Campo</div>
+                    <div class="page-card-desc">12 secciones Cerebro unificadas por campo: NDVI, termica, suelo, microbioma, clima y mas</div>
+                </a>
+                <a href="/anomalias" class="page-card">
+                    <div class="page-card-title">Deteccion de Anomalias</div>
+                    <div class="page-card-desc">Alertas proactivas de caidas de salud y NDVI con severidad y recomendaciones</div>
+                </a>
+                <a href="/enfermedades" class="page-card">
+                    <div class="page-card-title">Riesgo de Enfermedades</div>
+                    <div class="page-card-desc">Evaluacion de riesgo fitosanitario desde NDVI, termica y clima con identificacion de sintomas</div>
+                </a>
+                <a href="/fusion" class="page-card">
+                    <div class="page-card-title">Fusion de Sensores</div>
+                    <div class="page-card-desc">Validacion cruzada de datos NDVI, termica, suelo y clima con deteccion de contradicciones</div>
+                </a>
+                <a href="/rendimiento" class="page-card">
+                    <div class="page-card-title">Prediccion de Rendimiento</div>
+                    <div class="page-card-desc">Estimacion de kg/ha con banda de incertidumbre y factores contribuyentes</div>
+                </a>
+                <a href="/tek" class="page-card">
+                    <div class="page-card-title">Conocimiento Ancestral (TEK)</div>
+                    <div class="page-card-desc">Validacion de metodos tradicionales con puntajes de confianza y retroalimentacion</div>
+                </a>
+                <a href="/recomendaciones" class="page-card">
+                    <div class="page-card-title">Recomendaciones</div>
+                    <div class="page-card-desc">Tratamientos organicos y regenerativos recomendados por la IA segun condiciones del campo</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Cultivos y Suelo -->
+        <section class="category-section" data-category="cultivos">
+            <h2 class="category-title">Cultivos y Suelo</h2>
+            <p class="category-desc">Monitoreo de salud de cultivos, analisis de suelo, microbioma, carbono y practicas regenerativas</p>
+            <div class="page-cards">
+                <a href="/campo" class="page-card">
+                    <div class="page-card-title">Detalle de Campo</div>
+                    <div class="page-card-desc">Vista detallada por campo con NDVI, termica, suelo, tratamientos y tendencias</div>
+                </a>
+                <a href="/historial-suelo" class="page-card">
+                    <div class="page-card-title">Historial de Suelo</div>
+                    <div class="page-card-desc">Tendencias historicas de pH, materia organica, nitrogeno y otros indicadores</div>
+                </a>
+                <a href="/importar-suelo" class="page-card">
+                    <div class="page-card-title">Importar Datos de Suelo</div>
+                    <div class="page-card-desc">Carga masiva de analisis de suelo via CSV</div>
+                </a>
+                <a href="/microbioma" class="page-card">
+                    <div class="page-card-title">Salud del Microbioma</div>
+                    <div class="page-card-desc">Respiracion, ratio hongos/bacterias y biomasa de carbono del suelo</div>
+                </a>
+                <a href="/termica" class="page-card">
+                    <div class="page-card-title">Estres Termico</div>
+                    <div class="page-card-desc">Mapa de calor y zonas de estres hidrico detectadas por sensor termico</div>
+                </a>
+                <a href="/carbono" class="page-card">
+                    <div class="page-card-title">Secuestro de Carbono</div>
+                    <div class="page-card-desc">Tendencia SOC, equivalente CO2e, y reporte de carbono por campo</div>
+                </a>
+                <a href="/regenerativo" class="page-card">
+                    <div class="page-card-title">Scorecard Regenerativo</div>
+                    <div class="page-card-desc">Puntaje 0-100 de practicas regenerativas: tratamientos organicos, metodos ancestrales, tendencia de suelo</div>
+                </a>
+                <a href="/rotacion" class="page-card">
+                    <div class="page-card-title">Rotacion de Cultivos</div>
+                    <div class="page-card-desc">Planner de rotacion por temporada con beneficios al suelo</div>
+                </a>
+                <a href="/estaciones" class="page-card">
+                    <div class="page-card-title">Comparacion Estacional</div>
+                    <div class="page-card-desc">Metricas temporal vs secas con deltas de rendimiento</div>
+                </a>
+                <a href="/linea-tiempo" class="page-card">
+                    <div class="page-card-title">Linea de Tiempo de Salud</div>
+                    <div class="page-card-desc">Evolucion cronologica de la salud del campo con eventos marcados</div>
+                </a>
+                <a href="/conocimiento" class="page-card">
+                    <div class="page-card-title">Base de Conocimiento</div>
+                    <div class="page-card-desc">Fertilizantes organicos, enfermedades, metodos ancestrales y tipos de cultivo</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Drone y Mapas -->
+        <section class="category-section" data-category="drone">
+            <h2 class="category-title">Drone y Mapas</h2>
+            <p class="category-desc">Flota de drones, planificacion de misiones, registro de vuelos y mapa interactivo de campos</p>
+            <div class="page-cards">
+                <a href="/flota" class="page-card">
+                    <div class="page-card-title">Flota de Drones</div>
+                    <div class="page-card-desc">Estado de 3 drones: bateria, horas de vuelo, mantenimiento y cobertura</div>
+                </a>
+                <a href="/mision" class="page-card">
+                    <div class="page-card-title">Planificador de Mision</div>
+                    <div class="page-card-desc">Generador de rutas de vuelo con waypoints, tiempo y estimacion de bateria</div>
+                </a>
+                <a href="/vuelos" class="page-card">
+                    <div class="page-card-title">Registro de Vuelos</div>
+                    <div class="page-card-desc">Historial de misiones completadas con duracion, cobertura y datos capturados</div>
+                </a>
+                <a href="/mapa" class="page-card">
+                    <div class="page-card-title">Mapa Interactivo</div>
+                    <div class="page-card-desc">Mapa Leaflet con marcadores de granjas y poligonos de campos por salud</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Alertas y Clima -->
+        <section class="category-section" data-category="alertas">
+            <h2 class="category-title">Alertas y Clima</h2>
+            <p class="category-desc">Pronosticos climaticos, alertas SMS, configuracion de notificaciones y calendario de alertas estacionales</p>
+            <div class="page-cards">
+                <a href="/clima" class="page-card">
+                    <div class="page-card-title">Dashboard del Clima</div>
+                    <div class="page-card-desc">Pronostico, temperatura, humedad y precipitacion para cada granja</div>
+                </a>
+                <a href="/alertas-estacionales" class="page-card">
+                    <div class="page-card-title">Alertas Estacionales</div>
+                    <div class="page-card-desc">Calendario TEK con alertas por temporada de siembra, heladas y sequia</div>
+                </a>
+                <a href="/config-alertas" class="page-card">
+                    <div class="page-card-title">Configurar Alertas</div>
+                    <div class="page-card-desc">Umbrales y canales de notificacion por granja y tipo de alerta</div>
+                </a>
+                <a href="/notificaciones" class="page-card">
+                    <div class="page-card-title">Centro de Notificaciones</div>
+                    <div class="page-card-desc">Todas las notificaciones del sistema en orden cronologico</div>
+                </a>
+                <a href="/historial-alertas" class="page-card">
+                    <div class="page-card-title">Historial de Alertas</div>
+                    <div class="page-card-desc">Linea de tiempo de alertas SMS y sistema con filtros por granja, tipo y severidad</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Reportes y Datos -->
+        <section class="category-section" data-category="reportes">
+            <h2 class="category-title">Reportes y Datos</h2>
+            <p class="category-desc">Exportaciones CSV/PDF, reportes multi-granja, comparativas de efectividad y completitud de datos</p>
+            <div class="page-cards">
+                <a href="/exportar" class="page-card">
+                    <div class="page-card-title">Centro de Exportacion</div>
+                    <div class="page-card-desc">Descarga de datos en CSV y PDF por categoria: salud, suelo, tratamientos, vuelos</div>
+                </a>
+                <a href="/reportes" class="page-card">
+                    <div class="page-card-title">Generador de Reportes</div>
+                    <div class="page-card-desc">Reportes PDF multi-granja con salud, carbono y resumen economico</div>
+                </a>
+                <a href="/comparar" class="page-card">
+                    <div class="page-card-title">Comparar Granjas</div>
+                    <div class="page-card-desc">Comparacion lado a lado de metricas entre granjas del portafolio</div>
+                </a>
+                <a href="/completitud-global" class="page-card">
+                    <div class="page-card-title">Completitud Global</div>
+                    <div class="page-card-desc">Tabla cross-granja con Si/No por tipo de dato y brecha de datos</div>
+                </a>
+                <a href="/efectividad-global" class="page-card">
+                    <div class="page-card-title">Efectividad Global</div>
+                    <div class="page-card-desc">Efectividad de tratamientos con deltas de salud y tasas de exito</div>
+                </a>
+                <a href="/impacto-economico" class="page-card">
+                    <div class="page-card-title">Impacto Economico</div>
+                    <div class="page-card-desc">ROI, ahorro en insumos y proyeccion financiera por granja</div>
+                </a>
+                <a href="/api-docs" class="page-card">
+                    <div class="page-card-title">Documentacion API</div>
+                    <div class="page-card-desc">Referencia completa de endpoints REST con ejemplos de uso</div>
+                </a>
+                <a href="/resumen" class="page-card">
+                    <div class="page-card-title">Resumen Ejecutivo</div>
+                    <div class="page-card-desc">Resumen de 30 segundos del portafolio para presentaciones</div>
+                </a>
+                <a href="/regional" class="page-card">
+                    <div class="page-card-title">Inteligencia Regional</div>
+                    <div class="page-card-desc">Agregados por estado: distribucion de cultivos, tratamientos, alertas</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Operaciones -->
+        <section class="category-section" data-category="operaciones">
+            <h2 class="category-title">Operaciones</h2>
+            <p class="category-desc">Acciones diarias, calendario de fenologia, riego, intervenciones prioritarias y demos</p>
+            <div class="page-cards">
+                <a href="/acciones" class="page-card">
+                    <div class="page-card-title">Acciones del Dia</div>
+                    <div class="page-card-desc">Lista priorizada de tratamientos, etapas de crecimiento y alertas TEK para hoy</div>
+                </a>
+                <a href="/calendario" class="page-card">
+                    <div class="page-card-title">Calendario Fenologico</div>
+                    <div class="page-card-desc">Diagrama Gantt de 11 tipos de cultivo con 5 etapas de crecimiento</div>
+                </a>
+                <a href="/riego" class="page-card">
+                    <div class="page-card-title">Programacion de Riego</div>
+                    <div class="page-card-desc">Horario semanal optimizado con urgencia y ahorro de agua estimado</div>
+                </a>
+                <a href="/intervenciones" class="page-card">
+                    <div class="page-card-title">Ranking de Intervenciones</div>
+                    <div class="page-card-desc">Prioridad de tratamientos con puntaje compuesto y metodos ancestrales</div>
+                </a>
+                <a href="/efectividad" class="page-card">
+                    <div class="page-card-title">Efectividad por Campo</div>
+                    <div class="page-card-desc">Resultados antes/despues de tratamientos aplicados por campo</div>
+                </a>
+                <a href="/completitud" class="page-card">
+                    <div class="page-card-title">Completitud por Campo</div>
+                    <div class="page-card-desc">Que datos tenemos y que falta recolectar por campo</div>
+                </a>
+                <a href="/gestion" class="page-card">
+                    <div class="page-card-title">Gestion de Granjas</div>
+                    <div class="page-card-desc">Crear, editar y administrar granjas y campos del portafolio</div>
+                </a>
+                <a href="/whatsapp-demo" class="page-card">
+                    <div class="page-card-title">Demo WhatsApp</div>
+                    <div class="page-card-desc">Simulador de chat agricultor-IA con notas de voz y tratamientos organicos</div>
+                </a>
+                <a href="/recorrido" class="page-card">
+                    <div class="page-card-title">Recorrido Guiado</div>
+                    <div class="page-card-desc">Tour interactivo de la plataforma para nuevos usuarios</div>
+                </a>
+                <a href="/estado" class="page-card">
+                    <div class="page-card-title">Estado del Sistema</div>
+                    <div class="page-card-desc">Salud del servidor, servicios activos y version de la plataforma</div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script src="/plataforma.js"></script>
+</body>
+</html>

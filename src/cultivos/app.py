@@ -437,6 +437,11 @@ def create_app() -> FastAPI:
             """Alert history timeline — chronological view of all alerts per farm."""
             return FileResponse(frontend_dir / "historial-alertas.html")
 
+        @app.get("/plataforma")
+        async def serve_plataforma():
+            """Platform overview — categorized grid of all cultivOS pages and features."""
+            return FileResponse(frontend_dir / "plataforma.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
