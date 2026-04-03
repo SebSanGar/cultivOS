@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Flota de Drones</title>
+    <meta name="description" content="Estado de la flota de drones — Mavic 3 Multispectral, Mavic 3 Thermal, Agras T100. Bateria, horas de vuelo, mantenimiento y cobertura.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/mision" class="nav-tab intel-tab">Mision</a></li>
+            <li><a href="/flota" class="nav-tab intel-tab active">Flota</a></li>
+            <li><a href="/mapa" class="nav-tab intel-tab">Mapa</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- FLEET STATUS -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Flota de Drones</h1>
+            <p class="intel-subtitle">Estado operativo, mantenimiento y cobertura de cada aeronave en la flota cultivOS</p>
+        </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div id="fleet-stats" class="kpi-strip">
+        <div class="kpi-card">
+            <div class="kpi-label">Drones Totales</div>
+            <div class="kpi-value" id="drones-total">3</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Operativos</div>
+            <div class="kpi-value" id="drones-operativos">3</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Cobertura Total</div>
+            <div class="kpi-value" id="cobertura-total">425 ha/dia</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Inversion Total</div>
+            <div class="kpi-value" id="inversion-total">$792,000 MXN</div>
+        </div>
+    </div>
+
+    <!-- Fleet Cards -->
+    <div id="fleet-cards" class="intel-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+
+        <!-- DJI Mavic 3 Multispectral -->
+        <div class="intel-card drone-card" data-drone="mavic_multispectral">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 class="card-title">DJI Mavic 3 Multispectral</h3>
+                <span class="status-badge status-operativo">Operativo</span>
+            </div>
+            <p class="card-purpose">Mapeo NDVI con 4 bandas espectrales + RGB. Genera mapas de salud de cultivos con precision centimetrica.</p>
+
+            <div class="card-specs" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem;">
+                <div class="spec-item">
+                    <span class="spec-label">Bateria</span>
+                    <div class="spec-value">
+                        <div class="battery-bar" style="width:100%; height:8px; background:#222; border-radius:4px; overflow:hidden;">
+                            <div class="battery-fill" style="width:85%; height:100%; background:#00c896; border-radius:4px;"></div>
+                        </div>
+                        <span>85%</span>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Horas de Vuelo</span>
+                    <span class="spec-value">342 hrs</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Cobertura</span>
+                    <span class="spec-value">200 ha/vuelo</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Mantenimiento</span>
+                    <span class="spec-value">Proximo: 15 Apr 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Ultima Mision</span>
+                    <span class="spec-value">01 Apr 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Costo</span>
+                    <span class="spec-value">$106,000 MXN</span>
+                </div>
+            </div>
+
+            <div class="card-capabilities" style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid rgba(255,255,255,0.08);">
+                <span class="spec-label">Capacidades</span>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem;">
+                    <span class="tag-badge">NDVI</span>
+                    <span class="tag-badge">RGB</span>
+                    <span class="tag-badge">4 bandas</span>
+                    <span class="tag-badge">Ortomosaico</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DJI Mavic 3 Thermal -->
+        <div class="intel-card drone-card" data-drone="mavic_thermal">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 class="card-title">DJI Mavic 3 Thermal</h3>
+                <span class="status-badge status-operativo">Operativo</span>
+            </div>
+            <p class="card-purpose">Deteccion de estres termico con sensor 640x512. Identifica zonas de estres hidrico y anomalias termicas en cultivos.</p>
+
+            <div class="card-specs" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem;">
+                <div class="spec-item">
+                    <span class="spec-label">Bateria</span>
+                    <div class="spec-value">
+                        <div class="battery-bar" style="width:100%; height:8px; background:#222; border-radius:4px; overflow:hidden;">
+                            <div class="battery-fill" style="width:72%; height:100%; background:#f0b429; border-radius:4px;"></div>
+                        </div>
+                        <span>72%</span>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Horas de Vuelo</span>
+                    <span class="spec-value">198 hrs</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Cobertura</span>
+                    <span class="spec-value">150 ha/vuelo</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Mantenimiento</span>
+                    <span class="spec-value">Proximo: 20 Apr 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Ultima Mision</span>
+                    <span class="spec-value">30 Mar 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Costo</span>
+                    <span class="spec-value">$130,000 MXN</span>
+                </div>
+            </div>
+
+            <div class="card-capabilities" style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid rgba(255,255,255,0.08);">
+                <span class="spec-label">Capacidades</span>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem;">
+                    <span class="tag-badge">Termico 640x512</span>
+                    <span class="tag-badge">Estres hidrico</span>
+                    <span class="tag-badge">Anomalias</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DJI Agras T100 -->
+        <div class="intel-card drone-card" data-drone="agras_t100">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 class="card-title">DJI Agras T100</h3>
+                <span class="status-badge status-operativo">Operativo</span>
+            </div>
+            <p class="card-purpose">Aplicacion de precision con tanque de 100L. Aspersion variable guiada por LiDAR, 13-25 ha/hr de cobertura para tratamientos organicos.</p>
+
+            <div class="card-specs" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem;">
+                <div class="spec-item">
+                    <span class="spec-label">Bateria</span>
+                    <div class="spec-value">
+                        <div class="battery-bar" style="width:100%; height:8px; background:#222; border-radius:4px; overflow:hidden;">
+                            <div class="battery-fill" style="width:93%; height:100%; background:#00c896; border-radius:4px;"></div>
+                        </div>
+                        <span>93%</span>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Horas de Vuelo</span>
+                    <span class="spec-value">87 hrs</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Cobertura</span>
+                    <span class="spec-value">75 ha/vuelo</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Mantenimiento</span>
+                    <span class="spec-value">Proximo: 10 Apr 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Ultima Mision</span>
+                    <span class="spec-value">28 Mar 2026</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Costo</span>
+                    <span class="spec-value">$556,000 MXN</span>
+                </div>
+            </div>
+
+            <div class="card-capabilities" style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid rgba(255,255,255,0.08);">
+                <span class="spec-label">Capacidades</span>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem;">
+                    <span class="tag-badge">Aspersion 100L</span>
+                    <span class="tag-badge">LiDAR</span>
+                    <span class="tag-badge">13-25 ha/hr</span>
+                    <span class="tag-badge">Tratamientos organicos</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Fleet Summary -->
+    <div class="intel-card" style="margin-top:1.5rem;">
+        <h3 class="card-title">Resumen Operativo</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1rem;">
+            <div>
+                <span class="spec-label">Baterias Disponibles</span>
+                <span class="spec-value" style="display:block; margin-top:0.25rem;">4 baterias + carga rapida (8-9 min)</span>
+            </div>
+            <div>
+                <span class="spec-label">Horas Productivas/Dia</span>
+                <span class="spec-value" style="display:block; margin-top:0.25rem;">10-12 hrs</span>
+            </div>
+            <div>
+                <span class="spec-label">Tipos de Mision</span>
+                <span class="spec-value" style="display:block; margin-top:0.25rem;">NDVI, Termico, Aspersion, Reconocimiento</span>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/flota.js"></script>
+</body>
+</html>

@@ -394,6 +394,11 @@ def create_app() -> FastAPI:
             """Executive portfolio summary — total hectares, avg health, ROI projection for investors."""
             return FileResponse(frontend_dir / "resumen.html")
 
+        @app.get("/flota")
+        async def serve_flota():
+            """Drone fleet status — battery, flight hours, maintenance, coverage per drone."""
+            return FileResponse(frontend_dir / "flota.html")
+
         @app.get("/whatsapp-demo")
         async def serve_whatsapp_demo():
             """WhatsApp demo simulator — mock farmer-AI chat interaction in Spanish."""
