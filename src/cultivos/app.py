@@ -387,6 +387,11 @@ def create_app() -> FastAPI:
             """Portfolio report generation — multi-farm PDF reports with health, carbon, and economics."""
             return FileResponse(frontend_dir / "reportes.html")
 
+        @app.get("/exportar")
+        async def serve_exportar():
+            """Data export center — CSV and PDF downloads for health, soil, treatments, flights."""
+            return FileResponse(frontend_dir / "exportar.html")
+
         @app.get("/calendario")
         async def serve_calendario():
             """Crop phenology calendar — Gantt-like growth stage timelines per crop."""

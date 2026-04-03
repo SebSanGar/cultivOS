@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Centro de Exportacion</title>
+    <meta name="description" content="Descarga reportes CSV y PDF de salud, suelos, tratamientos y vuelos de tus granjas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/reportes" class="nav-tab intel-tab">Reportes</a></li>
+            <li><a href="/exportar" class="nav-tab intel-tab active">Exportar</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- EXPORTAR -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Centro de Exportacion</h1>
+            <p class="intel-subtitle">Descarga y exporta datos de tus granjas en formato CSV o PDF</p>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exportar-stat-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exportar-stat-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exportar-stat-fields">--</div>
+            <div class="intel-stat-label">Parcelas</div>
+        </div>
+    </div>
+
+    <!-- Export Configuration -->
+    <div class="intel-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+        <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1.5rem;">Configurar Exportacion</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.5rem; align-items: end;">
+            <!-- Farm selector -->
+            <div>
+                <label for="exportar-farm-select" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Granja</label>
+                <select id="exportar-farm-select" class="intel-select" style="width: 100%;">
+                    <option value="">Cargando granjas...</option>
+                </select>
+            </div>
+
+            <!-- Category selector -->
+            <div>
+                <label for="exportar-category-select" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Categoria</label>
+                <select id="exportar-category-select" class="intel-select" style="width: 100%;">
+                    <option value="salud">Salud de parcelas</option>
+                    <option value="suelo">Datos de suelo</option>
+                    <option value="tratamientos">Tratamientos aplicados</option>
+                    <option value="vuelos">Registros de vuelo</option>
+                    <option value="inteligencia">Inteligencia completa</option>
+                </select>
+            </div>
+
+            <!-- Format selector -->
+            <div>
+                <label for="exportar-format-select" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Formato</label>
+                <select id="exportar-format-select" class="intel-select" style="width: 100%;">
+                    <option value="csv">CSV</option>
+                    <option value="pdf">PDF</option>
+                </select>
+            </div>
+
+            <!-- Download button -->
+            <div>
+                <button id="exportar-download-btn" onclick="downloadExport()" class="intel-btn" style="width: 100%; padding: 0.75rem 1.5rem; background: var(--accent-green, #00c896); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    Descargar
+                </button>
+            </div>
+        </div>
+
+        <!-- Date range row -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 1.5rem; margin-top: 1.5rem; align-items: end;">
+            <div>
+                <label for="exportar-date-start" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Fecha inicio</label>
+                <input type="date" id="exportar-date-start" class="intel-select" style="width: 100%;">
+            </div>
+            <div>
+                <label for="exportar-date-end" style="display: block; color: var(--text-secondary, #999); margin-bottom: 0.5rem; font-size: 0.85rem;">Fecha fin</label>
+                <input type="date" id="exportar-date-end" class="intel-select" style="width: 100%;">
+            </div>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- Export Categories Cards -->
+    <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1rem;">Categorias Disponibles</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Health -->
+        <div class="intel-card" style="padding: 1.5rem;">
+            <h3 style="color: var(--accent-green, #00c896); margin-bottom: 0.5rem;">Salud de Parcelas</h3>
+            <p style="color: var(--text-secondary, #999); font-size: 0.85rem; margin-bottom: 1rem;">Scores de salud, tendencias NDVI, estado termico por parcela.</p>
+            <span style="color: var(--text-secondary, #666); font-size: 0.75rem;">Formatos: CSV, PDF</span>
+        </div>
+
+        <!-- Soil -->
+        <div class="intel-card" style="padding: 1.5rem;">
+            <h3 style="color: var(--accent-green, #00c896); margin-bottom: 0.5rem;">Datos de Suelo</h3>
+            <p style="color: var(--text-secondary, #999); font-size: 0.85rem; margin-bottom: 1rem;">pH, materia organica, nitrogeno, fosforo, potasio por parcela.</p>
+            <span style="color: var(--text-secondary, #666); font-size: 0.75rem;">Formatos: CSV, PDF</span>
+        </div>
+
+        <!-- Treatments -->
+        <div class="intel-card" style="padding: 1.5rem;">
+            <h3 style="color: var(--accent-green, #00c896); margin-bottom: 0.5rem;">Tratamientos Aplicados</h3>
+            <p style="color: var(--text-secondary, #999); font-size: 0.85rem; margin-bottom: 1rem;">Historial de tratamientos organicos, urgencia, costo estimado.</p>
+            <span style="color: var(--text-secondary, #666); font-size: 0.75rem;">Formatos: CSV, PDF</span>
+        </div>
+
+        <!-- Flights -->
+        <div class="intel-card" style="padding: 1.5rem;">
+            <h3 style="color: var(--accent-green, #00c896); margin-bottom: 0.5rem;">Registros de Vuelo</h3>
+            <p style="color: var(--text-secondary, #999); font-size: 0.85rem; margin-bottom: 1rem;">Misiones de dron, horas de vuelo, cobertura, imagenes capturadas.</p>
+            <span style="color: var(--text-secondary, #666); font-size: 0.75rem;">Formatos: CSV</span>
+        </div>
+
+        <!-- Intel complete -->
+        <div class="intel-card" style="padding: 1.5rem;">
+            <h3 style="color: var(--accent-green, #00c896); margin-bottom: 0.5rem;">Inteligencia Completa</h3>
+            <p style="color: var(--text-secondary, #999); font-size: 0.85rem; margin-bottom: 1rem;">Exportacion completa: salud, suelo, NDVI, tratamientos, clima.</p>
+            <span style="color: var(--text-secondary, #666); font-size: 0.75rem;">Formatos: CSV</span>
+        </div>
+    </div>
+
+    <!-- Download status -->
+    <div id="exportar-status" class="intel-card" style="padding: 2rem; display: none;">
+        <p id="exportar-status-text" style="color: var(--text-secondary, #999);"></p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="exportar-empty" class="intel-empty" style="display: none; text-align: center; padding: 3rem; color: var(--text-secondary, #999);">
+        <p>No hay granjas registradas. Agrega granjas primero para exportar datos.</p>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="intel-footer" style="text-align: center; padding: 2rem; color: var(--text-secondary, #666); font-size: 0.8rem;">
+    <p>cultivOS — Inteligencia agricola para agricultura regenerativa</p>
+</footer>
+
+<script src="/exportar.js"></script>
+</body>
+</html>
