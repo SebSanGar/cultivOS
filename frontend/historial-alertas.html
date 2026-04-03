@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Historial de Alertas</title>
+    <meta name="description" content="Linea cronologica de todas las alertas generadas por granja — WhatsApp, SMS, sistema.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/alertas" class="nav-tab intel-tab">Config Alertas</a></li>
+            <li><a href="/historial-alertas" class="nav-tab intel-tab active">Historial</a></li>
+            <li><a href="/regional" class="nav-tab intel-tab">Regional</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HISTORIAL DE ALERTAS -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Historial de Alertas</h1>
+            <p class="intel-subtitle">Cronologia de todas las alertas generadas por granja — WhatsApp, SMS y sistema</p>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="alertas-stat-total">--</div>
+            <div class="intel-stat-label">Total Alertas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="alertas-stat-critical">--</div>
+            <div class="intel-stat-label">Criticas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="alertas-stat-pending">--</div>
+            <div class="intel-stat-label">Pendientes</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="alertas-stat-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="intel-filters" style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+        <select id="alertas-farm-filter" class="intel-select">
+            <option value="">Todas las granjas</option>
+        </select>
+        <select id="alertas-type-filter" class="intel-select">
+            <option value="">Todos los tipos</option>
+            <option value="low_health">Salud baja</option>
+            <option value="irrigation">Riego</option>
+            <option value="anomaly_health_drop">Anomalia salud</option>
+            <option value="anomaly_ndvi_drop">Anomalia NDVI</option>
+            <option value="weather">Clima</option>
+        </select>
+        <select id="alertas-severity-filter" class="intel-select">
+            <option value="">Todas las severidades</option>
+            <option value="critical">Critica</option>
+            <option value="warning">Advertencia</option>
+            <option value="info">Informativa</option>
+        </select>
+        <input type="date" id="alertas-date-start" class="intel-select" title="Fecha inicio">
+        <input type="date" id="alertas-date-end" class="intel-select" title="Fecha fin">
+    </div>
+
+    <!-- Loading -->
+    <div id="alertas-loading" class="intel-loading">Cargando historial de alertas...</div>
+
+    <!-- Timeline container -->
+    <div id="alertas-timeline" class="intel-cards-grid" style="display:none;"></div>
+
+    <!-- Empty state -->
+    <div id="alertas-empty" class="intel-empty" style="display:none;">
+        No se encontraron alertas para los filtros seleccionados.
+    </div>
+</main>
+
+<script src="/historial-alertas.js"></script>
+</body>
+</html>

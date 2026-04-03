@@ -116,6 +116,7 @@ def create_app() -> FastAPI:
             {"name": "dashboard", "description": "Aggregated farm dashboard data"},
             {"name": "alerts", "description": "Automated health, irrigation, and anomaly alerts"},
             {"name": "alert-config", "description": "Per-farm alert threshold configuration"},
+            {"name": "alert-history", "description": "Cross-farm alert history timeline combining SMS and system alerts"},
             {"name": "notifications", "description": "Notification history and acknowledgement"},
             {"name": "knowledge", "description": "Organic fertilizers, ancestral methods, and crop database"},
             {"name": "diseases", "description": "Plant disease identification reference data"},
@@ -425,6 +426,11 @@ def create_app() -> FastAPI:
         async def serve_whatsapp_demo():
             """WhatsApp demo simulator — mock farmer-AI chat interaction in Spanish."""
             return FileResponse(frontend_dir / "whatsapp-demo.html")
+
+        @app.get("/historial-alertas")
+        async def serve_historial_alertas():
+            """Alert history timeline — chronological view of all alerts per farm."""
+            return FileResponse(frontend_dir / "historial-alertas.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 

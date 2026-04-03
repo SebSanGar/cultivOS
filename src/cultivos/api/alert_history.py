@@ -1,0 +1,92 @@
+"""Cross-farm alert history timeline — combines Alert (SMS) and AlertLog (system) records."""
+
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+
+from cultivos.db.models import Alert, AlertLog
+from cultivos.db.session import get_db
+
+router = APIRouter(
+    prefix="/api/alerts",
+    tags=["alert-history"],
+)
+
+
+def _alert_to_dict(a: Alert) -> dict:
+    return {
+        "id": f"sms-{a.id}",
+        "farm_id": a.farm_id,
+        "field_id": a.field_id,
+        "alert_type": a.alert_type,
+        "message": a.message,
+        "severity": _type_to_severity(a.alert_type),
+        "source": "sms",
+        "status": a.status,
+        "acknowledged": None,
+        "created_at": a.created_at.isoformat(),
+    }
+
+
+def _log_to_dict(log: AlertLog) -> dict:
+    return {
+        "id": f"sys-{log.id}",
+        "farm_id": log.farm_id,
+        "field_id": log.field_id,
+        "alert_type": log.alert_type,
+        "message": log.message,
+        "severity": log.severity,
+        "source": "system",
+        "status": None,
+        "acknowledged": log.acknowledged,
+        "created_at": log.created_at.isoformat(),
+    }
+
+
+def _type_to_severity(alert_type: str) -> str:
+    """Map SMS alert types to severity levels."""
+    critical_types = {"anomaly_health_drop", "anomaly_ndvi_drop", "low_health"}
+    warning_types = {"irrigation"}
+    if alert_type in critical_types:
+        return "critical"
+    if alert_type in warning_types:
+        return "warning"
+    return "info"
+
+
+@router.get("/history")
+def get_alert_history(
+    farm_id: int | None = Query(None),
+    alert_type: str | None = Query(None),
+    severity: str | None = Query(None),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    """Return combined alert history from Alert + AlertLog tables, newest first."""
+    # Query Alert (SMS) records
+    q_alerts = db.query(Alert)
+    if farm_id is not None:
+        q_alerts = q_alerts.filter(Alert.farm_id == farm_id)
+    if alert_type is not None:
+        q_alerts = q_alerts.filter(Alert.alert_type == alert_type)
+    alerts = q_alerts.all()
+
+    # Query AlertLog (system) records
+    q_logs = db.query(AlertLog)
+    if farm_id is not None:
+        q_logs = q_logs.filter(AlertLog.farm_id == farm_id)
+    if alert_type is not None:
+        q_logs = q_logs.filter(AlertLog.alert_type == alert_type)
+    if severity is not None:
+        q_logs = q_logs.filter(AlertLog.severity == severity)
+    logs = q_logs.all()
+
+    # Convert to unified dicts
+    results = [_alert_to_dict(a) for a in alerts]
+    results += [_log_to_dict(log) for log in logs]
+
+    # Apply severity filter to SMS alerts (computed, not stored)
+    if severity is not None:
+        results = [r for r in results if r["severity"] == severity]
+
+    # Sort newest first
+    results.sort(key=lambda x: x["created_at"], reverse=True)
+    return results
