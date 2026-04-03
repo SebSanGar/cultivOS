@@ -24,6 +24,8 @@ class ScoredTreatment(TypedDict):
     success_probability: float
     cost_per_hectare: float
     intervention_score: float
+    expected_roi: float
+    payback_days: int
     metodo_ancestral: str | None
     scientific_basis: str | None
 
@@ -36,6 +38,10 @@ _URGENCY_DELTA: dict[str, float] = {
 
 _DEFAULT_SUCCESS_PROB = 0.5
 _ANCESTRAL_BOOST = 1.25  # 25% score boost for ancestral-method-linked treatments
+# Economic conversion: MXN revenue per health point per hectare improvement
+# Based on Jalisco crop yields (~$40K MXN/ha avg), 1 health point ≈ 0.8% yield
+_REVENUE_PER_HEALTH_POINT = 300.0  # MXN/ha per health point
+_GROWING_SEASON_DAYS = 150  # Jalisco temporal season (Jun-Oct)
 
 
 def score_treatments(
@@ -97,6 +103,21 @@ def score_treatments(
         if ancestral_name:
             intervention_score = round(intervention_score * _ANCESTRAL_BOOST, 2)
 
+        # Cost-benefit: ROI and payback period
+        benefit_per_ha = expected_health_delta * success_probability * _REVENUE_PER_HEALTH_POINT
+        if cost_per_hectare <= 0:
+            expected_roi = 100.0
+            payback_days = 0
+        elif benefit_per_ha <= 0:
+            expected_roi = -100.0
+            payback_days = 999
+        else:
+            expected_roi = round(
+                ((benefit_per_ha - cost_per_hectare) / cost_per_hectare) * 100, 1
+            )
+            daily_benefit = benefit_per_ha / _GROWING_SEASON_DAYS
+            payback_days = min(int(cost_per_hectare / daily_benefit), 999)
+
         scored.append(ScoredTreatment(
             problema=problema,
             tratamiento=t.get("tratamiento", ""),
@@ -107,6 +128,8 @@ def score_treatments(
             success_probability=success_probability,
             cost_per_hectare=cost_per_hectare,
             intervention_score=intervention_score,
+            expected_roi=expected_roi,
+            payback_days=payback_days,
             metodo_ancestral=ancestral_name,
             scientific_basis=ancestral_science,
         ))

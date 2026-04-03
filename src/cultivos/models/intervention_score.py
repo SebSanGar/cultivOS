@@ -15,5 +15,7 @@ class InterventionScoreOut(BaseModel):
     success_probability: float
     cost_per_hectare: float
     intervention_score: float
+    expected_roi: float
+    payback_days: int
     metodo_ancestral: Optional[str] = None
     scientific_basis: Optional[str] = None

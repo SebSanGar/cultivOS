@@ -406,3 +406,143 @@ def test_api_ancestral_treatment_ranked_higher(client, db, farm_and_field):
     # Ancestral should be first
     assert data[0]["metodo_ancestral"] == "Milpa intercropping"
     assert data[1]["metodo_ancestral"] is None
+
+
+# --- Cost-benefit analysis tests (D3) ---
+
+
+def test_roi_calculated():
+    """Expected ROI should reflect benefit-to-cost ratio in percentage."""
+    treatments = [
+        {
+            "problema": "Materia organica baja",
+            "tratamiento": "Composta madura",
+            "costo_estimado_mxn": 2500,
+            "urgencia": "alta",
+            "health_score_used": 40.0,
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=5.0)
+    assert len(results) == 1
+    assert "expected_roi" in results[0]
+    # With cost 2500 over 5ha = 500 MXN/ha, and alta urgency with room to improve,
+    # ROI should be positive (benefit exceeds cost)
+    assert results[0]["expected_roi"] > 0
+
+
+def test_payback_days_calculated():
+    """Payback days should reflect time to recover treatment cost."""
+    treatments = [
+        {
+            "problema": "Humedad baja",
+            "tratamiento": "Acolchado organico",
+            "costo_estimado_mxn": 2000,
+            "urgencia": "alta",
+            "health_score_used": 30.0,
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=10.0)
+    assert len(results) == 1
+    assert "payback_days" in results[0]
+    # Cost is low (200 MXN/ha), alta urgency with low health = high benefit
+    # Payback should be relatively fast (< 90 days)
+    assert results[0]["payback_days"] > 0
+    assert results[0]["payback_days"] < 90
+
+
+def test_zero_cost_roi():
+    """Zero-cost treatments should have 100% ROI and 0 payback days."""
+    treatments = [
+        {
+            "problema": "Compactacion",
+            "tratamiento": "Arado con traccion animal",
+            "costo_estimado_mxn": 0,
+            "urgencia": "media",
+            "health_score_used": 50.0,
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=5.0)
+    assert results[0]["expected_roi"] == 100.0
+    assert results[0]["payback_days"] == 0
+
+
+def test_high_cost_negative_roi():
+    """Very expensive treatments with low impact should have negative ROI."""
+    treatments = [
+        {
+            "problema": "Test",
+            "tratamiento": "Expensive low impact",
+            "costo_estimado_mxn": 50000,
+            "urgencia": "baja",
+            "health_score_used": 90.0,  # high health = low room for improvement
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=1.0)
+    # 50000 MXN on 1 ha, baja urgency, health already at 90 — ROI should be negative
+    assert results[0]["expected_roi"] < 0
+
+
+def test_roi_higher_with_feedback():
+    """Treatments with positive feedback should have higher ROI via success probability."""
+    treatments = [
+        {
+            "problema": "Deficiencia de nitrogeno",
+            "tratamiento": "Te de composta",
+            "costo_estimado_mxn": 2000,
+            "urgencia": "media",
+            "health_score_used": 50.0,
+        },
+    ]
+    feedback = {
+        "Deficiencia de nitrogeno": FeedbackSummary(
+            avg_rating=4.5, positive_ratio=0.9, count=5
+        ),
+    }
+    with_fb = score_treatments(treatments, feedback=feedback, hectares=5.0)
+    without_fb = score_treatments(treatments, feedback={}, hectares=5.0)
+    # Higher success probability → higher benefit → higher ROI
+    assert with_fb[0]["expected_roi"] > without_fb[0]["expected_roi"]
+
+
+def test_payback_days_capped():
+    """When benefit is near zero, payback should be capped at 999 days."""
+    treatments = [
+        {
+            "problema": "Test",
+            "tratamiento": "Expensive no gain",
+            "costo_estimado_mxn": 10000,
+            "urgencia": "baja",
+            "health_score_used": 99.0,  # almost perfect — minimal delta
+        },
+    ]
+    results = score_treatments(treatments, feedback={}, hectares=1.0)
+    # Very low benefit, high cost — payback should be capped
+    assert results[0]["payback_days"] <= 999
+
+
+def test_api_returns_roi_fields(client, db, farm_and_field):
+    """API response should include expected_roi and payback_days."""
+    farm, field = farm_and_field
+
+    tr = TreatmentRecord(
+        field_id=field.id,
+        health_score_used=40.0,
+        problema="Materia organica baja",
+        causa_probable="Suelo degradado",
+        tratamiento="Composta madura",
+        costo_estimado_mxn=3000,
+        urgencia="alta",
+        prevencion="No quemar rastrojo",
+        organic=True,
+    )
+    db.add(tr)
+    db.commit()
+
+    resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/intervention-scores")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert "expected_roi" in data[0]
+    assert "payback_days" in data[0]
+    assert isinstance(data[0]["expected_roi"], (int, float))
+    assert isinstance(data[0]["payback_days"], int)
