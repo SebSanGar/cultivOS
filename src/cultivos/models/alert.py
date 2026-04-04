@@ -43,3 +43,15 @@ class AlertLogOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class AlertAnalyticsOut(BaseModel):
+    total_alerts: int
+    total_sms: int
+    total_system: int
+    delivery_rate: float
+    by_type: dict[str, int]
+    by_severity: dict[str, int]
+    by_status: dict[str, int]
+    farms_reached: int
+    fields_reached: int

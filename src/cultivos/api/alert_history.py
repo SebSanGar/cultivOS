@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from cultivos.db.models import Alert, AlertLog
 from cultivos.db.session import get_db
+from cultivos.models.alert import AlertAnalyticsOut
 
 router = APIRouter(
     prefix="/api/alerts",
@@ -51,6 +52,72 @@ def _type_to_severity(alert_type: str) -> str:
     if alert_type in warning_types:
         return "warning"
     return "info"
+
+
+@router.get("/analytics", response_model=AlertAnalyticsOut)
+def get_alert_analytics(
+    farm_id: int | None = Query(None),
+    db: Session = Depends(get_db),
+) -> AlertAnalyticsOut:
+    """Aggregate alert delivery metrics and farmer engagement KPIs."""
+    # Query Alert (SMS) records
+    q_alerts = db.query(Alert)
+    if farm_id is not None:
+        q_alerts = q_alerts.filter(Alert.farm_id == farm_id)
+    sms_alerts = q_alerts.all()
+
+    # Query AlertLog (system) records
+    q_logs = db.query(AlertLog)
+    if farm_id is not None:
+        q_logs = q_logs.filter(AlertLog.farm_id == farm_id)
+    sys_logs = q_logs.all()
+
+    # Counts by type (unified across both sources)
+    by_type: dict[str, int] = {}
+    for a in sms_alerts:
+        by_type[a.alert_type] = by_type.get(a.alert_type, 0) + 1
+    for log in sys_logs:
+        by_type[log.alert_type] = by_type.get(log.alert_type, 0) + 1
+
+    # Counts by severity (compute for SMS, read from system logs)
+    by_severity: dict[str, int] = {}
+    for a in sms_alerts:
+        sev = _type_to_severity(a.alert_type)
+        by_severity[sev] = by_severity.get(sev, 0) + 1
+    for log in sys_logs:
+        by_severity[log.severity] = by_severity.get(log.severity, 0) + 1
+
+    # Counts by SMS status (only SMS alerts have status)
+    by_status: dict[str, int] = {}
+    for a in sms_alerts:
+        by_status[a.status] = by_status.get(a.status, 0) + 1
+
+    # Delivery rate: sent / total SMS * 100
+    total_sms = len(sms_alerts)
+    sent_count = by_status.get("sent", 0)
+    delivery_rate = (sent_count / total_sms * 100) if total_sms > 0 else 0.0
+
+    # Reach: unique farms and fields across all alerts
+    all_farm_ids = {a.farm_id for a in sms_alerts} | {log.farm_id for log in sys_logs}
+    all_field_ids = set()
+    for a in sms_alerts:
+        if a.field_id is not None:
+            all_field_ids.add(a.field_id)
+    for log in sys_logs:
+        if log.field_id is not None:
+            all_field_ids.add(log.field_id)
+
+    return AlertAnalyticsOut(
+        total_alerts=total_sms + len(sys_logs),
+        total_sms=total_sms,
+        total_system=len(sys_logs),
+        delivery_rate=round(delivery_rate, 1),
+        by_type=by_type,
+        by_severity=by_severity,
+        by_status=by_status,
+        farms_reached=len(all_farm_ids),
+        fields_reached=len(all_field_ids),
+    )
 
 
 @router.get("/history")

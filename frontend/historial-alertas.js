@@ -162,5 +162,22 @@
   dateStart.addEventListener('change', applyFilters);
   dateEnd.addEventListener('change', applyFilters);
 
+  // ── Analytics ──────────────────────────────────────────
+
+  async function loadAnalytics() {
+    try {
+      var resp = await fetch('/api/alerts/analytics');
+      if (!resp.ok) return;
+      var data = await resp.json();
+      document.getElementById('analytics-delivery-rate').textContent = data.delivery_rate + '%';
+      document.getElementById('analytics-sms-count').textContent = data.total_sms;
+      document.getElementById('analytics-system-count').textContent = data.total_system;
+      document.getElementById('analytics-farms-reached').textContent = data.farms_reached;
+    } catch (e) {
+      // Analytics are non-critical — fail silently
+    }
+  }
+
   await loadData();
+  await loadAnalytics();
 })();
