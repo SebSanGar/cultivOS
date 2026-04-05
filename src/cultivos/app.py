@@ -437,6 +437,11 @@ def create_app() -> FastAPI:
             """Alert history timeline — chronological view of all alerts per farm."""
             return FileResponse(frontend_dir / "historial-alertas.html")
 
+        @app.get("/confianza-tratamientos")
+        async def serve_confianza_tratamientos():
+            """Treatment trust scores — ranked treatments by farmer feedback confidence."""
+            return FileResponse(frontend_dir / "confianza-tratamientos.html")
+
         @app.get("/plataforma")
         async def serve_plataforma():
             """Platform overview — categorized grid of all cultivOS pages and features."""

@@ -12,7 +12,8 @@ from sqlalchemy.orm import Session
 from cultivos.auth import require_role
 from cultivos.db.models import Farm, FarmerFeedback, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
-from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut
+from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut, TreatmentTrustOut
+from cultivos.services.intelligence.feedback_aggregation import aggregate_treatment_trust
 from cultivos.models.intel import (
     AnomaliesOut,
     BatchHealthOut,
@@ -149,6 +150,18 @@ def intel_regional_summary(
 ):
     """Aggregate intelligence across all farms in a region — crop performance, treatment success, seasonal patterns."""
     return compute_regional_summary(db, state=state)
+
+
+@router.get("/treatment-trust", response_model=TreatmentTrustOut)
+def treatment_trust(
+    crop_type: Optional[str] = None,
+    field_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Aggregate farmer feedback into per-treatment trust scores ranked by farmer confidence."""
+    items = aggregate_treatment_trust(db, crop_type=crop_type, field_id=field_id)
+    return TreatmentTrustOut(treatments=[item for item in items])
 
 
 @router.get("/tek-validation", response_model=TEKValidationOut)

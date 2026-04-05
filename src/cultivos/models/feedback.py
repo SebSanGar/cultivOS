@@ -34,6 +34,20 @@ class FeedbackOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class TreatmentTrustItem(BaseModel):
+    treatment_name: str
+    total_feedback: int
+    positive_count: int
+    negative_count: int
+    average_rating: float
+    trust_score: float  # 0-100 weighted score
+    top_farmer_note: Optional[str] = None
+
+
+class TreatmentTrustOut(BaseModel):
+    treatments: list[TreatmentTrustItem]
+
+
 class TEKMethodValidation(BaseModel):
     method_name: str
     total_feedback: int

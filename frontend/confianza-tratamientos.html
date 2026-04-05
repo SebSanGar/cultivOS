@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Confianza en Tratamientos</title>
+    <meta name="description" content="Confianza en tratamientos — ranking de tratamientos por puntuacion de confianza basada en retroalimentacion de agricultores.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/efectividad-global" class="nav-tab intel-tab">Efectividad</a></li>
+            <li><a href="/confianza-tratamientos" class="nav-tab intel-tab active">Confianza</a></li>
+            <li><a href="/tek" class="nav-tab intel-tab">TEK</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-dashboard">
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Confianza en Tratamientos</h1>
+            <p class="intel-subtitle">Ranking de tratamientos por confianza de los agricultores — basado en retroalimentacion real de campo</p>
+        </div>
+        <div class="intel-header-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <select id="trust-crop-filter" class="intel-select" onchange="filterTrust()">
+                <option value="">Todos los cultivos</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="trust-stats" class="intel-stats-strip">
+        <div class="stat-card">
+            <span class="stat-label">Tratamientos evaluados</span>
+            <span id="stat-total" class="stat-value">--</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Total retroalimentaciones</span>
+            <span id="stat-feedback" class="stat-value">--</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Confianza promedio</span>
+            <span id="stat-avg-trust" class="stat-value">--</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Mejor tratamiento</span>
+            <span id="stat-best" class="stat-value">--</span>
+        </div>
+    </div>
+
+    <div id="trust-cards" class="intel-cards-grid">
+        <p class="intel-empty">Cargando datos de confianza...</p>
+    </div>
+</main>
+
+<script src="/confianza-tratamientos.js"></script>
+</body>
+</html>
