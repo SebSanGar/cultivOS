@@ -72,9 +72,48 @@
         Seleccione una granja y un campo para generar el plan de rotacion de cultivos.
     </div>
 
-    <!-- Content -->
+    <!-- Content — single season plan -->
     <div id="rotation-content" style="display:none;">
         <div id="rotation-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;"></div>
+    </div>
+
+    <!-- Multi-year plan section -->
+    <div id="multiyear-section" style="display:none;margin-top:2rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h2 style="color:#eee;font-size:1.2rem;margin:0;">Plan a 3 Anos</h2>
+            <div id="milpa-badge" style="display:none;background:#22c55e22;color:#22c55e;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">
+                Sistema Milpa Recomendado
+            </div>
+        </div>
+
+        <!-- Milpa description -->
+        <div id="milpa-info" style="display:none;background:#1a2332;border:1px solid #22c55e33;border-radius:8px;padding:1rem;margin-bottom:1.5rem;">
+            <p id="milpa-description" style="color:#a3e635;font-size:0.85rem;line-height:1.5;margin:0;"></p>
+        </div>
+
+        <!-- OM projection strip -->
+        <div class="intel-stats-strip" id="multiyear-stats">
+            <div class="intel-stat">
+                <div class="intel-stat-value" id="om-start-val">--</div>
+                <div class="intel-stat-label">MO Inicial (%)</div>
+            </div>
+            <div class="intel-stat">
+                <div class="intel-stat-value" id="om-end-val">--</div>
+                <div class="intel-stat-label">MO Final (%)</div>
+            </div>
+            <div class="intel-stat">
+                <div class="intel-stat-value" id="om-delta-val">--</div>
+                <div class="intel-stat-label">Cambio MO</div>
+            </div>
+        </div>
+
+        <!-- OM timeline canvas -->
+        <div style="background:#111a;border-radius:8px;padding:1rem;margin-bottom:1.5rem;">
+            <canvas id="om-chart" height="120"></canvas>
+        </div>
+
+        <!-- Year cards -->
+        <div id="multiyear-cards" style="display:grid;gap:1.5rem;"></div>
     </div>
 </main>
 

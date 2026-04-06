@@ -150,3 +150,87 @@ class TestRotationPageContent:
     def test_page_has_content_container(self, client):
         resp = client.get("/rotacion")
         assert 'id="rotation-content"' in resp.text
+
+
+class TestMultiYearPageElements:
+    """Page HTML has multi-year plan section."""
+
+    def test_page_has_multiyear_section(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="multiyear-section"' in resp.text
+
+    def test_page_has_milpa_badge(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="milpa-badge"' in resp.text
+
+    def test_page_has_milpa_description(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="milpa-description"' in resp.text
+
+    def test_page_has_milpa_info_container(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="milpa-info"' in resp.text
+
+    def test_page_has_om_start_stat(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="om-start-val"' in resp.text
+
+    def test_page_has_om_end_stat(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="om-end-val"' in resp.text
+
+    def test_page_has_om_delta_stat(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="om-delta-val"' in resp.text
+
+    def test_page_has_om_chart_canvas(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="om-chart"' in resp.text
+
+    def test_page_has_multiyear_cards_container(self, client):
+        resp = client.get("/rotacion")
+        assert 'id="multiyear-cards"' in resp.text
+
+    def test_page_has_3_year_title(self, client):
+        resp = client.get("/rotacion")
+        assert "3 Anos" in resp.text or "3 anos" in resp.text
+
+    def test_page_has_mo_labels(self, client):
+        resp = client.get("/rotacion")
+        html = resp.text
+        assert "MO Inicial" in html
+        assert "MO Final" in html
+        assert "Cambio MO" in html
+
+    def test_page_has_milpa_badge_text(self, client):
+        resp = client.get("/rotacion")
+        assert "Sistema Milpa" in resp.text
+
+    def test_multiyear_api_returns_plan(self, client, db):
+        """Multi-year endpoint returns valid plan data."""
+        farm, f1, f2 = _seed_rotation_data(db)
+        resp = client.get(f"/api/farms/{farm.id}/fields/{f1.id}/rotation/multi-year")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["plan"]) == 6
+        assert data["total_years"] == 3
+        assert "milpa_recommended" in data
+        assert "om_start" in data
+        assert "om_end" in data
+
+    def test_multiyear_entries_have_year_and_om(self, client, db):
+        farm, f1, f2 = _seed_rotation_data(db)
+        resp = client.get(f"/api/farms/{farm.id}/fields/{f1.id}/rotation/multi-year")
+        data = resp.json()
+        for entry in data["plan"]:
+            assert "year" in entry
+            assert "organic_matter_pct" in entry
+            assert "season" in entry
+            assert "crop" in entry
+
+    def test_multiyear_milpa_for_maiz_field(self, client, db):
+        farm, f1, f2 = _seed_rotation_data(db)
+        resp = client.get(f"/api/farms/{farm.id}/fields/{f1.id}/rotation/multi-year")
+        data = resp.json()
+        assert data["milpa_recommended"] is True
+        assert "milpa" in data["milpa_description"].lower()
