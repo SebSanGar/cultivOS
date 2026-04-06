@@ -41,9 +41,9 @@ class TestSeedDemoRuns:
     def test_runs_without_error(self, seed_db):
         _run_seed(seed_db)
 
-    def test_creates_three_farms(self, seed_db):
+    def test_creates_five_farms(self, seed_db):
         _run_seed(seed_db)
-        assert seed_db.query(Farm).count() == 3
+        assert seed_db.query(Farm).count() == 5
 
     def test_creates_fields_per_farm(self, seed_db):
         _run_seed(seed_db)

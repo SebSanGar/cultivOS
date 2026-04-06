@@ -4,17 +4,20 @@ Demo data seeder for cultivOS — populates the DB with realistic Jalisco farm d
 Usage:
     PYTHONPATH=src python3 scripts/seed_demo.py
 
-Creates 3 farms with 2-3 fields each, plus 6 months of time-series data:
+Creates 5 farms with 2-3 fields each, plus 6 months of time-series data:
 weekly NDVI/health, bi-weekly thermal, monthly soil, every-other-day weather,
+flight logs per analysis, quarterly microbiome, alerts, farmer feedback,
 and 4 treatments per field showing a clear regenerative improvement arc.
 Idempotent: checks for existing demo data before inserting.
 """
 
 import math
+import random
 from datetime import datetime, timedelta
 
 from cultivos.db.models import (
-    Farm, Field, HealthScore, NDVIResult, SoilAnalysis,
+    Alert, AlertConfig, AlertLog, Farm, FarmerFeedback, Field,
+    FlightLog, HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis,
     ThermalResult, TreatmentRecord, WeatherRecord,
 )
 
@@ -22,6 +25,9 @@ DEMO_MARKER = "[DEMO]"
 
 # Jalisco seasons: temporal (rainy) June-October, secas (dry) November-May
 TEMPORAL_MONTHS = {6, 7, 8, 9, 10}
+
+# Reproducible randomness for consistent demo data
+_rng = random.Random(42)
 
 
 def _demo_exists(session) -> bool:
@@ -35,6 +41,27 @@ def _seasonal_modifier(dt):
     if dt.month in TEMPORAL_MONTHS:
         return 0.08  # rainy season boost
     return -0.03  # dry season slight penalty
+
+
+def _make_boundary(lat, lon, hectares):
+    """Generate a rectangular polygon boundary around a center point.
+
+    Approximates a rectangle of the given area (hectares) centered on (lat, lon).
+    At ~20N: 1deg lon ~ 104.5km, 1deg lat ~ 110.6km.
+    """
+    # hectares to km2
+    area_km2 = hectares / 100
+    side_km = math.sqrt(area_km2)
+    # Convert to degrees
+    dlat = side_km / 110.6 / 2
+    dlon = side_km / (104.5 * math.cos(math.radians(lat))) / 2
+    return [
+        [round(lon - dlon, 6), round(lat - dlat, 6)],
+        [round(lon + dlon, 6), round(lat - dlat, 6)],
+        [round(lon + dlon, 6), round(lat + dlat, 6)],
+        [round(lon - dlon, 6), round(lat + dlat, 6)],
+        [round(lon - dlon, 6), round(lat - dlat, 6)],  # close polygon
+    ]
 
 
 def seed_demo_data(session):
@@ -57,11 +84,14 @@ def seed_demo_data(session):
             "state": "Jalisco",
             "fields": [
                 {"name": "Agave Azul Norte", "crop_type": "agave", "hectares": 20.0,
-                 "planted_at": now - timedelta(days=730)},
+                 "planted_at": now - timedelta(days=730),
+                 "offset_lat": 0.003, "offset_lon": 0.001},
                 {"name": "Agave Azul Sur", "crop_type": "agave", "hectares": 15.0,
-                 "planted_at": now - timedelta(days=540)},
+                 "planted_at": now - timedelta(days=540),
+                 "offset_lat": -0.003, "offset_lon": 0.001},
                 {"name": "Maiz Temporal", "crop_type": "maiz", "hectares": 10.0,
-                 "planted_at": now - timedelta(days=120)},
+                 "planted_at": now - timedelta(days=120),
+                 "offset_lat": 0.0, "offset_lon": -0.004},
             ],
         },
         {
@@ -74,11 +104,14 @@ def seed_demo_data(session):
             "state": "Jalisco",
             "fields": [
                 {"name": "Fresa Invernadero A", "crop_type": "fresa", "hectares": 8.0,
-                 "planted_at": now - timedelta(days=90)},
+                 "planted_at": now - timedelta(days=90),
+                 "offset_lat": 0.002, "offset_lon": 0.0},
                 {"name": "Arandano Seccion 1", "crop_type": "arandano", "hectares": 12.0,
-                 "planted_at": now - timedelta(days=180)},
+                 "planted_at": now - timedelta(days=180),
+                 "offset_lat": -0.002, "offset_lon": 0.002},
                 {"name": "Frambuesa Piloto", "crop_type": "frambuesa", "hectares": 10.0,
-                 "planted_at": now - timedelta(days=60)},
+                 "planted_at": now - timedelta(days=60),
+                 "offset_lat": -0.002, "offset_lon": -0.002},
             ],
         },
         {
@@ -91,12 +124,56 @@ def seed_demo_data(session):
             "state": "Jalisco",
             "fields": [
                 {"name": "Milpa Principal", "crop_type": "maiz", "hectares": 15.0,
-                 "planted_at": now - timedelta(days=100)},
+                 "planted_at": now - timedelta(days=100),
+                 "offset_lat": 0.002, "offset_lon": 0.0},
                 {"name": "Frijol y Calabaza", "crop_type": "frijol", "hectares": 10.0,
-                 "planted_at": now - timedelta(days=95)},
+                 "planted_at": now - timedelta(days=95),
+                 "offset_lat": -0.002, "offset_lon": 0.0},
+            ],
+        },
+        {
+            "name": f"Agave Los Altos {DEMO_MARKER}",
+            "owner_name": "Roberto Sanchez Villarreal",
+            "location_lat": 20.7125,
+            "location_lon": -102.3481,
+            "total_hectares": 60.0,
+            "municipality": "Arandas",
+            "state": "Jalisco",
+            "fields": [
+                {"name": "Agave Tequilana Weber", "crop_type": "agave", "hectares": 25.0,
+                 "planted_at": now - timedelta(days=900),
+                 "offset_lat": 0.003, "offset_lon": 0.002},
+                {"name": "Chile de Arbol", "crop_type": "chile", "hectares": 15.0,
+                 "planted_at": now - timedelta(days=75),
+                 "offset_lat": -0.002, "offset_lon": -0.001},
+                {"name": "Jitomate Organico", "crop_type": "jitomate", "hectares": 20.0,
+                 "planted_at": now - timedelta(days=45),
+                 "offset_lat": 0.0, "offset_lon": -0.004},
+            ],
+        },
+        {
+            "name": f"Ganaderia Sustentable Lagos {DEMO_MARKER}",
+            "owner_name": "Ana Cristina Ramirez",
+            "location_lat": 21.3539,
+            "location_lon": -101.9311,
+            "total_hectares": 80.0,
+            "municipality": "Lagos de Moreno",
+            "state": "Jalisco",
+            "fields": [
+                {"name": "Sorgo Forrajero", "crop_type": "sorgo", "hectares": 30.0,
+                 "planted_at": now - timedelta(days=110),
+                 "offset_lat": 0.004, "offset_lon": 0.0},
+                {"name": "Maiz Grano", "crop_type": "maiz", "hectares": 25.0,
+                 "planted_at": now - timedelta(days=100),
+                 "offset_lat": -0.003, "offset_lon": 0.003},
+                {"name": "Alfalfa Riego", "crop_type": "alfalfa", "hectares": 25.0,
+                 "planted_at": now - timedelta(days=200),
+                 "offset_lat": -0.003, "offset_lon": -0.003},
             ],
         },
     ]
+
+    all_treatment_ids = []  # collect for farmer feedback later
 
     for farm_data in farms_data:
         fields_data = farm_data.pop("fields")
@@ -104,14 +181,32 @@ def seed_demo_data(session):
         session.add(farm)
         session.flush()
 
+        farm_fields = []
         for field_data in fields_data:
+            offset_lat = field_data.pop("offset_lat")
+            offset_lon = field_data.pop("offset_lon")
+            # Generate boundary polygon
+            field_lat = farm.location_lat + offset_lat
+            field_lon = farm.location_lon + offset_lon
+            field_data["boundary_coordinates"] = _make_boundary(
+                field_lat, field_lon, field_data["hectares"])
+
             field = Field(farm_id=farm.id, **field_data)
             session.add(field)
             session.flush()
+            farm_fields.append(field)
 
-            _seed_field_history(session, farm, field, now, six_months_ago)
+            treatment_ids = _seed_field_history(session, farm, field, now, six_months_ago)
+            all_treatment_ids.extend(treatment_ids)
+            _seed_flight_logs(session, field, now, six_months_ago)
+            _seed_microbiome(session, field, now, six_months_ago)
 
         _seed_weather_history(session, farm, now, six_months_ago)
+        _seed_alerts(session, farm, farm_fields, now, six_months_ago)
+        _seed_alert_config(session, farm)
+
+    # Farmer feedback after all treatments exist
+    _seed_farmer_feedback(session, all_treatment_ids)
 
     session.commit()
 
@@ -119,10 +214,12 @@ def seed_demo_data(session):
 def _seed_field_history(session, farm, field, now, start_date):
     """Seed 6 months of time-series data for a single field.
 
-    Data shows a clear before-regenerative → after-regenerative improvement arc:
+    Data shows a clear before-regenerative -> after-regenerative improvement arc:
     - Weeks 1-8: degraded baseline (low NDVI, low health, high stress)
     - Weeks 9-12: first treatments applied, early recovery
     - Weeks 13-26: sustained improvement, strong health scores
+
+    Returns list of treatment record IDs for farmer feedback.
     """
     total_days = (now - start_date).days  # ~182
     total_weeks = total_days // 7  # ~26
@@ -136,7 +233,7 @@ def _seed_field_history(session, farm, field, now, start_date):
     # --- Weekly NDVI + Health Scores (26 records each) ---
     for week in range(total_weeks):
         ts = start_date + timedelta(weeks=week)
-        progress = week / max(total_weeks - 1, 1)  # 0.0 → 1.0
+        progress = week / max(total_weeks - 1, 1)  # 0.0 -> 1.0
         seasonal = _seasonal_modifier(ts)
 
         # Improvement curve: slow start, accelerates after treatments (week 8-10)
@@ -214,8 +311,8 @@ def _seed_field_history(session, farm, field, now, start_date):
 
         # Soil improves gradually with organic amendments
         ph = round(6.0 + progress * 0.5, 1)
-        om = round(1.8 + progress * 1.4, 1)  # organic matter 1.8% → 3.2%
-        n = round(20 + progress * 20, 0)  # nitrogen 20 → 40 ppm
+        om = round(1.8 + progress * 1.4, 1)  # organic matter 1.8% -> 3.2%
+        n = round(20 + progress * 20, 0)  # nitrogen 20 -> 40 ppm
         p = round(12 + progress * 10, 0)
         k = round(110 + progress * 40, 0)
         moisture = round(18 + progress * 12, 0)
@@ -296,16 +393,244 @@ def _seed_field_history(session, farm, field, now, start_date):
         },
     ]
 
+    treatment_ids = []
     for t in treatments:
         offset = t.pop("offset_days")
         health_offset = t.pop("health_offset")
-        session.add(TreatmentRecord(
+        rec = TreatmentRecord(
             field_id=field.id,
             health_score_used=base_health + health_offset,
             organic=True,
             applied_at=start_date + timedelta(days=offset + 10),
             created_at=start_date + timedelta(days=offset),
             **t,
+        )
+        session.add(rec)
+        session.flush()
+        treatment_ids.append((field.id, rec.id))
+
+    return treatment_ids
+
+
+def _seed_flight_logs(session, field, now, start_date):
+    """Seed flight logs matching NDVI and thermal analysis dates.
+
+    Creates 3 flights per field:
+    - 2 multispectral health_scan flights (month 1 and month 4)
+    - 1 thermal_check flight (month 2)
+    """
+    flights = [
+        {
+            "drone_type": "mavic_multispectral",
+            "mission_type": "health_scan",
+            "flight_date": start_date + timedelta(days=14),
+            "duration_minutes": round(25 + field.hectares * 0.8, 1),
+            "altitude_m": 50.0,
+            "images_count": int(field.hectares * 40),
+            "coverage_pct": 98.5,
+            "status": "complete",
+        },
+        {
+            "drone_type": "mavic_thermal",
+            "mission_type": "thermal_check",
+            "flight_date": start_date + timedelta(days=45),
+            "duration_minutes": round(20 + field.hectares * 0.6, 1),
+            "altitude_m": 40.0,
+            "images_count": int(field.hectares * 25),
+            "coverage_pct": 95.2,
+            "status": "complete",
+        },
+        {
+            "drone_type": "mavic_multispectral",
+            "mission_type": "health_scan",
+            "flight_date": start_date + timedelta(days=105),
+            "duration_minutes": round(25 + field.hectares * 0.8, 1),
+            "altitude_m": 50.0,
+            "images_count": int(field.hectares * 40),
+            "coverage_pct": 99.1,
+            "status": "complete",
+        },
+    ]
+
+    for f in flights:
+        session.add(FlightLog(
+            field_id=field.id,
+            s3_path=f"imagery/demo/{field.farm_id}/{field.id}/{f['flight_date'].strftime('%Y%m%d')}",
+            **f,
+        ))
+
+
+def _seed_microbiome(session, field, now, start_date):
+    """Seed quarterly microbiome records showing soil biological recovery."""
+    # 3 records: baseline (degraded), mid (moderate), current (healthy)
+    stages = [
+        {
+            "offset_days": 10,
+            "respiration_rate": 8.5,
+            "microbial_biomass_carbon": 120.0,
+            "fungi_bacteria_ratio": 0.3,
+            "classification": "degraded",
+        },
+        {
+            "offset_days": 90,
+            "respiration_rate": 15.2,
+            "microbial_biomass_carbon": 280.0,
+            "fungi_bacteria_ratio": 0.6,
+            "classification": "moderate",
+        },
+        {
+            "offset_days": 170,
+            "respiration_rate": 22.8,
+            "microbial_biomass_carbon": 450.0,
+            "fungi_bacteria_ratio": 1.1,
+            "classification": "healthy",
+        },
+    ]
+
+    for stage in stages:
+        offset = stage.pop("offset_days")
+        session.add(MicrobiomeRecord(
+            field_id=field.id,
+            sampled_at=start_date + timedelta(days=offset),
+            **stage,
+        ))
+
+
+def _seed_alerts(session, farm, fields, now, start_date):
+    """Seed alerts and alert logs per farm — shows proactive farmer communication."""
+    alert_templates = [
+        {
+            "alert_type": "low_health",
+            "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
+            "severity": "critical",
+            "offset_days": 7,
+        },
+        {
+            "alert_type": "irrigation",
+            "message": "Deficit hidrico detectado por sensor termico. Programar riego suplementario.",
+            "severity": "warning",
+            "offset_days": 30,
+        },
+        {
+            "alert_type": "pest",
+            "message": "Patron de NDVI irregular sugiere posible plaga. Verificar zona sur del campo.",
+            "severity": "warning",
+            "offset_days": 55,
+        },
+        {
+            "alert_type": "recommendation",
+            "message": "Condiciones optimas para aplicar composta. Temperatura y humedad favorables esta semana.",
+            "severity": "info",
+            "offset_days": 80,
+        },
+    ]
+
+    for i, tmpl in enumerate(alert_templates):
+        field = fields[i % len(fields)]
+        ts = start_date + timedelta(days=tmpl["offset_days"])
+
+        # Alert record (sent via WhatsApp/SMS)
+        session.add(Alert(
+            farm_id=farm.id,
+            field_id=field.id,
+            alert_type=tmpl["alert_type"],
+            message=tmpl["message"],
+            phone_number="+5213312345678",
+            status="sent",
+            sent_at=ts,
+            created_at=ts,
+        ))
+
+        # AlertLog record (internal log)
+        session.add(AlertLog(
+            farm_id=farm.id,
+            field_id=field.id,
+            alert_type=tmpl["alert_type"],
+            message=tmpl["message"],
+            severity=tmpl["severity"],
+            acknowledged=i < 2,  # first 2 acknowledged
+            created_at=ts,
+        ))
+
+
+def _seed_alert_config(session, farm):
+    """Seed alert configuration thresholds per farm."""
+    session.add(AlertConfig(
+        farm_id=farm.id,
+        health_score_floor=40.0,
+        ndvi_minimum=0.3,
+        temp_max_c=42.0,
+    ))
+
+
+def _seed_farmer_feedback(session, all_treatment_ids):
+    """Seed farmer feedback on treatments — powers trust scores page.
+
+    Creates 2 feedback entries per farm (sample from treatments).
+    """
+    feedback_templates = [
+        {
+            "rating": 5,
+            "worked": True,
+            "farmer_notes": "La composta mejoro mucho el suelo. Se nota la diferencia en las plantas.",
+        },
+        {
+            "rating": 4,
+            "worked": True,
+            "farmer_notes": "El te de composta funciono bien pero tarda en verse el efecto.",
+        },
+        {
+            "rating": 3,
+            "worked": False,
+            "farmer_notes": "El biochar es caro y no vi cambio rapido. Voy a esperar mas tiempo.",
+            "alternative_method": "Mulch de rastrojo de maiz",
+        },
+        {
+            "rating": 5,
+            "worked": True,
+            "farmer_notes": "El bocashi es excelente. Lo recomiendo a todos mis vecinos.",
+        },
+        {
+            "rating": 4,
+            "worked": True,
+            "farmer_notes": "La micorriza funciono. Las raices se ven mas fuertes.",
+        },
+        {
+            "rating": 2,
+            "worked": False,
+            "farmer_notes": "No pude conseguir el inoculante localmente. Use lombricomposta en su lugar.",
+            "alternative_method": "Lombricomposta concentrada",
+        },
+        {
+            "rating": 5,
+            "worked": True,
+            "farmer_notes": "Excelente resultado con la milpa. Frijol fijo el nitrogeno como se dijo.",
+        },
+        {
+            "rating": 4,
+            "worked": True,
+            "farmer_notes": "El acolchado redujo la evaporacion. Ahorro en riego.",
+        },
+        {
+            "rating": 3,
+            "worked": True,
+            "farmer_notes": "Funciono parcialmente. Necesito ajustar la dosis para mi tipo de suelo.",
+        },
+        {
+            "rating": 5,
+            "worked": True,
+            "farmer_notes": "Resultado increible con la rotacion. El maiz rindio 20% mas.",
+        },
+    ]
+
+    # Use first 10 treatments (or all if fewer), one feedback each
+    used = all_treatment_ids[:min(len(all_treatment_ids), len(feedback_templates))]
+    for idx, (field_id, treatment_id) in enumerate(used):
+        tmpl = feedback_templates[idx]
+        session.add(FarmerFeedback(
+            field_id=field_id,
+            treatment_id=treatment_id,
+            **tmpl,
         ))
 
 
