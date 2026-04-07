@@ -447,6 +447,11 @@ def create_app() -> FastAPI:
             """FODECIJAL grant report — generate and download technical narrative PDF."""
             return FileResponse(frontend_dir / "reporte-fodecijal.html")
 
+        @app.get("/demo-fodecijal")
+        async def serve_demo_fodecijal():
+            """Guided FODECIJAL demo — 8-step walkthrough of key platform capabilities."""
+            return FileResponse(frontend_dir / "demo-fodecijal.html")
+
         @app.get("/plataforma")
         async def serve_plataforma():
             """Platform overview — categorized grid of all cultivOS pages and features."""

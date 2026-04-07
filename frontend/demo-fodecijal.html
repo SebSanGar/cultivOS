@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Recorrido FODECIJAL</title>
+    <meta name="description" content="Recorrido guiado por las 8 capacidades clave de cultivOS para evaluadores FODECIJAL.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Demo walkthrough — scoped to this page */
+        .demo-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .demo-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .demo-header p {
+            color: var(--text-secondary, #a0a0a0);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .progress-container {
+            background: var(--surface, #1e1e1e);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border, #333);
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-secondary, #a0a0a0);
+        }
+        .progress-track {
+            height: 8px;
+            background: var(--border, #333);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: var(--accent, #00c896);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        .step-card {
+            background: var(--surface, #1e1e1e);
+            border: 1px solid var(--border, #333);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: border-color 0.2s;
+        }
+        .step-card:hover {
+            border-color: var(--accent, #00c896);
+        }
+        .step-card.completed {
+            border-color: var(--accent, #00c896);
+            opacity: 0.85;
+        }
+        .step-check {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary, #a0a0a0);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .step-card.completed .step-check {
+            background: var(--accent, #00c896);
+            border-color: var(--accent, #00c896);
+            color: #fff;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .step-content p {
+            color: var(--text-secondary, #a0a0a0);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .step-cta {
+            display: inline-block;
+            padding: 8px 18px;
+            background: var(--accent, #00c896);
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .step-cta:hover {
+            opacity: 0.85;
+        }
+        .step-number {
+            font-size: 11px;
+            color: var(--text-secondary, #a0a0a0);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body class="intel-body">
+    <nav class="intel-nav">
+        <a href="/" class="nav-logo">cultivOS</a>
+        <div class="nav-links">
+            <a href="/plataforma">Plataforma</a>
+            <a href="/demo-fodecijal" class="active">Demo FODECIJAL</a>
+            <a href="/reporte-fodecijal">Reporte PDF</a>
+        </div>
+    </nav>
+
+    <main class="intel-main" style="max-width: 800px; margin: 0 auto; padding: 32px 20px;">
+        <div class="demo-header">
+            <h1>Recorrido FODECIJAL</h1>
+            <p>Recorrido guiado por las 8 capacidades clave de la plataforma de inteligencia agricola cultivOS. Complete cada paso para explorar la tecnologia.</p>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stats-strip" id="demo-stats">
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Pasos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completed-count">0</div>
+                <div class="stat-label">Completados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="remaining-count">8</div>
+                <div class="stat-label">Restantes</div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progreso del recorrido</span>
+                <span id="progress-text">0 de 8 pasos completados</span>
+            </div>
+            <div class="progress-track">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Demo Steps -->
+        <div id="demo-steps">
+            <div class="step-card" id="step-1" data-step="1">
+                <div class="step-check" onclick="toggleStep(1)">1</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 1 de 8</div>
+                    <h3>Mapa de Fincas Interactivo</h3>
+                    <p>Visualice la ubicacion geografica de todas las fincas del portafolio con poligonos de campos coloreados por nivel de salud. Demuestra cobertura espacial y monitoreo en tiempo real.</p>
+                    <a href="/mapa" class="step-cta">Ir a Mapa</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-2" data-step="2">
+                <div class="step-check" onclick="toggleStep(2)">2</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 2 de 8</div>
+                    <h3>Salud del Campo — Panel de Inteligencia</h3>
+                    <p>Dashboard completo con puntaje de salud 0-100, tendencias historicas, alertas activas y metricas de suelo por campo. El cerebro de la agricultura de precision.</p>
+                    <a href="/campo" class="step-cta">Ir a Salud del Campo</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-3" data-step="3">
+                <div class="step-check" onclick="toggleStep(3)">3</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 3 de 8</div>
+                    <h3>Analisis NDVI — Procesamiento de Imagenes Drone</h3>
+                    <p>Procesamiento de imagenes multiespectrales del DJI Mavic 3 para generar mapas de vigor vegetal. Identifica zonas de estres antes de que sean visibles al ojo humano.</p>
+                    <a href="/intel" class="step-cta">Ir a Inteligencia NDVI</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-4" data-step="4">
+                <div class="step-check" onclick="toggleStep(4)">4</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 4 de 8</div>
+                    <h3>Tratamientos Organicos y Recomendaciones</h3>
+                    <p>Motor de recomendaciones 100% organicas basado en conocimiento ancestral y datos de sensor. Composta, biofertilizantes, rotacion milpa — tratamientos validados por agricultores.</p>
+                    <a href="/recomendaciones" class="step-cta">Ir a Tratamientos</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-5" data-step="5">
+                <div class="step-check" onclick="toggleStep(5)">5</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 5 de 8</div>
+                    <h3>Planificador de Rotacion Multi-Anual</h3>
+                    <p>Plan de rotacion a 3 anos con proyecciones de materia organica del suelo, sistema milpa (Tres Hermanas) y recomendaciones por temporada para Jalisco.</p>
+                    <a href="/rotacion" class="step-cta">Ir a Rotacion</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-6" data-step="6">
+                <div class="step-check" onclick="toggleStep(6)">6</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 6 de 8</div>
+                    <h3>Reporte de Carbono y Secuestro</h3>
+                    <p>Calculo de CO2 equivalente secuestrado por hectarea usando factor 3.67 (peso molecular CO2/C). Cuantifica el impacto ambiental de la agricultura regenerativa.</p>
+                    <a href="/carbono" class="step-cta">Ir a Carbono</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-7" data-step="7">
+                <div class="step-check" onclick="toggleStep(7)">7</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 7 de 8</div>
+                    <h3>Sistema de Alertas — Comunicacion con Agricultores</h3>
+                    <p>Historial de alertas SMS y del sistema con metricas de entrega, alcance por finca y clasificacion por tipo/severidad. Demuestra comunicacion proactiva.</p>
+                    <a href="/historial-alertas" class="step-cta">Ir a Alertas</a>
+                </div>
+            </div>
+
+            <div class="step-card" id="step-8" data-step="8">
+                <div class="step-check" onclick="toggleStep(8)">8</div>
+                <div class="step-content">
+                    <div class="step-number">Paso 8 de 8</div>
+                    <h3>WhatsApp — Interfaz Voz-Primero</h3>
+                    <p>Simulador de conversacion WhatsApp entre agricultor e IA cultivOS. Notas de voz, reportes de salud y tratamientos organicos en espanol — la interfaz principal del agricultor.</p>
+                    <a href="/whatsapp-demo" class="step-cta">Ir a WhatsApp Demo</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/demo-fodecijal.js"></script>
+</body>
+</html>
