@@ -117,6 +117,10 @@ function buildTable(farms) {
         { label: 'Tendencia', key: f => trendBadge(f.trend), html: true },
         { label: 'Rendimiento (kg)', key: f => f.yield_total_kg.toLocaleString('es-MX', { maximumFractionDigits: 0 }) },
         { label: 'Tratamientos', key: f => f.treatment_count },
+        { label: 'Materia Organica (%)', key: f => f.soil_om_avg != null ? f.soil_om_avg.toFixed(1) + '%' : '--' },
+        { label: 'Carbono (CO2e ton)', key: f => f.carbon_co2e_tonnes != null ? f.carbon_co2e_tonnes.toFixed(1) : '--' },
+        { label: 'Alertas', key: f => f.alert_count },
+        { label: 'Completitud Datos', key: f => f.completeness_pct != null ? f.completeness_pct.toFixed(0) + '%' : '--' },
     ];
 
     tbody.innerHTML = metrics.map(m => {

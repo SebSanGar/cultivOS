@@ -7,6 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import (
+    Alert,
     Farm,
     FarmerFeedback,
     Field,
@@ -16,6 +17,7 @@ from cultivos.db.models import (
     SoilAnalysis,
     ThermalResult,
     TreatmentRecord,
+    WeatherRecord,
 )
 from cultivos.services.crop.health import (
     MicrobiomeInput,
@@ -42,13 +44,17 @@ def _classify_season(dt: datetime) -> tuple[str, int]:
 
 
 def compare_farms(db: Session, farm_ids: list[int]) -> dict:
-    """Compare health, yield, and treatments across multiple farms.
+    """Compare health, yield, treatments, soil, carbon, alerts, and completeness across farms.
 
     Returns a list of farm summaries with avg health (from latest score per field),
-    total yield prediction, and treatment count. Raises ValueError if any farm_id
-    is not found.
+    total yield prediction, treatment count, avg soil organic matter, carbon
+    sequestration estimate, alert count, and data completeness percentage.
+    Raises ValueError if any farm_id is not found.
     """
+    from cultivos.services.intelligence.carbon import estimate_soc
     from cultivos.services.intelligence.yield_model import predict_yield
+
+    _SOC_TO_CO2E = 3.67
 
     results = []
     for fid in farm_ids:
@@ -62,6 +68,9 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
         total_yield = 0.0
         total_treatment_count = 0
         total_hectares = 0.0
+        soil_om_values: list[float] = []
+        total_co2e = 0.0
+        has_soil_data = False
 
         # Collect all health scores across fields for history/trend
         field_ids = [f.id for f in fields]
@@ -100,7 +109,59 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
             ).scalar() or 0
             total_treatment_count += tc
 
+            # Latest soil analysis for OM avg and carbon
+            latest_soil = (
+                db.query(SoilAnalysis)
+                .filter(
+                    SoilAnalysis.field_id == field.id,
+                    SoilAnalysis.organic_matter_pct.isnot(None),
+                )
+                .order_by(SoilAnalysis.sampled_at.desc())
+                .first()
+            )
+            if latest_soil:
+                has_soil_data = True
+                soil_om_values.append(float(latest_soil.organic_matter_pct))
+                soc = estimate_soc(
+                    organic_matter_pct=float(latest_soil.organic_matter_pct),
+                    depth_cm=float(latest_soil.depth_cm or 30.0),
+                )
+                field_ha = field.hectares or 0
+                total_co2e += soc["soc_tonnes_per_ha"] * field_ha * _SOC_TO_CO2E
+
         avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
+
+        # Soil OM average
+        soil_om_avg = round(sum(soil_om_values) / len(soil_om_values), 1) if soil_om_values else None
+
+        # Carbon CO2e
+        carbon_co2e_tonnes = round(total_co2e, 2) if has_soil_data else None
+
+        # Alert count for this farm
+        alert_count = db.query(func.count(Alert.id)).filter(
+            Alert.farm_id == fid
+        ).scalar() or 0
+
+        # Data completeness: check 5 types per field, average
+        completeness_pct = None
+        if fields:
+            has_weather = (
+                db.query(WeatherRecord)
+                .filter(WeatherRecord.farm_id == fid)
+                .first()
+                is not None
+            )
+            field_scores = []
+            for field in fields:
+                present = sum([
+                    db.query(SoilAnalysis).filter(SoilAnalysis.field_id == field.id).first() is not None,
+                    db.query(NDVIResult).filter(NDVIResult.field_id == field.id).first() is not None,
+                    db.query(ThermalResult).filter(ThermalResult.field_id == field.id).first() is not None,
+                    db.query(TreatmentRecord).filter(TreatmentRecord.field_id == field.id).first() is not None,
+                    has_weather,
+                ])
+                field_scores.append(round((present / 5) * 100, 1))
+            completeness_pct = round(sum(field_scores) / len(field_scores), 1)
 
         # Build health history: avg score per scored_at date, last 10
         history_by_date: dict[str, list[float]] = {}
@@ -134,6 +195,10 @@ def compare_farms(db: Session, farm_ids: list[int]) -> dict:
             "treatment_count": total_treatment_count,
             "health_history": health_history,
             "trend": trend,
+            "soil_om_avg": soil_om_avg,
+            "carbon_co2e_tonnes": carbon_co2e_tonnes,
+            "alert_count": alert_count,
+            "completeness_pct": completeness_pct,
         })
 
     return {"farms": results}

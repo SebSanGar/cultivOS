@@ -142,6 +142,10 @@ class FarmCompareEntry(BaseModel):
     treatment_count: int = 0
     health_history: list[float] = []
     trend: Optional[str] = None
+    soil_om_avg: Optional[float] = None
+    carbon_co2e_tonnes: Optional[float] = None
+    alert_count: int = 0
+    completeness_pct: Optional[float] = None
 
 
 class FarmCompareOut(BaseModel):
