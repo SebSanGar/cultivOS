@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Estado del Sistema</title>
+    <meta name="description" content="Dashboard de estado del sistema — version, uptime, endpoints, tests, y conteos de base de datos para revisores FODECIJAL.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/plataforma" class="nav-tab intel-tab">Plataforma</a></li>
+            <li><a href="/api-status" class="nav-tab intel-tab active">Sistema</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="intel-main">
+    <header class="intel-header">
+        <h1>Estado del Sistema</h1>
+        <p class="intel-subtitle">Monitoreo en tiempo real de la plataforma cultivOS</p>
+    </header>
+
+    <!-- Stats strip -->
+    <div class="stats-strip">
+        <div class="stat-card">
+            <div class="stat-label">Estado</div>
+            <div class="stat-value" id="system-status">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Version API</div>
+            <div class="stat-value" id="api-version">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Python</div>
+            <div class="stat-value" id="python-version">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Uptime</div>
+            <div class="stat-value" id="uptime">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Endpoints</div>
+            <div class="stat-value" id="endpoint-count">--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tests</div>
+            <div class="stat-value" id="test-count">--</div>
+        </div>
+    </div>
+
+    <!-- Database counts -->
+    <section class="intel-section">
+        <h2>Registros en Base de Datos</h2>
+        <div id="db-counts" class="detail-grid">
+            <div class="detail-card">
+                <div class="detail-label">Granjas</div>
+                <div class="detail-value" id="count-farms">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Parcelas</div>
+                <div class="detail-value" id="count-fields">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Analisis de Suelo</div>
+                <div class="detail-value" id="count-soil">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Resultados NDVI</div>
+                <div class="detail-value" id="count-ndvi">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Resultados Termicos</div>
+                <div class="detail-value" id="count-thermal">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Tratamientos</div>
+                <div class="detail-value" id="count-treatments">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Alertas</div>
+                <div class="detail-value" id="count-alerts">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Vuelos</div>
+                <div class="detail-value" id="count-flights">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Registros Clima</div>
+                <div class="detail-value" id="count-weather">--</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest data timestamps -->
+    <section class="intel-section">
+        <h2>Datos Mas Recientes</h2>
+        <div id="latest-data" class="detail-grid">
+            <div class="detail-card">
+                <div class="detail-label">Suelo</div>
+                <div class="detail-value" id="latest-soil">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">NDVI</div>
+                <div class="detail-value" id="latest-ndvi">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Termico</div>
+                <div class="detail-value" id="latest-thermal">--</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Clima</div>
+                <div class="detail-value" id="latest-weather">--</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="action-bar">
+        <button id="refresh-btn" class="btn btn-primary" onclick="loadSystemHealth()">Actualizar</button>
+        <a href="/plataforma" class="btn btn-secondary">Volver a Plataforma</a>
+    </div>
+</main>
+
+<script src="/api-status.js"></script>
+</body>
+</html>

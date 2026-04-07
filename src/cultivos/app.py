@@ -143,6 +143,7 @@ def create_app() -> FastAPI:
             {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
             {"name": "phenology", "description": "Crop phenology calendar and growth stage timelines"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
+            {"name": "system", "description": "Detailed system health and operational status"},
         ],
     )
 
@@ -456,6 +457,11 @@ def create_app() -> FastAPI:
         async def serve_plataforma():
             """Platform overview — categorized grid of all cultivOS pages and features."""
             return FileResponse(frontend_dir / "plataforma.html")
+
+        @app.get("/api-status")
+        async def serve_api_status():
+            """System health dashboard — API versions, DB counts, test count for grant reviewers."""
+            return FileResponse(frontend_dir / "api-status.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
