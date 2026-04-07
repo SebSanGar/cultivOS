@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Reporte FODECIJAL</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .report-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .report-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .report-header p {
+            color: var(--text-secondary, #888);
+            font-size: 0.95rem;
+        }
+        .report-description {
+            background: var(--card-bg, #1a1a2e);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border, #333);
+        }
+        .report-description h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        .report-description ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            line-height: 1.8;
+        }
+        .report-actions {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        #generate-btn {
+            background: var(--accent, #2d7a3a);
+            color: #fff;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        #generate-btn:hover { opacity: 0.9; }
+        #generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #status-msg {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #888);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .info-card {
+            background: var(--card-bg, #1a1a2e);
+            border-radius: 8px;
+            padding: 1.2rem;
+            border: 1px solid var(--border, #333);
+        }
+        .info-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary, #888);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-card .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <div class="report-header">
+            <h1>Reporte Tecnico FODECIJAL</h1>
+            <p>cultivOS — Plataforma de Inteligencia Agricola</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>Formato</h3>
+                <div class="value">PDF</div>
+            </div>
+            <div class="info-card">
+                <h3>Contenido</h3>
+                <div class="value">5 secciones</div>
+            </div>
+            <div class="info-card">
+                <h3>Idioma</h3>
+                <div class="value">Espanol</div>
+            </div>
+            <div class="info-card">
+                <h3>Datos</h3>
+                <div class="value">Tiempo real</div>
+            </div>
+        </div>
+
+        <div class="report-description">
+            <h2>Contenido del Reporte</h2>
+            <ul>
+                <li><strong>Resumen de la Plataforma</strong> — endpoints, paginas, pruebas, granjas</li>
+                <li><strong>Motor de Inteligencia Cerebro</strong> — fuentes de datos, metodos de tratamiento, cultivos</li>
+                <li><strong>Pipelines de Datos</strong> — NDVI, termal, microbioma, suelo, estado operativo</li>
+                <li><strong>Captura de Carbono</strong> — CO2e secuestrado, SOC por hectarea</li>
+                <li><strong>Portafolio de Granjas</strong> — detalle por granja con salud y tratamientos</li>
+            </ul>
+        </div>
+
+        <div class="report-actions">
+            <button id="generate-btn" onclick="generateReport()">Generar y Descargar PDF</button>
+            <div id="status-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        async function generateReport() {
+            const btn = document.getElementById('generate-btn');
+            const msg = document.getElementById('status-msg');
+
+            btn.disabled = true;
+            btn.textContent = 'Generando...';
+            msg.textContent = 'Preparando reporte FODECIJAL...';
+
+            try {
+                const resp = await fetch('/api/reports/fodecijal');
+                if (!resp.ok) throw new Error('Error al generar el reporte');
+
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reporte_fodecijal_cultivOS.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                msg.textContent = 'Reporte descargado exitosamente.';
+            } catch (err) {
+                msg.textContent = 'Error: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generar y Descargar PDF';
+            }
+        }
+    </script>
+</body>
+</html>

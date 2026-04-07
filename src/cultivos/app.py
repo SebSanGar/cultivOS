@@ -442,6 +442,11 @@ def create_app() -> FastAPI:
             """Treatment trust scores — ranked treatments by farmer feedback confidence."""
             return FileResponse(frontend_dir / "confianza-tratamientos.html")
 
+        @app.get("/reporte-fodecijal")
+        async def serve_reporte_fodecijal():
+            """FODECIJAL grant report — generate and download technical narrative PDF."""
+            return FileResponse(frontend_dir / "reporte-fodecijal.html")
+
         @app.get("/plataforma")
         async def serve_plataforma():
             """Platform overview — categorized grid of all cultivOS pages and features."""

@@ -366,6 +366,238 @@ def generate_portfolio_report_pdf(
     return buf.getvalue()
 
 
+# -- FODECIJAL Grant Narrative Report --
+
+
+def generate_fodecijal_report_pdf(
+    platform_stats: dict,
+    cerebro_summary: dict,
+    pipeline_status: list[dict],
+    carbon_summary: dict,
+    farm_details: list[dict],
+) -> bytes:
+    """Generate a FODECIJAL grant narrative PDF showing TRL 4-5 maturity.
+
+    Args:
+        platform_stats: dict with api_endpoints, frontend_pages, passing_tests,
+                        route_files, total_farms, total_fields, total_hectares
+        cerebro_summary: dict with health_scoring_sources, treatment_methods,
+                         ancestral_methods, supported_crops, organic_only
+        pipeline_status: list of dicts with name, status, records
+        carbon_summary: dict with total_co2e_tonnes, avg_soc_tonnes_per_ha
+        farm_details: list of dicts with name, municipality, state, hectares,
+                      field_count, avg_health, treatment_count
+
+    Returns:
+        PDF file content as bytes.
+    """
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buf, pagesize=letter,
+        leftMargin=2 * cm, rightMargin=2 * cm,
+        topMargin=2 * cm, bottomMargin=2 * cm,
+        pageCompression=0,
+    )
+    styles = _build_styles()
+    story = []
+
+    # -- Title page --
+    story.append(Spacer(1, 60))
+    story.append(Paragraph(
+        "cultivOS — Reporte Tecnico FODECIJAL",
+        styles["title"],
+    ))
+    story.append(Paragraph(
+        "Plataforma de Inteligencia Agricola con Precision por Drones",
+        styles["subtitle"],
+    ))
+    story.append(Spacer(1, 20))
+    story.append(Paragraph(
+        f"Generado: {datetime.utcnow().strftime('%d/%m/%Y')}",
+        styles["normal"],
+    ))
+    story.append(Paragraph(
+        "Nivel de Madurez Tecnologica: TRL 4 → TRL 5",
+        styles["normal"],
+    ))
+    story.append(Spacer(1, 30))
+    story.append(Paragraph(
+        "Este documento presenta el estado actual de la plataforma cultivOS, "
+        "desarrollada para transformar la agricultura de precision en Jalisco. "
+        "El sistema integra imagenes de drones (NDVI, termal), analisis de suelo, "
+        "conocimiento ancestral y recomendaciones de tratamientos organicos para "
+        "apoyar a agricultores de pequena y mediana escala.",
+        styles["normal"],
+    ))
+
+    story.append(PageBreak())
+
+    # -- Section 1: Plataforma --
+    story.append(Paragraph("1. Resumen de la Plataforma", styles["heading"]))
+
+    ps = platform_stats
+    platform_data = [
+        ["Endpoints API funcionales", str(ps.get("api_endpoints", 0))],
+        ["Paginas de interfaz", str(ps.get("frontend_pages", 0))],
+        ["Pruebas automatizadas", str(ps.get("passing_tests", 0))],
+        ["Archivos de rutas", str(ps.get("route_files", 0))],
+        ["Granjas registradas", str(ps.get("total_farms", 0))],
+        ["Parcelas registradas", str(ps.get("total_fields", 0))],
+        ["Superficie total", f"{ps.get('total_hectares', 0):.1f} hectareas"],
+    ]
+    platform_table = Table(platform_data, colWidths=[3.5 * inch, 3.5 * inch])
+    platform_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+        ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+    ]))
+    story.append(platform_table)
+    story.append(Spacer(1, 16))
+
+    # -- Section 2: Cerebro Intelligence --
+    story.append(Paragraph("2. Motor de Inteligencia Cerebro", styles["heading"]))
+
+    cs = cerebro_summary
+    sources = cs.get("health_scoring_sources", [])
+    cerebro_data = [
+        ["Fuentes de datos para scoring", ", ".join(sources) if sources else "—"],
+        ["Metodos de tratamiento", str(cs.get("treatment_methods", 0))],
+        ["Metodos ancestrales documentados", str(cs.get("ancestral_methods", 0))],
+        ["Tipos de cultivo soportados", str(cs.get("supported_crops", 0))],
+        ["Solo organico", "Si" if cs.get("organic_only") else "No"],
+    ]
+    cerebro_table = Table(cerebro_data, colWidths=[3.5 * inch, 3.5 * inch])
+    cerebro_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+        ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+    ]))
+    story.append(cerebro_table)
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        "El motor Cerebro combina multiples fuentes de datos — imagenes NDVI y "
+        "termales de drones, analisis de suelo, datos meteorologicos — para generar "
+        "una puntuacion de salud 0-100 por parcela. Todas las recomendaciones de "
+        "tratamiento son 100% organicas, priorizando metodos regenerativos y "
+        "conocimiento ancestral (sistema milpa, fertilizantes naturales).",
+        styles["normal"],
+    ))
+    story.append(Spacer(1, 16))
+
+    # -- Section 3: Pipelines de Datos --
+    story.append(Paragraph("3. Pipelines de Datos", styles["heading"]))
+
+    if pipeline_status:
+        pipe_header = ["Pipeline", "Estado", "Registros"]
+        pipe_rows = [pipe_header]
+        for p in pipeline_status:
+            status_label = "Operativo" if p.get("status") == "operational" else "Planificado"
+            pipe_rows.append([
+                p.get("name", "—"),
+                status_label,
+                str(p.get("records", 0)),
+            ])
+
+        pipe_table = Table(pipe_rows, colWidths=[3.0 * inch, 2.0 * inch, 2.0 * inch])
+        pipe_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), _GREEN),
+            ("TEXTCOLOR", (0, 0), (-1, 0), _WHITE),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+            ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [_WHITE, _LIGHT_BG]),
+        ]))
+        story.append(pipe_table)
+    else:
+        story.append(Paragraph("Sin pipelines configurados.", styles["normal"]))
+
+    story.append(Spacer(1, 16))
+
+    # -- Section 4: Carbono --
+    story.append(Paragraph("4. Captura de Carbono", styles["heading"]))
+
+    co2e = carbon_summary.get("total_co2e_tonnes", 0)
+    avg_soc = carbon_summary.get("avg_soc_tonnes_per_ha", 0)
+    carbon_data = [
+        ["CO2e Total Estimado", f"{co2e:,.1f} toneladas"],
+        ["SOC Promedio por Hectarea", f"{avg_soc:,.2f} ton/ha"],
+    ]
+    carbon_table = Table(carbon_data, colWidths=[3.5 * inch, 3.5 * inch])
+    carbon_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+        ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+    ]))
+    story.append(carbon_table)
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        "La plataforma monitorea el carbono organico del suelo (SOC) y proyecta "
+        "secuestro de CO2 equivalente usando el factor de conversion molecular "
+        "(3.67 CO2/C). Las practicas regenerativas recomendadas — cobertura vegetal, "
+        "labranza minima, rotacion con leguminosas — incrementan el SOC de manera "
+        "medible entre temporadas.",
+        styles["normal"],
+    ))
+    story.append(Spacer(1, 16))
+
+    # -- Section 5: Portafolio de Granjas --
+    story.append(Paragraph("5. Portafolio de Granjas", styles["heading"]))
+
+    if farm_details:
+        farm_header = ["Granja", "Municipio", "Hectareas", "Parcelas", "Salud", "Tratamientos"]
+        farm_rows = [farm_header]
+        for fd in farm_details:
+            score = fd.get("avg_health", 0)
+            score_str = f"{score:.1f}" if score else "—"
+            farm_rows.append([
+                fd.get("name", "—"),
+                fd.get("municipality", "—") or "—",
+                f"{fd.get('hectares', 0):.0f}",
+                str(fd.get("field_count", 0)),
+                score_str,
+                str(fd.get("treatment_count", 0)),
+            ])
+
+        farm_table = Table(farm_rows, colWidths=[1.6 * inch, 1.2 * inch, 0.9 * inch, 0.9 * inch, 0.9 * inch, 1.2 * inch])
+        farm_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), _GREEN),
+            ("TEXTCOLOR", (0, 0), (-1, 0), _WHITE),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+            ("ALIGN", (2, 0), (-1, -1), "CENTER"),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [_WHITE, _LIGHT_BG]),
+        ]))
+        story.append(farm_table)
+    else:
+        story.append(Paragraph("Sin granjas registradas en el portafolio.", styles["normal"]))
+
+    # -- Footer --
+    story.append(Spacer(1, 30))
+    story.append(Paragraph(
+        "Este reporte fue generado automaticamente por cultivOS. "
+        "Los datos reflejan las mediciones mas recientes disponibles. "
+        "cultivOS es una plataforma de inteligencia agricola desarrollada "
+        "para agricultores de pequena y mediana escala en Jalisco, Mexico.",
+        styles["small"],
+    ))
+
+    doc.build(story)
+    return buf.getvalue()
+
+
 # -- CSV Export --
 
 _CSV_HEADERS = [
