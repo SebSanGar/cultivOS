@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cultivOS — Agricultura de Precisión para Jalisco</title>
     <meta name="description" content="cultivOS lleva agricultura de precisión con drones e IA a las granjas de Jalisco — para cuidar el agua, bajar costos y sacar más de cada hectárea.">
+    <link rel="canonical" href="https://cultivosagro.com/">
+    <meta property="og:title" content="cultivOS — Agricultura de Precisión para Jalisco">
+    <meta property="og:description" content="cultivOS lleva agricultura de precisión con drones e IA a las granjas de Jalisco — para cuidar el agua, bajar costos y sacar más de cada hectárea.">
+    <meta property="og:image" content="https://cultivosagro.com/images/og-cover.png">
+    <meta property="og:url" content="https://cultivosagro.com/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "cultivOS",
+      "url": "https://cultivosagro.com",
+      "description": "Agricultura de precisión con drones e IA para las granjas de Jalisco.",
+      "foundingDate": "2026",
+      "areaServed": ["Jalisco, México", "Ontario, Canadá"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "hola@cultivosagro.com",
+        "contactType": "sales"
+      }
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -478,7 +501,6 @@
         </ul>
         <div class="lang-toggle">
             <button class="lang-btn active" onclick="setLang('es')">MX</button>
-            <button class="lang-btn" onclick="setLang('en')">CA</button>
         </div>
         <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
             <span></span><span></span><span></span>
@@ -510,16 +532,16 @@
 <!-- STATS -->
 <div class="stats stagger">
     <div class="stat-card">
-        <div class="stat-value">52%</div>
+        <div class="stat-value">40%</div>
         <div class="stat-label">menos costo por hectárea</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">75</div>
+        <div class="stat-value">85</div>
         <div class="stat-label">Granjas para el Año 3</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">8,000+</div>
-        <div class="stat-label">Hectáreas bajo agricultura de precisión</div>
+        <div class="stat-value">2,000+</div>
+        <div class="stat-label">Hectáreas para el Año 3</div>
     </div>
 </div>
 
@@ -529,19 +551,20 @@
     <div class="section-inner">
         <span class="section-tag">El Reto</span>
         <h2 class="section-title">Crisis Hídrica Agrícola de México</h2>
-        <p class="section-subtitle">Jalisco ocupa el puesto #1 en producción agrícola ($116,800M MXN), pero enfrenta una crisis hídrica severa.</p>
+        <p class="section-subtitle">Jalisco ocupa el puesto #1 en producción agrícola ($117,200M MXN, SIAP 2024), pero enfrenta una crisis hídrica severa.</p>
         <div class="problem-grid stagger">
             <div class="problem-card">
                 <div class="problem-number">57%</div>
                 <div class="problem-label">del agua agrícola se pierde por ineficiencia (CONAGUA)</div>
             </div>
             <div class="problem-card">
-                <div class="problem-number">84%</div>
-                <div class="problem-label">de los municipios de Jalisco enfrentaron sequía en 2024</div>
+                <div class="problem-number">84.8%</div>
+                <div class="problem-label">de los municipios de Jalisco en sequía al inicio de 2024 (CONAGUA Monitor de Sequía)</div>
             </div>
             <div class="problem-card">
-                <div class="problem-number">&lt;5%</div>
+                <div class="problem-number">&lt;5%*</div>
                 <div class="problem-label">de las pequeñas granjas tienen acceso a agricultura de precisión</div>
+                <p style="font-size:0.7rem;color:var(--text-muted);margin-top:8px">*Estimación basada en datos INEGI/ENA. Solo ~30% de unidades productivas usan tecnología avanzada.</p>
             </div>
         </div>
     </div>
@@ -750,10 +773,11 @@
                 <div class="drone-price" data-es="$106,000 MXN" data-en="$5,945 CAD">$106,000 MXN</div>
                 <ul class="drone-specs">
                     <li data-es="Cámaras especiales que detectan salud del cultivo" data-en="Special cameras that detect crop health">Cámaras especiales que detectan salud del cultivo</li>
-                    <li data-es="200 hectáreas por vuelo" data-en="500 acres per flight">200 hectáreas por vuelo</li>
+                    <li data-es="Hasta 200 hectáreas por vuelo*" data-en="Up to 500 acres per flight*">Hasta 200 hectáreas por vuelo*</li>
                     <li data-es="43 minutos de vuelo" data-en="43-minute flight time">43 minutos de vuelo</li>
                     <li data-es="Mapa detallado de salud por zona" data-en="Detailed health map by zone">Mapa detallado de salud por zona</li>
                 </ul>
+                <p style="font-size:0.7rem;color:var(--text-muted);margin-top:8px">*A 217m de altitud, resolución 10cm GSD. Cobertura práctica: 80–150 ha según condiciones.</p>
             </div>
             <div class="drone-card">
                 <img src="images/mavic-3-enterprise.webp" alt="DJI Mavic 3 Thermal" class="drone-img">
@@ -771,7 +795,7 @@
                 <div class="drone-name">Agras T100</div>
                 <div class="drone-price" data-es="$771,000 MXN" data-en="$40,000 CAD">$771,000 MXN</div>
                 <ul class="drone-specs">
-                    <li data-es="Tanque de 100L, 25 hectáreas/hora" data-en="100L tank, 60 acres/hour">Tanque de 100L, 25 hectáreas/hora</li>
+                    <li data-es="Tanque de 100L, hasta 25 hectáreas/hora" data-en="100L tank, up to 60 acres/hour">Tanque de 100L, hasta 25 hectáreas/hora</li>
                     <li data-es="Fumiga solo donde se necesita" data-en="Sprays only where needed">Fumiga solo donde se necesita</li>
                     <li data-es="Sigue el terreno aunque no sea plano" data-en="Follows terrain even on hills">Sigue el terreno aunque no sea plano</li>
                     <li data-es="Carga útil: 100 kg (transporte)" data-en="Payload: 100 kg (transport)">Carga útil: 100 kg (transporte)</li>
@@ -797,26 +821,26 @@
             <div class="roadmap-item">
                 <div class="roadmap-year" data-es="Año 2" data-en="Year 2">Año 2</div>
                 <div class="roadmap-stage" data-es="Crecimiento" data-en="Growth">Crecimiento</div>
-                <div class="roadmap-detail" data-es="3 personas, 3 drones, 45 granjas" data-en="3 people, 3 drones, 20 farms">3 personas, 3 drones, 45 granjas</div>
-                <div class="roadmap-revenue" data-es="$6.0M MXN" data-en="$380K CAD">$6.0M MXN</div>
+                <div class="roadmap-detail" data-es="3 personas, 3 drones, 55 granjas" data-en="3 people, 3 drones, 20 farms">3 personas, 3 drones, 55 granjas</div>
+                <div class="roadmap-revenue" data-es="$5.0M MXN" data-en="$380K CAD">$5.0M MXN</div>
             </div>
             <div class="roadmap-item">
                 <div class="roadmap-year" data-es="Año 3" data-en="Year 3">Año 3</div>
                 <div class="roadmap-stage" data-es="Escalado" data-en="Scale">Escalado</div>
-                <div class="roadmap-detail" data-es="4 personas, 4 drones, 75 granjas" data-en="4 people, 4 drones, 30 farms">4 personas, 4 drones, 75 granjas</div>
-                <div class="roadmap-revenue" data-es="$10.1M MXN" data-en="$570K CAD">$10.1M MXN</div>
+                <div class="roadmap-detail" data-es="4 personas, 4 drones, 85 granjas" data-en="4 people, 4 drones, 30 farms">4 personas, 4 drones, 85 granjas</div>
+                <div class="roadmap-revenue" data-es="$8.1M MXN" data-en="$570K CAD">$8.1M MXN</div>
             </div>
             <div class="roadmap-item">
                 <div class="roadmap-year" data-es="Año 4" data-en="Year 4">Año 4</div>
                 <div class="roadmap-stage" data-es="Regional" data-en="Regional">Regional</div>
                 <div class="roadmap-detail" data-es="6 personas, 5 drones, 110 granjas" data-en="6 people, 5 drones, 50 farms">6 personas, 5 drones, 110 granjas</div>
-                <div class="roadmap-revenue" data-es="$15.0M MXN" data-en="$850K CAD">$15.0M MXN</div>
+                <div class="roadmap-revenue" data-es="$12.0M MXN" data-en="$850K CAD">$12.0M MXN</div>
             </div>
             <div class="roadmap-item">
                 <div class="roadmap-year" data-es="Año 5" data-en="Year 5">Año 5</div>
                 <div class="roadmap-stage" data-es="Líder" data-en="Leader">Líder</div>
                 <div class="roadmap-detail" data-es="10 personas, 8 drones, 170 granjas" data-en="10 people, 8 drones, 80 farms">10 personas, 8 drones, 170 granjas</div>
-                <div class="roadmap-revenue" data-es="$24.0M MXN" data-en="$1.4M CAD">$24.0M MXN</div>
+                <div class="roadmap-revenue" data-es="$18.0M MXN" data-en="$1.4M CAD">$18.0M MXN</div>
             </div>
         </div>
     </div>
@@ -834,18 +858,18 @@
                     <tr><th>Concepto</th><th>Convencional</th><th>CultivOS</th><th>Ahorro</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Mano de Obra</td><td>$5,000 MXN/ha</td><td>$1,500 MXN/ha</td><td class="savings">-70%</td></tr>
-                    <tr><td>Fertilizante</td><td>$4,500 MXN/ha</td><td>$3,150 MXN/ha</td><td class="savings">-30%</td></tr>
-                    <tr><td>Pesticida / Herbicida</td><td>$3,500 MXN/ha</td><td>$2,100 MXN/ha</td><td class="savings">-40%</td></tr>
-                    <tr><td>Agua</td><td>$3,000 MXN/ha</td><td>$2,100 MXN/ha</td><td class="savings">-30%</td></tr>
-                    <tr><td>Pérdida de Cultivo</td><td>$4,000 MXN/ha</td><td>$800 MXN/ha</td><td class="savings">-80%</td></tr>
-                    <tr class="total-row"><td><strong>TOTAL por hectárea</strong></td><td><strong>$20,000 MXN</strong></td><td><strong>$9,650 MXN</strong></td><td class="savings"><strong>-52%</strong></td></tr>
-                    <tr class="total-row highlight"><td><strong>TOTAL para 40 ha</strong></td><td><strong>$800,000 MXN</strong></td><td><strong>$386,000 MXN</strong></td><td class="savings"><strong>$414,000 MXN</strong></td></tr>
+                    <tr><td>Mano de Obra</td><td>$3,800 MXN/ha</td><td>$1,300 MXN/ha</td><td class="savings">-66%</td></tr>
+                    <tr><td>Fertilizante</td><td>$4,200 MXN/ha</td><td>$3,150 MXN/ha</td><td class="savings">-25%</td></tr>
+                    <tr><td>Pesticida / Herbicida</td><td>$3,000 MXN/ha</td><td>$2,100 MXN/ha</td><td class="savings">-30%</td></tr>
+                    <tr><td>Agua</td><td>$2,200 MXN/ha</td><td>$1,540 MXN/ha</td><td class="savings">-30%</td></tr>
+                    <tr><td>Pérdida de Cultivo</td><td>$2,000 MXN/ha</td><td>$1,000 MXN/ha</td><td class="savings">-50%</td></tr>
+                    <tr class="total-row"><td><strong>TOTAL por hectárea</strong></td><td><strong>$15,200 MXN</strong></td><td><strong>$9,090 MXN</strong></td><td class="savings"><strong>-40%</strong></td></tr>
+                    <tr class="total-row highlight"><td><strong>TOTAL para 40 ha</strong></td><td><strong>$608,000 MXN</strong></td><td><strong>$363,600 MXN</strong></td><td class="savings"><strong>$244,400 MXN</strong></td></tr>
                 </tbody>
             </table>
         </div>
         <p style="text-align:center;margin-top:16px;color:var(--green-dark);font-weight:700;font-size:1.1rem">
-            40 ha → $414,000 MXN/año en ahorros + 10-15% mayor rendimiento
+            40 ha → $244,400 MXN/año en ahorros + hasta 15% mayor rendimiento (MDPI meta-análisis, 2025)
         </p>
     </div>
 </section>
@@ -860,17 +884,17 @@
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">🏟</div>
                 <h3 data-es="Copa Mundial 2026" data-en="OMAFRA Grant Programs">Copa Mundial 2026</h3>
-                <p data-es="Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo." data-en="Ontario's Ministry of Agriculture funds precision agriculture adoption through cost-share programs — reducing the barrier for small farms to get started.">Guadalajara como ciudad anfitriona impulsa la inversión estatal en infraestructura e innovación. Jalisco quiere mostrar tecnología al mundo.</p>
+                <p data-es="La Copa Mundial 2026 posiciona a Guadalajara en el escenario global. El impulso económico general y la atención internacional crean oportunidades para startups jaliscienses." data-en="Ontario's Ministry of Agriculture funds precision agriculture adoption through cost-share programs — reducing the barrier for small farms to get started.">La Copa Mundial 2026 posiciona a Guadalajara en el escenario global. El impulso económico general y la atención internacional crean oportunidades para startups jaliscienses.</p>
             </div>
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">💧</div>
                 <h3 data-es="Crisis Hídrica Histórica" data-en="Climate Volatility">Crisis Hídrica Histórica</h3>
-                <p data-es="84% de municipios en sequía. CONAGUA exige eficiencia hídrica — los agricultores necesitan soluciones ahora." data-en="68% of Ontario farms reported climate-related yield losses in 2024. Early detection is no longer optional — it's the difference between a good season and a write-off.">84% de municipios en sequía. CONAGUA exige eficiencia hídrica — los agricultores necesitan soluciones ahora.</p>
+                <p data-es="84.8% de municipios en sequía al inicio de 2024. CONAGUA exige eficiencia hídrica — los agricultores necesitan soluciones ahora." data-en="68% of Ontario farms reported climate-related yield losses in 2024. Early detection is no longer optional — it's the difference between a good season and a write-off.">84.8% de municipios en sequía al inicio de 2024. CONAGUA exige eficiencia hídrica — los agricultores necesitan soluciones ahora.</p>
             </div>
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">💰</div>
                 <h3 data-es="Financiación de COECYTJAL" data-en="Carbon Credit Incentives">Financiación de COECYTJAL</h3>
-                <p data-es="Convocatorias abiertas para innovación agrícola. Impulsora de Innovación México — hasta $8M MXN en capital semilla." data-en="Precision application reduces chemical inputs and qualifies farms for carbon offset programs — turning sustainability into a revenue stream.">Convocatorias abiertas para innovación agrícola. Impulsora de Innovación México — hasta $8M MXN en capital semilla.</p>
+                <p data-es="Convocatorias abiertas para innovación agrícola. Impulsora de Innovación México — hasta $6M MXN en capital semilla (coinversión)." data-en="Precision application reduces chemical inputs and qualifies farms for carbon offset programs — turning sustainability into a revenue stream.">Convocatorias abiertas para innovación agrícola. Impulsora de Innovación México — hasta $6M MXN en capital semilla (coinversión).</p>
             </div>
             <div class="solution-card" style="border-color:#c7d2fe">
                 <div class="solution-icon" style="background:#e0e7ff">📱</div>
@@ -885,7 +909,7 @@
 <section id="inversión">
     <div class="section-inner">
         <span class="section-tag" data-es="Inversión" data-en="Investment">Inversión</span>
-        <h2 class="section-title">Inversión Total: $2.93M MXN</h2>
+        <h2 class="section-title">Inversión Total: $2.94M MXN</h2>
         <p class="section-subtitle" data-es="Equipo $1.65M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)" data-en="Equipment $105K CAD (38%) + Year 1 Operations $174K CAD (62%)">Equipo $1.65M MXN (56%) + Operaciones Año 1 $1.28M MXN (44%)</p>
 
         <div id="inv-tables" style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
@@ -940,29 +964,29 @@
             </div>
             <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)">
                 <div style="font-size:0.75rem;color:#a7f3d0;margin-bottom:8px" data-es="Año 2 — Crecimiento" data-en="Year 2 — Growth">Año 2 — Crecimiento</div>
-                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px" data-es="45 Granjas" data-en="20 Farms">45 Granjas</div>
-                <div style="font-size:0.85rem;color:#a7f3d0" data-es="Ingresos: $6.0M MXN" data-en="Revenue: $380K CAD">Ingresos: $6.0M MXN</div>
-                <div style="font-size:0.85rem;color:#86efac" data-es="Beneficio Neto: $1.8M MXN" data-en="Net Profit: $130K CAD">Beneficio Neto: $1.8M MXN</div>
+                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px" data-es="55 Granjas" data-en="20 Farms">55 Granjas</div>
+                <div style="font-size:0.85rem;color:#a7f3d0" data-es="Ingresos: $5.0M MXN" data-en="Revenue: $380K CAD">Ingresos: $5.0M MXN</div>
+                <div style="font-size:0.85rem;color:#86efac" data-es="Beneficio Neto: $1.2M MXN" data-en="Net Profit: $130K CAD">Beneficio Neto: $1.2M MXN</div>
             </div>
             <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:24px;border:1px solid rgba(167,243,208,0.3)">
                 <div style="font-size:0.75rem;color:#a7f3d0;margin-bottom:8px" data-es="Año 3 — Escalado" data-en="Year 3 — Scale">Año 3 — Escalado</div>
-                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px" data-es="75 Granjas" data-en="30 Farms">75 Granjas</div>
-                <div style="font-size:0.85rem;color:#a7f3d0" data-es="Ingresos: $10.1M MXN" data-en="Revenue: $570K CAD">Ingresos: $10.1M MXN</div>
-                <div style="font-size:0.85rem;color:#86efac" data-es="Beneficio Neto: $4.5M MXN" data-en="Net Profit: $260K CAD">Beneficio Neto: $4.5M MXN</div>
+                <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px" data-es="85 Granjas" data-en="30 Farms">85 Granjas</div>
+                <div style="font-size:0.85rem;color:#a7f3d0" data-es="Ingresos: $8.1M MXN" data-en="Revenue: $570K CAD">Ingresos: $8.1M MXN</div>
+                <div style="font-size:0.85rem;color:#86efac" data-es="Beneficio Neto: $3.2M MXN" data-en="Net Profit: $260K CAD">Beneficio Neto: $3.2M MXN</div>
             </div>
         </div>
 
         <div class="stats" style="margin:0 auto;padding:0">
             <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
-                <div class="stat-value" style="color:#86efac">$18.7M</div>
+                <div class="stat-value" style="color:#86efac">$15.7M</div>
                 <div class="stat-label" style="color:#a7f3d0">Ingresos Acumulados</div>
             </div>
             <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
-                <div class="stat-value" style="color:#86efac">$5.1M</div>
+                <div class="stat-value" style="color:#86efac">$3.2M</div>
                 <div class="stat-label" style="color:#a7f3d0">Beneficio Acumulado</div>
             </div>
             <div class="stat-card" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)">
-                <div class="stat-value" style="color:#86efac">5.8x</div>
+                <div class="stat-value" style="color:#86efac">~3x</div>
                 <div class="stat-label" style="color:#a7f3d0">Multiplicador de la Inversión</div>
             </div>
         </div>
@@ -987,11 +1011,11 @@
                 <table class="finance-table compact">
                     <thead><tr><th data-es="Servicio" data-en="Service">Servicio</th><th data-es="Precio/ha" data-en="Price/ha">Precio/ha</th><th data-es="Margen" data-en="Margin">Margen</th></tr></thead>
                     <tbody>
-                        <tr><td data-es="Escaneo de Salud" data-en="Crop Health Scan">Escaneo de Salud</td><td data-es="$400 MXN" data-en="$37 CAD">$400 MXN</td><td>70%</td></tr>
-                        <tr><td data-es="Detección de Agua" data-en="Water Stress Scan">Detección de Agua</td><td data-es="$450 MXN" data-en="$42 CAD">$450 MXN</td><td>70%</td></tr>
-                        <tr><td data-es="Detección de Plagas" data-en="Pest Detection">Detección de Plagas</td><td data-es="$340 MXN" data-en="$30 CAD">$340 MXN</td><td>70%</td></tr>
-                        <tr><td data-es="Fertilización" data-en="Fertilization">Fertilización</td><td data-es="$1,000 MXN" data-en="$50 CAD">$1,000 MXN</td><td>50%</td></tr>
-                        <tr><td data-es="Fumigación" data-en="Spraying">Fumigación</td><td data-es="$950 MXN" data-en="$55 CAD">$950 MXN</td><td>45%</td></tr>
+                        <tr><td data-es="Escaneo de Salud (NDVI)" data-en="Crop Health Scan (NDVI)">Escaneo de Salud (NDVI)</td><td data-es="$250 MXN" data-en="$20 CAD">$250 MXN</td><td>70%</td></tr>
+                        <tr><td data-es="Detección de Estrés Hídrico" data-en="Water Stress Detection">Detección de Estrés Hídrico</td><td data-es="$300 MXN" data-en="$24 CAD">$300 MXN</td><td>70%</td></tr>
+                        <tr><td data-es="Detección de Plagas" data-en="Pest Detection">Detección de Plagas</td><td data-es="$250 MXN" data-en="$20 CAD">$250 MXN</td><td>70%</td></tr>
+                        <tr><td data-es="Fertilización de Precisión" data-en="Precision Fertilization">Fertilización de Precisión</td><td data-es="$600 MXN" data-en="$48 CAD">$600 MXN</td><td>50%</td></tr>
+                        <tr><td data-es="Fumigación Dirigida" data-en="Targeted Spraying">Fumigación Dirigida</td><td data-es="$550 MXN" data-en="$44 CAD">$550 MXN</td><td>45%</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1000,16 +1024,16 @@
                 <table class="finance-table compact">
                     <thead><tr><th data-es="Paquete" data-en="Package">Paquete</th><th data-es="Precio/ha/temporada" data-en="Price/ha/season">Precio/ha</th><th data-es="Margen" data-en="Margin">Margen</th><th data-es="Incluye" data-en="Includes">Incluye</th></tr></thead>
                     <tbody>
-                        <tr><td data-es="Básico" data-en="Basic">Básico</td><td data-es="$2,800" data-en="$175">$2,800</td><td>65%</td><td data-es="Solo Monitoreo" data-en="Monitoring Only">Solo Monitoreo</td></tr>
-                        <tr><td data-es="Estándar" data-en="Standard">Estándar</td><td data-es="$5,100" data-en="$320">$5,100</td><td>55%</td><td data-es="Monitoreo + 2 Aplicaciones" data-en="Monitoring + 2 Applications">Monitoreo + 2 Aplicaciones</td></tr>
-                        <tr><td>Premium</td><td data-es="$7,900" data-en="$495">$7,900</td><td>50%</td><td data-es="Monitoreo + 4 Aplicaciones" data-en="Monitoring + 4 Applications">Monitoreo + 4 Aplicaciones</td></tr>
-                        <tr><td data-es="Empresarial" data-en="Enterprise">Empresarial</td><td data-es="$11,200" data-en="$700">$11,200</td><td>45%</td><td data-es="Ilimitado Anual" data-en="Unlimited Annual">Ilimitado Anual</td></tr>
+                        <tr><td data-es="Básico" data-en="Basic">Básico</td><td data-es="$1,500" data-en="$120">$1,500</td><td>65%</td><td data-es="Solo Monitoreo" data-en="Monitoring Only">Solo Monitoreo</td></tr>
+                        <tr><td data-es="Estándar" data-en="Standard">Estándar</td><td data-es="$2,800" data-en="$224">$2,800</td><td>55%</td><td data-es="Monitoreo + 2 Aplicaciones" data-en="Monitoring + 2 Applications">Monitoreo + 2 Aplicaciones</td></tr>
+                        <tr><td>Premium</td><td data-es="$4,500" data-en="$360">$4,500</td><td>50%</td><td data-es="Monitoreo + 4 Aplicaciones" data-en="Monitoring + 4 Applications">Monitoreo + 4 Aplicaciones</td></tr>
+                        <tr><td data-es="Empresarial" data-en="Enterprise">Empresarial</td><td data-es="$6,500" data-en="$520">$6,500</td><td>45%</td><td data-es="Ilimitado Anual" data-en="Unlimited Annual">Ilimitado Anual</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <p style="text-align:center;margin-top:16px;font-size:0.85rem;color:var(--text-muted)" data-es="Ingreso promedio por granja: ~$135,000 MXN/año (25 ha, mezcla Estándar-Premium)" data-en="Average revenue per farm: ~$19,000 CAD/year (150 acres, Standard-Premium mix)">
-            Ingreso promedio por granja: ~$135,000 MXN/año (25 ha, mezcla Estándar-Premium)
+        <p style="text-align:center;margin-top:16px;font-size:0.85rem;color:var(--text-muted)" data-es="Ingreso promedio por granja: ~$87,500 MXN/año (25 ha, mezcla Estándar-Premium)" data-en="Average revenue per farm: ~$19,000 CAD/year (150 acres, Standard-Premium mix)">
+            Ingreso promedio por granja: ~$87,500 MXN/año (25 ha, mezcla Estándar-Premium)
         </p>
     </div>
 </section>
@@ -1025,7 +1049,7 @@
                 <tbody>
                     <tr><td data-es="Cadena de suministro DJI" data-en="DJI supply chain">Cadena de suministro DJI</td><td data-es="Retrasos en equipo" data-en="Equipment delays">Retrasos en equipo</td><td data-es="2+ distribuidores; repuestos pre-almacenados" data-en="2+ distributors; pre-stocked spare parts">2+ distribuidores; repuestos pre-almacenados</td></tr>
                     <tr><td data-es="Resistencia del agricultor" data-en="Farmer resistance">Resistencia del agricultor</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Piloto gratuito con ITESO; ROI en la primera cosecha" data-en="Free pilot program; payback within one growing season">Piloto gratuito con ITESO; ROI en la primera cosecha</td></tr>
-                    <tr><td data-es="Cambios regulatorios" data-en="Regulatory changes">Cambios regulatorios</td><td data-es="Interrupciones operativas" data-en="Operational disruptions">Interrupciones operativas</td><td data-es="Cumplimiento DGAC; respaldo vía alianza académica ITESO" data-en="Transport Canada compliance; university research partnership">Cumplimiento DGAC; respaldo vía alianza académica ITESO</td></tr>
+                    <tr><td data-es="Cambios regulatorios" data-en="Regulatory changes">Cambios regulatorios</td><td data-es="Interrupciones operativas" data-en="Operational disruptions">Interrupciones operativas</td><td data-es="Cumplimiento AFAC (Agencia Federal de Aviación Civil); respaldo vía alianza académica ITESO" data-en="Transport Canada compliance; university research partnership">Cumplimiento AFAC (Agencia Federal de Aviación Civil); respaldo vía alianza académica ITESO</td></tr>
                     <tr><td data-es="Inestabilidad climática" data-en="Climate instability">Inestabilidad climática</td><td data-es="Interrupciones de ingresos" data-en="Revenue disruptions">Interrupciones de ingresos</td><td data-es="Calendario de 40 semanas; cultivos diversificados" data-en="40-week calendar; diversified crop mix">Calendario de 40 semanas; cultivos diversificados</td></tr>
                     <tr><td data-es="Ejecución con equipo limitado" data-en="Execution with small team">Ejecución con equipo limitado</td><td data-es="Adopción más lenta" data-en="Slower adoption">Adopción más lenta</td><td data-es="Región de lanzamiento agrupada; talento vía alianza académica ITESO" data-en="Clustered launch region; talent via local agricultural college">Región de lanzamiento agrupada; talento vía alianza académica ITESO</td></tr>
                 </tbody>
@@ -1044,7 +1068,7 @@
 
 <!-- FOOTER -->
 <footer>
-    <p id="footer-text" data-es-html='&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Ontario, Canadá<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>' data-en-html='&copy; 2026 cultivOS — Intelligent Agriculture. Jalisco, Mexico &middot; Ontario, Canada<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>'>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Ontario, Canadá<br>
+    <p id="footer-text" data-es-html='&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Próximamente: Ontario, Canadá<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>' data-en-html='&copy; 2026 cultivOS — Intelligent Agriculture. Jalisco, Mexico &middot; Coming Soon: Ontario, Canada<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>'>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Próximamente: Ontario, Canadá<br>
     <a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a></p>
 </footer>
 
@@ -1063,32 +1087,32 @@ const T = {
     heroSub: 'Llevamos tecnología de drones e inteligencia artificial a las granjas que más lo necesitan — para que usted cuide su agua, baje sus costos y saque más de cada hectárea.',
     heroCta1: 'Agendar una Demo',
     heroCta2: 'Ver la Plataforma',
-    statVal1: '52%', statLbl1: 'menos costo por hectárea',
-    statVal2: '75', statLbl2: 'Granjas para el Año 3',
-    statVal3: '8,000+', statLbl3: 'Hectáreas bajo agricultura de precisión',
+    statVal1: '40%', statLbl1: 'menos costo por hectárea',
+    statVal2: '85', statLbl2: 'Granjas para el Año 3',
+    statVal3: '2,000+', statLbl3: 'Hectáreas para el Año 3',
     probTag: 'El Reto',
     probTitle: 'Crisis Hídrica Agrícola de México',
-    probSub: 'Jalisco ocupa el puesto #1 en producción agrícola ($116,800M MXN), pero enfrenta una crisis hídrica severa.',
+    probSub: 'Jalisco ocupa el puesto #1 en producción agrícola ($117,200M MXN, SIAP 2024), pero enfrenta una crisis hídrica severa.',
     probNum1: '57%', probLbl1: 'del agua agrícola se pierde por ineficiencia (CONAGUA)',
-    probNum2: '84%', probLbl2: 'de los municipios de Jalisco enfrentaron sequía en 2024',
-    probNum3: '<5%', probLbl3: 'de las pequeñas granjas tienen acceso a agricultura de precisión',
+    probNum2: '84.8%', probLbl2: 'de los municipios de Jalisco en sequía al inicio de 2024 (CONAGUA Monitor de Sequía)',
+    probNum3: '<5%*', probLbl3: 'de las pequeñas granjas tienen acceso a agricultura de precisión',
     costTitle: 'El Costo de No Modernizarse',
     costSub: 'Granja típica: 40 hectáreas, Jalisco. Riego de temporal/convencional.',
     costHead: ['Concepto','Convencional','CultivOS','Ahorro'],
     costRows: [
-      ['Mano de Obra','$5,000 MXN/ha','$1,500 MXN/ha','-70%'],
-      ['Fertilizante','$4,500 MXN/ha','$3,150 MXN/ha','-30%'],
-      ['Pesticida / Herbicida','$3,500 MXN/ha','$2,100 MXN/ha','-40%'],
-      ['Agua','$3,000 MXN/ha','$2,100 MXN/ha','-30%'],
-      ['Pérdida de Cultivo','$4,000 MXN/ha','$800 MXN/ha','-80%'],
+      ['Mano de Obra','$3,800 MXN/ha','$1,300 MXN/ha','-66%'],
+      ['Fertilizante','$4,200 MXN/ha','$3,150 MXN/ha','-25%'],
+      ['Pesticida / Herbicida','$3,000 MXN/ha','$2,100 MXN/ha','-30%'],
+      ['Agua','$2,200 MXN/ha','$1,540 MXN/ha','-30%'],
+      ['Pérdida de Cultivo','$2,000 MXN/ha','$1,000 MXN/ha','-50%'],
     ],
-    costTotal: ['TOTAL por hectárea','$20,000 MXN','$9,650 MXN','-52%'],
-    costGrand: ['TOTAL para 40 ha','$800,000 MXN','$386,000 MXN','$414,000 MXN'],
-    costNote: '40 ha → $414,000 MXN/año en ahorros + 10-15% mayor rendimiento',
-    invTitle: 'Inversión Total: $2.93M MXN',
-    finVal1: '$18.7M', finLbl1: 'Ingresos Acumulados',
-    finVal2: '$5.1M', finLbl2: 'Beneficio Acumulado',
-    finVal3: '6.4x', finLbl3: 'Ingresos / Inversión (3 años)',
+    costTotal: ['TOTAL por hectárea','$15,200 MXN','$9,090 MXN','-40%'],
+    costGrand: ['TOTAL para 40 ha','$608,000 MXN','$363,600 MXN','$244,400 MXN'],
+    costNote: '40 ha → $244,400 MXN/año en ahorros + hasta 15% mayor rendimiento (MDPI meta-análisis, 2025)',
+    invTitle: 'Inversión Total: $2.94M MXN',
+    finVal1: '$15.7M', finLbl1: 'Ingresos Acumulados',
+    finVal2: '$3.2M', finLbl2: 'Beneficio Acumulado',
+    finVal3: '~3x', finLbl3: 'Multiplicador de la Inversión',
     ctaTitle: 'Jalisco: Agricultura de Precisión para el Mundo',
     ctaSub: 'CultivOS llega en el momento justo — la sequía golpea, COECYTJAL tiene convocatorias abiertas y la Copa Mundial pone los ojos del mundo en Jalisco.',
     ctaBtn: 'Solicitar Reunión de Inversión',
