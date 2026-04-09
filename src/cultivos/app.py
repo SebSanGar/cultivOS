@@ -143,6 +143,7 @@ def create_app() -> FastAPI:
             {"name": "status", "description": "Platform status, uptime, and data freshness overview"},
             {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
             {"name": "phenology", "description": "Crop phenology calendar and growth stage timelines"},
+            {"name": "photos", "description": "Crop photo upload and visual analysis"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
             {"name": "cooperatives", "description": "Cooperative (farmer group) management and aggregate dashboards"},
             {"name": "executive", "description": "Platform-wide executive KPIs and multi-farm overview"},
@@ -500,6 +501,11 @@ def create_app() -> FastAPI:
         async def serve_calculadora_suelo():
             """Soil amendment calculator — organic amendments prescription from current soil values."""
             return FileResponse(frontend_dir / "calculadora-suelo.html")
+
+        @app.get("/fotos")
+        async def serve_fotos():
+            """Crop photo analysis — upload field photos for instant visual classification."""
+            return FileResponse(frontend_dir / "fotos.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 

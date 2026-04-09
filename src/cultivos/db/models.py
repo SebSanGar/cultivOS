@@ -388,3 +388,17 @@ class Cooperative(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     farms = relationship("Farm", back_populates="cooperative")
+
+
+class FieldPhoto(Base):
+    __tablename__ = "field_photos"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    filename = Column(String(255), nullable=False)
+    content_type = Column(String(50), default="image/jpeg")
+    size_bytes = Column(Integer, nullable=True)
+    uploaded_at = Column(DateTime, default=datetime.utcnow)
+    analysis_json = Column(JSON, nullable=True)
+
+    field = relationship("Field")

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotos de Campo — cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .photo-stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1rem 1.5rem; min-width: 140px; text-align: center; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .stat-card .label { font-size: 0.85rem; color: var(--text-muted, #888); margin-top: 0.25rem; }
+        .upload-zone { background: var(--card-bg, #1a1a2e); border: 2px dashed var(--border, #2a2a3e); border-radius: 8px; padding: 2rem; text-align: center; margin-bottom: 1.5rem; cursor: pointer; transition: border-color 0.2s; }
+        .upload-zone:hover { border-color: var(--accent, #4ade80); }
+        .upload-zone input[type="file"] { display: none; }
+        .upload-zone .hint { color: var(--text-muted, #888); font-size: 0.9rem; margin-top: 0.5rem; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .photo-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1rem; border: 1px solid var(--border, #2a2a3e); }
+        .photo-card .photo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .photo-card h4 { margin: 0; font-size: 0.95rem; }
+        .photo-card .date { color: var(--text-muted, #888); font-size: 0.8rem; }
+        .classification-badge { padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .class-healthy { background: #166534; color: #4ade80; }
+        .class-stressed { background: #854d0e; color: #fbbf24; }
+        .class-bare { background: #7f1d1d; color: #f87171; }
+        .class-mixed { background: #1e3a5f; color: #60a5fa; }
+        .color-bar { display: flex; height: 12px; border-radius: 4px; overflow: hidden; margin: 0.5rem 0; }
+        .color-bar span { display: block; }
+        .analysis-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.2rem 0; }
+        .analysis-row .label { color: var(--text-muted, #888); }
+        .btn-delete { background: none; border: 1px solid #7f1d1d; color: #f87171; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        .btn-delete:hover { background: #7f1d1d; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors select { padding: 0.5rem; border-radius: 6px; background: var(--card-bg, #1a1a2e); color: var(--text, #e0e0e0); border: 1px solid var(--border, #2a2a3e); min-width: 200px; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fotos de Campo</h1>
+            <p>Sube fotos de tus cultivos para analisis visual instantaneo — histograma de color, brillo, y clasificacion de vegetacion.</p>
+        </header>
+
+        <div class="selectors">
+            <select id="farmSelect"><option value="">-- Seleccionar granja --</option></select>
+            <select id="fieldSelect" disabled><option value="">-- Seleccionar parcela --</option></select>
+        </div>
+
+        <div class="photo-stats" id="statsStrip" style="display:none;">
+            <div class="stat-card"><div class="value" id="totalPhotos">0</div><div class="label">Fotos</div></div>
+            <div class="stat-card"><div class="value" id="healthyCount">0</div><div class="label">Vegetacion Sana</div></div>
+            <div class="stat-card"><div class="value" id="stressedCount">0</div><div class="label">Estresada</div></div>
+            <div class="stat-card"><div class="value" id="avgGreen">--</div><div class="label">Ratio Verde Prom.</div></div>
+        </div>
+
+        <div id="uploadZone" class="upload-zone" style="display:none;">
+            <div>Haz clic o arrastra una foto aqui para analizar</div>
+            <div class="hint">JPEG o PNG — analisis automatico al subir</div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png">
+        </div>
+
+        <div id="photoGrid" class="photo-grid"></div>
+        <div id="emptyState" class="empty-state" style="display:none;">Selecciona una granja y parcela para ver y subir fotos.</div>
+    </div>
+
+    <script src="/fotos.js"></script>
+</body>
+</html>
