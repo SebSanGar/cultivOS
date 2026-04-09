@@ -463,6 +463,11 @@ def create_app() -> FastAPI:
             """System health dashboard — API versions, DB counts, test count for grant reviewers."""
             return FileResponse(frontend_dir / "api-status.html")
 
+        @app.get("/trayectoria")
+        async def serve_trayectoria():
+            """Health trajectory — trend, projection, and treatment correlation per field."""
+            return FileResponse(frontend_dir / "trayectoria.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

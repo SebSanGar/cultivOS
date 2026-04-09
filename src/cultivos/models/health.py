@@ -14,7 +14,7 @@ class HealthScoreOut(BaseModel):
     stress_pct: float | None
     soil_ph: float | None
     soil_organic_matter_pct: float | None
-    trend: str
+    trend: str | None = None
     sources: list[str]
     breakdown: dict[str, float]
     scored_at: datetime

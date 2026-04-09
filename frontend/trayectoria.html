@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Trayectoria de Salud</title>
+    <meta name="description" content="Trayectoria de salud del campo — tendencia, proyeccion y correlacion con tratamientos aplicados.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/suelo" class="nav-tab intel-tab">Suelo</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/trayectoria" class="nav-tab intel-tab active">Trayectoria</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HEALTH TRAJECTORY -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Trayectoria de Salud</h1>
+            <p class="intel-subtitle">Tendencia historica, proyeccion y correlacion de tratamientos con cambios en salud del campo</p>
+        </div>
+        <div class="intel-header-actions">
+            <select id="traj-farm-select" class="intel-select" onchange="loadFieldsForTrajectory()">
+                <option value="">Seleccione una granja...</option>
+            </select>
+            <select id="traj-field-select" class="intel-select" onchange="loadTrajectory()">
+                <option value="">Seleccione un campo...</option>
+            </select>
+            <button class="intel-btn" onclick="loadTrajectory()">Analizar</button>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="traj-stat-current">--</div>
+            <div class="intel-stat-label">Puntaje Actual</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="traj-stat-trend">--</div>
+            <div class="intel-stat-label">Tendencia</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="traj-stat-projection">--</div>
+            <div class="intel-stat-label">Proyeccion</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="traj-stat-range">--</div>
+            <div class="intel-stat-label">Rango (min — max)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="traj-empty" class="intel-empty" style="display:none;">
+        Seleccione una granja y un campo para ver la trayectoria de salud.
+    </div>
+
+    <!-- Content -->
+    <div id="traj-content" style="display:none;">
+        <!-- Health trajectory chart -->
+        <div id="traj-chart" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Linea de Tiempo de Salud</h2>
+            <canvas id="traj-canvas" width="800" height="300"></canvas>
+        </div>
+
+        <!-- Projection card -->
+        <div id="traj-projection" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Proyeccion</h2>
+            <div id="traj-projection-content"></div>
+        </div>
+
+        <!-- Score range -->
+        <div id="traj-range" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Rango de Puntajes</h2>
+            <div id="traj-range-content"></div>
+        </div>
+
+        <!-- Treatment correlations -->
+        <div id="traj-treatments" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Correlacion de Tratamientos con Cambios de Salud</h2>
+            <div id="traj-treatments-content"></div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/trayectoria.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>
