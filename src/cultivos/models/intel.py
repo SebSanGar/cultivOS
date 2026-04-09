@@ -342,3 +342,33 @@ class FarmerImpactOut(BaseModel):
     avg_health_improvement_pct: Optional[float] = None
     estimated_savings_mxn: int = 0
     fields: list[FieldImpactEntry] = []
+
+
+# ── Executive dashboard summary ────────────────────────────────────
+
+
+class DailyActivityEntry(BaseModel):
+    date: str
+    count: int
+
+
+class ExecutiveFarmEntry(BaseModel):
+    farm_id: int
+    farm_name: str
+    state: str = "Jalisco"
+    field_count: int = 0
+    hectares: float = 0
+    avg_health: Optional[float] = None
+    treatment_count: int = 0
+
+
+class ExecutiveSummaryOut(BaseModel):
+    total_farms: int = 0
+    total_fields: int = 0
+    total_hectares: float = 0
+    avg_health: Optional[float] = None
+    total_treatments: int = 0
+    active_alerts: int = 0
+    total_co2e_tonnes: float = 0
+    activity_30d: list[DailyActivityEntry] = []
+    farms: list[ExecutiveFarmEntry] = []

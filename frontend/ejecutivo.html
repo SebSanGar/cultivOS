@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Dashboard Ejecutivo</title>
+    <meta name="description" content="Dashboard ejecutivo — KPIs de toda la plataforma para revisores de grants e inversionistas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/ejecutivo" class="nav-tab intel-tab active">Ejecutivo</a></li>
+            <li><a href="/cerebro-analytics" class="nav-tab intel-tab">Cerebro IA</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- EXECUTIVE DASHBOARD -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Dashboard Ejecutivo</h1>
+            <p class="intel-subtitle">Vision general de toda la plataforma — granjas, salud, tratamientos, carbono y actividad reciente</p>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="exec-empty" class="intel-empty-state" style="display:none;text-align:center;padding:3rem;color:var(--text-secondary);">
+        <p style="font-size:1.1rem;">No hay datos en la plataforma aun.</p>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">Registra granjas y parcelas para ver las metricas ejecutivas.</p>
+    </div>
+
+    <!-- Stats strip -->
+    <div id="exec-stats" class="intel-stats-strip" style="display:none;">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-farms">--</div>
+            <div class="intel-stat-label">Granjas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-fields">--</div>
+            <div class="intel-stat-label">Parcelas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-hectares">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-health">--</div>
+            <div class="intel-stat-label">Salud Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-treatments">--</div>
+            <div class="intel-stat-label">Tratamientos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-alerts">--</div>
+            <div class="intel-stat-label">Alertas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="exec-co2e">--</div>
+            <div class="intel-stat-label">CO2e Secuestrado (t)</div>
+        </div>
+    </div>
+
+    <!-- Activity chart -->
+    <div id="exec-chart-section" class="intel-card" style="display:none;padding:1.5rem;margin-bottom:1.5rem;">
+        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);">Actividad Ultimos 30 Dias</h3>
+        <div style="position:relative;height:220px;">
+            <canvas id="activity-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Farms table -->
+    <div id="exec-table-section" class="intel-card" style="display:none;padding:1.5rem;">
+        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);">Granjas en la Plataforma</h3>
+        <div style="overflow-x:auto;">
+            <table id="farms-table" style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+                <thead>
+                    <tr style="border-bottom:2px solid var(--border-color);text-align:left;">
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);">Granja</th>
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);">Estado</th>
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);text-align:right;">Parcelas</th>
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);text-align:right;">Hectareas</th>
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);text-align:right;">Salud</th>
+                        <th style="padding:0.6rem 0.8rem;color:var(--text-secondary);text-align:right;">Tratamientos</th>
+                    </tr>
+                </thead>
+                <tbody id="farms-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="/ejecutivo.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 """Cross-farm analytics service — pure queries, no HTTP concerns."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from sqlalchemy import func
@@ -1342,4 +1342,151 @@ def compute_farmer_impact(db: Session, farm_id: int) -> dict:
         "avg_health_improvement_pct": avg_improvement,
         "estimated_savings_mxn": estimated_savings,
         "fields": field_entries,
+    }
+
+
+def compute_executive_summary(db: Session) -> dict:
+    """Compute platform-wide KPIs for the executive dashboard.
+
+    Aggregates: total farms, fields, hectares, avg health, total treatments,
+    active alerts, CO2e estimate, 30-day activity trend, per-farm breakdown.
+    """
+    from cultivos.db.models import AlertLog
+
+    _SOC_TO_CO2E = 3.67
+
+    farms = db.query(Farm).all()
+    total_farms = len(farms)
+
+    if total_farms == 0:
+        return {
+            "total_farms": 0,
+            "total_fields": 0,
+            "total_hectares": 0,
+            "avg_health": None,
+            "total_treatments": 0,
+            "active_alerts": 0,
+            "total_co2e_tonnes": 0,
+            "activity_30d": [],
+            "farms": [],
+        }
+
+    all_fields = db.query(Field).all()
+    total_fields = len(all_fields)
+    total_hectares = sum(f.hectares or 0 for f in all_fields)
+    field_ids = [f.id for f in all_fields]
+
+    # Average health: latest score per field
+    latest_scores = []
+    for fld in all_fields:
+        hs = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == fld.id)
+            .order_by(HealthScore.scored_at.desc())
+            .first()
+        )
+        if hs:
+            latest_scores.append(hs.score)
+
+    avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
+
+    # Total treatments
+    total_treatments = 0
+    if field_ids:
+        total_treatments = db.query(func.count(TreatmentRecord.id)).filter(
+            TreatmentRecord.field_id.in_(field_ids)
+        ).scalar() or 0
+
+    # Active alerts (AlertLog entries)
+    active_alerts = db.query(func.count(AlertLog.id)).scalar() or 0
+
+    # CO2e estimate from soil organic matter
+    total_co2e = 0.0
+    for fld in all_fields:
+        soil = (
+            db.query(SoilAnalysis)
+            .filter(SoilAnalysis.field_id == fld.id)
+            .order_by(SoilAnalysis.sampled_at.desc())
+            .first()
+        )
+        if soil and soil.organic_matter_pct and fld.hectares:
+            # Rough estimate: OM% -> SOC * hectares * 3.67
+            soc_tonnes_per_ha = soil.organic_matter_pct * 0.58  # Bemmelen factor
+            total_co2e += soc_tonnes_per_ha * (fld.hectares or 0) * _SOC_TO_CO2E
+
+    total_co2e = round(total_co2e, 1)
+
+    # 30-day activity: count health scores + treatments per day
+    now = datetime.utcnow()
+    thirty_days_ago = now - timedelta(days=30)
+    activity_map: dict[str, int] = {}
+
+    if field_ids:
+        recent_hs = (
+            db.query(HealthScore.scored_at)
+            .filter(HealthScore.field_id.in_(field_ids), HealthScore.scored_at >= thirty_days_ago)
+            .all()
+        )
+        for (dt,) in recent_hs:
+            day = dt.strftime("%Y-%m-%d")
+            activity_map[day] = activity_map.get(day, 0) + 1
+
+        recent_tx = (
+            db.query(TreatmentRecord.created_at)
+            .filter(TreatmentRecord.field_id.in_(field_ids), TreatmentRecord.created_at >= thirty_days_ago)
+            .all()
+        )
+        for (dt,) in recent_tx:
+            day = dt.strftime("%Y-%m-%d")
+            activity_map[day] = activity_map.get(day, 0) + 1
+
+    activity_30d = [{"date": d, "count": c} for d, c in sorted(activity_map.items())]
+
+    # Per-farm breakdown
+    farm_entries = []
+    for farm in farms:
+        farm_fields = [f for f in all_fields if f.farm_id == farm.id]
+        farm_field_ids = [f.id for f in farm_fields]
+        farm_hectares = sum(f.hectares or 0 for f in farm_fields)
+
+        farm_scores = [s for s in latest_scores]  # recompute per farm
+        farm_latest = []
+        for ff in farm_fields:
+            hs = (
+                db.query(HealthScore)
+                .filter(HealthScore.field_id == ff.id)
+                .order_by(HealthScore.scored_at.desc())
+                .first()
+            )
+            if hs:
+                farm_latest.append(hs.score)
+
+        farm_avg = round(sum(farm_latest) / len(farm_latest), 1) if farm_latest else None
+
+        farm_treatments = 0
+        if farm_field_ids:
+            farm_treatments = db.query(func.count(TreatmentRecord.id)).filter(
+                TreatmentRecord.field_id.in_(farm_field_ids)
+            ).scalar() or 0
+
+        farm_entries.append({
+            "farm_id": farm.id,
+            "farm_name": farm.name,
+            "state": farm.state or "Jalisco",
+            "field_count": len(farm_fields),
+            "hectares": round(farm_hectares, 1),
+            "avg_health": farm_avg,
+            "treatment_count": farm_treatments,
+        })
+
+    return {
+        "total_farms": total_farms,
+        "total_fields": total_fields,
+        "total_hectares": round(total_hectares, 1),
+        "avg_health": avg_health,
+        "total_treatments": total_treatments,
+        "active_alerts": active_alerts,
+        "total_co2e_tonnes": total_co2e,
+        "activity_30d": activity_30d,
+        "farms": farm_entries,
     }

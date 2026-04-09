@@ -32,6 +32,7 @@ from cultivos.models.intel import (
     TreatmentEffectivenessReportOut,
     CerebroAnalyticsOut,
     PredictionAccuracyOut,
+    ExecutiveSummaryOut,
 )
 from cultivos.services.intelligence.analytics import (
     compare_farms,
@@ -48,6 +49,7 @@ from cultivos.services.intelligence.analytics import (
     compute_summary,
     compute_treatment_effectiveness,
     compute_treatment_effectiveness_report,
+    compute_executive_summary,
 )
 from cultivos.services.intelligence.recommendations import optimize_treatment_timing
 
@@ -72,6 +74,15 @@ def intel_prediction_accuracy(
     """Prediction accuracy tracker — compare AI forecasts vs actual outcomes."""
     result = compute_prediction_accuracy(db)
     return PredictionAccuracyOut(**result)
+
+
+@router.get("/executive-summary", response_model=ExecutiveSummaryOut)
+def intel_executive_summary(
+    db: Session = Depends(get_db),
+):
+    """Platform-wide executive KPIs — total farms, fields, health, CO2e, treatments, alerts."""
+    result = compute_executive_summary(db)
+    return ExecutiveSummaryOut(**result)
 
 
 @router.get("/compare", response_model=FarmCompareOut)

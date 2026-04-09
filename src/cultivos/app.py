@@ -144,6 +144,7 @@ def create_app() -> FastAPI:
             {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
             {"name": "phenology", "description": "Crop phenology calendar and growth stage timelines"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
+            {"name": "executive", "description": "Platform-wide executive KPIs and multi-farm overview"},
             {"name": "system", "description": "Detailed system health and operational status"},
         ],
     )
@@ -483,6 +484,11 @@ def create_app() -> FastAPI:
         async def serve_impacto_agricultor():
             """Farmer impact summary — per-farm journey metrics and health improvement."""
             return FileResponse(frontend_dir / "impacto-agricultor.html")
+
+        @app.get("/ejecutivo")
+        async def serve_ejecutivo():
+            """Multi-farm executive dashboard — platform-wide KPIs for grant reviewers and investors."""
+            return FileResponse(frontend_dir / "ejecutivo.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
