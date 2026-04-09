@@ -144,6 +144,7 @@ def create_app() -> FastAPI:
             {"name": "recommendations", "description": "Region-aware farm-level treatment recommendations"},
             {"name": "phenology", "description": "Crop phenology calendar and growth stage timelines"},
             {"name": "demo", "description": "Demo data endpoints for FODECIJAL walkthrough"},
+            {"name": "cooperatives", "description": "Cooperative (farmer group) management and aggregate dashboards"},
             {"name": "executive", "description": "Platform-wide executive KPIs and multi-farm overview"},
             {"name": "system", "description": "Detailed system health and operational status"},
         ],
@@ -489,6 +490,11 @@ def create_app() -> FastAPI:
         async def serve_ejecutivo():
             """Multi-farm executive dashboard — platform-wide KPIs for grant reviewers and investors."""
             return FileResponse(frontend_dir / "ejecutivo.html")
+
+        @app.get("/cooperativa")
+        async def serve_cooperativa():
+            """Cooperative management — farmer groups with aggregate health/carbon/economic rollups."""
+            return FileResponse(frontend_dir / "cooperativa.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 

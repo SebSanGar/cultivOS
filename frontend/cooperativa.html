@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperativas — cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .coop-stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1rem 1.5rem; min-width: 140px; text-align: center; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .stat-card .label { font-size: 0.85rem; color: var(--text-muted, #888); margin-top: 0.25rem; }
+        .coop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+        .coop-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.25rem; border: 1px solid var(--border, #2a2a3e); }
+        .coop-card h3 { margin: 0 0 0.5rem; }
+        .coop-card .meta { color: var(--text-muted, #888); font-size: 0.85rem; margin-bottom: 0.75rem; }
+        .farm-list { list-style: none; padding: 0; margin: 0; }
+        .farm-list li { padding: 0.4rem 0; border-bottom: 1px solid var(--border, #2a2a3e); display: flex; justify-content: space-between; }
+        .farm-list li:last-child { border-bottom: none; }
+        .health-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .health-good { background: #166534; color: #4ade80; }
+        .health-mid { background: #854d0e; color: #fbbf24; }
+        .health-low { background: #7f1d1d; color: #f87171; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cooperativas</h1>
+            <p>Gestion de grupos de agricultores con metricas agregadas de salud, carbono y economia.</p>
+        </header>
+
+        <div class="coop-stats" id="globalStats">
+            <div class="stat-card"><div class="value" id="totalCoops">--</div><div class="label">Cooperativas</div></div>
+            <div class="stat-card"><div class="value" id="totalFarms">--</div><div class="label">Granjas</div></div>
+            <div class="stat-card"><div class="value" id="totalHectares">--</div><div class="label">Hectareas</div></div>
+            <div class="stat-card"><div class="value" id="avgHealth">--</div><div class="label">Salud Prom.</div></div>
+        </div>
+
+        <div id="coopList" class="coop-grid">
+            <div class="empty-state">Cargando cooperativas...</div>
+        </div>
+    </div>
+
+    <script src="/cooperativa.js"></script>
+</body>
+</html>

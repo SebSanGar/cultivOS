@@ -23,10 +23,12 @@ class Farm(Base):
     municipality = Column(String(100))
     state = Column(String(50), default="Jalisco")
     country = Column(String(10), default="MX")
+    cooperative_id = Column(Integer, ForeignKey("cooperatives.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     fields = relationship("Field", back_populates="farm", cascade="all, delete-orphan")
     weather_records = relationship("WeatherRecord", back_populates="farm", cascade="all, delete-orphan")
+    cooperative = relationship("Cooperative", back_populates="farms")
 
 
 class Field(Base):
@@ -373,3 +375,16 @@ class PredictionSnapshot(Base):
     resolved_at = Column(DateTime, nullable=True)
 
     field = relationship("Field")
+
+
+class Cooperative(Base):
+    __tablename__ = "cooperatives"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(150), nullable=False)
+    state = Column(String(50), default="Jalisco")
+    contact_name = Column(String(100), nullable=True)
+    contact_phone = Column(String(30), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    farms = relationship("Farm", back_populates="cooperative")
