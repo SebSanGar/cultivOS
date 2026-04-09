@@ -261,3 +261,31 @@ class RegionalSummaryEntry(BaseModel):
 
 class RegionalSummaryOut(BaseModel):
     regions: list[RegionalSummaryEntry] = []
+
+
+class DecisionsByType(BaseModel):
+    health_assessments: int = 0
+    treatment_recommendations: int = 0
+    ndvi_analyses: int = 0
+    thermal_analyses: int = 0
+    alerts_generated: int = 0
+
+
+class DailyDecisionCount(BaseModel):
+    date: str
+    count: int
+
+
+class AccuracyMetrics(BaseModel):
+    feedback_positive_rate: float = 0.0
+    total_feedback: int = 0
+
+
+class CerebroAnalyticsOut(BaseModel):
+    total_decisions: int = 0
+    decisions_by_type: DecisionsByType = DecisionsByType()
+    feedback_collected: int = 0
+    farms_covered: int = 0
+    fields_analyzed: int = 0
+    accuracy: AccuracyMetrics = AccuracyMetrics()
+    decisions_per_day: list[DailyDecisionCount] = []

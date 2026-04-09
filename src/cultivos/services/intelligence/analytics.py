@@ -1077,3 +1077,89 @@ def compute_regional_summary(db: Session, state: Optional[str] = None) -> dict:
         })
 
     return {"regions": regions}
+
+
+def compute_cerebro_analytics(db) -> dict:
+    """Aggregate Cerebro AI decision counts and accuracy metrics.
+
+    Counts decisions across all AI-driven tables: health scores, treatments,
+    NDVI analyses, thermal analyses, and alerts. Computes daily decision
+    trend and feedback-based accuracy.
+    """
+    from collections import defaultdict
+
+    from cultivos.db.models import (
+        Alert,
+        Farm,
+        FarmerFeedback,
+        Field,
+        HealthScore,
+        NDVIResult,
+        ThermalResult,
+        TreatmentRecord,
+    )
+
+    # Count by type
+    health_count = db.query(func.count(HealthScore.id)).scalar() or 0
+    treatment_count = db.query(func.count(TreatmentRecord.id)).scalar() or 0
+    ndvi_count = db.query(func.count(NDVIResult.id)).scalar() or 0
+    thermal_count = db.query(func.count(ThermalResult.id)).scalar() or 0
+    alert_count = db.query(func.count(Alert.id)).scalar() or 0
+
+    total = health_count + treatment_count + ndvi_count + thermal_count + alert_count
+
+    # Feedback metrics
+    feedback_count = db.query(func.count(FarmerFeedback.id)).scalar() or 0
+    positive_count = db.query(func.count(FarmerFeedback.id)).filter(
+        FarmerFeedback.worked == True  # noqa: E712
+    ).scalar() or 0
+    positive_rate = round((positive_count / feedback_count) * 100, 1) if feedback_count > 0 else 0.0
+
+    # Coverage
+    farms_covered = db.query(func.count(func.distinct(Farm.id))).join(
+        Field, Field.farm_id == Farm.id
+    ).join(HealthScore, HealthScore.field_id == Field.id).scalar() or 0
+
+    fields_analyzed = db.query(func.count(func.distinct(HealthScore.field_id))).scalar() or 0
+
+    # Decisions per day — aggregate all dated events
+    daily = defaultdict(int)
+    for row in db.query(HealthScore.scored_at).all():
+        if row[0]:
+            daily[row[0].strftime("%Y-%m-%d")] += 1
+    for row in db.query(TreatmentRecord.created_at).all():
+        if row[0]:
+            daily[row[0].strftime("%Y-%m-%d")] += 1
+    for row in db.query(NDVIResult.analyzed_at).all():
+        if row[0]:
+            daily[row[0].strftime("%Y-%m-%d")] += 1
+    for row in db.query(ThermalResult.analyzed_at).all():
+        if row[0]:
+            daily[row[0].strftime("%Y-%m-%d")] += 1
+    for row in db.query(Alert.created_at).all():
+        if row[0]:
+            daily[row[0].strftime("%Y-%m-%d")] += 1
+
+    decisions_per_day = sorted(
+        [{"date": d, "count": c} for d, c in daily.items()],
+        key=lambda x: x["date"],
+    )
+
+    return {
+        "total_decisions": total,
+        "decisions_by_type": {
+            "health_assessments": health_count,
+            "treatment_recommendations": treatment_count,
+            "ndvi_analyses": ndvi_count,
+            "thermal_analyses": thermal_count,
+            "alerts_generated": alert_count,
+        },
+        "feedback_collected": feedback_count,
+        "farms_covered": farms_covered,
+        "fields_analyzed": fields_analyzed,
+        "accuracy": {
+            "feedback_positive_rate": positive_rate,
+            "total_feedback": feedback_count,
+        },
+        "decisions_per_day": decisions_per_day,
+    }

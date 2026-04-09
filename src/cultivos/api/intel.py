@@ -30,12 +30,14 @@ from cultivos.models.intel import (
     TimingRequestIn,
     TreatmentEffectivenessOut,
     TreatmentEffectivenessReportOut,
+    CerebroAnalyticsOut,
 )
 from cultivos.services.intelligence.analytics import (
     compare_farms,
     compute_anomalies,
     compute_batch_health,
     compute_carbon_summary,
+    compute_cerebro_analytics,
     compute_economics_summary,
     compute_regional_summary,
     compute_seasonal_performance,
@@ -50,6 +52,15 @@ from cultivos.services.intelligence.recommendations import optimize_treatment_ti
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
 _admin_or_researcher = require_role("admin", "researcher")
+
+
+@router.get("/cerebro-analytics", response_model=CerebroAnalyticsOut)
+def intel_cerebro_analytics(
+    db: Session = Depends(get_db),
+):
+    """Cerebro AI decision log and analytics — aggregate AI activity counts, accuracy, trends."""
+    result = compute_cerebro_analytics(db)
+    return CerebroAnalyticsOut(**result)
 
 
 @router.get("/compare", response_model=FarmCompareOut)

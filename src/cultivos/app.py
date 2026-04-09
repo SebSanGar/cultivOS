@@ -468,6 +468,11 @@ def create_app() -> FastAPI:
             """Health trajectory — trend, projection, and treatment correlation per field."""
             return FileResponse(frontend_dir / "trayectoria.html")
 
+        @app.get("/cerebro-analytics")
+        async def serve_cerebro_analytics():
+            """Cerebro AI analytics — decision log, accuracy, and activity trends."""
+            return FileResponse(frontend_dir / "cerebro-analytics.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

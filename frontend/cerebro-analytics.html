@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Cerebro IA Analytics</title>
+    <meta name="description" content="Panel de analitica del Cerebro IA — decisiones, precision y tendencias de actividad.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/cerebro-analytics" class="nav-tab intel-tab active">Cerebro IA</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- CEREBRO ANALYTICS -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Cerebro IA — Analytics</h1>
+            <p class="intel-subtitle">Decisiones de IA, precision y tendencias de actividad del motor inteligente</p>
+        </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cerebro-stat-total">--</div>
+            <div class="intel-stat-label">Total Decisiones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cerebro-stat-recommendations">--</div>
+            <div class="intel-stat-label">Recomendaciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cerebro-stat-analyses">--</div>
+            <div class="intel-stat-label">Analisis (NDVI + Termal)</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cerebro-stat-farms">--</div>
+            <div class="intel-stat-label">Granjas Cubiertas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="cerebro-stat-accuracy">--</div>
+            <div class="intel-stat-label">Tasa de Exito</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="cerebro-empty" class="intel-empty" style="display:none;">
+        No hay datos de decisiones del Cerebro IA todavia. Las decisiones se registran automaticamente cuando el sistema analiza campos.
+    </div>
+
+    <!-- Content -->
+    <div id="cerebro-content" style="display:none;">
+        <!-- Decisions per day chart -->
+        <div id="cerebro-chart" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Decisiones por Dia</h2>
+            <canvas id="cerebro-canvas" width="800" height="300"></canvas>
+        </div>
+
+        <!-- Decisions by type breakdown -->
+        <div id="cerebro-decisions" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Decisiones por Tipo</h2>
+            <div id="cerebro-decisions-content"></div>
+        </div>
+
+        <!-- Accuracy section -->
+        <div id="cerebro-accuracy" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Precision y Retroalimentacion</h2>
+            <div id="cerebro-accuracy-content"></div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/cerebro-analytics.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>
