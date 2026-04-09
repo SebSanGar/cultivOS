@@ -149,6 +149,7 @@ def create_app() -> FastAPI:
             {"name": "executive", "description": "Platform-wide executive KPIs and multi-farm overview"},
             {"name": "system", "description": "Detailed system health and operational status"},
             {"name": "regions", "description": "Region-aware agricultural profiles (climate, soil, crops, currency)"},
+            {"name": "predictions", "description": "Per-field AI prediction accuracy tracking (MAPE and resolved vs pending)"},
         ],
     )
 

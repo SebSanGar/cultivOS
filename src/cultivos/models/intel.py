@@ -329,6 +329,11 @@ class PredictionAccuracyOut(BaseModel):
     recent: list[RecentPrediction] = []
 
 
+class FieldPredictionAccuracyOut(PredictionAccuracyOut):
+    field_id: int
+    field_name: str = ""
+
+
 # ── Farmer impact summary ────────────────────────────────────────────
 
 

@@ -1303,6 +1303,103 @@ def compute_prediction_accuracy(db) -> dict:
     }
 
 
+def compute_field_prediction_accuracy(db: Session, field_id: int) -> dict:
+    """Compute prediction accuracy metrics scoped to a single field.
+
+    Mirrors compute_prediction_accuracy but filters PredictionSnapshot rows
+    to one field_id. Returns the same shape plus field_id and field_name so
+    the frontend can label per-field accuracy cards.
+    """
+    from cultivos.db.models import PredictionSnapshot
+
+    field = db.query(Field).filter(Field.id == field_id).first()
+    field_name = field.name if field else ""
+
+    all_snaps = (
+        db.query(PredictionSnapshot)
+        .filter(PredictionSnapshot.field_id == field_id)
+        .order_by(PredictionSnapshot.predicted_at.desc())
+        .all()
+    )
+
+    total = len(all_snaps)
+    if total == 0:
+        return {
+            "field_id": field_id,
+            "field_name": field_name,
+            "total_predictions": 0,
+            "resolved": 0,
+            "pending": 0,
+            "mape": None,
+            "status": "green",
+            "by_type": {},
+            "recent": [],
+        }
+
+    resolved = [s for s in all_snaps if s.actual_value is not None]
+    pending = [s for s in all_snaps if s.actual_value is None]
+
+    mape = None
+    if resolved:
+        ape_values = []
+        for s in resolved:
+            if s.actual_value != 0:
+                ape_values.append(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100)
+        if ape_values:
+            mape = round(sum(ape_values) / len(ape_values), 1)
+
+    if mape is None:
+        status = "green"
+    elif mape <= 30:
+        status = "green"
+    elif mape <= 40:
+        status = "yellow"
+    else:
+        status = "red"
+
+    by_type: dict[str, dict] = {}
+    type_groups: dict[str, list] = {}
+    for s in all_snaps:
+        type_groups.setdefault(s.prediction_type, []).append(s)
+
+    for ptype, snaps in type_groups.items():
+        type_resolved = [s for s in snaps if s.actual_value is not None]
+        type_ape = []
+        for s in type_resolved:
+            if s.actual_value != 0:
+                type_ape.append(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100)
+        by_type[ptype] = {
+            "total": len(snaps),
+            "resolved": len(type_resolved),
+            "pending": len(snaps) - len(type_resolved),
+            "mape": round(sum(type_ape) / len(type_ape), 1) if type_ape else None,
+        }
+
+    recent = []
+    for s in all_snaps[:10]:
+        recent.append({
+            "prediction_type": s.prediction_type,
+            "predicted_value": s.predicted_value,
+            "actual_value": s.actual_value,
+            "predicted_at": s.predicted_at.isoformat() if s.predicted_at else None,
+            "resolved_at": s.resolved_at.isoformat() if s.resolved_at else None,
+            "error_pct": round(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100, 1)
+                if s.actual_value and s.actual_value != 0 else None,
+        })
+
+    return {
+        "field_id": field_id,
+        "field_name": field_name,
+        "total_predictions": total,
+        "resolved": len(resolved),
+        "pending": len(pending),
+        "mape": mape,
+        "status": status,
+        "by_type": by_type,
+        "recent": recent,
+    }
+
+
 def compute_farmer_impact(db: Session, farm_id: int) -> dict:
     """Compute farmer journey impact metrics for a single farm.
 
