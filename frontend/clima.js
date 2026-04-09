@@ -66,6 +66,7 @@ async function loadWeather() {
     buildRainChart(records);
     buildHistory(records);
     checkDrought(records);
+    loadWeatherAlerts(farmId);
 }
 
 function showEmpty() {
@@ -262,6 +263,48 @@ function checkDrought(records) {
     } else {
         alert.style.display = 'none';
     }
+}
+
+// ── Weather alerts ──
+async function loadWeatherAlerts(farmId) {
+    const container = document.getElementById('clima-weather-alerts');
+    const body = document.getElementById('clima-alerts-body');
+    const data = await fetchJSON(`/api/farms/${farmId}/weather/alerts`);
+
+    if (!data || !data.alerts || data.alerts.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+
+    const severityColors = {
+        critica: { border: '#ef4444', bg: 'rgba(239,68,68,0.1)', text: '#fca5a5', badge: '#ef4444' },
+        moderada: { border: '#f59e0b', bg: 'rgba(245,158,11,0.1)', text: '#fcd34d', badge: '#f59e0b' },
+    };
+
+    body.innerHTML = data.alerts.map(alert => {
+        const colors = severityColors[alert.severity] || severityColors.moderada;
+        const sourceLabel = alert.source === 'current' ? 'Ahora' : alert.source.replace('forecast_day_', 'Dia ');
+        return `
+            <div style="border-left:4px solid ${colors.border}; background:${colors.bg}; border-radius:8px; padding:1rem; margin-bottom:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <strong style="color:${colors.text}; font-size:1.1rem;">${esc(alert.title)}</strong>
+                    <div>
+                        <span style="background:${colors.badge}; color:#000; padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; text-transform:uppercase;">${esc(alert.severity)}</span>
+                        <span style="color:#94a3b8; font-size:0.8rem; margin-left:0.5rem;">${esc(sourceLabel)}</span>
+                    </div>
+                </div>
+                <p style="color:#cbd5e1; margin:0.25rem 0 0.75rem;">${esc(alert.message)}</p>
+                <div style="color:#94a3b8; font-size:0.85rem;">
+                    <strong style="color:#60a5fa;">Acciones recomendadas:</strong>
+                    <ul style="margin:0.25rem 0 0; padding-left:1.25rem;">
+                        ${alert.actions.map(a => `<li>${esc(a)}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 // ── Init ──

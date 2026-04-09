@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from cultivos.db.models import Farm, WeatherRecord
 from cultivos.db.session import get_db
-from cultivos.models.weather import WeatherRecordCreate, WeatherRecordOut
+from cultivos.models.weather import WeatherAlertsResponse, WeatherRecordCreate, WeatherRecordOut
+from cultivos.services.intelligence.weather_alerts import detect_weather_alerts
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/weather",
@@ -42,6 +43,41 @@ def create_weather_record(
     db.commit()
     db.refresh(record)
     return record
+
+
+@router.get("/alerts", response_model=WeatherAlertsResponse)
+def get_weather_alerts(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Check latest weather data for severe conditions and return warnings.
+
+    Thresholds: frost (<2C), extreme heat (>38C), heavy rain (>50mm),
+    high wind (>60km/h), hail (description keywords).
+    """
+    _get_farm(farm_id, db)
+    latest = (
+        db.query(WeatherRecord)
+        .filter(WeatherRecord.farm_id == farm_id)
+        .order_by(WeatherRecord.recorded_at.desc())
+        .first()
+    )
+    if not latest:
+        return WeatherAlertsResponse(farm_id=farm_id, alerts=[], weather_record_id=None)
+
+    raw_alerts = detect_weather_alerts(
+        temp_c=latest.temp_c,
+        humidity_pct=latest.humidity_pct,
+        wind_kmh=latest.wind_kmh,
+        rainfall_mm=latest.rainfall_mm,
+        description=latest.description,
+        forecast_3day=latest.forecast_3day or [],
+    )
+    return WeatherAlertsResponse(
+        farm_id=farm_id,
+        alerts=raw_alerts,
+        weather_record_id=latest.id,
+    )
 
 
 @router.get("", response_model=list[WeatherRecordOut])

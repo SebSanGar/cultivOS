@@ -35,3 +35,18 @@ class WeatherRecordOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class WeatherAlertOut(BaseModel):
+    alert_type: str
+    severity: str
+    title: str
+    message: str
+    actions: list[str]
+    source: str
+
+
+class WeatherAlertsResponse(BaseModel):
+    farm_id: int
+    alerts: list[WeatherAlertOut]
+    weather_record_id: int | None = None
