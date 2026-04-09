@@ -1,10 +1,16 @@
-"""Seasonal TEK calendar alerts — Jalisco phenology + ancestral planting windows.
+"""Seasonal TEK calendar alerts — region-aware phenology + ancestral planting windows.
 
 Pure function: date in, alerts out. No I/O, no side effects.
 
 Jalisco agricultural calendar:
 - Temporal (Jun-Oct): rainy season, main planting cycle
 - Secas (Nov-May): dry season, irrigation-dependent crops
+
+Ontario agricultural calendar:
+- Spring prep (Mar-Apr): soil thaws, plan and prepare
+- Growing (May-Sep): frost-free ~140 days, main planting and growth
+- Fall harvest (Oct-Nov): harvest, cover crop planting
+- Winter (Dec-Feb): dormant, snow cover benefits soil biology
 
 Milpa system (maiz + frijol + calabaza) follows ancestral Mesoamerican
 timing: land preparation in March-April, planting with first rains May-June.
@@ -252,6 +258,230 @@ PHENOLOGY_CALENDAR: list[dict] = [
 ]
 
 
+# Ontario phenology calendar: short growing season (May-Sep), frost risk, corn-soy-wheat belt
+ONTARIO_PHENOLOGY_CALENDAR: list[dict] = [
+    # --- Spring preparation ---
+    {
+        "crop": "Corn (Field)",
+        "alert_type": "preparacion",
+        "months": (4, 5),
+        "season": "spring_prep",
+        "message": (
+            "Preparar tierras para maiz de campo. Aplicar composta "
+            "o estiercol composteado cuando el suelo este seco al tacto. "
+            "No trabajar suelo humedo — riesgo de compactacion en arcillas glaciales."
+        ),
+        "month_label": "Apr-May",
+    },
+    {
+        "crop": "Corn (Field)",
+        "alert_type": "siembra",
+        "months": (5, 6),
+        "season": "growing",
+        "message": (
+            "Ventana de siembra de maiz. Sembrar cuando temperatura "
+            "del suelo sea >10C a 5 cm de profundidad. Fecha optima: "
+            "mayo 1-20 en suroeste de Ontario. Cada dia de retraso "
+            "despues del 20 de mayo reduce rendimiento ~1%."
+        ),
+        "month_label": "May-Jun",
+    },
+    {
+        "crop": "Corn (Field)",
+        "alert_type": "cosecha",
+        "months": (10, 11),
+        "season": "fall_harvest",
+        "message": (
+            "Periodo de cosecha de maiz. Cosechar cuando humedad "
+            "del grano sea <25% (ideal <20% para almacenamiento). "
+            "Secar a 15.5% para almacenamiento seguro."
+        ),
+        "month_label": "Oct-Nov",
+    },
+    # --- Soybean ---
+    {
+        "crop": "Soybean",
+        "alert_type": "preparacion",
+        "months": (4, 5),
+        "season": "spring_prep",
+        "message": (
+            "Preparar tierras para soya. Inocular semilla con "
+            "Bradyrhizobium japonicum si es primer ano de soya "
+            "en la parcela. Verificar pH del suelo (optimo 6.0-6.5)."
+        ),
+        "month_label": "Apr-May",
+    },
+    {
+        "crop": "Soybean",
+        "alert_type": "siembra",
+        "months": (5, 6),
+        "season": "growing",
+        "message": (
+            "Ventana de siembra de soya. Sembrar cuando suelo >12C. "
+            "Fecha optima: mayo 10-31. Profundidad: 3-4 cm. "
+            "Soya tolera siembra tardia mejor que maiz."
+        ),
+        "month_label": "May-Jun",
+    },
+    {
+        "crop": "Soybean",
+        "alert_type": "cosecha",
+        "months": (9, 10),
+        "season": "fall_harvest",
+        "message": (
+            "Periodo de cosecha de soya. Cosechar cuando vainas "
+            "esten secas y semillas sueltas al agitar. Humedad "
+            "optima de cosecha: 13-14%."
+        ),
+        "month_label": "Sep-Oct",
+    },
+    # --- Winter Wheat ---
+    {
+        "crop": "Winter Wheat",
+        "alert_type": "siembra",
+        "months": (9, 10),
+        "season": "fall_harvest",
+        "message": (
+            "Ventana de siembra de trigo de invierno. Sembrar "
+            "despues de cosecha de soya. Fecha optima: septiembre "
+            "25 - octubre 10 en suroeste de Ontario. El trigo necesita "
+            "establecer 3-4 hojas antes del invierno."
+        ),
+        "month_label": "Sep-Oct",
+    },
+    {
+        "crop": "Winter Wheat",
+        "alert_type": "mantenimiento",
+        "months": (4, 5),
+        "season": "spring_prep",
+        "message": (
+            "Evaluacion de sobrevivencia invernal del trigo. "
+            "Verificar densidad de plantas al derretir la nieve. "
+            "Aplicar fertilizante nitrogenado si stand es adecuado (>75%)."
+        ),
+        "month_label": "Apr-May",
+    },
+    {
+        "crop": "Winter Wheat",
+        "alert_type": "cosecha",
+        "months": (7, 8),
+        "season": "growing",
+        "message": (
+            "Periodo de cosecha de trigo de invierno. Cosechar "
+            "cuando grano este duro y humedad <14.5%. Sembrar "
+            "cultivo de cobertura inmediatamente despues si es posible."
+        ),
+        "month_label": "Jul-Aug",
+    },
+    # --- Apple ---
+    {
+        "crop": "Apple",
+        "alert_type": "mantenimiento",
+        "months": (3, 4),
+        "season": "spring_prep",
+        "message": (
+            "Poda invernal de manzanos antes de brotacion. "
+            "Aplicar aceite de dormancia para control de insectos "
+            "(cochinillas, acaros). Primera aplicacion de azufre "
+            "contra sarna (apple scab) en boton verde."
+        ),
+        "month_label": "Mar-Apr",
+    },
+    {
+        "crop": "Apple",
+        "alert_type": "cosecha",
+        "months": (9, 10),
+        "season": "fall_harvest",
+        "message": (
+            "Temporada de cosecha de manzana. Cosechar por variedad: "
+            "Gala (agosto-septiembre), McIntosh y Empire (septiembre), "
+            "Honeycrisp (octubre). Almacenar a 0-2C con humedad 90-95%."
+        ),
+        "month_label": "Sep-Oct",
+    },
+    # --- Grape ---
+    {
+        "crop": "Grape",
+        "alert_type": "mantenimiento",
+        "months": (4, 5),
+        "season": "spring_prep",
+        "message": (
+            "Desatar vides y poda de primavera si no se hizo en "
+            "invierno. Primera aplicacion preventiva de azufre contra "
+            "powdery mildew cuando brotes tengan 15 cm."
+        ),
+        "month_label": "Apr-May",
+    },
+    {
+        "crop": "Grape",
+        "alert_type": "cosecha",
+        "months": (9, 10),
+        "season": "fall_harvest",
+        "message": (
+            "Vendimia en Ontario. Medir Brix semanalmente — cosechar "
+            "tintas a 22-24 Brix, blancas a 20-22 Brix. Icewine: "
+            "dejar racimos para cosecha en diciembre-enero a <-8C."
+        ),
+        "month_label": "Sep-Oct",
+    },
+    # --- Greenhouse Tomato ---
+    {
+        "crop": "Greenhouse Tomato",
+        "alert_type": "mantenimiento",
+        "months": (1, 12),
+        "season": "growing",
+        "message": (
+            "Monitoreo continuo de invernadero. Mantener temperatura "
+            "18-25C, humedad 65-80%. Vigilar trips, mosca blanca y "
+            "botrytis. Podar chupones semanalmente."
+        ),
+        "month_label": "Year-round",
+    },
+    # --- Frost warnings ---
+    {
+        "crop": "All",
+        "alert_type": "frost_warning",
+        "months": (4, 5),
+        "season": "spring_prep",
+        "message": (
+            "ALERTA DE HELADA — riesgo de helada tardia en Ontario. "
+            "Fecha promedio de ultima helada: mayo 10-24 segun zona. "
+            "Proteger plantulas y flores de frutales. No sembrar "
+            "cultivos sensibles hasta despues de fecha segura."
+        ),
+        "month_label": "Apr-May",
+    },
+    {
+        "crop": "All",
+        "alert_type": "frost_warning",
+        "months": (9, 10),
+        "season": "fall_harvest",
+        "message": (
+            "ALERTA DE HELADA — riesgo de primera helada de otono. "
+            "Fecha promedio: septiembre 25 - octubre 15 segun zona. "
+            "Acelerar cosecha de cultivos sensibles. Cubrir "
+            "hortalizas vulnerables si se pronostica helada."
+        ),
+        "month_label": "Sep-Oct",
+    },
+    # --- Cover crop window ---
+    {
+        "crop": "Cover Crop",
+        "alert_type": "siembra",
+        "months": (8, 9),
+        "season": "growing",
+        "message": (
+            "Ventana optima para sembrar cultivos de cobertura "
+            "despues de cosecha de trigo o grano temprano. "
+            "Mezcla recomendada: trebol carmin + centeno + rabano "
+            "forrajero. Sembrar antes de septiembre 15 para "
+            "establecimiento adecuado antes del invierno."
+        ),
+        "month_label": "Aug-Sep",
+    },
+]
+
+
 def _month_in_range(month: int, start: int, end: int) -> bool:
     """Check if month falls within range, handling year-wrapping (e.g. Oct-Mar)."""
     if start <= end:
@@ -261,34 +491,51 @@ def _month_in_range(month: int, start: int, end: int) -> bool:
         return month >= start or month <= end
 
 
-def _classify_current_season(month: int) -> str:
-    """Classify current month into Jalisco season."""
+def _classify_current_season(month: int, region: str = "jalisco") -> str:
+    """Classify current month into agricultural season for the given region."""
+    if region == "ontario":
+        if month in (3, 4):
+            return "spring_prep"
+        if 5 <= month <= 9:
+            return "growing"
+        if month in (10, 11):
+            return "fall_harvest"
+        return "winter"
+    # Jalisco (default)
     if 6 <= month <= 10:
         return "temporal"
     return "secas"
 
 
-def generate_seasonal_alerts(reference_date: date | None = None) -> list[dict]:
-    """Generate seasonal TEK calendar alerts for Jalisco crops.
+def generate_seasonal_alerts(
+    reference_date: date | None = None,
+    region: str = "jalisco",
+) -> list[dict]:
+    """Generate seasonal calendar alerts for the given region.
 
-    Pure function: takes a reference date (defaults to today),
-    returns a list of active alerts based on the Jalisco phenology
-    calendar and ancestral planting traditions.
+    Pure function: takes a reference date (defaults to today) and region,
+    returns a list of active alerts based on the regional phenology
+    calendar and planting traditions.
+
+    Args:
+        reference_date: Date to check alerts for (defaults to today).
+        region: Agricultural region — "jalisco" (default) or "ontario".
 
     Each alert contains:
         - crop: crop name
-        - alert_type: preparacion | siembra | cosecha | mantenimiento
+        - alert_type: preparacion | siembra | cosecha | mantenimiento | frost_warning
         - message: actionable Spanish-language guidance
-        - season: temporal | secas
+        - season: region-specific season label
         - month_range: human-readable month range
     """
     if reference_date is None:
         reference_date = date.today()
 
+    calendar = ONTARIO_PHENOLOGY_CALENDAR if region == "ontario" else PHENOLOGY_CALENDAR
     month = reference_date.month
     alerts = []
 
-    for entry in PHENOLOGY_CALENDAR:
+    for entry in calendar:
         start_month, end_month = entry["months"]
         if _month_in_range(month, start_month, end_month):
             alerts.append({

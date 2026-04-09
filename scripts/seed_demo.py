@@ -26,6 +26,9 @@ DEMO_MARKER = "[DEMO]"
 # Jalisco seasons: temporal (rainy) June-October, secas (dry) November-May
 TEMPORAL_MONTHS = {6, 7, 8, 9, 10}
 
+# Ontario seasons: growing May-September, winter rest
+ONTARIO_GROWING_MONTHS = {5, 6, 7, 8, 9}
+
 # Reproducible randomness for consistent demo data
 _rng = random.Random(42)
 
@@ -36,8 +39,13 @@ def _demo_exists(session) -> bool:
     return farm is not None
 
 
-def _seasonal_modifier(dt):
-    """Return a modifier based on Jalisco season. Temporal (rainy) is better for crops."""
+def _seasonal_modifier(dt, region="jalisco"):
+    """Return a modifier based on agricultural season. Growing season is better for crops."""
+    if region == "ontario":
+        if dt.month in ONTARIO_GROWING_MONTHS:
+            return 0.08  # growing season boost
+        return -0.05  # winter/shoulder penalty
+    # Jalisco (default)
     if dt.month in TEMPORAL_MONTHS:
         return 0.08  # rainy season boost
     return -0.03  # dry season slight penalty
@@ -171,12 +179,68 @@ def seed_demo_data(session):
                  "offset_lat": -0.003, "offset_lon": -0.003},
             ],
         },
+        # --- Ontario / Canada ---
+        {
+            "name": f"Chatham-Kent Corn & Soy {DEMO_MARKER}",
+            "owner_name": "James McAllister",
+            "location_lat": 42.4048,
+            "location_lon": -82.1819,
+            "total_hectares": 140.0,
+            "municipality": "Chatham-Kent",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Corn North Field", "crop_type": "corn", "hectares": 80.0,
+                 "planted_at": now - timedelta(days=120),
+                 "offset_lat": 0.004, "offset_lon": 0.0},
+                {"name": "Soybean South Field", "crop_type": "soybean", "hectares": 60.0,
+                 "planted_at": now - timedelta(days=110),
+                 "offset_lat": -0.004, "offset_lon": 0.0},
+            ],
+        },
+        {
+            "name": f"Niagara Orchard & Vineyard {DEMO_MARKER}",
+            "owner_name": "Sarah Chen-Williams",
+            "location_lat": 43.0896,
+            "location_lon": -79.0849,
+            "total_hectares": 25.0,
+            "municipality": "Niagara-on-the-Lake",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Honeycrisp Block A", "crop_type": "apple", "hectares": 15.0,
+                 "planted_at": now - timedelta(days=730),
+                 "offset_lat": 0.002, "offset_lon": 0.001},
+                {"name": "Riesling Vineyard", "crop_type": "grape", "hectares": 10.0,
+                 "planted_at": now - timedelta(days=1095),
+                 "offset_lat": -0.002, "offset_lon": -0.001},
+            ],
+        },
+        {
+            "name": f"Elgin County Mixed Farm {DEMO_MARKER}",
+            "owner_name": "David Fehr",
+            "location_lat": 42.7700,
+            "location_lon": -81.1000,
+            "total_hectares": 42.0,
+            "municipality": "Elgin County",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Winter Wheat West", "crop_type": "wheat", "hectares": 40.0,
+                 "planted_at": now - timedelta(days=200),
+                 "offset_lat": 0.003, "offset_lon": -0.002},
+                {"name": "Greenhouse Tomato", "crop_type": "tomato", "hectares": 2.0,
+                 "planted_at": now - timedelta(days=60),
+                 "offset_lat": -0.001, "offset_lon": 0.001},
+            ],
+        },
     ]
 
     all_treatment_ids = []  # collect for farmer feedback later
 
     for farm_data in farms_data:
         fields_data = farm_data.pop("fields")
+        region = "ontario" if farm_data.get("state") == "Ontario" else "jalisco"
         farm = Farm(**farm_data)
         session.add(farm)
         session.flush()
@@ -196,13 +260,14 @@ def seed_demo_data(session):
             session.flush()
             farm_fields.append(field)
 
-            treatment_ids = _seed_field_history(session, farm, field, now, six_months_ago)
+            treatment_ids = _seed_field_history(
+                session, farm, field, now, six_months_ago, region=region)
             all_treatment_ids.extend(treatment_ids)
             _seed_flight_logs(session, field, now, six_months_ago)
             _seed_microbiome(session, field, now, six_months_ago)
 
-        _seed_weather_history(session, farm, now, six_months_ago)
-        _seed_alerts(session, farm, farm_fields, now, six_months_ago)
+        _seed_weather_history(session, farm, now, six_months_ago, region=region)
+        _seed_alerts(session, farm, farm_fields, now, six_months_ago, region=region)
         _seed_alert_config(session, farm)
 
     # Farmer feedback after all treatments exist
@@ -211,7 +276,7 @@ def seed_demo_data(session):
     session.commit()
 
 
-def _seed_field_history(session, farm, field, now, start_date):
+def _seed_field_history(session, farm, field, now, start_date, region="jalisco"):
     """Seed 6 months of time-series data for a single field.
 
     Data shows a clear before-regenerative -> after-regenerative improvement arc:
@@ -234,7 +299,7 @@ def _seed_field_history(session, farm, field, now, start_date):
     for week in range(total_weeks):
         ts = start_date + timedelta(weeks=week)
         progress = week / max(total_weeks - 1, 1)  # 0.0 -> 1.0
-        seasonal = _seasonal_modifier(ts)
+        seasonal = _seasonal_modifier(ts, region=region)
 
         # Improvement curve: slow start, accelerates after treatments (week 8-10)
         if week < 8:
@@ -343,55 +408,106 @@ def _seed_field_history(session, farm, field, now, start_date):
         ))
 
     # --- 4 Treatments at intervals ---
-    treatments = [
-        {
-            "offset_days": 14,
-            "health_offset": 0,
-            "problema": "Suelo compactado y materia organica baja",
-            "causa_probable": "Monocultivo previo sin rotacion ni enmiendas organicas",
-            "tratamiento": "Aplicar composta madura 8 ton/ha + acolchado organico (mulch) de 10cm",
-            "costo_estimado_mxn": 4500,
-            "urgencia": "alta",
-            "prevencion": "Rotacion con leguminosas cada 2 ciclos + incorporar rastrojo",
-            "ancestral_method_name": "Acolchado con rastrojo",
-            "applied_notes": "Composta de lombriz local + rastrojo de maiz como mulch",
-        },
-        {
-            "offset_days": 50,
-            "health_offset": 10,
-            "problema": "Baja actividad microbiana en rizosfera",
-            "causa_probable": "pH acido y ausencia de inoculantes biologicos",
-            "tratamiento": "Inocular con micorriza arbuscular 2kg/ha + te de composta semanal",
-            "costo_estimado_mxn": 3200,
-            "urgencia": "media",
-            "prevencion": "Mantener cobertura vegetal permanente para alimentar microbiota",
-            "ancestral_method_name": "Abonos verdes",
-            "applied_notes": "Inoculante Glomus intraradices + te de composta aerobico",
-        },
-        {
-            "offset_days": 95,
-            "health_offset": 25,
-            "problema": "Estres hidrico moderado en zona sur del campo",
-            "causa_probable": "Distribucion irregular de riego y suelo con baja retencion",
-            "tratamiento": "Instalar riego por goteo + biochar 3 ton/ha para retencion hidrica",
-            "costo_estimado_mxn": 8500,
-            "urgencia": "media",
-            "prevencion": "Monitoreo semanal de humedad con sensor capacitivo",
-            "applied_notes": "Biochar de cascara de coco + goteo cada 50cm",
-        },
-        {
-            "offset_days": 140,
-            "health_offset": 40,
-            "problema": "Deficiencia leve de nitrogeno en fase de crecimiento",
-            "causa_probable": "Alta demanda del cultivo + lixiviacion por lluvias temporales",
-            "tratamiento": "Aplicar bocashi 4 ton/ha + siembra de frijol de abono intercalado",
-            "costo_estimado_mxn": 3000,
-            "urgencia": "baja",
-            "prevencion": "Intercalar leguminosas fijadoras de nitrogeno en rotacion",
-            "ancestral_method_name": "Milpa",
-            "applied_notes": "Bocashi fermentado 14 dias + frijol terciopelo como cobertura",
-        },
-    ]
+    if region == "ontario":
+        treatments = [
+            {
+                "offset_days": 14,
+                "health_offset": 0,
+                "problema": "Suelo compactado por maquinaria pesada y baja materia organica",
+                "causa_probable": "Laboreo convencional en arcillas glaciales y monocultivo maiz-maiz",
+                "tratamiento": "Aplicar estiercol composteado 6 ton/ha + sembrar rabano forrajero como descompactador biologico",
+                "costo_estimado_mxn": 3600,  # ~270 CAD
+                "urgencia": "alta",
+                "prevencion": "Rotacion maiz-soya-trigo + cultivos de cobertura invernal cada ano",
+                "ancestral_method_name": "Rotacion maiz-soya-trigo",
+                "applied_notes": "Estiercol de granja lechera local + rabano forrajero Tillage Radish",
+            },
+            {
+                "offset_days": 50,
+                "health_offset": 10,
+                "problema": "pH acido (5.5) limitando disponibilidad de nutrientes",
+                "causa_probable": "Suelos glaciales naturalmente acidos + lixiviacion por deshielo primaveral",
+                "tratamiento": "Aplicar ceniza de madera dura 800 kg/ha + caliza dolomitica 2 ton/ha",
+                "costo_estimado_mxn": 2667,  # ~200 CAD
+                "urgencia": "media",
+                "prevencion": "Monitoreo de pH anual + aplicacion de ceniza cada 3 anos",
+                "applied_notes": "Ceniza de arce de aserradero local + caliza de cantera de Guelph",
+            },
+            {
+                "offset_days": 95,
+                "health_offset": 25,
+                "problema": "Baja actividad biologica del suelo despues de invierno largo",
+                "causa_probable": "5 meses de congelamiento reducen poblaciones microbianas activas",
+                "tratamiento": "Inocular con micorriza 2 kg/ha en primavera + te de composta cada 2 semanas",
+                "costo_estimado_mxn": 4000,  # ~300 CAD
+                "urgencia": "media",
+                "prevencion": "Mantener cobertura vegetal invernal para alimentar microbiota bajo nieve",
+                "ancestral_method_name": "Cover cropping (Ontario)",
+                "applied_notes": "Inoculante MycoApply + te de composta de vermicompost",
+            },
+            {
+                "offset_days": 140,
+                "health_offset": 40,
+                "problema": "Deficiencia de nitrogeno en fase de llenado de grano",
+                "causa_probable": "Alta demanda del cultivo + lixiviacion por lluvias de verano",
+                "tratamiento": "Aplicar composta 5 ton/ha + planificar cultivo de cobertura de trebol post-cosecha",
+                "costo_estimado_mxn": 2400,  # ~180 CAD
+                "urgencia": "baja",
+                "prevencion": "Incluir soya en rotacion para fijacion biologica de nitrogeno",
+                "ancestral_method_name": "Cover cropping (Ontario)",
+                "applied_notes": "Composta de granja certificada + semilla de trebol carmin para otono",
+            },
+        ]
+    else:
+        treatments = [
+            {
+                "offset_days": 14,
+                "health_offset": 0,
+                "problema": "Suelo compactado y materia organica baja",
+                "causa_probable": "Monocultivo previo sin rotacion ni enmiendas organicas",
+                "tratamiento": "Aplicar composta madura 8 ton/ha + acolchado organico (mulch) de 10cm",
+                "costo_estimado_mxn": 4500,
+                "urgencia": "alta",
+                "prevencion": "Rotacion con leguminosas cada 2 ciclos + incorporar rastrojo",
+                "ancestral_method_name": "Acolchado con rastrojo",
+                "applied_notes": "Composta de lombriz local + rastrojo de maiz como mulch",
+            },
+            {
+                "offset_days": 50,
+                "health_offset": 10,
+                "problema": "Baja actividad microbiana en rizosfera",
+                "causa_probable": "pH acido y ausencia de inoculantes biologicos",
+                "tratamiento": "Inocular con micorriza arbuscular 2kg/ha + te de composta semanal",
+                "costo_estimado_mxn": 3200,
+                "urgencia": "media",
+                "prevencion": "Mantener cobertura vegetal permanente para alimentar microbiota",
+                "ancestral_method_name": "Abonos verdes",
+                "applied_notes": "Inoculante Glomus intraradices + te de composta aerobico",
+            },
+            {
+                "offset_days": 95,
+                "health_offset": 25,
+                "problema": "Estres hidrico moderado en zona sur del campo",
+                "causa_probable": "Distribucion irregular de riego y suelo con baja retencion",
+                "tratamiento": "Instalar riego por goteo + biochar 3 ton/ha para retencion hidrica",
+                "costo_estimado_mxn": 8500,
+                "urgencia": "media",
+                "prevencion": "Monitoreo semanal de humedad con sensor capacitivo",
+                "applied_notes": "Biochar de cascara de coco + goteo cada 50cm",
+            },
+            {
+                "offset_days": 140,
+                "health_offset": 40,
+                "problema": "Deficiencia leve de nitrogeno en fase de crecimiento",
+                "causa_probable": "Alta demanda del cultivo + lixiviacion por lluvias temporales",
+                "tratamiento": "Aplicar bocashi 4 ton/ha + siembra de frijol de abono intercalado",
+                "costo_estimado_mxn": 3000,
+                "urgencia": "baja",
+                "prevencion": "Intercalar leguminosas fijadoras de nitrogeno en rotacion",
+                "ancestral_method_name": "Milpa",
+                "applied_notes": "Bocashi fermentado 14 dias + frijol terciopelo como cobertura",
+            },
+        ]
 
     treatment_ids = []
     for t in treatments:
@@ -496,34 +612,62 @@ def _seed_microbiome(session, field, now, start_date):
         ))
 
 
-def _seed_alerts(session, farm, fields, now, start_date):
+def _seed_alerts(session, farm, fields, now, start_date, region="jalisco"):
     """Seed alerts and alert logs per farm — shows proactive farmer communication."""
-    alert_templates = [
-        {
-            "alert_type": "low_health",
-            "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
-            "severity": "critical",
-            "offset_days": 7,
-        },
-        {
-            "alert_type": "irrigation",
-            "message": "Deficit hidrico detectado por sensor termico. Programar riego suplementario.",
-            "severity": "warning",
-            "offset_days": 30,
-        },
-        {
-            "alert_type": "pest",
-            "message": "Patron de NDVI irregular sugiere posible plaga. Verificar zona sur del campo.",
-            "severity": "warning",
-            "offset_days": 55,
-        },
-        {
-            "alert_type": "recommendation",
-            "message": "Condiciones optimas para aplicar composta. Temperatura y humedad favorables esta semana.",
-            "severity": "info",
-            "offset_days": 80,
-        },
-    ]
+    if region == "ontario":
+        alert_templates = [
+            {
+                "alert_type": "low_health",
+                "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
+                "severity": "critical",
+                "offset_days": 7,
+            },
+            {
+                "alert_type": "frost_warning",
+                "message": "Pronostico de helada para manana. Proteger plantulas sensibles y cubrir cultivos vulnerables.",
+                "severity": "warning",
+                "offset_days": 30,
+            },
+            {
+                "alert_type": "pest",
+                "message": "Patron de NDVI irregular sugiere posible plaga. Verificar presencia de corn rootworm o soybean aphid.",
+                "severity": "warning",
+                "offset_days": 55,
+            },
+            {
+                "alert_type": "recommendation",
+                "message": "Ventana optima para sembrar cultivo de cobertura. Temperatura del suelo favorable esta semana.",
+                "severity": "info",
+                "offset_days": 80,
+            },
+        ]
+    else:
+        alert_templates = [
+            {
+                "alert_type": "low_health",
+                "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
+                "severity": "critical",
+                "offset_days": 7,
+            },
+            {
+                "alert_type": "irrigation",
+                "message": "Deficit hidrico detectado por sensor termico. Programar riego suplementario.",
+                "severity": "warning",
+                "offset_days": 30,
+            },
+            {
+                "alert_type": "pest",
+                "message": "Patron de NDVI irregular sugiere posible plaga. Verificar zona sur del campo.",
+                "severity": "warning",
+                "offset_days": 55,
+            },
+            {
+                "alert_type": "recommendation",
+                "message": "Condiciones optimas para aplicar composta. Temperatura y humedad favorables esta semana.",
+                "severity": "info",
+                "offset_days": 80,
+            },
+        ]
 
     for i, tmpl in enumerate(alert_templates):
         field = fields[i % len(fields)]
@@ -535,7 +679,7 @@ def _seed_alerts(session, farm, fields, now, start_date):
             field_id=field.id,
             alert_type=tmpl["alert_type"],
             message=tmpl["message"],
-            phone_number="+5213312345678",
+            phone_number="+14165551234" if region == "ontario" else "+5213312345678",
             status="sent",
             sent_at=ts,
             created_at=ts,
@@ -634,26 +778,44 @@ def _seed_farmer_feedback(session, all_treatment_ids):
         ))
 
 
-def _seed_weather_history(session, farm, now, start_date):
+def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
     """Seed every-other-day weather records for a farm over 6 months."""
     total_days = (now - start_date).days
     day = 0
     while day < total_days:
         ts = start_date + timedelta(days=day)
         month = ts.month
-        is_temporal = month in TEMPORAL_MONTHS
 
-        # Jalisco climate: temporal is warmer/wetter, secas is cooler/drier
-        if is_temporal:
-            temp = round(26 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
-            humidity = round(70 + (day % 5) * 2, 1)
-            rainfall = round(max(0, 8 + math.sin(day / 7) * 12), 1)
-            description = "Lluvia temporal" if rainfall > 5 else "Parcialmente nublado"
+        if region == "ontario":
+            is_growing = month in ONTARIO_GROWING_MONTHS
+            if is_growing:
+                temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 4, 1)
+                humidity = round(60 + (day % 5) * 2, 1)
+                rainfall = round(max(0, 5 + math.sin(day / 7) * 10), 1)
+                description = "Lluvia de verano" if rainfall > 5 else "Parcialmente nublado"
+            elif month in (3, 4, 10, 11):
+                temp = round(5 + (day % 7) * 0.5 + math.sin(day / 30) * 3, 1)
+                humidity = round(55 + (day % 5) * 2, 1)
+                rainfall = round(max(0, math.sin(day / 10) * 4), 1)
+                description = "Fresco y variable" if rainfall < 2 else "Lluvia ligera"
+            else:
+                temp = round(-5 + (day % 7) * 0.3 + math.sin(day / 30) * 4, 1)
+                humidity = round(70 + (day % 5) * 2, 1)
+                rainfall = round(max(0, math.sin(day / 12) * 3), 1)
+                description = "Nieve ligera" if temp < -2 else "Nublado y frio"
         else:
-            temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
-            humidity = round(40 + (day % 5) * 2, 1)
-            rainfall = round(max(0, math.sin(day / 15) * 3), 1)
-            description = "Seco y soleado" if rainfall < 1 else "Llovizna ligera"
+            is_temporal = month in TEMPORAL_MONTHS
+            # Jalisco climate: temporal is warmer/wetter, secas is cooler/drier
+            if is_temporal:
+                temp = round(26 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
+                humidity = round(70 + (day % 5) * 2, 1)
+                rainfall = round(max(0, 8 + math.sin(day / 7) * 12), 1)
+                description = "Lluvia temporal" if rainfall > 5 else "Parcialmente nublado"
+            else:
+                temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
+                humidity = round(40 + (day % 5) * 2, 1)
+                rainfall = round(max(0, math.sin(day / 15) * 3), 1)
+                description = "Seco y soleado" if rainfall < 1 else "Llovizna ligera"
 
         wind = round(10 + math.sin(day / 10) * 5, 1)
 
