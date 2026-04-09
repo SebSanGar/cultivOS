@@ -26,13 +26,13 @@ class TestDemoSeedEndpoint:
         resp = client.post("/api/demo/seed")
         assert resp.status_code == 201
         data = resp.json()
-        assert data["farms"] == 5
-        assert data["fields"] >= 12  # 5 farms with 2-3 fields each
+        assert data["farms"] == 8  # 5 Jalisco + 3 Ontario
+        assert data["fields"] >= 18  # 8 farms with 2-3 fields each
 
     def test_seed_creates_farms_in_db(self, client, db):
         client.post("/api/demo/seed")
         farms = db.query(Farm).filter(Farm.name.contains("[DEMO]")).all()
-        assert len(farms) == 5
+        assert len(farms) == 8  # 5 Jalisco + 3 Ontario
 
     def test_seed_creates_fields_with_data(self, client, db):
         client.post("/api/demo/seed")
@@ -62,7 +62,7 @@ class TestDemoSeedEndpoint:
         resp = client.get("/api/demo/farms")
         assert resp.status_code == 200
         data = resp.json()
-        assert len(data) == 5
+        assert len(data) == 8  # 5 Jalisco + 3 Ontario
         # Each farm should have fields
         for farm in data:
             assert len(farm["fields"]) >= 2
