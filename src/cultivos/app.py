@@ -496,6 +496,11 @@ def create_app() -> FastAPI:
             """Cooperative management — farmer groups with aggregate health/carbon/economic rollups."""
             return FileResponse(frontend_dir / "cooperativa.html")
 
+        @app.get("/calculadora-suelo")
+        async def serve_calculadora_suelo():
+            """Soil amendment calculator — organic amendments prescription from current soil values."""
+            return FileResponse(frontend_dir / "calculadora-suelo.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

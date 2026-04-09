@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Enmiendas — cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+        .form-section { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.5rem; }
+        .form-section h3 { margin-top: 0; }
+        .form-row { display: flex; gap: 1rem; margin-bottom: 0.75rem; align-items: center; }
+        .form-row label { min-width: 120px; font-size: 0.9rem; color: var(--text-muted, #888); }
+        .form-row input { flex: 1; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border, #2a2a3e); background: var(--input-bg, #0d0d1a); color: var(--text, #eee); font-size: 0.95rem; }
+        .btn-calculate { width: 100%; padding: 0.75rem; background: var(--accent, #4ade80); color: #000; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-bottom: 2rem; }
+        .btn-calculate:hover { opacity: 0.9; }
+        .btn-calculate:disabled { opacity: 0.5; cursor: not-allowed; }
+        #resultados { display: none; }
+        .summary-box { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent, #4ade80); }
+        .amendment-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border, #2a2a3e); }
+        .amendment-card h4 { margin: 0 0 0.5rem; }
+        .amendment-card .meta { color: var(--text-muted, #888); font-size: 0.85rem; }
+        .amendment-card .qty { font-size: 1.3rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .cost-total { text-align: center; font-size: 1.2rem; margin-top: 1rem; padding: 1rem; background: var(--card-bg, #1a1a2e); border-radius: 8px; }
+        .cost-total .amount { font-size: 1.8rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .no-amendments { text-align: center; padding: 2rem; color: var(--accent, #4ade80); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Enmiendas de Suelo</h1>
+            <p>Ingrese los valores actuales de su suelo y los objetivos deseados para recibir prescripciones de enmiendas organicas.</p>
+        </header>
+
+        <div class="calc-grid">
+            <div class="form-section">
+                <h3>Valores Actuales</h3>
+                <div class="form-row"><label>pH</label><input type="number" id="currentPh" step="0.1" min="0" max="14" value="5.5"></div>
+                <div class="form-row"><label>Materia Org. %</label><input type="number" id="currentOm" step="0.1" min="0" max="100" value="2.0"></div>
+                <div class="form-row"><label>Nitrogeno (ppm)</label><input type="number" id="currentN" step="1" min="0" value="20"></div>
+                <div class="form-row"><label>Fosforo (ppm)</label><input type="number" id="currentP" step="1" min="0" value="10"></div>
+                <div class="form-row"><label>Potasio (ppm)</label><input type="number" id="currentK" step="1" min="0" value="100"></div>
+            </div>
+            <div class="form-section">
+                <h3>Valores Objetivo</h3>
+                <div class="form-row"><label>pH</label><input type="number" id="targetPh" step="0.1" min="0" max="14" value="6.5"></div>
+                <div class="form-row"><label>Materia Org. %</label><input type="number" id="targetOm" step="0.1" min="0" max="100" value="4.0"></div>
+                <div class="form-row"><label>Nitrogeno (ppm)</label><input type="number" id="targetN" step="1" min="0" value="40"></div>
+                <div class="form-row"><label>Fosforo (ppm)</label><input type="number" id="targetP" step="1" min="0" value="25"></div>
+                <div class="form-row"><label>Potasio (ppm)</label><input type="number" id="targetK" step="1" min="0" value="200"></div>
+            </div>
+        </div>
+
+        <button class="btn-calculate" id="btnCalc" onclick="calcular()">Calcular Enmiendas</button>
+
+        <div id="resultados">
+            <div class="summary-box" id="summaryBox"></div>
+            <div id="amendmentList"></div>
+            <div class="cost-total" id="costTotal"></div>
+        </div>
+    </div>
+
+    <script src="/calculadora-suelo.js"></script>
+</body>
+</html>
