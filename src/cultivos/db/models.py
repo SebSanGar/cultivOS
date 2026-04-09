@@ -356,3 +356,20 @@ class AlertConfig(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     farm = relationship("Farm")
+
+
+class PredictionSnapshot(Base):
+    __tablename__ = "prediction_snapshots"
+    __table_args__ = (
+        Index("ix_prediction_snapshots_field_type", "field_id", "prediction_type"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    prediction_type = Column(String(30), nullable=False)  # yield, health
+    predicted_value = Column(Float, nullable=False)
+    actual_value = Column(Float, nullable=True)
+    predicted_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    resolved_at = Column(DateTime, nullable=True)
+
+    field = relationship("Field")

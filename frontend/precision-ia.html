@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Precision IA</title>
+    <meta name="description" content="Seguimiento de precision de predicciones del Cerebro IA — comparacion de pronosticos vs resultados reales.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/cerebro-analytics" class="nav-tab intel-tab">Cerebro IA</a></li>
+            <li><a href="/precision-ia" class="nav-tab intel-tab active">Precision IA</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- PREDICTION ACCURACY -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Precision de Predicciones IA</h1>
+            <p class="intel-subtitle">Comparacion de pronosticos del Cerebro vs resultados reales — validacion cientifica</p>
+        </div>
+        <div id="pred-status" class="intel-badge" style="font-size:1rem;padding:0.5rem 1rem;border-radius:8px;">--</div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="pred-stat-total">--</div>
+            <div class="intel-stat-label">Total Predicciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="pred-stat-resolved">--</div>
+            <div class="intel-stat-label">Resueltas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="pred-stat-pending">--</div>
+            <div class="intel-stat-label">Pendientes</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="pred-stat-mape">--</div>
+            <div class="intel-stat-label">MAPE (Error Medio %)</div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="pred-empty" class="intel-empty" style="display:none;">
+        No hay predicciones registradas todavia. Las predicciones se crean automaticamente cuando el Cerebro IA analiza campos.
+    </div>
+
+    <!-- Content -->
+    <div id="pred-content" style="display:none;">
+        <!-- Accuracy chart -->
+        <div id="pred-chart" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Predicciones Recientes — Error por Prediccion</h2>
+            <canvas id="pred-canvas" width="800" height="300"></canvas>
+        </div>
+
+        <!-- By type breakdown -->
+        <div id="pred-by-type" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Precision por Tipo de Prediccion</h2>
+            <div id="pred-by-type-content"></div>
+        </div>
+
+        <!-- Recent predictions table -->
+        <div id="pred-recent" class="intel-card" style="margin-bottom:2rem;">
+            <h2 class="intel-card-title">Predicciones Recientes</h2>
+            <div id="pred-recent-content"></div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/precision-ia.js"></script>
+<footer class="cultivos-footer">
+    <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
+    <span class="cultivos-footer-sep"></span>
+    Agricultura de precision para Jalisco
+    <span class="cultivos-footer-sep"></span>
+    <a href="/recorrido">FODECIJAL</a>
+    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+</footer>
+</body>
+</html>

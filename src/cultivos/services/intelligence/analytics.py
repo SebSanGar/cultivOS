@@ -1163,3 +1163,91 @@ def compute_cerebro_analytics(db) -> dict:
         },
         "decisions_per_day": decisions_per_day,
     }
+
+
+def compute_prediction_accuracy(db) -> dict:
+    """Compute accuracy metrics for AI predictions by comparing forecasts vs actuals.
+
+    Queries PredictionSnapshot records, separates resolved (has actual_value) from
+    pending, and computes MAPE and per-type breakdowns.
+    """
+    from cultivos.db.models import PredictionSnapshot
+
+    all_snaps = db.query(PredictionSnapshot).order_by(PredictionSnapshot.predicted_at.desc()).all()
+
+    total = len(all_snaps)
+    if total == 0:
+        return {
+            "total_predictions": 0,
+            "resolved": 0,
+            "pending": 0,
+            "mape": None,
+            "status": "green",
+            "by_type": {},
+            "recent": [],
+        }
+
+    resolved = [s for s in all_snaps if s.actual_value is not None]
+    pending = [s for s in all_snaps if s.actual_value is None]
+
+    # Compute MAPE across all resolved predictions
+    mape = None
+    if resolved:
+        ape_values = []
+        for s in resolved:
+            if s.actual_value != 0:
+                ape_values.append(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100)
+        if ape_values:
+            mape = round(sum(ape_values) / len(ape_values), 1)
+
+    # Status based on accuracy thresholds from quant-strategy.md
+    if mape is None:
+        status = "green"
+    elif mape <= 30:
+        status = "green"
+    elif mape <= 40:
+        status = "yellow"
+    else:
+        status = "red"
+
+    # Breakdown by type
+    by_type: dict[str, dict] = {}
+    type_groups: dict[str, list] = {}
+    for s in all_snaps:
+        type_groups.setdefault(s.prediction_type, []).append(s)
+
+    for ptype, snaps in type_groups.items():
+        type_resolved = [s for s in snaps if s.actual_value is not None]
+        type_ape = []
+        for s in type_resolved:
+            if s.actual_value != 0:
+                type_ape.append(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100)
+        by_type[ptype] = {
+            "total": len(snaps),
+            "resolved": len(type_resolved),
+            "pending": len(snaps) - len(type_resolved),
+            "mape": round(sum(type_ape) / len(type_ape), 1) if type_ape else None,
+        }
+
+    # Recent predictions (last 10)
+    recent = []
+    for s in all_snaps[:10]:
+        recent.append({
+            "prediction_type": s.prediction_type,
+            "predicted_value": s.predicted_value,
+            "actual_value": s.actual_value,
+            "predicted_at": s.predicted_at.isoformat() if s.predicted_at else None,
+            "resolved_at": s.resolved_at.isoformat() if s.resolved_at else None,
+            "error_pct": round(abs(s.predicted_value - s.actual_value) / abs(s.actual_value) * 100, 1)
+                if s.actual_value and s.actual_value != 0 else None,
+        })
+
+    return {
+        "total_predictions": total,
+        "resolved": len(resolved),
+        "pending": len(pending),
+        "mape": mape,
+        "status": status,
+        "by_type": by_type,
+        "recent": recent,
+    }

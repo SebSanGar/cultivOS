@@ -289,3 +289,29 @@ class CerebroAnalyticsOut(BaseModel):
     fields_analyzed: int = 0
     accuracy: AccuracyMetrics = AccuracyMetrics()
     decisions_per_day: list[DailyDecisionCount] = []
+
+
+class PredictionTypeBreakdown(BaseModel):
+    total: int = 0
+    resolved: int = 0
+    pending: int = 0
+    mape: Optional[float] = None
+
+
+class RecentPrediction(BaseModel):
+    prediction_type: str
+    predicted_value: float
+    actual_value: Optional[float] = None
+    predicted_at: Optional[str] = None
+    resolved_at: Optional[str] = None
+    error_pct: Optional[float] = None
+
+
+class PredictionAccuracyOut(BaseModel):
+    total_predictions: int = 0
+    resolved: int = 0
+    pending: int = 0
+    mape: Optional[float] = None
+    status: str = "green"
+    by_type: dict[str, PredictionTypeBreakdown] = {}
+    recent: list[RecentPrediction] = []

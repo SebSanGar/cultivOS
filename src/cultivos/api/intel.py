@@ -31,6 +31,7 @@ from cultivos.models.intel import (
     TreatmentEffectivenessOut,
     TreatmentEffectivenessReportOut,
     CerebroAnalyticsOut,
+    PredictionAccuracyOut,
 )
 from cultivos.services.intelligence.analytics import (
     compare_farms,
@@ -38,6 +39,7 @@ from cultivos.services.intelligence.analytics import (
     compute_batch_health,
     compute_carbon_summary,
     compute_cerebro_analytics,
+    compute_prediction_accuracy,
     compute_economics_summary,
     compute_regional_summary,
     compute_seasonal_performance,
@@ -61,6 +63,15 @@ def intel_cerebro_analytics(
     """Cerebro AI decision log and analytics — aggregate AI activity counts, accuracy, trends."""
     result = compute_cerebro_analytics(db)
     return CerebroAnalyticsOut(**result)
+
+
+@router.get("/prediction-accuracy", response_model=PredictionAccuracyOut)
+def intel_prediction_accuracy(
+    db: Session = Depends(get_db),
+):
+    """Prediction accuracy tracker — compare AI forecasts vs actual outcomes."""
+    result = compute_prediction_accuracy(db)
+    return PredictionAccuracyOut(**result)
 
 
 @router.get("/compare", response_model=FarmCompareOut)

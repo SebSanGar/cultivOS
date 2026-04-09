@@ -473,6 +473,11 @@ def create_app() -> FastAPI:
             """Cerebro AI analytics — decision log, accuracy, and activity trends."""
             return FileResponse(frontend_dir / "cerebro-analytics.html")
 
+        @app.get("/precision-ia")
+        async def serve_precision_ia():
+            """Prediction accuracy tracker — compare AI forecasts vs actual outcomes."""
+            return FileResponse(frontend_dir / "precision-ia.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
