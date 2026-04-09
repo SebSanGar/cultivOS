@@ -499,8 +499,9 @@
             <li><a href="#inversión">Inversión</a></li>
             <li><a href="#finanzas">Finanzas</a></li>
         </ul>
-        <div class="lang-toggle">
-            <button class="lang-btn active" onclick="setLang('es')">MX</button>
+        <div class="lang-toggle" role="group" aria-label="Language / Idioma">
+            <button class="lang-btn active" onclick="setLang('es')" aria-pressed="true">🇲🇽 MX</button>
+            <button class="lang-btn" onclick="setLang('en')" aria-pressed="false">🇨🇦 CA</button>
         </div>
         <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
             <span></span><span></span><span></span>
@@ -1068,7 +1069,7 @@
 
 <!-- FOOTER -->
 <footer>
-    <p id="footer-text" data-es-html='&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Próximamente: Ontario, Canadá<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>' data-en-html='&copy; 2026 cultivOS — Intelligent Agriculture. Jalisco, Mexico &middot; Coming Soon: Ontario, Canada<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>'>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Próximamente: Ontario, Canadá<br>
+    <p id="footer-text" data-es-html='&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Ontario, Canadá (Piloto)<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>' data-en-html='&copy; 2026 cultivOS — Intelligent Agriculture. Jalisco, Mexico &middot; Ontario, Canada (Pilot)<br><a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a>'>&copy; 2026 cultivOS — Agricultura Inteligente. Jalisco, México &middot; Ontario, Canadá (Piloto)<br>
     <a href="mailto:hola@cultivosagro.com">hola@cultivosagro.com</a> &middot; <a href="https://cultivosagro.com">cultivosagro.com</a></p>
 </footer>
 
@@ -1167,8 +1168,18 @@ function setLang(lang) {
   const htmlKey = key + '-html';
 
   // Toggle buttons
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`)?.classList.add('active');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
+  });
+  const activeBtn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+    activeBtn.setAttribute('aria-pressed', 'true');
+  }
+
+  // Persist selection
+  try { localStorage.setItem('cultivos_lang', lang); } catch (e) {}
 
   // HTML lang + title
   document.documentElement.lang = lang === 'es' ? 'es' : 'en';
@@ -1293,6 +1304,22 @@ function setLang(lang) {
   const mobileNavKeys = ['navProb','navSol','navPlat','navDrone','navRoad','navInv','navFin'];
   mobileLinks.forEach((a, i) => { if (mobileNavKeys[i] && t[mobileNavKeys[i]]) a.textContent = t[mobileNavKeys[i]]; });
 }
+
+// ── Restore preferred language on load ──
+// Priority: explicit localStorage > browser lang (en-CA, en-US → en) > default es
+(function initLang() {
+  let preferred = 'es';
+  try {
+    const stored = localStorage.getItem('cultivos_lang');
+    if (stored === 'es' || stored === 'en') {
+      preferred = stored;
+    } else if (typeof navigator !== 'undefined' && navigator.language) {
+      // Auto-detect Canadian/English visitors on first visit
+      if (navigator.language.toLowerCase().startsWith('en')) preferred = 'en';
+    }
+  } catch (e) {}
+  if (preferred !== 'es') setLang(preferred);
+})();
 
 // ── SCROLL REVEAL (IntersectionObserver) ──
 const revealObserver = new IntersectionObserver((entries) => {
