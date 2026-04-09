@@ -148,6 +148,7 @@ def create_app() -> FastAPI:
             {"name": "cooperatives", "description": "Cooperative (farmer group) management and aggregate dashboards"},
             {"name": "executive", "description": "Platform-wide executive KPIs and multi-farm overview"},
             {"name": "system", "description": "Detailed system health and operational status"},
+            {"name": "regions", "description": "Region-aware agricultural profiles (climate, soil, crops, currency)"},
         ],
     )
 
