@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cultivOS — Impacto Agricultor</title>
+    <meta name="description" content="Resumen del impacto por agricultor — mejora de salud, tratamientos aplicados, ahorro estimado.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="intel-body">
+
+<!-- NAV -->
+<nav class="intel-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/impacto-agricultor" class="nav-tab intel-tab active">Impacto</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+        </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- FARMER IMPACT -->
+<main class="intel-dashboard">
+    <!-- Header -->
+    <div class="intel-header">
+        <div>
+            <h1 class="intel-title">Impacto del Agricultor</h1>
+            <p class="intel-subtitle">Resumen del viaje del agricultor — recomendaciones, tratamientos, mejora de salud y ahorro estimado</p>
+        </div>
+    </div>
+
+    <!-- Farm selector -->
+    <div class="intel-filters" style="margin-bottom:1.5rem;">
+        <label for="farmSelect" style="color:var(--text-secondary);margin-right:0.5rem;">Granja:</label>
+        <select id="farmSelect" class="intel-select" style="min-width:200px;padding:0.5rem;border-radius:8px;background:var(--card-bg);color:var(--text-primary);border:1px solid var(--border-color);">
+            <option value="">Seleccionar granja...</option>
+        </select>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="intel-stats-strip" id="stats-strip">
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-dias">--</div>
+            <div class="intel-stat-label">Dias en Plataforma</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-campos">--</div>
+            <div class="intel-stat-label">Campos</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-hectareas">--</div>
+            <div class="intel-stat-label">Hectareas</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-recomendaciones">--</div>
+            <div class="intel-stat-label">Recomendaciones</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-aplicados">--</div>
+            <div class="intel-stat-label">Tratamientos Aplicados</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-feedback">--</div>
+            <div class="intel-stat-label">Retroalimentacion</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-mejora">--</div>
+            <div class="intel-stat-label">Mejora Promedio</div>
+        </div>
+        <div class="intel-stat">
+            <div class="intel-stat-value" id="stat-ahorro">--</div>
+            <div class="intel-stat-label">Ahorro Estimado (MXN)</div>
+        </div>
+    </div>
+
+    <!-- Field impact cards -->
+    <section style="margin-top:2rem;">
+        <h2 class="intel-section-title" style="margin-bottom:1rem;">Impacto por Campo</h2>
+        <div id="field-cards" class="intel-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;">
+            <p id="field-cards-empty" style="color:var(--text-secondary);">Selecciona una granja para ver el impacto por campo.</p>
+        </div>
+    </section>
+</main>
+
+<script src="/impacto-agricultor.js"></script>
+</body>
+</html>

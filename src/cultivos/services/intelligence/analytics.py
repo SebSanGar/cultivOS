@@ -1251,3 +1251,95 @@ def compute_prediction_accuracy(db) -> dict:
         "by_type": by_type,
         "recent": recent,
     }
+
+
+def compute_farmer_impact(db: Session, farm_id: int) -> dict:
+    """Compute farmer journey impact metrics for a single farm.
+
+    Aggregates: days since onboard, recommendations received, treatments applied,
+    health improvement per field, estimated savings in MXN.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        return None
+
+    fields = db.query(Field).filter(Field.farm_id == farm_id).all()
+    field_ids = [f.id for f in fields]
+
+    # Days since onboard
+    days_since = (datetime.utcnow() - farm.created_at).days if farm.created_at else 0
+
+    # Total treatments (recommendations received)
+    treatment_count = 0
+    treatments_applied = 0
+    if field_ids:
+        treatment_count = db.query(func.count(TreatmentRecord.id)).filter(
+            TreatmentRecord.field_id.in_(field_ids)
+        ).scalar() or 0
+        treatments_applied = db.query(func.count(TreatmentRecord.id)).filter(
+            TreatmentRecord.field_id.in_(field_ids),
+            TreatmentRecord.applied_at.isnot(None),
+        ).scalar() or 0
+
+    # Feedback given
+    feedback_count = 0
+    if field_ids:
+        feedback_count = db.query(func.count(FarmerFeedback.id)).filter(
+            FarmerFeedback.field_id.in_(field_ids)
+        ).scalar() or 0
+
+    # Per-field health impact
+    field_entries = []
+    health_deltas = []
+    for f in fields:
+        scores = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == f.id)
+            .order_by(HealthScore.scored_at.asc())
+            .all()
+        )
+        first_score = scores[0].score if scores else None
+        latest_score = scores[-1].score if scores else None
+        delta = None
+        if first_score is not None and latest_score is not None and len(scores) > 1:
+            delta = round(latest_score - first_score, 1)
+            health_deltas.append(delta)
+
+        field_treatments = db.query(func.count(TreatmentRecord.id)).filter(
+            TreatmentRecord.field_id == f.id,
+            TreatmentRecord.applied_at.isnot(None),
+        ).scalar() or 0
+
+        field_entries.append({
+            "field_id": f.id,
+            "field_name": f.name,
+            "crop_type": f.crop_type,
+            "first_score": round(first_score, 1) if first_score is not None else None,
+            "latest_score": round(latest_score, 1) if latest_score is not None else None,
+            "health_delta": delta,
+            "treatments_applied": field_treatments,
+        })
+
+    # Average health improvement percentage
+    avg_improvement = None
+    if health_deltas:
+        avg_improvement = round(sum(health_deltas) / len(health_deltas), 1)
+
+    # Estimated savings: treatments applied * avg cost reduction (rough heuristic)
+    # Each applied treatment saves ~$1,500 MXN on average (prevention vs reactive)
+    total_hectares = sum(f.hectares or 0 for f in fields)
+    estimated_savings = treatments_applied * 1500
+
+    return {
+        "farm_id": farm_id,
+        "farm_name": farm.name,
+        "days_since_onboard": days_since,
+        "total_fields": len(fields),
+        "total_hectares": round(total_hectares, 1),
+        "recommendations_received": treatment_count,
+        "treatments_applied": treatments_applied,
+        "feedback_given": feedback_count,
+        "avg_health_improvement_pct": avg_improvement,
+        "estimated_savings_mxn": estimated_savings,
+        "fields": field_entries,
+    }

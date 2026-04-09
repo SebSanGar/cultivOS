@@ -131,6 +131,7 @@ def create_app() -> FastAPI:
             {"name": "fusion", "description": "Multi-sensor data fusion analysis"},
             {"name": "yield", "description": "Crop yield prediction models"},
             {"name": "economics", "description": "Economic impact analysis per farm"},
+            {"name": "farmer-impact", "description": "Farmer journey impact metrics and health improvement"},
             {"name": "feedback", "description": "Farmer feedback on treatment effectiveness"},
             {"name": "intervention-scores", "description": "Predictive intervention priority scoring"},
             {"name": "action-timeline", "description": "Weather-integrated prioritized action timeline"},
@@ -477,6 +478,11 @@ def create_app() -> FastAPI:
         async def serve_precision_ia():
             """Prediction accuracy tracker — compare AI forecasts vs actual outcomes."""
             return FileResponse(frontend_dir / "precision-ia.html")
+
+        @app.get("/impacto-agricultor")
+        async def serve_impacto_agricultor():
+            """Farmer impact summary — per-farm journey metrics and health improvement."""
+            return FileResponse(frontend_dir / "impacto-agricultor.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 

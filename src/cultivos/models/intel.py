@@ -315,3 +315,30 @@ class PredictionAccuracyOut(BaseModel):
     status: str = "green"
     by_type: dict[str, PredictionTypeBreakdown] = {}
     recent: list[RecentPrediction] = []
+
+
+# ── Farmer impact summary ────────────────────────────────────────────
+
+
+class FieldImpactEntry(BaseModel):
+    field_id: int
+    field_name: str
+    crop_type: Optional[str] = None
+    first_score: Optional[float] = None
+    latest_score: Optional[float] = None
+    health_delta: Optional[float] = None
+    treatments_applied: int = 0
+
+
+class FarmerImpactOut(BaseModel):
+    farm_id: int
+    farm_name: str
+    days_since_onboard: int = 0
+    total_fields: int = 0
+    total_hectares: float = 0
+    recommendations_received: int = 0
+    treatments_applied: int = 0
+    feedback_given: int = 0
+    avg_health_improvement_pct: Optional[float] = None
+    estimated_savings_mxn: int = 0
+    fields: list[FieldImpactEntry] = []
