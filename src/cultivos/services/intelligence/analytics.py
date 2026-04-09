@@ -443,6 +443,56 @@ def compute_treatment_effectiveness_report(
     return {"treatments": results}
 
 
+def compute_treatment_effectiveness_by_crop(db: Session, crop: str) -> dict:
+    """Per-crop treatment ranking by mean health delta.
+
+    Cerebro's "which treatment actually worked for MY crop" answer. Aggregates
+    all treatments applied to fields of the given crop, groups by treatment
+    name, and ranks by mean health delta desc. Treatments with <2 samples are
+    flagged low_confidence. Treatments with no post-treatment health score are
+    excluded (no delta to measure).
+    """
+    treatments = (
+        db.query(TreatmentRecord)
+        .join(Field, TreatmentRecord.field_id == Field.id)
+        .filter(Field.crop_type == crop)
+        .all()
+    )
+
+    # Group by treatment name, collecting deltas
+    groups: dict[str, list[float]] = {}
+    for tr in treatments:
+        if not tr.created_at:
+            continue
+        next_hs = (
+            db.query(HealthScore)
+            .filter(
+                HealthScore.field_id == tr.field_id,
+                HealthScore.scored_at > tr.created_at,
+            )
+            .order_by(HealthScore.scored_at.asc())
+            .first()
+        )
+        if next_hs is None:
+            continue
+        delta = next_hs.score - tr.health_score_used
+        groups.setdefault(tr.tratamiento, []).append(delta)
+
+    results = []
+    for name, deltas in groups.items():
+        sample_count = len(deltas)
+        mean_delta = round(sum(deltas) / sample_count, 1)
+        results.append({
+            "tratamiento": name,
+            "mean_health_delta": mean_delta,
+            "sample_count": sample_count,
+            "low_confidence": sample_count < 2,
+        })
+
+    results.sort(key=lambda x: x["mean_health_delta"], reverse=True)
+    return {"crop": crop, "treatments": results}
+
+
 def compute_seasonal_performance(
     db: Session, field_id: int, year: Optional[int] = None
 ) -> dict:

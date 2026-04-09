@@ -28,6 +28,7 @@ from cultivos.models.intel import (
     SoilTrendsOut,
     TimingOut,
     TimingRequestIn,
+    TreatmentEffectivenessByCropOut,
     TreatmentEffectivenessOut,
     TreatmentEffectivenessReportOut,
     CerebroAnalyticsOut,
@@ -48,6 +49,7 @@ from cultivos.services.intelligence.analytics import (
     compute_soil_trends,
     compute_summary,
     compute_treatment_effectiveness,
+    compute_treatment_effectiveness_by_crop,
     compute_treatment_effectiveness_report,
     compute_executive_summary,
 )
@@ -164,6 +166,22 @@ def intel_treatment_effectiveness_report(
 ):
     """Aggregate treatment effectiveness ranked by composite score."""
     return compute_treatment_effectiveness_report(db, crop_type=crop_type)
+
+
+@router.get(
+    "/treatment-effectiveness-by-crop",
+    response_model=TreatmentEffectivenessByCropOut,
+)
+def intel_treatment_effectiveness_by_crop(
+    crop: str,
+    db: Session = Depends(get_db),
+    user=Depends(_admin_or_researcher),
+):
+    """Per-crop treatment ranking by mean health delta — Cerebro's answer to
+    "which treatment actually worked for my crop". Flags low-confidence
+    entries (sample_count < 2).
+    """
+    return compute_treatment_effectiveness_by_crop(db, crop=crop)
 
 
 @router.get("/anomalies", response_model=AnomaliesOut)

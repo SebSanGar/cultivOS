@@ -44,6 +44,18 @@ class TreatmentEffectivenessOut(BaseModel):
     treatments: list[TreatmentEffectivenessEntry]
 
 
+class TreatmentEffectivenessByCropRow(BaseModel):
+    tratamiento: str
+    mean_health_delta: float
+    sample_count: int
+    low_confidence: bool
+
+
+class TreatmentEffectivenessByCropOut(BaseModel):
+    crop: str
+    treatments: list[TreatmentEffectivenessByCropRow]
+
+
 class AnomalyEntry(BaseModel):
     field_id: int
     field_name: str
