@@ -4,6 +4,8 @@ const API = '/api';
 let mapInstance = null;
 let allFarmData = [];
 let mapLayers = [];
+let viewMode = 'health'; // 'health' | 'risk'
+let riskDataByFarm = {}; // farm_id → [{field_id, risk_score, dominant_factor, lat, lon}]
 
 function esc(str) {
     if (!str) return '';
@@ -35,6 +37,42 @@ function healthLabel(score) {
     if (score >= 40) return 'Alerta';
     return 'Critico';
 }
+
+function riskColor(score) {
+    if (score == null) return '#666';
+    if (score > 60) return '#e63946';
+    if (score >= 30) return '#f0b429';
+    return '#00c896';
+}
+
+function riskLabel(score) {
+    if (score == null) return 'Sin datos';
+    if (score > 60) return 'Riesgo Alto';
+    if (score >= 30) return 'Riesgo Medio';
+    return 'Riesgo Bajo';
+}
+
+function dominantLabel(factor) {
+    const labels = {health: 'Salud', weather: 'Clima', disease: 'Enfermedad', thermal: 'Termal'};
+    return factor ? (labels[factor] || factor) : '--';
+}
+
+window.toggleViewMode = function() {
+    viewMode = viewMode === 'health' ? 'risk' : 'health';
+    var btn = document.getElementById('view-toggle-btn');
+    if (btn) btn.textContent = viewMode === 'health' ? 'Ver Riesgo' : 'Ver Salud';
+    var lh = document.getElementById('legend-health');
+    var lr = document.getElementById('legend-risk');
+    if (lh) lh.style.display = viewMode === 'health' ? 'contents' : 'none';
+    if (lr) lr.style.display = viewMode === 'risk' ? 'contents' : 'none';
+    var val = document.getElementById('map-farm-filter').value;
+    if (!val) {
+        renderMap(allFarmData);
+    } else {
+        var filtered = allFarmData.filter(function(entry) { return String(entry.farm.id) === val; });
+        renderMap(filtered);
+    }
+};
 
 // -- Initialize map --
 function initMap() {
@@ -88,6 +126,15 @@ async function loadMapData() {
     });
 
     allFarmData = await Promise.all(farmFieldPromises);
+
+    // Fetch risk map for each farm in parallel
+    await Promise.all(farms.map(async function(farm) {
+        const risk = await fetchJSON('/farms/' + farm.id + '/fields/risk-map');
+        if (risk) {
+            riskDataByFarm[farm.id] = risk;
+        }
+    }));
+
     renderMap(allFarmData);
 }
 
@@ -137,7 +184,12 @@ function renderMap(farmData) {
             mapLayers.push(marker);
         }
 
-        // Field polygons (if boundary_coordinates exist)
+        // Build risk lookup for this farm
+        var farmRisk = riskDataByFarm[farm.id] || [];
+        var riskByField = {};
+        farmRisk.forEach(function(r) { riskByField[r.field_id] = r; });
+
+        // Field polygons / risk markers
         fields.forEach(function(field) {
             totalFields++;
             totalHectares += field.hectares || 0;
@@ -147,18 +199,47 @@ function renderMap(farmData) {
                 healthCount++;
             }
 
-            if (field.boundary_coordinates && field.boundary_coordinates.length >= 3) {
-                // Leaflet expects [lat, lng] but boundary_coordinates are [lon, lat]
+            var riskItem = riskByField[field.id];
+
+            if (viewMode === 'risk') {
+                // Risk mode: draw a circle marker at field lat/lon with risk color
+                var rLat = riskItem && riskItem.lat != null ? riskItem.lat : (farm.location_lat || null);
+                var rLon = riskItem && riskItem.lon != null ? riskItem.lon : (farm.location_lon || null);
+                if (rLat != null && rLon != null) {
+                    var rScore = riskItem ? riskItem.risk_score : null;
+                    var color = riskColor(rScore);
+                    var marker = L.circleMarker([rLat, rLon], {
+                        radius: 9,
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.85,
+                        weight: 2
+                    }).addTo(mapInstance);
+
+                    marker.bindPopup(
+                        '<strong>' + esc(field.name) + '</strong><br>' +
+                        'Cultivo: ' + esc(field.crop_type || '--') + '<br>' +
+                        'Area: ' + (field.hectares || 0) + ' ha<br>' +
+                        'Riesgo: ' + (rScore != null ? rScore.toFixed(0) + ' — ' + riskLabel(rScore) : 'Sin datos') + '<br>' +
+                        (riskItem && riskItem.dominant_factor ? 'Factor: ' + dominantLabel(riskItem.dominant_factor) + '<br>' : '') +
+                        '<a href="/campo?farm=' + farm.id + '&field=' + field.id + '">Ver campo</a>'
+                    );
+
+                    bounds.push([rLat, rLon]);
+                    mapLayers.push(marker);
+                }
+            } else if (field.boundary_coordinates && field.boundary_coordinates.length >= 3) {
+                // Health mode: draw polygon colored by health
                 var latlngs = field.boundary_coordinates.map(function(coord) {
                     return [coord[1], coord[0]];
                 });
 
-                var color = healthColor(score);
+                var hColor = healthColor(score);
                 var polygon = L.polygon(latlngs, {
-                    color: color,
+                    color: hColor,
                     weight: 2,
                     fillOpacity: 0.25,
-                    fillColor: color
+                    fillColor: hColor
                 }).addTo(mapInstance);
 
                 polygon.bindPopup(

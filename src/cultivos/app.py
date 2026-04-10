@@ -150,6 +150,7 @@ def create_app() -> FastAPI:
             {"name": "system", "description": "Detailed system health and operational status"},
             {"name": "regions", "description": "Region-aware agricultural profiles (climate, soil, crops, currency)"},
             {"name": "predictions", "description": "Per-field AI prediction accuracy tracking (MAPE and resolved vs pending)"},
+            {"name": "risk-map", "description": "Per-field risk heatmap combining health, weather, disease, and thermal scores"},
         ],
     )
 

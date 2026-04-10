@@ -95,10 +95,11 @@
             <h1 class="intel-title">Mapa de Campos</h1>
             <p class="intel-subtitle">Ubicaciones de granjas y parcelas — salud de cultivos con codigo de colores</p>
         </div>
-        <div class="intel-header-actions">
+        <div class="intel-header-actions" style="display:flex;gap:0.75rem;align-items:center;">
             <select id="map-farm-filter" class="intel-select" onchange="filterByFarm()">
                 <option value="">Todas las granjas</option>
             </select>
+            <button id="view-toggle-btn" class="intel-btn" onclick="toggleViewMode()" style="white-space:nowrap;">Ver Riesgo</button>
         </div>
     </div>
 
@@ -124,10 +125,18 @@
 
     <!-- Legend -->
     <div id="map-legend">
-        <span class="legend-item"><span class="legend-dot good"></span> Saludable (&gt;70)</span>
-        <span class="legend-item"><span class="legend-dot warning"></span> Alerta (40-70)</span>
-        <span class="legend-item"><span class="legend-dot critical"></span> Critico (&lt;40)</span>
-        <span class="legend-item"><span class="legend-dot none"></span> Sin datos</span>
+        <span id="legend-health" style="display:contents;">
+            <span class="legend-item"><span class="legend-dot good"></span> Saludable (&gt;70)</span>
+            <span class="legend-item"><span class="legend-dot warning"></span> Alerta (40-70)</span>
+            <span class="legend-item"><span class="legend-dot critical"></span> Critico (&lt;40)</span>
+            <span class="legend-item"><span class="legend-dot none"></span> Sin datos</span>
+        </span>
+        <span id="legend-risk" style="display:none;">
+            <span class="legend-item"><span class="legend-dot critical"></span> Riesgo Alto (&gt;60)</span>
+            <span class="legend-item"><span class="legend-dot warning"></span> Riesgo Medio (30-60)</span>
+            <span class="legend-item"><span class="legend-dot good"></span> Riesgo Bajo (&lt;30)</span>
+            <span class="legend-item"><span class="legend-dot none"></span> Sin datos</span>
+        </span>
     </div>
 
     <!-- Map -->
