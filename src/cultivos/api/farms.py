@@ -11,11 +11,13 @@ from cultivos.models.farm import (
     FieldCreate, FieldUpdate, FieldOut,
     HeatmapResponse, FieldHeatmapPoint,
 )
+from cultivos.models.field_priority import FieldPriorityOut
 from cultivos.models.intel import FarmExecutiveSummaryOut
 from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
+from cultivos.services.intelligence.field_priority import compute_field_priority
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
@@ -239,3 +241,18 @@ def field_stress_report(farm_id: int, field_id: int, db: Session = Depends(get_d
     if field is None:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_field_stress_report(field, db)
+
+
+# ── Field prioritization ranking ──────────────────────────────────────────
+
+@router.get("/{farm_id}/field-priority", response_model=FieldPriorityOut)
+def field_priority(farm_id: int, db: Session = Depends(get_db)):
+    """Rank all fields in a farm by urgency — highest stress first.
+
+    Combines multi-sensor stress scores to identify which field needs
+    attention most urgently. Farmers with 3+ fields get an AI triage list.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_field_priority(farm, db)
