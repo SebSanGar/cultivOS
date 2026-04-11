@@ -1,4 +1,4 @@
-"""Regenerative scorecard CSV export endpoint."""
+"""Regenerative scorecard CSV and PDF export endpoints."""
 
 import csv
 import io
@@ -6,11 +6,12 @@ from datetime import date
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.orm import Session
 
 from cultivos.db.session import get_db
 from cultivos.services.intelligence.regen_scorecard import compute_farm_regen_scorecard_csv
+from cultivos.services.intelligence.regen_scorecard_pdf import generate_regen_scorecard_pdf
 
 router = APIRouter(tags=["intelligence"])
 
@@ -48,5 +49,27 @@ def export_regen_scorecard(
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/api/farms/{farm_id}/regen-scorecard/export.pdf")
+def export_regen_scorecard_pdf(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Export regenerative scorecard as PDF for a farm.
+
+    Returns a formatted PDF with per-field metrics and overall readiness %.
+    FODECIJAL: printable audit evidence for certification bodies and grant reviewers.
+    """
+    pdf_bytes = generate_regen_scorecard_pdf(farm_id, db)
+    if pdf_bytes is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+
+    filename = f"regen_scorecard_farm_{farm_id}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
