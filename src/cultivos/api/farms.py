@@ -18,6 +18,7 @@ from cultivos.models.growth_report import GrowthReportOut
 from cultivos.models.intel import FarmExecutiveSummaryOut
 from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
+from cultivos.models.water_stress import WaterStressOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
 from cultivos.services.intelligence.daily_briefing import compute_daily_briefing
@@ -26,6 +27,7 @@ from cultivos.services.intelligence.field_priority import compute_field_priority
 from cultivos.services.intelligence.growth_report import compute_growth_report
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
+from cultivos.services.intelligence.water_stress import compute_water_stress
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
@@ -316,3 +318,22 @@ def daily_briefing(farm_id: int, db: Session = Depends(get_db)):
     if farm is None:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_daily_briefing(farm, db)
+
+
+# ── Water stress early warning ─────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/water-stress", response_model=WaterStressOut)
+def water_stress(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Assess water stress urgency from soil moisture, thermal stress, and weather.
+
+    Urgency levels: severe (3 factors or soil<20%+temp>35°C), moderate (2 factors
+    or soil<20%), low (1 factor), none (0 factors). Graceful degradation when
+    soil data is missing.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if field is None:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_water_stress(field, db)
