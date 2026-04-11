@@ -1,6 +1,6 @@
 """Seed data for the cultivOS knowledge base."""
 
-from cultivos.db.models import AncestralMethod, CropType, Disease, Fertilizer
+from cultivos.db.models import AncestralMethod, CropType, CropVariety, Disease, Fertilizer
 
 
 FERTILIZER_SEEDS = [
@@ -697,3 +697,175 @@ def seed_diseases(db_session) -> int:
         ))
     db_session.commit()
     return len(DISEASE_SEEDS)
+
+
+CROP_VARIETY_SEEDS = [
+    # Maiz — 4 local Jalisco/LATAM varieties
+    CropVariety(
+        crop_name="maiz",
+        name="Maiz Azul Criollo de Jalisco",
+        region="Altos de Jalisco",
+        altitude_m=1800,
+        water_mm=700,
+        diseases=["tizón_foliar", "carbón_de_la_espiga", "roya"],
+        adaptation_notes="Variedad criollo azul de alta adaptación a altitudes de 1600-2000 msnm. Alta tolerancia a sequía moderada. Ciclo 110-120 días. Grano azul-morado rico en antocianinas. Usado en tortillas azules y tamales de maíz azul.",
+    ),
+    CropVariety(
+        crop_name="maiz",
+        name="Maiz Blanco de Temporal Jaliscience",
+        region="Valles Centrales de Jalisco",
+        altitude_m=1500,
+        water_mm=650,
+        diseases=["roya_común", "mancha_de_asfalto"],
+        adaptation_notes="Ciclo corto (90-100 días), ideal para temporal junio-octubre en valles centrales. Grano blanco harinoso. Muy productivo bajo lluvia natural sin irrigación suplementaria.",
+    ),
+    CropVariety(
+        crop_name="maiz",
+        name="Maiz Olotillo Rojo de la Costa",
+        region="Costa Sur de Jalisco",
+        altitude_m=400,
+        water_mm=1200,
+        diseases=["pudrición_de_mazorca", "tizón_de_la_hoja_del_norte"],
+        adaptation_notes="Variedad costera adaptada a temperaturas altas (28-35°C) y alta humedad. Olote rojo delgado, grano semi-dentado. Ciclo largo 130-140 días. Resistente a plagas de almacenaje.",
+    ),
+    CropVariety(
+        crop_name="maiz",
+        name="Maiz Cacahuazintle Criollo",
+        region="Jalisco y Michoacán",
+        altitude_m=2000,
+        water_mm=600,
+        diseases=["carbón_del_maíz", "fusarium_de_mazorca"],
+        adaptation_notes="Maíz cacahuazintle (pozolero) de endospermo suave y harinoso. Preferido para pozole y atole. Altura de planta mayor a 2.5 m. Requiere suelos bien drenados. Tolerante a heladas tardías de primavera.",
+    ),
+    # Agave — 3 Jalisco varieties
+    CropVariety(
+        crop_name="agave",
+        name="Agave Tequilana Weber Azul",
+        region="Jalisco (DO Tequila)",
+        altitude_m=1200,
+        water_mm=800,
+        diseases=["pudrición_de_raíz_por_Fusarium", "picudo_del_agave"],
+        adaptation_notes="Única variedad autorizada para producción de tequila bajo Denominación de Origen. Cosecha a los 7-10 años. Muy sensible a pudrición radicular — requiere suelos bien drenados y sin compactación. Propagación por hijuelos (mecuates) exclusivamente.",
+    ),
+    CropVariety(
+        crop_name="agave",
+        name="Agave Tobaziche Silvestre",
+        region="Sierra de Jalisco",
+        altitude_m=1600,
+        water_mm=400,
+        diseases=["trips_del_agave"],
+        adaptation_notes="Agave silvestre usado en producción artesanal de mezcal jalisciense. Ciclo muy largo (15-20 años). Alta tolerancia a sequía extrema. No se cultiva comercialmente — se cosecha silvestre o semi-cultivado. Alta demanda para mezcal premium.",
+    ),
+    CropVariety(
+        crop_name="agave",
+        name="Agave Angustifolia (Espadín Jalisciense)",
+        region="Sierra Occidental de Jalisco",
+        altitude_m=1000,
+        water_mm=600,
+        diseases=["bacteriosis_del_agave", "trips"],
+        adaptation_notes="Especie versátil usada para mezcal artesanal en sierra occidental. Ciclo 8-12 años. Más tolerante a condiciones variables que el azul tequilana. Creciente demanda por boom del mezcal artesanal.",
+    ),
+    # Frijol — 3 local varieties
+    CropVariety(
+        crop_name="frijol",
+        name="Frijol Negro de Jamapa Jaliscience",
+        region="Valles Centrales de Jalisco",
+        altitude_m=1400,
+        water_mm=500,
+        diseases=["antracnosis", "mosaico_común"],
+        adaptation_notes="Variedad de frijol negro de ciclo corto (70-80 días). Grano pequeño negro brillante, sabor suave. Ideal para temporal. Resistente a pudrición radicular. Alta demanda en mercados locales y exportación.",
+    ),
+    CropVariety(
+        crop_name="frijol",
+        name="Frijol Bayo de Jalisco",
+        region="Los Altos de Jalisco",
+        altitude_m=1700,
+        water_mm=550,
+        diseases=["roya_del_frijol", "tizón_de_la_hoja"],
+        adaptation_notes="Frijol bayo (beige) adaptado a las altitudes de Los Altos. Grano grande harinoso. Ciclo 85-95 días. Sabor cremoso, preferido para caldo tlalpeño y frijoles charros jaliscienses.",
+    ),
+    CropVariety(
+        crop_name="frijol",
+        name="Frijol Flor de Mayo Jaliscience",
+        region="Jalisco",
+        altitude_m=1500,
+        water_mm=500,
+        diseases=["antracnosis", "viruela_del_frijol"],
+        adaptation_notes="Variedad rosada moteada de alta adaptabilidad en todo Jalisco. Una de las más cultivadas en la región. Ciclo 80-90 días. Buen rendimiento en condiciones de temporal variable.",
+    ),
+    # Chile — 3 local varieties
+    CropVariety(
+        crop_name="chile",
+        name="Chiltepín Silvestre de Jalisco",
+        region="Barrancas del Río Santiago",
+        altitude_m=800,
+        water_mm=900,
+        diseases=["antracnosis_del_chile", "phytophthora"],
+        adaptation_notes="Chile silvestre más picante del mundo (50,000-100,000 SHU). Recolección silvestre en barrancas y selva baja caducifolia. Fruto pequeño redondo rojo. Alta demanda gourmet y medicinal. En proceso de domesticación como cultivo semi-intensivo.",
+    ),
+    CropVariety(
+        crop_name="chile",
+        name="Chile Poblano de Jalisco",
+        region="Jalisco",
+        altitude_m=1600,
+        water_mm=700,
+        diseases=["virus_del_mosaico_del_pepino", "botrytis"],
+        adaptation_notes="Variedad adaptada a condiciones jaliscienses. Fruto grande verde oscuro, suave-medio (1,000-2,000 SHU). Usado en rajas, chile en nogada y rellenos. Ciclo 80-90 días. Requiere soporte en campo.",
+    ),
+    CropVariety(
+        crop_name="chile",
+        name="Chile de Árbol Jaliscience",
+        region="Lagos de Moreno, Jalisco",
+        altitude_m=1800,
+        water_mm=600,
+        diseases=["trips", "oidio_del_chile"],
+        adaptation_notes="Chile seco fino (15,000-30,000 SHU). Planta arbustiva de 60-90 cm. Ciclo 90-100 días. Fruto rojo intenso al secar. Ingrediente clave en salsas jaliscienses y como especia seca. Alta rentabilidad por kg.",
+    ),
+    # Tomate — 3 local varieties
+    CropVariety(
+        crop_name="tomate",
+        name="Jitomate Bola Criollo de Jalisco",
+        region="El Grullo y Autlán, Jalisco",
+        altitude_m=900,
+        water_mm=800,
+        diseases=["tizón_tardío", "fusarium_del_tomate"],
+        adaptation_notes="Tomate redondo tipo bola adaptado a valles costeros de Jalisco. Fruto 150-200 g, alta acidez y sabor intenso. Ciclo 70-80 días en campo. Preferido por consumidores locales sobre variedades comerciales. Resistencia moderada a virus.",
+    ),
+    CropVariety(
+        crop_name="tomate",
+        name="Jitomate Cherry Silvestre Jalisciense",
+        region="Costa de Jalisco",
+        altitude_m=300,
+        water_mm=1000,
+        diseases=["virus_del_rizado_de_la_hoja", "alternaria"],
+        adaptation_notes="Tomate cherry pequeño (15-20 g) de sabor dulce intenso. Altamente productivo en climas cálidos de costa. Ciclo 60-70 días. Resistente a altas temperaturas (>35°C). Creciente demanda en mercados premium y restaurantes.",
+    ),
+    CropVariety(
+        crop_name="tomate",
+        name="Jitomate Guaje de Jalisco",
+        region="Jalisco",
+        altitude_m=1400,
+        water_mm=700,
+        diseases=["phytophthora_infestans", "cladosporium"],
+        adaptation_notes="Tomate tipo guaje (pera) muy productivo y carnoso. Bajo contenido de agua — ideal para salsas y cocción. Ciclo 75-85 días. Buena vida de anaquel (10-14 días) para mercados locales. Base de la salsa jalisco tradicional.",
+    ),
+]
+
+
+def seed_crop_varieties(db_session) -> int:
+    """Load Jalisco/LATAM crop variety seed data if table is empty. Returns count inserted."""
+    existing = db_session.query(CropVariety).count()
+    if existing > 0:
+        return 0
+    for variety in CROP_VARIETY_SEEDS:
+        db_session.add(CropVariety(
+            crop_name=variety.crop_name,
+            name=variety.name,
+            region=variety.region,
+            altitude_m=variety.altitude_m,
+            water_mm=variety.water_mm,
+            diseases=variety.diseases,
+            adaptation_notes=variety.adaptation_notes,
+        ))
+    db_session.commit()
+    return len(CROP_VARIETY_SEEDS)
