@@ -1,5 +1,8 @@
 """Knowledge base endpoints — fertilizers, ancestral methods, etc."""
 
+from datetime import datetime
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
@@ -11,6 +14,8 @@ from cultivos.models.crop_type import CropTypeOut
 from cultivos.models.crop_variety import CropVarietyOut
 from cultivos.models.farmer_vocabulary import FarmerVocabularyOut
 from cultivos.models.fertilizer import FertilizerOut
+from cultivos.models.treatment_outcomes import TreatmentOutcomeItem
+from cultivos.services.intelligence.treatment_outcomes import compute_treatment_outcomes
 
 router = APIRouter(
     prefix="/api/knowledge",
@@ -198,3 +203,20 @@ def list_farmer_vocabulary(
         symptom_lower = symptom.lower()
         results = [r for r in results if r.symptom and r.symptom.lower() == symptom_lower]
     return results
+
+
+@router.get("/treatment-outcomes", response_model=list[TreatmentOutcomeItem])
+def get_treatment_outcomes(
+    crop_type: Optional[str] = Query(None, description="Filter by crop type (e.g. maiz, agave)"),
+    start_date: Optional[datetime] = Query(None, description="Filter treatments on or after this date (ISO 8601)"),
+    end_date: Optional[datetime] = Query(None, description="Filter treatments on or before this date (ISO 8601)"),
+    db: Session = Depends(get_db),
+):
+    """Per-crop treatment effectiveness summary.
+
+    For each (crop_type, problema) pair, returns the average health improvement
+    observed within 30 days of applying that treatment. Only treatments with a
+    follow-up HealthScore are included. Sorted by avg_health_delta descending.
+    """
+    return compute_treatment_outcomes(db, crop_type=crop_type, start_date=start_date, end_date=end_date)
+
