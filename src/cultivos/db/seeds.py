@@ -1,6 +1,6 @@
 """Seed data for the cultivOS knowledge base."""
 
-from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, Disease, Fertilizer
+from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, Disease, FarmerVocabulary, Fertilizer
 
 
 FERTILIZER_SEEDS = [
@@ -1018,3 +1018,67 @@ def seed_agronomist_tips(db_session) -> int:
         ))
     db_session.commit()
     return len(AGRONOMIST_TIP_SEEDS)
+
+
+# ---------------------------------------------------------------------------
+# Farmer vocabulary — Jalisco colloquial speech patterns
+# ---------------------------------------------------------------------------
+FARMER_VOCABULARY_SEEDS = [
+    # --- Yellowing / clorosis ---
+    FarmerVocabulary(phrase="se está amarillando", formal_term_es="clorosis", likely_cause="deficiencia de nitrógeno o hierro", recommended_action="Aplicar composta madura o té de composta al suelo. Para clorosis intervenal en hojas jóvenes aplicar quelato de hierro foliar.", crop=None, symptom="yellowing"),
+    FarmerVocabulary(phrase="la hoja está güera", formal_term_es="clorosis", likely_cause="deficiencia de nitrógeno", recommended_action="Incorporar composta o estiércol bien fermentado. Rotar con leguminosas para enriquecer el suelo con nitrógeno biológico.", crop="maiz", symptom="yellowing"),
+    FarmerVocabulary(phrase="se pone amarillo el maíz", formal_term_es="clorosis nitrogenada", likely_cause="suelo pobre en nitrógeno orgánico", recommended_action="Aplicar estiércol composteado o harina de sangre como fuente orgánica de nitrógeno.", crop="maiz", symptom="yellowing"),
+    FarmerVocabulary(phrase="las hojas se blanquean", formal_term_es="blanqueamiento foliar", likely_cause="exceso de luz directa o deficiencia de magnesio", recommended_action="Aplicar ceniza de madera (fuente de magnesio y potasio) o cal agrícola al suelo.", crop=None, symptom="yellowing"),
+    # --- Pest / plaga ---
+    FarmerVocabulary(phrase="tiene plaga", formal_term_es="infestación de plagas", likely_cause="insectos plaga o patógenos no identificados", recommended_action="Identificar el insecto o patógeno específico. Aplicar extracto de nim (azadiractina) o caldo sulfocálcico como primera respuesta orgánica.", crop=None, symptom="pest"),
+    FarmerVocabulary(phrase="está lleno de bichos", formal_term_es="infestación de insectos", likely_cause="aphidos, trips, mosca blanca o gusano cogollero", recommended_action="Liberar insectos benéficos (crisopa, catarina). Aplicar jabón potásico o extracto de ajo y chile.", crop=None, symptom="pest"),
+    FarmerVocabulary(phrase="lo está comiendo el gusano", formal_term_es="daño por lepidópteros", likely_cause="gusano cogollero (Spodoptera frugiperda) u oruga defoliadora", recommended_action="Aplicar Bacillus thuringiensis (Bt) en las primeras horas de la mañana. Revisar el cogollo diariamente.", crop="maiz", symptom="pest"),
+    FarmerVocabulary(phrase="le cayó el piojo", formal_term_es="infestación de áfidos", likely_cause="áfidos chupadores de savia", recommended_action="Aplicar jabón potásico diluido (2%) o caldo de ajo-chile. Conservar vegetación arvense que alberga enemigos naturales.", crop=None, symptom="pest"),
+    FarmerVocabulary(phrase="se lo está comiendo la hormiga", formal_term_es="daño por hormigas cortadoras", likely_cause="hormigas arrieras (Atta spp.)", recommended_action="Aplicar polvo de tierra de diatomeas alrededor de la planta. Localizar y destruir el hormiguero con agua hirviendo.", crop=None, symptom="pest"),
+    # --- Drought / water stress ---
+    FarmerVocabulary(phrase="le falta agua", formal_term_es="estrés hídrico", likely_cause="déficit de humedad en el suelo", recommended_action="Aplicar riego profundo y reducido en frecuencia. Cubrir el suelo con mulch orgánico para retener humedad.", crop=None, symptom="drought"),
+    FarmerVocabulary(phrase="se está secando", formal_term_es="marchitamiento por sequía", likely_cause="estrés hídrico severo o daño radicular", recommended_action="Regar inmediatamente con agua tibia. Agregar composta para mejorar capacidad de retención hídrica del suelo.", crop=None, symptom="drought"),
+    FarmerVocabulary(phrase="está muy resseca la tierra", formal_term_es="suelo seco compactado", likely_cause="compactación superficial y pérdida de materia orgánica", recommended_action="Escarificar superficialmente y aplicar composta. Implantar labranza mínima para conservar humedad.", crop=None, symptom="drought"),
+    FarmerVocabulary(phrase="la hoja está colgada", formal_term_es="turgencia pérdida, marchitez hídrica", likely_cause="déficit de agua en la planta", recommended_action="Regar de inmediato. Aplicar mulch grueso (10 cm) para reducir evaporación. Verificar que el riego llegue a la zona radicular.", crop=None, symptom="drought"),
+    # --- Dying / plant death ---
+    FarmerVocabulary(phrase="se está petateando", formal_term_es="muerte de la planta", likely_cause="daño radicular por encharcamiento, hongo de suelo o estrés severo", recommended_action="Revisar raíces. Si hay pudredumbre, aplicar Trichoderma al suelo. Mejorar drenaje y agregar materia orgánica.", crop=None, symptom="dying"),
+    FarmerVocabulary(phrase="ya se peló", formal_term_es="planta muerta o pérdida de cultivo", likely_cause="estrés severo acumulado, helada, plaga o enfermedad no controlada", recommended_action="Documentar la causa antes de remover la planta. Rotar cultivo en esa zona. Incorporar abono verde para recuperar el suelo.", crop=None, symptom="dying"),
+    FarmerVocabulary(phrase="se dobló la planta", formal_term_es="acame o volcamiento", likely_cause="viento fuerte, raíces débiles o suelo blando por exceso de lluvia", recommended_action="Aporcar tierra alrededor del tallo para dar soporte. En maíz, el acame tardío no requiere intervención urgente.", crop="maiz", symptom="dying"),
+    # --- Tip blight / burn ---
+    FarmerVocabulary(phrase="se secó la punta", formal_term_es="quemado de ápice foliar", likely_cause="deficiencia de potasio, salinidad alta o estrés térmico", recommended_action="Aplicar ceniza de madera (fuente de potasio) o agua de lavado de ceniza foliar. Riegos más frecuentes en calor extremo.", crop=None, symptom="tip_blight"),
+    FarmerVocabulary(phrase="la punta está negra", formal_term_es="necrosis apical", likely_cause="Botrytis spp. o deficiencia de calcio", recommended_action="Aplicar caldo bordelés diluido. Mejorar ventilación entre plantas y evitar mojar el follaje al regar.", crop=None, symptom="tip_blight"),
+    # --- Disease / fungal ---
+    FarmerVocabulary(phrase="tiene hongos", formal_term_es="enfermedad fúngica", likely_cause="Fusarium, Botrytis, Phytophthora u otro hongo según síntoma", recommended_action="Aplicar caldo sulfocálcico o caldo bordelés como fungicida orgánico. Mejorar drenaje y reducir humedad foliar.", crop=None, symptom="disease"),
+    FarmerVocabulary(phrase="se está pudriendo la raíz", formal_term_es="pudrición radicular", likely_cause="Phytophthora o Pythium por encharcamiento", recommended_action="Mejorar drenaje inmediatamente. Aplicar Trichoderma harzianum al suelo. Reducir riego y evitar compactación.", crop=None, symptom="disease"),
+    FarmerVocabulary(phrase="tiene manchas café", formal_term_es="lesiones necróticas foliares", likely_cause="Alternaria, Cercospora u otro hongo foliar", recommended_action="Retirar hojas infectadas. Aplicar caldo bordelés cada 10 días como preventivo en época de lluvias.", crop=None, symptom="disease"),
+    FarmerVocabulary(phrase="sale espuma en el maguey", formal_term_es="salivazo o insecto chupador en agave", likely_cause="picudo del agave (Scyphophorus acupunctatus) o cochinilla", recommended_action="Retirar plantas muy afectadas para evitar propagación. Aplicar neem o tierra de diatomeas en la base del agave.", crop="agave", symptom="disease"),
+    FarmerVocabulary(phrase="tiene manchas blancas", formal_term_es="oidio o mildiu polvoriento", likely_cause="Erysiphe spp. u hongo oidio", recommended_action="Aplicar bicarbonato de sodio diluido (5 g/L) + unas gotas de jabón. En frijol y chile es común en secas.", crop=None, symptom="disease"),
+    # --- Nutrient deficiency ---
+    FarmerVocabulary(phrase="le falta fuerza", formal_term_es="deficiencia nutricional generalizada", likely_cause="suelo empobrecido o pH inadecuado", recommended_action="Analizar el suelo antes de actuar. Aplicar composta madura y estiércol. Si el pH es extremo, cal agrícola para suelos ácidos o azufre para alcalinos.", crop=None, symptom="nutrient"),
+    FarmerVocabulary(phrase="no agarra", formal_term_es="falla en establecimiento o nutrición", likely_cause="suelo compactado, deficiencia de fósforo o mal trasplante", recommended_action="Agregar harina de hueso (fósforo orgánico) en el hoyo de trasplante. Aplicar micorrizas para mejorar absorción radical.", crop=None, symptom="nutrient"),
+    FarmerVocabulary(phrase="no está creciendo", formal_term_es="enanismo o desarrollo retrasado", likely_cause="deficiencia de nitrógeno, compactación o estrés", recommended_action="Aplicar té de composta o worm casting. Escarificar el suelo para airearlo. Revisar si hay plagas radiculares.", crop=None, symptom="nutrient"),
+    # --- Overwatering / flooding ---
+    FarmerVocabulary(phrase="le cayó mucha agua", formal_term_es="anegamiento temporal", likely_cause="exceso de lluvia o riego", recommended_action="Abrir surcos para drenar el exceso. Aplicar cal al suelo para prevenir hongos. Evitar pisar el suelo mojado para no compactarlo.", crop=None, symptom="flooding"),
+    FarmerVocabulary(phrase="está encharcado", formal_term_es="encharcamiento persistente", likely_cause="mal drenaje o suelo arcilloso compactado", recommended_action="Formar camellones o bordes de drenaje. Incorporar materia orgánica gruesa para mejorar la estructura del suelo.", crop=None, symptom="flooding"),
+    # --- Harvest / quality ---
+    FarmerVocabulary(phrase="no llenó bien el elote", formal_term_es="llenado deficiente de grano", likely_cause="estrés hídrico o nutricional en floración o deficiencia de boro", recommended_action="En siguiente ciclo, asegurar agua en floración. Aplicar composta de calidad antes de siembra.", crop="maiz", symptom="harvest"),
+    FarmerVocabulary(phrase="salió poco grano", formal_term_es="rendimiento bajo", likely_cause="estrés múltiple (agua, nutrición, plaga) durante llenado de grano", recommended_action="Documentar el momento del estrés para el siguiente ciclo. Mejorar suelo con abonos orgánicos y rotación de cultivos.", crop="maiz", symptom="harvest"),
+]
+
+
+def seed_farmer_vocabulary(db_session) -> int:
+    """Load farmer vocabulary seed data if table is empty. Returns count of records inserted."""
+    existing = db_session.query(FarmerVocabulary).count()
+    if existing > 0:
+        return 0
+    for entry in FARMER_VOCABULARY_SEEDS:
+        db_session.add(FarmerVocabulary(
+            phrase=entry.phrase,
+            formal_term_es=entry.formal_term_es,
+            likely_cause=entry.likely_cause,
+            recommended_action=entry.recommended_action,
+            crop=entry.crop,
+            symptom=entry.symptom,
+        ))
+    db_session.commit()
+    return len(FARMER_VOCABULARY_SEEDS)

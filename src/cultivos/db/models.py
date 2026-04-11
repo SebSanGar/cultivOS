@@ -446,3 +446,16 @@ class AgronomistTip(Base):
     source = Column(String(150), nullable=True)      # CIMMYT, INIFAP, agronomist name, etc.
     region = Column(String(100), nullable=True)      # jalisco, mexico, latam
     season = Column(String(50), nullable=True)       # dry, wet, all
+
+
+class FarmerVocabulary(Base):
+    """Jalisco farmer colloquial phrases mapped to formal agronomic terms + actions."""
+    __tablename__ = "farmer_vocabulary"
+
+    id = Column(Integer, primary_key=True)
+    phrase = Column(String(200), nullable=False)         # colloquial phrase (e.g. "se está petateando")
+    formal_term_es = Column(String(150), nullable=False) # formal agronomic term (e.g. "marchitamiento")
+    likely_cause = Column(String(200), nullable=False)   # most probable cause in Spanish
+    recommended_action = Column(Text, nullable=False)    # organic-first action in Spanish
+    crop = Column(String(50), nullable=True)             # optional crop scope (maiz, agave, etc.)
+    symptom = Column(String(100), nullable=True)         # symptom category (yellowing, pest, drought, dying, etc.)

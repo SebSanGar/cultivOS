@@ -3,12 +3,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, Fertilizer
+from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, FarmerVocabulary, Fertilizer
 from cultivos.db.session import get_db
 from cultivos.models.agronomist_tip import AgronomistTipOut
 from cultivos.models.ancestral import AncestralMethodOut
 from cultivos.models.crop_type import CropTypeOut
 from cultivos.models.crop_variety import CropVarietyOut
+from cultivos.models.farmer_vocabulary import FarmerVocabularyOut
 from cultivos.models.fertilizer import FertilizerOut
 
 router = APIRouter(
@@ -176,3 +177,24 @@ def list_agronomist_tips(
     if problem:
         query = query.filter(AgronomistTip.problem == problem.lower())
     return query.all()
+
+
+@router.get("/farmer-vocabulary", response_model=list[FarmerVocabularyOut])
+def list_farmer_vocabulary(
+    crop: str | None = Query(None, description="Filter by crop (e.g. maiz, agave, frijol)"),
+    symptom: str | None = Query(None, description="Filter by symptom category (e.g. yellowing, pest, drought, dying, disease)"),
+    db: Session = Depends(get_db),
+):
+    """Return Jalisco farmer colloquial phrases mapped to formal agronomic terms and recommended actions.
+
+    Unknown crop/symptom combination returns empty list — never 404.
+    Case-insensitive matching on crop and symptom.
+    """
+    results = db.query(FarmerVocabulary).all()
+    if crop:
+        crop_lower = crop.lower()
+        results = [r for r in results if r.crop is None or r.crop.lower() == crop_lower]
+    if symptom:
+        symptom_lower = symptom.lower()
+        results = [r for r in results if r.symptom and r.symptom.lower() == symptom_lower]
+    return results

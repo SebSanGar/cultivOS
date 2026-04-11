@@ -31,7 +31,7 @@ async def _lifespan(app: FastAPI):
         get_engine()  # creates tables
         logger.info("Database initialized")
         # Seed knowledge base data
-        from cultivos.db.seeds import seed_agronomist_tips, seed_ancestral_methods, seed_crop_varieties, seed_crops, seed_diseases, seed_fertilizers
+        from cultivos.db.seeds import seed_agronomist_tips, seed_ancestral_methods, seed_crop_varieties, seed_crops, seed_diseases, seed_farmer_vocabulary, seed_fertilizers
         db_session = get_session_factory()()
         try:
             count = seed_fertilizers(db_session)
@@ -52,6 +52,9 @@ async def _lifespan(app: FastAPI):
             count = seed_agronomist_tips(db_session)
             if count:
                 logger.info("Seeded %d agronomist tips", count)
+            count = seed_farmer_vocabulary(db_session)
+            if count:
+                logger.info("Seeded %d farmer vocabulary entries", count)
         finally:
             db_session.close()
     yield
