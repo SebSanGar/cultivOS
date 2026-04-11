@@ -64,6 +64,8 @@ from cultivos.models.soil_trajectory import SoilTrajectoryOut
 from cultivos.services.intelligence.soil_trajectory import compute_soil_trajectory
 from cultivos.models.treatment_impact import TreatmentImpactOut
 from cultivos.services.intelligence.treatment_impact import compute_treatment_impact
+from cultivos.models.feedback_trend import FeedbackTrendOut
+from cultivos.services.intelligence.feedback_trend import compute_feedback_trend
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -720,3 +722,21 @@ def treatment_impact(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_treatment_impact(farm, db, days=days)
+
+
+# ── Farmer feedback trend ─────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/feedback-trend", response_model=FeedbackTrendOut)
+def feedback_trend(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Monthly feedback trend for a farm over the last 6 months.
+
+    Groups FarmerFeedback by calendar month, returns avg rating and entry count
+    per month. Overall trend compares last 2 months vs prior 2 months.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_feedback_trend(farm, db)
