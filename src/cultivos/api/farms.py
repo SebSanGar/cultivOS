@@ -1,5 +1,7 @@
 """Farm and Field CRUD endpoints."""
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 
@@ -20,6 +22,7 @@ from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.carbon_baseline import CarbonBaselineIn, CarbonBaselineOut, CarbonProjectionOut
 from cultivos.models.forecast_alerts import ForecastAlertsOut
+from cultivos.models.field_timeline import FieldTimelineOut
 from cultivos.models.progress_report import ProgressReportOut
 from cultivos.models.regen_trajectory import RegenTrajectoryOut
 from cultivos.models.water_stress import WaterStressOut
@@ -33,6 +36,7 @@ from cultivos.services.intelligence.growth_report import compute_growth_report
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.carbon import compute_carbon_projection
+from cultivos.services.intelligence.field_timeline import compute_field_timeline
 from cultivos.services.intelligence.progress_report import compute_progress_report
 from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
@@ -479,3 +483,25 @@ def carbon_projection(
         lab_method=latest.lab_method,
     )
     return CarbonProjectionOut(field_id=field.id, **projection)
+
+
+# ── Field intervention timeline ───────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/timeline", response_model=FieldTimelineOut)
+def field_timeline(
+    farm_id: int,
+    field_id: int,
+    start_date: Optional[str] = Query(None, description="Filter from YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="Filter to YYYY-MM-DD"),
+    db: Session = Depends(get_db),
+):
+    """Chronological audit trail of all events for a field.
+
+    Events: health score recordings, NDVI measurements, treatments applied, alerts triggered.
+    Sorted by date ASC. Optional start_date/end_date filtering.
+    """
+    from datetime import date as date_type
+    field = _get_field_for_farm(farm_id, field_id, db)
+    start = date_type.fromisoformat(start_date) if start_date else None
+    end = date_type.fromisoformat(end_date) if end_date else None
+    return compute_field_timeline(field, db, start_date=start, end_date=end)
