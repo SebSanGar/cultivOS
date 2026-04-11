@@ -14,6 +14,7 @@ from cultivos.models.farm import (
 from cultivos.models.daily_briefing import DailyBriefingOut
 from cultivos.models.disease_risk_assessment import DiseaseRiskAssessmentOut
 from cultivos.models.field_priority import FieldPriorityOut
+from cultivos.models.growth_report import GrowthReportOut
 from cultivos.models.intel import FarmExecutiveSummaryOut
 from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.analytics import compute_farm_executive_summ
 from cultivos.services.intelligence.daily_briefing import compute_daily_briefing
 from cultivos.services.intelligence.disease_risk_assessment import compute_disease_risk_assessment
 from cultivos.services.intelligence.field_priority import compute_field_priority
+from cultivos.services.intelligence.growth_report import compute_growth_report
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
@@ -279,6 +281,25 @@ def disease_risk_assessment(farm_id: int, field_id: int, db: Session = Depends(g
     if field is None:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_disease_risk_assessment(field, db)
+
+
+# ── Crop growth health report ─────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/growth-report", response_model=GrowthReportOut)
+def growth_report(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Compare crop health against expected phenology stage.
+
+    Uses planting date to determine expected stage and compares latest health
+    score against stage baseline. Returns on_track status, health_vs_expected
+    ratio, estimated lag_days, and Spanish-language recommendations.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if field is None:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_growth_report(field, db)
 
 
 # ── Farmer daily briefing ──────────────────────────────────────────────────────
