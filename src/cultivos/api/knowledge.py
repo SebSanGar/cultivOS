@@ -204,6 +204,37 @@ def list_crop_varieties(
     return varieties
 
 
+@router.get("/crop-varieties", response_model=list[CropVarietyOut])
+def search_crop_varieties(
+    crop: str = Query(..., description="Crop name (e.g. maiz, agave, frijol)"),
+    region: str | None = Query(None, description="Region filter — case-insensitive substring match"),
+    altitude_m: int | None = Query(None, description="Target altitude in metres — returns varieties within ±500m"),
+    db: Session = Depends(get_db),
+):
+    """Search crop varieties by crop type, optional region, and optional altitude range.
+
+    Returns empty list when no matches found (never 404).
+    Results sorted by water_mm ASC (most drought-efficient first).
+    """
+    query = db.query(CropVariety).filter(CropVariety.crop_name == crop.lower())
+
+    if region is not None:
+        query = query.filter(CropVariety.region.ilike(f"%{region}%"))
+
+    if altitude_m is not None:
+        query = query.filter(
+            CropVariety.altitude_m >= altitude_m - 500,
+            CropVariety.altitude_m <= altitude_m + 500,
+        )
+
+    varieties = query.order_by(
+        CropVariety.water_mm.is_(None),  # nulls last
+        CropVariety.water_mm.asc(),
+    ).all()
+
+    return varieties
+
+
 @router.get("/agronomist-tips", response_model=list[AgronomistTipOut])
 def list_agronomist_tips(
     crop: str | None = Query(None, description="Filter by crop (e.g. maiz, agave, frijol, chile)"),
