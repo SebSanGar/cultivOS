@@ -162,6 +162,7 @@ def create_app() -> FastAPI:
             {"name": "risk-map", "description": "Per-field risk heatmap combining health, weather, disease, and thermal scores"},
             {"name": "treatment-effectiveness", "description": "Per-field treatment cost and health delta — measurable ROI for each organic intervention"},
             {"name": "harvests", "description": "Harvest yield records and prediction accuracy closure — links actual yields to AI predictions"},
+            {"name": "observations", "description": "Farmer ground-truth observations — completes the data loop (drone + sensor + farmer eyes). Required for WhatsApp integration."},
             {"name": "water", "description": "Water use efficiency — stress index, optimal irrigation mm, and liters wasted per field"},
         ],
     )

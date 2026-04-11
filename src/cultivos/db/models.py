@@ -54,6 +54,7 @@ class Field(Base):
     microbiome_records = relationship("MicrobiomeRecord", back_populates="field", cascade="all, delete-orphan")
     harvest_records = relationship("HarvestRecord", back_populates="field", cascade="all, delete-orphan")
     carbon_baselines = relationship("CarbonBaseline", back_populates="field", cascade="all, delete-orphan")
+    observations = relationship("FarmerObservation", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -477,3 +478,20 @@ class FarmerVocabulary(Base):
     recommended_action = Column(Text, nullable=False)    # organic-first action in Spanish
     crop = Column(String(50), nullable=True)             # optional crop scope (maiz, agave, etc.)
     symptom = Column(String(100), nullable=True)         # symptom category (yellowing, pest, drought, dying, etc.)
+
+
+class FarmerObservation(Base):
+    """Ground-truth observations logged by farmers — completes the data loop (drone + sensor + farmer eyes)."""
+    __tablename__ = "farmer_observations"
+    __table_args__ = (
+        Index("ix_farmer_observations_field_created", "field_id", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    observation_es = Column(Text, nullable=False)           # farmer's observation in Spanish
+    observation_type = Column(String(20), nullable=False)   # problem | success | neutral
+    crop_stage = Column(String(100), nullable=True)         # e.g. germinacion, floracion, cosecha
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="observations")
