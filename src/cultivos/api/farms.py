@@ -12,9 +12,11 @@ from cultivos.models.farm import (
     HeatmapResponse, FieldHeatmapPoint,
 )
 from cultivos.models.intel import FarmExecutiveSummaryOut
+from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
+from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 
@@ -224,3 +226,16 @@ def upcoming_treatments(farm_id: int, field_id: int, db: Session = Depends(get_d
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_upcoming_treatments(field, db)
 
+
+# ── Field stress report ───────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/stress-report", response_model=FieldStressReportOut)
+def field_stress_report(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Multi-sensor unified stress index for a field: health + NDVI + thermal + soil."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if field is None:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_field_stress_report(field, db)
