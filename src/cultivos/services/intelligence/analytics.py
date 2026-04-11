@@ -1637,3 +1637,48 @@ def compute_executive_summary(db: Session) -> dict:
         "activity_30d": activity_30d,
         "farms": farm_entries,
     }
+
+
+def compute_field_treatment_cost_effectiveness(field_id: int, db: Session) -> list[dict]:
+    """Per-treatment cost and health delta for a single field.
+
+    For each TreatmentRecord on the field, returns cost_mxn and the health delta
+    (health_after - health_score_used) using the first HealthScore recorded after
+    applied_at (or created_at when applied_at is None).
+    """
+    treatments = (
+        db.query(TreatmentRecord)
+        .filter(TreatmentRecord.field_id == field_id)
+        .order_by(TreatmentRecord.created_at.asc())
+        .all()
+    )
+
+    results = []
+    for tr in treatments:
+        reference_time = tr.applied_at or tr.created_at
+        health_after = None
+        delta = None
+        if reference_time:
+            next_hs = (
+                db.query(HealthScore)
+                .filter(
+                    HealthScore.field_id == field_id,
+                    HealthScore.scored_at > reference_time,
+                )
+                .order_by(HealthScore.scored_at.asc())
+                .first()
+            )
+            if next_hs:
+                health_after = next_hs.score
+                delta = round(next_hs.score - tr.health_score_used, 1)
+
+        results.append({
+            "tratamiento": tr.tratamiento,
+            "cost_mxn": tr.costo_estimado_mxn,
+            "health_before": tr.health_score_used,
+            "health_after": health_after,
+            "health_delta": delta,
+            "applied_at": tr.applied_at.isoformat() if tr.applied_at else None,
+        })
+
+    return results

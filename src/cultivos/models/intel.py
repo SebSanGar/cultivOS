@@ -389,3 +389,12 @@ class ExecutiveSummaryOut(BaseModel):
     total_co2e_tonnes: float = 0
     activity_30d: list[DailyActivityEntry] = []
     farms: list[ExecutiveFarmEntry] = []
+
+
+class TreatmentCostEffectivenessItem(BaseModel):
+    tratamiento: str
+    cost_mxn: int
+    health_before: Optional[float] = None
+    health_after: Optional[float] = None
+    health_delta: Optional[float] = None
+    applied_at: Optional[str] = None
