@@ -16,9 +16,11 @@ from cultivos.models.cooperative import (
 from cultivos.models.cooperative_portfolio import CooperativePortfolioOut
 from cultivos.models.cooperative_ranking import CooperativeRankingOut
 from cultivos.models.field_leaderboard import FieldLeaderboardOut
+from cultivos.models.regen_adoption import RegenAdoptionOut
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
 from cultivos.services.intelligence.cooperative_ranking import compute_member_ranking
 from cultivos.services.intelligence.field_leaderboard import compute_field_leaderboard
+from cultivos.services.intelligence.regen_adoption import compute_regen_adoption
 
 router = APIRouter(prefix="/api/cooperatives", tags=["cooperatives"])
 
@@ -199,3 +201,16 @@ def field_leaderboard(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_field_leaderboard(coop, db)
+
+
+@router.get("/{coop_id}/regen-adoption", response_model=RegenAdoptionOut)
+def regen_adoption(
+    coop_id: int,
+    days: int = Query(30, ge=1, le=365),
+    db: Session = Depends(get_db),
+):
+    """Regen practice adoption rate across all member farms."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_regen_adoption(coop, days, db)
