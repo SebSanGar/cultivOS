@@ -403,3 +403,16 @@ class FieldPhoto(Base):
     analysis_json = Column(JSON, nullable=True)
 
     field = relationship("Field")
+
+
+class CropVariety(Base):
+    __tablename__ = "crop_varieties"
+
+    id = Column(Integer, primary_key=True)
+    crop_name = Column(String(50), nullable=False)  # e.g. "maiz", "agave"
+    name = Column(String(100), nullable=False, unique=True)  # e.g. "Maiz Azul Criollo"
+    region = Column(String(100), nullable=False)  # e.g. "Jalisco", "Altos de Jalisco"
+    altitude_m = Column(Integer, nullable=True)  # optimal altitude in metres
+    water_mm = Column(Integer, nullable=True)  # annual water needs in mm
+    diseases = Column(JSON, nullable=False, default=list)  # ["corn_smut", "rust", ...]
+    adaptation_notes = Column(Text, nullable=True)  # Spanish-language notes

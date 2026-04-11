@@ -1,12 +1,13 @@
 """Knowledge base endpoints — fertilizers, ancestral methods, etc."""
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import AncestralMethod, CropType, Fertilizer
+from cultivos.db.models import AncestralMethod, CropType, CropVariety, Fertilizer
 from cultivos.db.session import get_db
 from cultivos.models.ancestral import AncestralMethodOut
 from cultivos.models.crop_type import CropTypeOut
+from cultivos.models.crop_variety import CropVarietyOut
 from cultivos.models.fertilizer import FertilizerOut
 
 router = APIRouter(
@@ -70,3 +71,21 @@ def list_ancestral_methods(
         crop_lower = crop.lower()
         results = [m for m in results if m.crops and crop_lower in [c.lower() for c in m.crops]]
     return results
+
+
+@router.get("/crops/{crop_name}/varieties", response_model=list[CropVarietyOut])
+def list_crop_varieties(
+    crop_name: str,
+    db: Session = Depends(get_db),
+):
+    """Return local Jalisco/LATAM varieties for a given crop. 404 if crop has no registered varieties."""
+    crop_lower = crop_name.lower()
+    varieties = db.query(CropVariety).filter(
+        CropVariety.crop_name == crop_lower
+    ).all()
+    if not varieties:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No varieties found for crop '{crop_name}'",
+        )
+    return varieties
