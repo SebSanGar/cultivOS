@@ -1,5 +1,8 @@
 """Cross-farm alert history timeline — combines Alert (SMS) and AlertLog (system) records."""
 
+from datetime import date, datetime, time
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
@@ -125,15 +128,24 @@ def get_alert_history(
     farm_id: int | None = Query(None),
     alert_type: str | None = Query(None),
     severity: str | None = Query(None),
+    start_date: Optional[date] = Query(None, description="Filter alerts on or after this date (YYYY-MM-DD)"),
+    end_date: Optional[date] = Query(None, description="Filter alerts on or before this date (YYYY-MM-DD)"),
     db: Session = Depends(get_db),
 ) -> list[dict]:
     """Return combined alert history from Alert + AlertLog tables, newest first."""
+    start_dt = datetime.combine(start_date, time.min) if start_date is not None else None
+    end_dt = datetime.combine(end_date, time.max) if end_date is not None else None
+
     # Query Alert (SMS) records
     q_alerts = db.query(Alert)
     if farm_id is not None:
         q_alerts = q_alerts.filter(Alert.farm_id == farm_id)
     if alert_type is not None:
         q_alerts = q_alerts.filter(Alert.alert_type == alert_type)
+    if start_dt is not None:
+        q_alerts = q_alerts.filter(Alert.created_at >= start_dt)
+    if end_dt is not None:
+        q_alerts = q_alerts.filter(Alert.created_at <= end_dt)
     alerts = q_alerts.all()
 
     # Query AlertLog (system) records
@@ -144,6 +156,10 @@ def get_alert_history(
         q_logs = q_logs.filter(AlertLog.alert_type == alert_type)
     if severity is not None:
         q_logs = q_logs.filter(AlertLog.severity == severity)
+    if start_dt is not None:
+        q_logs = q_logs.filter(AlertLog.created_at >= start_dt)
+    if end_dt is not None:
+        q_logs = q_logs.filter(AlertLog.created_at <= end_dt)
     logs = q_logs.all()
 
     # Convert to unified dicts
