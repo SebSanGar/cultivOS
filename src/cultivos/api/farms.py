@@ -45,6 +45,8 @@ from cultivos.models.carbon_audit import CarbonAuditOut
 from cultivos.services.intelligence.carbon_audit import compute_carbon_audit
 from cultivos.models.alert_effectiveness import AlertEffectivenessOut
 from cultivos.services.intelligence.alert_effectiveness import compute_alert_effectiveness
+from cultivos.models.field_comparison import FieldComparisonItem
+from cultivos.services.intelligence.field_comparison import compute_field_comparison
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -536,3 +538,19 @@ def alert_effectiveness(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_alert_effectiveness(farm, db)
+
+
+# ── Multi-field health comparison ─────────────────────────────────────────────
+
+@router.get("/{farm_id}/field-comparison", response_model=list[FieldComparisonItem])
+def field_comparison(farm_id: int, db: Session = Depends(get_db)):
+    """Compare latest health score, NDVI, and soil pH side-by-side for all fields.
+
+    Sorted by latest_health descending (best-performing field first).
+    Fields with no data appear with null values at the end.
+    Useful for grant demos: "show me which field needs attention vs which is thriving."
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_field_comparison(farm, db)
