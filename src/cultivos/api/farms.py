@@ -41,6 +41,8 @@ from cultivos.services.intelligence.progress_report import compute_progress_repo
 from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
+from cultivos.models.carbon_audit import CarbonAuditOut
+from cultivos.services.intelligence.carbon_audit import compute_carbon_audit
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -505,3 +507,14 @@ def field_timeline(
     start = date_type.fromisoformat(start_date) if start_date else None
     end = date_type.fromisoformat(end_date) if end_date else None
     return compute_field_timeline(field, db, start_date=start, end_date=end)
+
+
+# ── Farm soil carbon audit ────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/carbon-audit", response_model=CarbonAuditOut)
+def carbon_audit(farm_id: int, db: Session = Depends(get_db)):
+    """Aggregate current CO2e, 5-year projection, and sequestration rate across all fields."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_carbon_audit(farm, db)
