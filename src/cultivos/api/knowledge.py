@@ -3,10 +3,14 @@
 from datetime import datetime
 from typing import Optional
 
+from typing import Literal, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, FarmerVocabulary, Fertilizer
+
+_VALID_TYPES = {"vocab", "tips", "fertilizers", "ancestral"}
 from cultivos.db.session import get_db
 from cultivos.models.agronomist_tip import AgronomistTipOut
 from cultivos.models.ancestral import AncestralMethodOut
@@ -118,66 +122,91 @@ def list_ancestral_methods(
 @router.get("/search")
 def search_knowledge(
     q: str = Query("", description="Search term — matches name, description, tip text (case-insensitive)"),
+    type: Optional[str] = Query(None, description="Filter by category: vocab | tips | fertilizers | ancestral"),
     limit: int = Query(20, ge=1, le=200, description="Maximum results to return"),
     db: Session = Depends(get_db),
 ) -> list[dict]:
-    """Full-text search across ancestral methods, fertilizers, and agronomist tips.
+    """Full-text search across farmer vocabulary, ancestral methods, fertilizers, and agronomist tips.
 
     Returns list of {type, id, name, summary} sorted with exact name matches first.
-    Unknown term returns empty list — never 404.
+    Unknown term returns empty list — never 404. Invalid type returns 422.
     """
+    from fastapi import HTTPException as _HTTPException
+    if type is not None and type not in _VALID_TYPES:
+        raise _HTTPException(status_code=422, detail=f"Invalid type '{type}'. Must be one of: {sorted(_VALID_TYPES)}")
+
     term = q.lower().strip()
     results: list[dict] = []
 
+    # Farmer vocabulary — search phrase + formal_term_es
+    if type is None or type == "vocab":
+        vocab = db.query(FarmerVocabulary).all()
+        for v in vocab:
+            searchable = " ".join([
+                v.phrase or "",
+                v.formal_term_es or "",
+            ]).lower()
+            if not term or term in searchable:
+                results.append({
+                    "type": "farmer_vocabulary",
+                    "id": v.id,
+                    "name": v.phrase,
+                    "summary": (v.formal_term_es or "")[:120],
+                    "_exact": term and term in (v.phrase or "").lower(),
+                })
+
     # Ancestral methods — search name + description_es + benefits_es
-    ancestral = db.query(AncestralMethod).all()
-    for m in ancestral:
-        searchable = " ".join([
-            m.name or "",
-            m.description_es or "",
-            m.benefits_es or "",
-        ]).lower()
-        if not term or term in searchable:
-            results.append({
-                "type": "ancestral_method",
-                "id": m.id,
-                "name": m.name,
-                "summary": (m.description_es or "")[:120],
-                "_exact": term and term in (m.name or "").lower(),
-            })
+    if type is None or type == "ancestral":
+        ancestral = db.query(AncestralMethod).all()
+        for m in ancestral:
+            searchable = " ".join([
+                m.name or "",
+                m.description_es or "",
+                m.benefits_es or "",
+            ]).lower()
+            if not term or term in searchable:
+                results.append({
+                    "type": "ancestral_method",
+                    "id": m.id,
+                    "name": m.name,
+                    "summary": (m.description_es or "")[:120],
+                    "_exact": term and term in (m.name or "").lower(),
+                })
 
     # Fertilizers — search name + description_es
-    fertilizers = db.query(Fertilizer).all()
-    for f in fertilizers:
-        searchable = " ".join([
-            f.name or "",
-            f.description_es or "",
-        ]).lower()
-        if not term or term in searchable:
-            results.append({
-                "type": "fertilizer",
-                "id": f.id,
-                "name": f.name,
-                "summary": (f.description_es or "")[:120],
-                "_exact": term and term in (f.name or "").lower(),
-            })
+    if type is None or type == "fertilizers":
+        fertilizers = db.query(Fertilizer).all()
+        for f in fertilizers:
+            searchable = " ".join([
+                f.name or "",
+                f.description_es or "",
+            ]).lower()
+            if not term or term in searchable:
+                results.append({
+                    "type": "fertilizer",
+                    "id": f.id,
+                    "name": f.name,
+                    "summary": (f.description_es or "")[:120],
+                    "_exact": term and term in (f.name or "").lower(),
+                })
 
     # Agronomist tips — search tip_text_es + crop + problem
-    tips = db.query(AgronomistTip).all()
-    for t in tips:
-        searchable = " ".join([
-            t.tip_text_es or "",
-            t.crop or "",
-            t.problem or "",
-        ]).lower()
-        if not term or term in searchable:
-            results.append({
-                "type": "agronomist_tip",
-                "id": t.id,
-                "name": f"{t.crop} — {t.problem}",
-                "summary": (t.tip_text_es or "")[:120],
-                "_exact": False,
-            })
+    if type is None or type == "tips":
+        tips = db.query(AgronomistTip).all()
+        for t in tips:
+            searchable = " ".join([
+                t.tip_text_es or "",
+                t.crop or "",
+                t.problem or "",
+            ]).lower()
+            if not term or term in searchable:
+                results.append({
+                    "type": "agronomist_tip",
+                    "id": t.id,
+                    "name": f"{t.crop} — {t.problem}",
+                    "summary": (t.tip_text_es or "")[:120],
+                    "_exact": False,
+                })
 
     # Sort: exact name matches first
     results.sort(key=lambda r: (0 if r["_exact"] else 1))
