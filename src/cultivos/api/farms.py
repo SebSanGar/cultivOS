@@ -70,6 +70,8 @@ from cultivos.models.tek_alignment import TekAlignmentOut
 from cultivos.services.intelligence.tek_alignment import compute_tek_alignment
 from cultivos.models.health_volatility import HealthVolatilityOut
 from cultivos.services.intelligence.health_volatility import compute_health_volatility
+from cultivos.models.action_plan import ActionPlanOut
+from cultivos.services.intelligence.action_plan import compose_action_plan
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -791,3 +793,27 @@ def health_volatility(
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_health_volatility(field, db)
+
+
+# ── Field weekly action plan ──────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/action-plan", response_model=ActionPlanOut)
+def action_plan(
+    farm_id: int,
+    field_id: int,
+    days: int = Query(7, ge=1, le=30, description="Planning horizon in days (default 7)"),
+    db: Session = Depends(get_db),
+):
+    """Prioritized weekly action plan for a field.
+
+    Composes TEK ancestral calendar + upcoming treatment schedule + live stress
+    signals (water, disease, thermal) into a ranked to-do list for the farmer.
+    Returns gracefully empty actions when no data is available.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compose_action_plan(field, days, db)
