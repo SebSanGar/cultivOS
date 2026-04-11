@@ -224,6 +224,9 @@ class AncestralMethod(Base):
     benefits_es = Column(Text, nullable=False)
     scientific_basis = Column(Text)  # modern scientific validation
     problems = Column(JSON, nullable=True, default=list)  # ["erosion", "compaction", ...]
+    applicable_months = Column(JSON, nullable=True, default=None)  # [1, 2, ..., 12]
+    timing_rationale = Column(Text, nullable=True)  # Spanish — why this season
+    ecological_benefit = Column(Integer, nullable=True)  # 1-5 scale
 
 
 class Fertilizer(Base):

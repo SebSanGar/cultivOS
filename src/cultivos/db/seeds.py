@@ -139,6 +139,9 @@ ANCESTRAL_METHOD_SEEDS = [
         crops=["maiz", "frijol", "calabaza"],
         benefits_es="Fijacion biologica de nitrogeno, control natural de malezas, diversificacion de cosecha, resiliencia ante sequias.",
         scientific_basis="Validado por FAO e INIFAP — la milpa produce mas calorias/ha que el monocultivo de maiz y regenera nitrogeno del suelo sin fertilizantes sinteticos.",
+        applicable_months=[5, 6, 7, 8, 9, 10],
+        timing_rationale="Se establece al inicio de la temporada de lluvias (mayo-junio) cuando el suelo tiene suficiente humedad para germinar las tres hermanas simultáneamente.",
+        ecological_benefit=5,
     ),
     AncestralMethod(
         name="Chinampa",
@@ -157,6 +160,9 @@ ANCESTRAL_METHOD_SEEDS = [
         crops=["maiz", "frijol", "agave", "nopal"],
         benefits_es="Prevencion de erosion, retencion de agua de lluvia, creacion de microclimas, aprovechamiento de terrenos en pendiente.",
         scientific_basis="CONABIO documenta que las terrazas reducen erosion hidrica hasta 90% en laderas con pendiente >15%. Patron similar a terrazas incas validadas por estudios en Peru y Bolivia.",
+        applicable_months=[3, 4, 5],
+        timing_rationale="Construccion y mantenimiento de terrazas se realiza antes de la temporada de lluvias (marzo-mayo) para que las estructuras estén listas para capturar agua.",
+        ecological_benefit=4,
     ),
     AncestralMethod(
         name="Roza-tumba-quema controlada",
@@ -175,6 +181,9 @@ ANCESTRAL_METHOD_SEEDS = [
         crops=["maiz", "frijol", "calabaza", "sorgo"],
         benefits_es="Fijacion biologica de nitrogeno (80-200 kg N/ha), supresion de malezas, prevencion de erosion, aporte de materia organica.",
         scientific_basis="Mucuna pruriens (frijol terciopelo) fija hasta 200 kg N/ha segun estudios de CIMMYT en Mesoamerica. Reduccion documentada de fertilizantes sinteticos hasta 50% en rotaciones maiz-mucuna.",
+        applicable_months=[11, 12, 1, 2],
+        timing_rationale="Se siembran en temporada de secas (noviembre-febrero) como cultivo de cobertura post-cosecha para proteger el suelo y fijar nitrogeno antes del siguiente ciclo.",
+        ecological_benefit=4,
     ),
     AncestralMethod(
         name="Cultivo en callejones",
@@ -202,6 +211,9 @@ ANCESTRAL_METHOD_SEEDS = [
         crops=["maiz", "frijol", "calabaza", "agave"],
         benefits_es="Conservacion de estructura del suelo, retencion de humedad, proteccion de vida microbiana, reduccion de erosion.",
         scientific_basis="CIMMYT demuestra que la labranza cero incrementa materia organica del suelo 0.2-0.5% en 5 anos y reduce erosion hidrica hasta 80% comparada con labranza convencional en laderas de Jalisco.",
+        applicable_months=[5, 6, 7, 8, 9, 10, 11, 12],
+        timing_rationale="Aplicable en cualquier época del año; la siembra directa se realiza al inicio de lluvias (mayo-junio) o en riegos de auxilio (noviembre-diciembre).",
+        ecological_benefit=5,
     ),
     # --- Ontario / Canada ---
     AncestralMethod(

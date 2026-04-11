@@ -10,6 +10,7 @@ from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVar
 from cultivos.db.session import get_db
 from cultivos.models.agronomist_tip import AgronomistTipOut
 from cultivos.models.ancestral import AncestralMethodOut
+from cultivos.models.tek_calendar import TEKCalendarEntryOut
 from cultivos.models.crop_type import CropTypeOut
 from cultivos.models.crop_variety import CropVarietyOut
 from cultivos.models.farmer_vocabulary import FarmerVocabularyOut
@@ -53,6 +54,40 @@ def list_crops(
         region_lower = region.lower()
         results = [c for c in results if region_lower in [r.lower() for r in (c.regions or [])]]
     return results
+
+
+@router.get("/tek-calendar", response_model=list[TEKCalendarEntryOut])
+def tek_calendar(
+    month: int = Query(..., ge=1, le=12, description="Month number (1-12)"),
+    crop_type: str | None = Query(None, description="Filter by crop type (e.g. maiz, agave)"),
+    db: Session = Depends(get_db),
+):
+    """Return ancestral/TEK practices recommended for the given month, sorted by ecological benefit."""
+    methods = db.query(AncestralMethod).all()
+
+    # Filter by applicable_months — Python-side for JSON portability
+    results = [
+        m for m in methods
+        if m.applicable_months and month in m.applicable_months
+    ]
+
+    if crop_type:
+        crop_lower = crop_type.lower()
+        results = [m for m in results if m.crops and crop_lower in [c.lower() for c in m.crops]]
+
+    # Sort by ecological_benefit DESC (None treated as 0)
+    results.sort(key=lambda m: m.ecological_benefit or 0, reverse=True)
+
+    return [
+        TEKCalendarEntryOut(
+            method_name=m.name,
+            description_es=m.description_es,
+            timing_rationale=m.timing_rationale,
+            crop_types=m.crops or [],
+            ecological_benefit=m.ecological_benefit,
+        )
+        for m in results
+    ]
 
 
 @router.get("/ancestral", response_model=list[AncestralMethodOut])
