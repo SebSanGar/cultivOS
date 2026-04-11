@@ -72,6 +72,8 @@ from cultivos.models.health_volatility import HealthVolatilityOut
 from cultivos.services.intelligence.health_volatility import compute_health_volatility
 from cultivos.models.action_plan import ActionPlanOut
 from cultivos.services.intelligence.action_plan import compose_action_plan
+from cultivos.models.sensor_freshness import SensorFreshnessOut
+from cultivos.services.intelligence.sensor_freshness import compute_sensor_freshness
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -817,3 +819,21 @@ def action_plan(
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compose_action_plan(field, days, db)
+
+
+# ── Sensor data freshness ──────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/sensor-freshness", response_model=SensorFreshnessOut)
+def sensor_freshness(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Sensor data freshness report for all fields on a farm.
+
+    For each field, shows days since last NDVI, soil analysis, health score,
+    and weather record. Lists sensors stale (>14 days or no data) in stale_sensors.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_sensor_freshness(farm, db)
