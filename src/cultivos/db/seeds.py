@@ -1,6 +1,6 @@
 """Seed data for the cultivOS knowledge base."""
 
-from cultivos.db.models import AncestralMethod, CropType, CropVariety, Disease, Fertilizer
+from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, Disease, Fertilizer
 
 
 FERTILIZER_SEEDS = [
@@ -852,6 +852,108 @@ CROP_VARIETY_SEEDS = [
 ]
 
 
+AGRONOMIST_TIP_SEEDS = [
+    AgronomistTip(
+        crop="maiz", problem="drought",
+        tip_text_es="Aplique acolchado (mulch) de rastrojo para reducir la evaporacion del suelo hasta un 40%. Mantenga una capa de 5-8 cm entre hileras.",
+        source="INIFAP Jalisco", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="maiz", problem="drought",
+        tip_text_es="Riegue en la madrugada (4-6 am) para minimizar la evaporacion. En temporal, deje de regar cuando el suelo tenga humedad hasta 30 cm de profundidad.",
+        source="CIMMYT", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="maiz", problem="nutrient_deficiency",
+        tip_text_es="Aplique vermicompost (2 ton/ha) en banda junto a la hilera al momento de la siembra. El nitrogeno organico se libera gradualmente evitando el lavado.",
+        source="INIFAP Jalisco", region="jalisco", season="all",
+    ),
+    AgronomistTip(
+        crop="maiz", problem="disease",
+        tip_text_es="Para prevenir carbon (Ustilago maydis), use semilla criolla resistente y evite el exceso de nitrogeno sintetico. Rote con frijol o calabaza.",
+        source="CIMMYT", region="jalisco", season="wet",
+    ),
+    AgronomistTip(
+        crop="maiz", problem="water_stress",
+        tip_text_es="Durante floracion y llenado de grano (etapas VT-R3), el maiz es mas sensible al estres hidrico. Garantice riego cada 7-10 dias en esta ventana critica.",
+        source="INIFAP Jalisco", region="jalisco", season="wet",
+    ),
+    AgronomistTip(
+        crop="agave", problem="drought",
+        tip_text_es="El agave azul tolera sequia severa pero en los primeros 2 anos requiere un riego de apoyo mensual (20-30 L/planta) en secas. Use agua de lluvia captada.",
+        source="CIATEJ", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="agave", problem="disease",
+        tip_text_es="La punta roja (Fusarium) se previene con espaciado adecuado (3x3 m) y eliminando hijuelos infectados inmediatamente. No use machetes sin desinfectar.",
+        source="CIATEJ", region="jalisco", season="all",
+    ),
+    AgronomistTip(
+        crop="agave", problem="nutrient_deficiency",
+        tip_text_es="Aplique composta de cachaza o estiercol de bovino maduro (3 ton/ha/ano) en corona alrededor de la planta. El agave responde bien a materia organica de liberacion lenta.",
+        source="Universidad de Guadalajara", region="jalisco", season="all",
+    ),
+    AgronomistTip(
+        crop="frijol", problem="drought",
+        tip_text_es="El frijol es sensible al estres hidrico en floracion. Si hay sequia en esta etapa, aplique un riego de emergencia de 20-25 mm. Prefiera variedades criollas de temporal.",
+        source="INIFAP Jalisco", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="frijol", problem="disease",
+        tip_text_es="La antracnosis (Colletotrichum) se controla con rotacion de cultivos, semilla sana y no trabajar el campo cuando hay rocio matutino. Elimine residuos de cosecha.",
+        source="INIFAP Jalisco", region="jalisco", season="wet",
+    ),
+    AgronomistTip(
+        crop="frijol", problem="nutrient_deficiency",
+        tip_text_es="El frijol es leguminosa — inocule con Rhizobium phaseoli al momento de la siembra para fijar nitrogeno atmosferico. Reduce o elimina la necesidad de nitrogeno externo.",
+        source="CIMMYT", region="jalisco", season="all",
+    ),
+    AgronomistTip(
+        crop="chile", problem="drought",
+        tip_text_es="El chile requiere humedad constante — deficits en floracion causan caida de flores. Use riego por goteo (2-3 L/planta/dia) para optimizar el agua disponible.",
+        source="SAGARPA Jalisco", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="chile", problem="disease",
+        tip_text_es="Para Phytophthora capsici (marchitez), mejore el drenaje del suelo, evite riego excesivo y aplique cal agricola (2 ton/ha) para elevar el pH a 6.5-7.0.",
+        source="INIFAP Jalisco", region="jalisco", season="wet",
+    ),
+    AgronomistTip(
+        crop="chile", problem="water_stress",
+        tip_text_es="Aplique acolchado plastico negro o de paja para mantener humedad del suelo, reducir maleza y elevar temperatura del suelo 2-3 grados en temporada fria.",
+        source="SAGARPA Jalisco", region="jalisco", season="dry",
+    ),
+    AgronomistTip(
+        crop="tomate", problem="nutrient_deficiency",
+        tip_text_es="Aplique te de compost (1:10 compost:agua, 48 horas aireado) cada 15 dias al follaje y suelo. Aporta micronutrientes biodisponibles y activa microbioma benefico.",
+        source="Agricultura regenerativa Jalisco", region="jalisco", season="all",
+    ),
+    AgronomistTip(
+        crop="tomate", problem="disease",
+        tip_text_es="Para mancha bacteriana (Xanthomonas), evite el riego por aspersion, podas excesivas y use caldo bordeles (sulfato de cobre + cal) como preventivo organico.",
+        source="INIFAP Jalisco", region="jalisco", season="wet",
+    ),
+]
+
+
+def seed_agronomist_tips(db_session) -> int:
+    """Load agronomist tip seed data if table is empty. Returns count inserted."""
+    existing = db_session.query(AgronomistTip).count()
+    if existing > 0:
+        return 0
+    for tip in AGRONOMIST_TIP_SEEDS:
+        db_session.add(AgronomistTip(
+            crop=tip.crop,
+            problem=tip.problem,
+            tip_text_es=tip.tip_text_es,
+            source=tip.source,
+            region=tip.region,
+            season=tip.season,
+        ))
+    db_session.commit()
+    return len(AGRONOMIST_TIP_SEEDS)
+
+
 def seed_crop_varieties(db_session) -> int:
     """Load Jalisco/LATAM crop variety seed data if table is empty. Returns count inserted."""
     existing = db_session.query(CropVariety).count()
@@ -869,3 +971,50 @@ def seed_crop_varieties(db_session) -> int:
         ))
     db_session.commit()
     return len(CROP_VARIETY_SEEDS)
+
+
+AGRONOMIST_TIP_SEEDS = [
+    # Maiz — drought
+    AgronomistTip(crop="maiz", problem="drought", tip_text_es="Aplique mulch organico (zacate seco o rastrojo) alrededor de las plantas para retener humedad del suelo y reducir evaporacion hasta 40%.", source="CIMMYT", region="jalisco", season="dry"),
+    AgronomistTip(crop="maiz", problem="drought", tip_text_es="Riegue en las horas frescas — antes de las 8am o despues de las 6pm — para minimizar perdidas por evaporacion.", source="INIFAP Jalisco", region="jalisco", season="dry"),
+    AgronomistTip(crop="maiz", problem="drought", tip_text_es="Siembre variedades criollas adaptadas a sequia (Maiz Azul Criollo, Olotillo) que resisten estres hidrico mejor que hibridos comerciales.", source="CIMMYT", region="jalisco", season="dry"),
+    # Maiz — disease
+    AgronomistTip(crop="maiz", problem="disease", tip_text_es="Para prevenir tizoncillo (Fusarium), trate la semilla con Trichoderma harzianum antes de siembra — hongo benefico que compite con patogenos.", source="INIFAP Jalisco", region="jalisco", season="all"),
+    AgronomistTip(crop="maiz", problem="disease", tip_text_es="Rote cultivos con frijol o calabaza cada dos ciclos para romper ciclos de plagas y enfermedades del suelo sin fungicidas.", source="CIMMYT", region="jalisco", season="all"),
+    # Maiz — nutrient deficiency
+    AgronomistTip(crop="maiz", problem="nutrient_deficiency", tip_text_es="Si las hojas viejas amarillan desde la punta, es deficiencia de nitrogeno. Aplique lombricomposta (1-2 ton/ha) en banda a los 15 dias de emergencia.", source="INIFAP Jalisco", region="jalisco", season="wet"),
+    AgronomistTip(crop="maiz", problem="nutrient_deficiency", tip_text_es="Hojas con rayas purpuras indican deficiencia de fosforo. Incorpore huesos calcinados molidos (harina osea) 200 kg/ha al momento de siembra.", source="CIMMYT", region="jalisco", season="all"),
+    # Agave — drought
+    AgronomistTip(crop="agave", problem="drought", tip_text_es="El agave azul es tolerante a sequia pero durante el primer ano necesita 2-3 riegos de establecimiento. Use ollas de barro enterradas para liberacion lenta.", source="CRT — Consejo Regulador del Tequila", region="jalisco", season="dry"),
+    AgronomistTip(crop="agave", problem="drought", tip_text_es="En temporada seca extrema cubra la base del agave con piedra caliza (tezontle) para reflejar calor y retener humedad nocturna del suelo.", source="Agricultores de Los Altos", region="jalisco", season="dry"),
+    # Agave — disease
+    AgronomistTip(crop="agave", problem="disease", tip_text_es="Para prevenir pudricion de pina (Pectobacterium agglomerans), evite dano mecanico durante deshije. Aplique cal viva en heridas para desinfectar.", source="CRT", region="jalisco", season="all"),
+    AgronomistTip(crop="agave", problem="disease", tip_text_es="El picudo del agave (Scyphophorus acupunctatus) se controla con nematodos entomopatogenos (Steinernema carpocapsae). Aplicar en riego de la zona radicular.", source="INIFAP Jalisco", region="jalisco", season="wet"),
+    # Frijol — disease
+    AgronomistTip(crop="frijol", problem="disease", tip_text_es="Para prevenir bacteriosis (Xanthomonas), evite riego por aspersion cuando la planta esta en floracion. Use riego por goteo o surcos.", source="INIFAP Jalisco", region="jalisco", season="wet"),
+    AgronomistTip(crop="frijol", problem="nutrient_deficiency", tip_text_es="Inocule la semilla con Rhizobium antes de siembra para maximizar fijacion biologica de nitrogeno. Reduce o elimina la necesidad de fertilizante nitrogenado.", source="CIMMYT", region="jalisco", season="all"),
+    # Chile — water stress
+    AgronomistTip(crop="chile", problem="water_stress", tip_text_es="El chile es muy sensible a encharcamiento. Use camellones altos y suelos con buen drenaje. Si hay exceso de humedad, aplique Trichoderma al suelo para prevenir damping-off.", source="SAGARPA Jalisco", region="jalisco", season="wet"),
+    AgronomistTip(crop="chile", problem="drought", tip_text_es="Durante floracion y cuaje de fruto el chile necesita humedad constante. Instale riego por goteo y aplique mulch organico para evitar estres hidrico que causa caida de flores.", source="INIFAP Jalisco", region="jalisco", season="dry"),
+    # Tomate — disease
+    AgronomistTip(crop="tomate", problem="disease", tip_text_es="Para tizon tardio (Phytophthora infestans), aplique caldo bordelés (sulfato de cobre + cal) cada 10 dias en epoca de lluvias como preventivo organico.", source="SAGARPA Jalisco", region="jalisco", season="wet"),
+    AgronomistTip(crop="tomate", problem="nutrient_deficiency", tip_text_es="Hojas con clorosis intervenal en hojas jovenes indica deficiencia de hierro — problema comun en suelos calcareos de Jalisco. Aplique quelato de hierro via foliar.", source="INIFAP Jalisco", region="jalisco", season="all"),
+]
+
+
+def seed_agronomist_tips(db_session) -> int:
+    """Load agronomist tip seed data if table is empty. Returns count of records inserted."""
+    existing = db_session.query(AgronomistTip).count()
+    if existing > 0:
+        return 0
+    for tip in AGRONOMIST_TIP_SEEDS:
+        db_session.add(AgronomistTip(
+            crop=tip.crop,
+            problem=tip.problem,
+            tip_text_es=tip.tip_text_es,
+            source=tip.source,
+            region=tip.region,
+            season=tip.season,
+        ))
+    db_session.commit()
+    return len(AGRONOMIST_TIP_SEEDS)

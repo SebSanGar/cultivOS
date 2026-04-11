@@ -434,3 +434,15 @@ class HarvestRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="harvest_records")
+
+
+class AgronomistTip(Base):
+    __tablename__ = "agronomist_tips"
+
+    id = Column(Integer, primary_key=True)
+    crop = Column(String(50), nullable=False)        # maiz, agave, frijol, chile, tomate, etc.
+    problem = Column(String(100), nullable=False)    # drought, disease, nutrient_deficiency, water_stress, etc.
+    tip_text_es = Column(Text, nullable=False)       # advice in Spanish
+    source = Column(String(150), nullable=True)      # CIMMYT, INIFAP, agronomist name, etc.
+    region = Column(String(100), nullable=True)      # jalisco, mexico, latam
+    season = Column(String(50), nullable=True)       # dry, wet, all

@@ -3,8 +3,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from cultivos.db.models import AncestralMethod, CropType, CropVariety, Fertilizer
+from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, Fertilizer
 from cultivos.db.session import get_db
+from cultivos.models.agronomist_tip import AgronomistTipOut
 from cultivos.models.ancestral import AncestralMethodOut
 from cultivos.models.crop_type import CropTypeOut
 from cultivos.models.crop_variety import CropVarietyOut
@@ -89,3 +90,18 @@ def list_crop_varieties(
             detail=f"No varieties found for crop '{crop_name}'",
         )
     return varieties
+
+
+@router.get("/agronomist-tips", response_model=list[AgronomistTipOut])
+def list_agronomist_tips(
+    crop: str | None = Query(None, description="Filter by crop (e.g. maiz, agave, frijol, chile)"),
+    problem: str | None = Query(None, description="Filter by problem (e.g. drought, disease, nutrient_deficiency, water_stress)"),
+    db: Session = Depends(get_db),
+):
+    """List agronomist tips for Jalisco crops, optionally filtered by crop and/or problem."""
+    query = db.query(AgronomistTip)
+    if crop:
+        query = query.filter(AgronomistTip.crop == crop.lower())
+    if problem:
+        query = query.filter(AgronomistTip.problem == problem.lower())
+    return query.all()
