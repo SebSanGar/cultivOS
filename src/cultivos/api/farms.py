@@ -52,6 +52,8 @@ from cultivos.models.resilience_score import ResilienceScoreOut
 from cultivos.services.intelligence.resilience_score import compute_resilience_score
 from cultivos.models.seasonal_benchmark import SeasonalBenchmarkOut
 from cultivos.services.intelligence.seasonal_benchmark import compute_seasonal_benchmark
+from cultivos.models.alert_frequency import AlertFrequencyOut
+from cultivos.services.intelligence.alert_frequency import compute_alert_frequency
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -597,3 +599,22 @@ def seasonal_benchmark(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_seasonal_benchmark(farm, db, reference_date=reference_date)
+
+
+# ── Alert frequency analysis ───────────────────────────────────────────────────
+
+@router.get("/{farm_id}/alert-frequency", response_model=AlertFrequencyOut)
+def alert_frequency(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Alert frequency per field over the last 6 months.
+
+    Returns per-field monthly average, dominant alert type, and trend
+    (increasing/stable/decreasing based on last 2 months vs prior 2 months).
+    overall_alert_load is the average monthly alert rate across all fields.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_alert_frequency(farm, db)
