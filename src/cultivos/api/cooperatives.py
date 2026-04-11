@@ -15,8 +15,10 @@ from cultivos.models.cooperative import (
 )
 from cultivos.models.cooperative_portfolio import CooperativePortfolioOut
 from cultivos.models.cooperative_ranking import CooperativeRankingOut
+from cultivos.models.field_leaderboard import FieldLeaderboardOut
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
 from cultivos.services.intelligence.cooperative_ranking import compute_member_ranking
+from cultivos.services.intelligence.field_leaderboard import compute_field_leaderboard
 
 router = APIRouter(prefix="/api/cooperatives", tags=["cooperatives"])
 
@@ -188,3 +190,12 @@ def portfolio_health(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_portfolio_health(coop, db)
+
+
+@router.get("/{coop_id}/field-leaderboard", response_model=FieldLeaderboardOut)
+def field_leaderboard(coop_id: int, db: Session = Depends(get_db)):
+    """Rank all fields across cooperative member farms by latest health score."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_field_leaderboard(coop, db)
