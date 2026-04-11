@@ -12,7 +12,9 @@ from cultivos.models.farm import (
     HeatmapResponse, FieldHeatmapPoint,
 )
 from cultivos.models.intel import FarmExecutiveSummaryOut
+from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
+from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -194,4 +196,15 @@ def farm_executive_summary(farm_id: int, db: Session = Depends(get_db)):
     if result is None:
         raise HTTPException(status_code=404, detail="Farm not found")
     return result
+
+
+# ── Seasonal yield forecast ───────────────────────────────────────────────
+
+@router.get("/{farm_id}/yield-forecast", response_model=FarmYieldForecastOut)
+def farm_yield_forecast(farm_id: int, db: Session = Depends(get_db)):
+    """Per-field seasonal yield forecast based on current health score and PredictionSnapshot."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_farm_yield_forecast(db, farm)
 
