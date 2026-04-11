@@ -52,6 +52,7 @@ class Field(Base):
     treatments = relationship("TreatmentRecord", back_populates="field", cascade="all, delete-orphan")
     thermal_results = relationship("ThermalResult", back_populates="field", cascade="all, delete-orphan")
     microbiome_records = relationship("MicrobiomeRecord", back_populates="field", cascade="all, delete-orphan")
+    harvest_records = relationship("HarvestRecord", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -416,3 +417,20 @@ class CropVariety(Base):
     water_mm = Column(Integer, nullable=True)  # annual water needs in mm
     diseases = Column(JSON, nullable=False, default=list)  # ["corn_smut", "rust", ...]
     adaptation_notes = Column(Text, nullable=True)  # Spanish-language notes
+
+
+class HarvestRecord(Base):
+    __tablename__ = "harvest_records"
+    __table_args__ = (
+        Index("ix_harvest_records_field_date", "field_id", "harvest_date"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    crop_type = Column(String(50), nullable=False)
+    harvest_date = Column(DateTime, nullable=False)
+    actual_yield_kg = Column(Float, nullable=False)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="harvest_records")

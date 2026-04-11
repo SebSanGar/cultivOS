@@ -155,6 +155,7 @@ def create_app() -> FastAPI:
             {"name": "predictions", "description": "Per-field AI prediction accuracy tracking (MAPE and resolved vs pending)"},
             {"name": "risk-map", "description": "Per-field risk heatmap combining health, weather, disease, and thermal scores"},
             {"name": "treatment-effectiveness", "description": "Per-field treatment cost and health delta — measurable ROI for each organic intervention"},
+            {"name": "harvests", "description": "Harvest yield records and prediction accuracy closure — links actual yields to AI predictions"},
         ],
     )
 
