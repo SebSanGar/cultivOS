@@ -1,5 +1,6 @@
 """Farm and Field CRUD endpoints."""
 
+from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
@@ -49,6 +50,8 @@ from cultivos.models.field_comparison import FieldComparisonItem
 from cultivos.services.intelligence.field_comparison import compute_field_comparison
 from cultivos.models.resilience_score import ResilienceScoreOut
 from cultivos.services.intelligence.resilience_score import compute_resilience_score
+from cultivos.models.seasonal_benchmark import SeasonalBenchmarkOut
+from cultivos.services.intelligence.seasonal_benchmark import compute_seasonal_benchmark
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -574,3 +577,23 @@ def resilience_score(farm_id: int, field_id: int, db: Session = Depends(get_db))
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_resilience_score(field, db)
+
+
+# ── Seasonal performance benchmark ────────────────────────────────────────────
+
+@router.get("/{farm_id}/seasonal-benchmark", response_model=SeasonalBenchmarkOut)
+def seasonal_benchmark(
+    farm_id: int,
+    reference_date: datetime | None = None,
+    db: Session = Depends(get_db),
+):
+    """Compare current-season avg health vs prior-season avg health per field.
+
+    Jalisco seasons: temporal (Jun-Oct), secas (Nov-May).
+    Returns per-field delta and overall farm trend (improving/stable/declining).
+    Optional reference_date (ISO 8601) overrides today for testing.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_seasonal_benchmark(farm, db, reference_date=reference_date)
