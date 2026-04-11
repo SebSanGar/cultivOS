@@ -5,6 +5,7 @@ import io
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from fastapi.responses import Response
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -58,6 +59,8 @@ from cultivos.models.farm_comparison import FarmComparisonOut
 from cultivos.services.intelligence.comparison import compute_farm_comparison
 from cultivos.models.diagnosis import DiagnoseOut, DiagnoseRequest
 from cultivos.services.intelligence.diagnosis import diagnose
+from cultivos.models.fertilizer_stress import FertilizerStressOut, FertilizerStressNoUrgency
+from cultivos.services.intelligence.fertilizer_stress import compute_fertilizer_for_stress
 
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
@@ -472,3 +475,26 @@ def diagnose_problem(
         vocab_entries=vocab,
         health_score=health_score,
     )
+
+
+class _FertilizerStressRequest(BaseModel):
+    farm_id: int
+    field_id: int
+
+
+@router.post("/fertilizer-for-stress")
+def fertilizer_for_stress(
+    body: _FertilizerStressRequest,
+    db: Session = Depends(get_db),
+):
+    """Return top 3 organic fertilizer recommendations based on current field stress.
+
+    Returns a message when stress is low/none; returns recommendations otherwise.
+    """
+    farm = db.query(Farm).filter(Farm.id == body.farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == body.field_id, Field.farm_id == body.farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_fertilizer_for_stress(field, db)
