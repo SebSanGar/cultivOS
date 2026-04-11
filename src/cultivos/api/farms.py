@@ -78,6 +78,8 @@ from cultivos.models.risk_priority import RiskPriorityItem
 from cultivos.services.intelligence.risk_priority import compute_risk_priority
 from cultivos.models.regional_benchmark import RegionalBenchmarkOut
 from cultivos.services.intelligence.regional_benchmark import compute_regional_benchmark
+from cultivos.models.active_alerts_summary import ActiveAlertsSummaryOut
+from cultivos.services.intelligence.active_alerts_summary import compute_active_alerts_summary
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -864,3 +866,12 @@ def risk_priority(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_risk_priority(farm, db)
+
+
+@router.get("/{farm_id}/active-alerts-summary", response_model=ActiveAlertsSummaryOut)
+def active_alerts_summary(farm_id: int, db: Session = Depends(get_db)):
+    """Compose weather + disease + water stress signals into a farm-level alert summary."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_active_alerts_summary(farm, db)
