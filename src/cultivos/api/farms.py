@@ -11,6 +11,7 @@ from cultivos.models.farm import (
     FieldCreate, FieldUpdate, FieldOut,
     HeatmapResponse, FieldHeatmapPoint,
 )
+from cultivos.models.daily_briefing import DailyBriefingOut
 from cultivos.models.disease_risk_assessment import DiseaseRiskAssessmentOut
 from cultivos.models.field_priority import FieldPriorityOut
 from cultivos.models.intel import FarmExecutiveSummaryOut
@@ -18,6 +19,7 @@ from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
+from cultivos.services.intelligence.daily_briefing import compute_daily_briefing
 from cultivos.services.intelligence.disease_risk_assessment import compute_disease_risk_assessment
 from cultivos.services.intelligence.field_priority import compute_field_priority
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
@@ -277,3 +279,19 @@ def disease_risk_assessment(farm_id: int, field_id: int, db: Session = Depends(g
     if field is None:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_disease_risk_assessment(field, db)
+
+
+# ── Farmer daily briefing ──────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/daily-briefing", response_model=DailyBriefingOut)
+def daily_briefing(farm_id: int, db: Session = Depends(get_db)):
+    """Return a concise daily action summary for the farm in Spanish.
+
+    Combines field priority ranking, weather summary, and upcoming treatment
+    reminders into a single voice-friendly briefing. overall_farm_status:
+    urgent (any field score >= 60), attention (any >= 30), ok otherwise.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_daily_briefing(farm, db)
