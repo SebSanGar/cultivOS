@@ -62,6 +62,8 @@ from cultivos.models.stress_composite import StressCompositeOut
 from cultivos.services.intelligence.stress_composite import compute_stress_composite
 from cultivos.models.soil_trajectory import SoilTrajectoryOut
 from cultivos.services.intelligence.soil_trajectory import compute_soil_trajectory
+from cultivos.models.treatment_impact import TreatmentImpactOut
+from cultivos.services.intelligence.treatment_impact import compute_treatment_impact
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -698,3 +700,23 @@ def soil_trajectory(farm_id: int, field_id: int, db: Session = Depends(get_db)):
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_soil_trajectory(field, db)
+
+
+# ── Farm treatment impact summary ─────────────────────────────────────────────
+
+@router.get("/{farm_id}/treatment-impact", response_model=TreatmentImpactOut)
+def treatment_impact(
+    farm_id: int,
+    days: int = Query(default=90, ge=1, le=365),
+    db: Session = Depends(get_db),
+):
+    """Per-(crop_type, problema) treatment effectiveness for a farm.
+
+    Groups TreatmentRecord entries from all farm fields within the last `days` days.
+    Computes avg_health_delta using the first HealthScore within 30 days after
+    each treatment. Only treatments with at least one followup score are counted.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_treatment_impact(farm, db, days=days)
