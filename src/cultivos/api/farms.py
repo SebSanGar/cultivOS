@@ -194,3 +194,4 @@ def farm_executive_summary(farm_id: int, db: Session = Depends(get_db)):
     if result is None:
         raise HTTPException(status_code=404, detail="Farm not found")
     return result
+
