@@ -68,6 +68,8 @@ from cultivos.models.feedback_trend import FeedbackTrendOut
 from cultivos.services.intelligence.feedback_trend import compute_feedback_trend
 from cultivos.models.tek_alignment import TekAlignmentOut
 from cultivos.services.intelligence.tek_alignment import compute_tek_alignment
+from cultivos.models.health_volatility import HealthVolatilityOut
+from cultivos.services.intelligence.health_volatility import compute_health_volatility
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -767,3 +769,25 @@ def tek_alignment(
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_tek_alignment(field, month, db)
+
+
+# ── Health score volatility index ──────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/health-volatility", response_model=HealthVolatilityOut)
+def health_volatility(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Health score volatility index for a field over the last 60 days.
+
+    Computes population std dev of HealthScore values. Low std dev = stable;
+    high = erratic or crisis-prone field needing targeted investigation.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_health_volatility(field, db)
