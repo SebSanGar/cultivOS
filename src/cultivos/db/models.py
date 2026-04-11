@@ -221,6 +221,7 @@ class AncestralMethod(Base):
     crops = Column(JSON, nullable=False, default=list)  # ["maiz", "frijol", ...]
     benefits_es = Column(Text, nullable=False)
     scientific_basis = Column(Text)  # modern scientific validation
+    problems = Column(JSON, nullable=True, default=list)  # ["erosion", "compaction", ...]
 
 
 class Fertilizer(Base):

@@ -51,9 +51,11 @@ def list_crops(
 def list_ancestral_methods(
     region: str | None = Query(None, description="Filter by region (e.g. jalisco, mesoamerica)"),
     type: str | None = Query(None, alias="type", description="Filter by practice type (e.g. soil_management, intercropping)"),
+    problem: str | None = Query(None, description="Filter by problem the method addresses (e.g. compaction, erosion)"),
+    crop: str | None = Query(None, description="Filter by compatible crop (e.g. maiz, agave)"),
     db: Session = Depends(get_db),
 ):
-    """List ancestral farming methods, optionally filtered by region or practice type."""
+    """List ancestral farming methods, optionally filtered by region, practice type, problem, or crop."""
     query = db.query(AncestralMethod)
     if type:
         query = query.filter(AncestralMethod.practice_type == type)
@@ -61,4 +63,10 @@ def list_ancestral_methods(
     if region:
         region_lower = region.lower()
         results = [m for m in results if region_lower in m.region.lower()]
+    if problem:
+        problem_lower = problem.lower()
+        results = [m for m in results if m.problems and problem_lower in [p.lower() for p in m.problems]]
+    if crop:
+        crop_lower = crop.lower()
+        results = [m for m in results if m.crops and crop_lower in [c.lower() for c in m.crops]]
     return results

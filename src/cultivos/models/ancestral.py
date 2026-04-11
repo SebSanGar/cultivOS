@@ -12,5 +12,6 @@ class AncestralMethodOut(BaseModel):
     crops: list[str]
     benefits_es: str
     scientific_basis: str | None = None
+    problems: list[str] = []
 
     model_config = {"from_attributes": True}
