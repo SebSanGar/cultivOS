@@ -1639,6 +1639,121 @@ def compute_executive_summary(db: Session) -> dict:
     }
 
 
+def compute_farm_executive_summary(farm_id: int, db: Session) -> dict | None:
+    """Compute per-farm KPIs for a single farm executive summary.
+
+    Returns None if the farm does not exist.
+    Aggregates: fields, hectares, avg health, total treatments, alerts, CO2e, 30-day activity.
+    """
+    from cultivos.db.models import AlertLog
+
+    _SOC_TO_CO2E = 3.67
+
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        return None
+
+    farm_fields = db.query(Field).filter(Field.farm_id == farm_id).all()
+    total_fields = len(farm_fields)
+    total_hectares = round(sum(f.hectares or 0 for f in farm_fields), 1)
+    field_ids = [f.id for f in farm_fields]
+
+    if total_fields == 0:
+        return {
+            "farm_id": farm.id,
+            "farm_name": farm.name,
+            "state": farm.state or "Jalisco",
+            "total_fields": 0,
+            "total_hectares": 0.0,
+            "avg_health": None,
+            "total_treatments": 0,
+            "active_alerts": 0,
+            "total_co2e_tonnes": 0.0,
+            "activity_30d": [],
+        }
+
+    # Average health: latest score per field
+    latest_scores = []
+    for fld in farm_fields:
+        hs = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == fld.id)
+            .order_by(HealthScore.scored_at.desc())
+            .first()
+        )
+        if hs:
+            latest_scores.append(hs.score)
+
+    avg_health = round(sum(latest_scores) / len(latest_scores), 1) if latest_scores else None
+
+    # Total treatments for this farm's fields
+    total_treatments = (
+        db.query(func.count(TreatmentRecord.id))
+        .filter(TreatmentRecord.field_id.in_(field_ids))
+        .scalar() or 0
+    )
+
+    # Active alerts scoped to this farm's fields
+    active_alerts = (
+        db.query(func.count(AlertLog.id))
+        .filter(AlertLog.field_id.in_(field_ids))
+        .scalar() or 0
+    )
+
+    # CO2e estimate from soil organic matter
+    total_co2e = 0.0
+    for fld in farm_fields:
+        soil = (
+            db.query(SoilAnalysis)
+            .filter(SoilAnalysis.field_id == fld.id)
+            .order_by(SoilAnalysis.sampled_at.desc())
+            .first()
+        )
+        if soil and soil.organic_matter_pct and fld.hectares:
+            soc_tonnes_per_ha = soil.organic_matter_pct * 0.58
+            total_co2e += soc_tonnes_per_ha * (fld.hectares or 0) * _SOC_TO_CO2E
+
+    total_co2e = round(total_co2e, 1)
+
+    # 30-day activity: count health scores + treatments per day for this farm
+    now = datetime.utcnow()
+    thirty_days_ago = now - timedelta(days=30)
+    activity_map: dict[str, int] = {}
+
+    recent_hs = (
+        db.query(HealthScore.scored_at)
+        .filter(HealthScore.field_id.in_(field_ids), HealthScore.scored_at >= thirty_days_ago)
+        .all()
+    )
+    for (dt,) in recent_hs:
+        day = dt.strftime("%Y-%m-%d")
+        activity_map[day] = activity_map.get(day, 0) + 1
+
+    recent_tx = (
+        db.query(TreatmentRecord.created_at)
+        .filter(TreatmentRecord.field_id.in_(field_ids), TreatmentRecord.created_at >= thirty_days_ago)
+        .all()
+    )
+    for (dt,) in recent_tx:
+        day = dt.strftime("%Y-%m-%d")
+        activity_map[day] = activity_map.get(day, 0) + 1
+
+    activity_30d = [{"date": d, "count": c} for d, c in sorted(activity_map.items())]
+
+    return {
+        "farm_id": farm.id,
+        "farm_name": farm.name,
+        "state": farm.state or "Jalisco",
+        "total_fields": total_fields,
+        "total_hectares": total_hectares,
+        "avg_health": avg_health,
+        "total_treatments": total_treatments,
+        "active_alerts": active_alerts,
+        "total_co2e_tonnes": total_co2e,
+        "activity_30d": activity_30d,
+    }
+
+
 def compute_field_treatment_cost_effectiveness(field_id: int, db: Session) -> list[dict]:
     """Per-treatment cost and health delta for a single field.
 

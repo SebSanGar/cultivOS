@@ -391,6 +391,19 @@ class ExecutiveSummaryOut(BaseModel):
     farms: list[ExecutiveFarmEntry] = []
 
 
+class FarmExecutiveSummaryOut(BaseModel):
+    farm_id: int
+    farm_name: str
+    state: str = "Jalisco"
+    total_fields: int = 0
+    total_hectares: float = 0
+    avg_health: Optional[float] = None
+    total_treatments: int = 0
+    active_alerts: int = 0
+    total_co2e_tonnes: float = 0
+    activity_30d: list[DailyActivityEntry] = []
+
+
 class TreatmentCostEffectivenessItem(BaseModel):
     tratamiento: str
     cost_mxn: int

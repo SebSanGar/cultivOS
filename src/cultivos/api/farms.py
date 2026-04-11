@@ -11,6 +11,8 @@ from cultivos.models.farm import (
     FieldCreate, FieldUpdate, FieldOut,
     HeatmapResponse, FieldHeatmapPoint,
 )
+from cultivos.models.intel import FarmExecutiveSummaryOut
+from cultivos.services.intelligence.analytics import compute_farm_executive_summary
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -181,3 +183,14 @@ def delete_field(farm_id: int, field_id: int, db: Session = Depends(get_db)):
     db.delete(field)
     db.commit()
     return Response(status_code=204)
+
+
+# ── Farm executive summary ────────────────────────────────────────────────
+
+@router.get("/{farm_id}/executive-summary", response_model=FarmExecutiveSummaryOut)
+def farm_executive_summary(farm_id: int, db: Session = Depends(get_db)):
+    """Per-farm KPI summary: fields, hectares, avg health, treatments, alerts, CO2e, 30-day activity."""
+    result = compute_farm_executive_summary(farm_id, db)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return result
