@@ -19,6 +19,8 @@ from cultivos.models.intel import FarmExecutiveSummaryOut
 from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.forecast_alerts import ForecastAlertsOut
+from cultivos.models.progress_report import ProgressReportOut
+from cultivos.models.regen_trajectory import RegenTrajectoryOut
 from cultivos.models.water_stress import WaterStressOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
@@ -29,6 +31,8 @@ from cultivos.services.intelligence.forecast_alerts import compute_forecast_aler
 from cultivos.services.intelligence.growth_report import compute_growth_report
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
+from cultivos.services.intelligence.progress_report import compute_progress_report
+from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 
@@ -358,3 +362,44 @@ def forecast_alerts(farm_id: int, field_id: int, db: Session = Depends(get_db)):
     if field is None:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_forecast_alerts(field, db)
+
+
+# ── Regenerative score trajectory ─────────────────────────────────────────────
+
+@router.get("/{farm_id}/regen-trajectory", response_model=RegenTrajectoryOut)
+def regen_trajectory(farm_id: int, db: Session = Depends(get_db)):
+    """Return monthly regenerative score trajectory for the last 12 months.
+
+    regen_score per month = (organic_treatment_pct * 0.6) + (avg_health_score * 0.4)
+    trend: improving | stable | declining (compares last 3 vs first 3 months avg).
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_regen_trajectory(farm, db)
+
+
+# ── Farm health progress report ───────────────────────────────────────────────
+
+@router.get("/{farm_id}/progress-report", response_model=ProgressReportOut)
+def farm_progress_report(
+    farm_id: int,
+    start_date: str = Query(..., description="Start date YYYY-MM-DD"),
+    end_date: str = Query(..., description="End date YYYY-MM-DD"),
+    db: Session = Depends(get_db),
+):
+    """Before/after comparison of health score, NDVI, and soil pH across all fields.
+
+    Splits the date range at midpoint and computes deltas (end_avg - start_avg).
+    improved=True when health_delta > 0. Useful for longitudinal grant evidence.
+    """
+    from datetime import date as date_type
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    try:
+        start = date_type.fromisoformat(start_date)
+        end = date_type.fromisoformat(end_date)
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Dates must be YYYY-MM-DD format")
+    return compute_progress_report(farm, start, end, db)
