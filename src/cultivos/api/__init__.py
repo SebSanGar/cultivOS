@@ -53,6 +53,7 @@ from cultivos.api import (
     system_health,
     thermal,
     treatments,
+    water_efficiency,
     weather,
     yield_pred,
 )
@@ -114,6 +115,7 @@ all_routers = [
     system_health.router,
     thermal.router,
     treatments.router,
+    water_efficiency.router,
     weather.router,
     yield_pred.router,
 ]
