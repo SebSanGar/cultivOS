@@ -16,7 +16,9 @@ from cultivos.models.cooperative import (
 from cultivos.models.cooperative_portfolio import CooperativePortfolioOut
 from cultivos.models.cooperative_ranking import CooperativeRankingOut
 from cultivos.models.field_leaderboard import FieldLeaderboardOut
+from cultivos.models.carbon_summary import CoopCarbonSummaryOut
 from cultivos.models.regen_adoption import RegenAdoptionOut
+from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
 from cultivos.services.intelligence.cooperative_ranking import compute_member_ranking
 from cultivos.services.intelligence.field_leaderboard import compute_field_leaderboard
@@ -214,3 +216,12 @@ def regen_adoption(
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_regen_adoption(coop, days, db)
+
+
+@router.get("/{coop_id}/carbon-summary", response_model=CoopCarbonSummaryOut)
+def carbon_summary(coop_id: int, db: Session = Depends(get_db)):
+    """Aggregate CO2e baseline and 5-year projections across all member farms."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_carbon_summary(coop, db)
