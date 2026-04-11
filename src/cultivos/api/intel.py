@@ -54,6 +54,8 @@ from cultivos.services.intelligence.analytics import (
     compute_executive_summary,
 )
 from cultivos.services.intelligence.recommendations import optimize_treatment_timing
+from cultivos.models.farm_comparison import FarmComparisonOut
+from cultivos.services.intelligence.comparison import compute_farm_comparison
 
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
@@ -102,6 +104,25 @@ def intel_compare(
         return compare_farms(db, ids)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/farms/compare", response_model=FarmComparisonOut)
+def intel_farms_compare(
+    farm_ids: str = "",
+    db: Session = Depends(get_db),
+):
+    """Side-by-side farm comparison: avg health, hectares, treatments, CO2e, organic %, certification readiness.
+
+    Unknown farm IDs return null rows — never raises 404.
+    Order matches input farm_ids.
+    """
+    if not farm_ids.strip():
+        return FarmComparisonOut(farms=[])
+    try:
+        ids = [int(x.strip()) for x in farm_ids.split(",") if x.strip()]
+    except ValueError:
+        raise HTTPException(status_code=422, detail="farm_ids must be comma-separated integers")
+    return compute_farm_comparison(ids, db)
 
 
 @router.get("/summary", response_model=IntelSummaryOut)
