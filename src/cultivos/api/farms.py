@@ -74,6 +74,8 @@ from cultivos.models.action_plan import ActionPlanOut
 from cultivos.services.intelligence.action_plan import compose_action_plan
 from cultivos.models.sensor_freshness import SensorFreshnessOut
 from cultivos.services.intelligence.sensor_freshness import compute_sensor_freshness
+from cultivos.models.regional_benchmark import RegionalBenchmarkOut
+from cultivos.services.intelligence.regional_benchmark import compute_regional_benchmark
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -837,3 +839,17 @@ def sensor_freshness(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_sensor_freshness(farm, db)
+
+
+# ── Regional benchmark ─────────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/regional-benchmark", response_model=RegionalBenchmarkOut)
+def regional_benchmark(
+    farm_id: int,
+    db: Session = Depends(get_db),
+):
+    """Compare farm average health score against all farms in the same state."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_regional_benchmark(farm, db)
