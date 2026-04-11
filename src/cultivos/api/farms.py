@@ -43,6 +43,8 @@ from cultivos.services.intelligence.water_stress import compute_water_stress
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 from cultivos.models.carbon_audit import CarbonAuditOut
 from cultivos.services.intelligence.carbon_audit import compute_carbon_audit
+from cultivos.models.alert_effectiveness import AlertEffectivenessOut
+from cultivos.services.intelligence.alert_effectiveness import compute_alert_effectiveness
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -518,3 +520,19 @@ def carbon_audit(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_carbon_audit(farm, db)
+
+
+# ── Alert response effectiveness ──────────────────────────────────────────────
+
+@router.get("/{farm_id}/alert-effectiveness", response_model=AlertEffectivenessOut)
+def alert_effectiveness(farm_id: int, db: Session = Depends(get_db)):
+    """Measure whether sent alerts led to measurable health improvements.
+
+    For each alert, finds the most recent HealthScore before the alert (baseline)
+    and the first HealthScore within 30 days after. Computes improvement rate and
+    average improvement in score points across all alerts with health followup.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_alert_effectiveness(farm, db)
