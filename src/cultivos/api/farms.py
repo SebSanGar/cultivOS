@@ -74,6 +74,8 @@ from cultivos.models.action_plan import ActionPlanOut
 from cultivos.services.intelligence.action_plan import compose_action_plan
 from cultivos.models.sensor_freshness import SensorFreshnessOut
 from cultivos.services.intelligence.sensor_freshness import compute_sensor_freshness
+from cultivos.models.risk_priority import RiskPriorityItem
+from cultivos.services.intelligence.risk_priority import compute_risk_priority
 from cultivos.models.regional_benchmark import RegionalBenchmarkOut
 from cultivos.services.intelligence.regional_benchmark import compute_regional_benchmark
 
@@ -853,3 +855,12 @@ def regional_benchmark(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_regional_benchmark(farm, db)
+
+
+@router.get("/{farm_id}/risk-priority", response_model=list[RiskPriorityItem])
+def risk_priority(farm_id: int, db: Session = Depends(get_db)):
+    """Fields ranked by stress × recency-of-treatment — highest risk first."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_risk_priority(farm, db)
