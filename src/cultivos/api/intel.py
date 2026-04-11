@@ -10,7 +10,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from cultivos.auth import require_role
-from cultivos.db.models import Farm, FarmerFeedback, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
+from cultivos.db.models import Farm, FarmerFeedback, FarmerVocabulary, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.feedback import TEKMethodValidation, TEKValidationOut, TreatmentTrustOut
 from cultivos.services.intelligence.feedback_aggregation import aggregate_treatment_trust
@@ -56,6 +56,8 @@ from cultivos.services.intelligence.analytics import (
 from cultivos.services.intelligence.recommendations import optimize_treatment_timing
 from cultivos.models.farm_comparison import FarmComparisonOut
 from cultivos.services.intelligence.comparison import compute_farm_comparison
+from cultivos.models.diagnosis import DiagnoseOut, DiagnoseRequest
+from cultivos.services.intelligence.diagnosis import diagnose
 
 router = APIRouter(prefix="/api/intel", tags=["intelligence"])
 
@@ -436,3 +438,37 @@ def get_global_data_completeness(
     from cultivos.services.intelligence.completeness import compute_global_data_completeness
 
     return compute_global_data_completeness(db, state=state)
+
+
+@router.post("/diagnose-problem", response_model=DiagnoseOut)
+def diagnose_problem(
+    body: DiagnoseRequest,
+    db: Session = Depends(get_db),
+):
+    """Phrase-to-treatment pipeline — farmer speaks a symptom, Cerebro diagnoses and recommends.
+
+    Matches the farmer's phrase against the vocabulary knowledge base, then generates
+    organic treatment recommendations. Always returns 200 — no match returns generic
+    recommendations rather than 404.
+    """
+    # Fetch all vocab entries (small table, ~40 rows — no pagination needed)
+    vocab = db.query(FarmerVocabulary).all()
+
+    # Resolve field health score if field_id provided
+    health_score: float | None = None
+    if body.field_id is not None:
+        latest = (
+            db.query(HealthScore)
+            .filter(HealthScore.field_id == body.field_id)
+            .order_by(HealthScore.scored_at.desc())
+            .first()
+        )
+        if latest:
+            health_score = latest.score
+
+    return diagnose(
+        phrase=body.phrase,
+        crop=body.crop,
+        vocab_entries=vocab,
+        health_score=health_score,
+    )
