@@ -54,6 +54,8 @@ from cultivos.models.seasonal_benchmark import SeasonalBenchmarkOut
 from cultivos.services.intelligence.seasonal_benchmark import compute_seasonal_benchmark
 from cultivos.models.alert_frequency import AlertFrequencyOut
 from cultivos.services.intelligence.alert_frequency import compute_alert_frequency
+from cultivos.models.field_microclimate import FieldMicroclimateOut
+from cultivos.services.intelligence.field_microclimate import compute_field_microclimate
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -618,3 +620,21 @@ def alert_frequency(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_alert_frequency(farm, db)
+
+
+# ── Field micro-climate summary ───────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/microclimate", response_model=FieldMicroclimateOut)
+def field_microclimate(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Aggregate last 7 days of weather for a specific field's farm.
+
+    Returns avg/max/min temp, total rainfall, avg humidity, avg wind speed,
+    frost risk day count, and a Spanish summary.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_field_microclimate(field, db)
