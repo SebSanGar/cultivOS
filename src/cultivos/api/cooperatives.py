@@ -13,6 +13,8 @@ from cultivos.models.cooperative import (
     CooperativeOut,
     CooperativeUpdate,
 )
+from cultivos.models.cooperative_portfolio import CooperativePortfolioOut
+from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
 
 router = APIRouter(prefix="/api/cooperatives", tags=["cooperatives"])
 
@@ -166,3 +168,12 @@ def cooperative_dashboard(coop_id: int, db: Session = Depends(get_db)):
         avg_health=avg_health,
         farms=farm_summaries,
     )
+
+
+@router.get("/{coop_id}/portfolio-health", response_model=CooperativePortfolioOut)
+def portfolio_health(coop_id: int, db: Session = Depends(get_db)):
+    """Aggregate portfolio health: farms, fields, health, carbon, economic impact."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_portfolio_health(coop, db)
