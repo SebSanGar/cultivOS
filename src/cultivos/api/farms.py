@@ -12,8 +12,10 @@ from cultivos.models.farm import (
     HeatmapResponse, FieldHeatmapPoint,
 )
 from cultivos.models.intel import FarmExecutiveSummaryOut
+from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.yield_forecast import FarmYieldForecastOut
 from cultivos.services.intelligence.analytics import compute_farm_executive_summary
+from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.yield_forecast import compute_farm_yield_forecast
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
@@ -207,4 +209,18 @@ def farm_yield_forecast(farm_id: int, db: Session = Depends(get_db)):
     if farm is None:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_farm_yield_forecast(db, farm)
+
+
+# ── Upcoming treatment schedule ───────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/upcoming-treatments", response_model=list[UpcomingTreatmentOut])
+def upcoming_treatments(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Suggest up to 3 upcoming treatment windows for a field based on growth stage and treatment history."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if field is None:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_upcoming_treatments(field, db)
 
