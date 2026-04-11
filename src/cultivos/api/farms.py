@@ -66,6 +66,8 @@ from cultivos.models.treatment_impact import TreatmentImpactOut
 from cultivos.services.intelligence.treatment_impact import compute_treatment_impact
 from cultivos.models.feedback_trend import FeedbackTrendOut
 from cultivos.services.intelligence.feedback_trend import compute_feedback_trend
+from cultivos.models.tek_alignment import TekAlignmentOut
+from cultivos.services.intelligence.tek_alignment import compute_tek_alignment
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -740,3 +742,28 @@ def feedback_trend(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_feedback_trend(farm, db)
+
+
+# ── TEK-sensor alignment ───────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/tek-alignment", response_model=TekAlignmentOut)
+def tek_alignment(
+    farm_id: int,
+    field_id: int,
+    month: int = Query(..., ge=1, le=12, description="Calendar month (1-12)"),
+    db: Session = Depends(get_db),
+):
+    """TEK-sensor alignment score for a field in the given calendar month.
+
+    For each AncestralMethod applicable to this month and field crop_type,
+    checks whether current sensor data (water stress, disease risk, thermal)
+    supports the TEK prescription. Returns alignment_score_pct and per-practice
+    sensor evidence.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_tek_alignment(field, month, db)
