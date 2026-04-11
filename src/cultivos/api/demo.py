@@ -1,14 +1,31 @@
 """Demo data endpoints for FODECIJAL walkthrough."""
 
-from fastapi import APIRouter, Depends
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from cultivos.auth import require_role
-from cultivos.db.models import Farm, Field
+from cultivos.db.models import Farm, Field as FieldORM
 from cultivos.db.session import get_db
+from cultivos.services.intelligence.farmer_query import simulate_farmer_query
 
 router = APIRouter(prefix="/api/demo", tags=["demo"])
+
+
+class FarmerQueryIn(BaseModel):
+    message: str = Field(..., min_length=1)
+    farm_id: Optional[int] = None
+
+
+class FarmerQueryOut(BaseModel):
+    detected_issue: str
+    crop: Optional[str]
+    severity: str
+    recommended_action: str
+    confidence: float
 
 
 @router.post("/seed")
@@ -25,7 +42,7 @@ def seed_demo(db: Session = Depends(get_db), _user=Depends(require_role("admin")
     seed_demo_data(db)
     farms = db.query(Farm).filter(Farm.name.contains(DEMO_MARKER)).count()
     fields = (
-        db.query(Field)
+        db.query(FieldORM)
         .join(Farm)
         .filter(Farm.name.contains(DEMO_MARKER))
         .count()
@@ -61,3 +78,30 @@ def get_demo_farms(db: Session = Depends(get_db)):
         }
         for f in farms
     ]
+
+
+@router.post("/farmer-query", response_model=FarmerQueryOut)
+def farmer_query(payload: FarmerQueryIn, db: Session = Depends(get_db)):
+    """Simulate a WhatsApp AI response to a Spanish farming query.
+
+    Accepts a farmer message in Spanish and an optional farm_id.
+    Returns a structured AI response with detected issue, crop, severity,
+    recommended organic action (in Spanish), and confidence score.
+    """
+    crop_hint: Optional[str] = None
+
+    if payload.farm_id is not None:
+        farm = db.query(Farm).filter(Farm.id == payload.farm_id).first()
+        if farm is None:
+            raise HTTPException(status_code=404, detail="Farm not found")
+        # Use the crop type of the first field as a hint
+        first_field = (
+            db.query(FieldORM)
+            .filter(FieldORM.farm_id == farm.id)
+            .first()
+        )
+        if first_field:
+            crop_hint = first_field.crop_type
+
+    result = simulate_farmer_query(message=payload.message, crop_hint=crop_hint)
+    return FarmerQueryOut(**result)
