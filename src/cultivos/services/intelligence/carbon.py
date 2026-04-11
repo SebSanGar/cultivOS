@@ -4,11 +4,30 @@ Estimates soil organic carbon (SOC) from organic matter percentage using the
 Van Bemmelen factor (0.58). Provides trend detection across multiple soil records
 and regenerative practice recommendations for carbon-losing fields.
 
+Also provides carbon baseline projection for explicit SOC lab measurements,
+used in carbon finance reporting and the Impulsora grant application.
+
 MRV-lite: Monitoring, Reporting, Verification at zero marginal cost from existing
 soil analysis data.
 """
 
 from typing import TypedDict
+
+
+# CO2:C molecular weight ratio (CO2=44, C=12)
+CO2_TO_C_RATIO = 3.67
+
+# Regenerative practice baseline carbon sequestration rate (t C/ha/yr)
+# Conservative estimate per IPCC Tier 1 for improved grassland/cropland
+REGEN_SEQ_RATE_T_C_HA_YR = 0.5
+
+# Default soil properties for projection when not measured
+DEFAULT_BULK_DENSITY_PROJ = 1.3   # g/cm³
+DEFAULT_DEPTH_M = 0.30             # 30 cm standard sampling depth
+
+# Lab method confidence tiers
+_HIGH_CONFIDENCE_METHODS = {"dry_combustion", "elemental_analysis"}
+_MEDIUM_CONFIDENCE_METHODS = {"loss_on_ignition", "wet_oxidation", "walkley_black"}
 
 
 # Van Bemmelen factor: organic matter × 0.58 = soil organic carbon
@@ -155,3 +174,46 @@ def compute_carbon_trend(
         ultimo_soc_tonnes_per_ha=last_soc["soc_tonnes_per_ha"],
         recomendaciones=recomendaciones,
     )
+
+
+def compute_carbon_projection(
+    soc_percent: float,
+    hectares: float,
+    lab_method: str,
+) -> dict:
+    """Compute 5-year CO2e sequestration projection from an explicit SOC baseline.
+
+    Args:
+        soc_percent: Soil organic carbon percentage from lab measurement
+        hectares: Field area in hectares
+        lab_method: Laboratory analysis method (determines confidence tier)
+
+    Returns dict with keys:
+        baseline_soc_pct, hectares, current_co2e_t,
+        projected_5yr_co2e_t, sequestration_rate_t_per_yr, confidence
+    """
+    # SOC stock in t/ha: SOC% / 100 × depth(m) × bulk_density(g/cm³) × 10000
+    soc_t_per_ha = (soc_percent / 100.0) * DEFAULT_DEPTH_M * DEFAULT_BULK_DENSITY_PROJ * 10000.0
+    current_co2e_t = round(soc_t_per_ha * hectares * CO2_TO_C_RATIO, 2)
+
+    # Annual sequestration potential under regenerative management
+    sequestration_rate_t_per_yr = round(REGEN_SEQ_RATE_T_C_HA_YR * CO2_TO_C_RATIO * hectares, 2)
+    projected_5yr_co2e_t = round(current_co2e_t + sequestration_rate_t_per_yr * 5, 2)
+
+    # Confidence based on lab method quality
+    method_lower = lab_method.strip().lower()
+    if method_lower in _HIGH_CONFIDENCE_METHODS:
+        confidence = "high"
+    elif method_lower in _MEDIUM_CONFIDENCE_METHODS:
+        confidence = "medium"
+    else:
+        confidence = "low"
+
+    return {
+        "baseline_soc_pct": soc_percent,
+        "hectares": hectares,
+        "current_co2e_t": current_co2e_t,
+        "projected_5yr_co2e_t": projected_5yr_co2e_t,
+        "sequestration_rate_t_per_yr": sequestration_rate_t_per_yr,
+        "confidence": confidence,
+    }

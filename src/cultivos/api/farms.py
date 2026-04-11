@@ -18,6 +18,7 @@ from cultivos.models.growth_report import GrowthReportOut
 from cultivos.models.intel import FarmExecutiveSummaryOut
 from cultivos.models.stress_report import FieldStressReportOut
 from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
+from cultivos.models.carbon_baseline import CarbonBaselineIn, CarbonBaselineOut, CarbonProjectionOut
 from cultivos.models.forecast_alerts import ForecastAlertsOut
 from cultivos.models.progress_report import ProgressReportOut
 from cultivos.models.regen_trajectory import RegenTrajectoryOut
@@ -31,6 +32,7 @@ from cultivos.services.intelligence.forecast_alerts import compute_forecast_aler
 from cultivos.services.intelligence.growth_report import compute_growth_report
 from cultivos.services.intelligence.stress_report import compute_field_stress_report
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
+from cultivos.services.intelligence.carbon import compute_carbon_projection
 from cultivos.services.intelligence.progress_report import compute_progress_report
 from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
@@ -403,3 +405,77 @@ def farm_progress_report(
     except ValueError:
         raise HTTPException(status_code=422, detail="Dates must be YYYY-MM-DD format")
     return compute_progress_report(farm, start, end, db)
+
+
+# ── Soil carbon baseline + projection ─────────────────────────────────────────
+
+def _get_field_for_farm(farm_id: int, field_id: int, db: Session) -> Field:
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if field is None:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return field
+
+
+@router.post("/{farm_id}/fields/{field_id}/carbon-baseline", response_model=CarbonBaselineOut)
+def record_carbon_baseline(
+    farm_id: int,
+    field_id: int,
+    payload: CarbonBaselineIn,
+    db: Session = Depends(get_db),
+):
+    """Record an explicit SOC baseline measurement for carbon finance tracking.
+
+    Stores the measurement date and lab method alongside the SOC percentage.
+    Multiple baselines can be recorded; the GET projection always uses the latest.
+    """
+    from cultivos.db.models import CarbonBaseline
+    field = _get_field_for_farm(farm_id, field_id, db)
+    baseline = CarbonBaseline(
+        field_id=field.id,
+        soc_percent=payload.soc_percent,
+        measurement_date=payload.measurement_date,
+        lab_method=payload.lab_method,
+    )
+    db.add(baseline)
+    db.commit()
+    db.refresh(baseline)
+    return CarbonBaselineOut(
+        id=baseline.id,
+        field_id=baseline.field_id,
+        soc_percent=baseline.soc_percent,
+        measurement_date=baseline.measurement_date,
+        lab_method=baseline.lab_method,
+    )
+
+
+@router.get("/{farm_id}/fields/{field_id}/carbon-projection", response_model=CarbonProjectionOut)
+def carbon_projection(
+    farm_id: int,
+    field_id: int,
+    db: Session = Depends(get_db),
+):
+    """Compute 5-year CO2e sequestration projection from the latest SOC baseline.
+
+    Uses 3.67 CO2:C ratio and 0.5 t C/ha/yr regenerative sequestration rate.
+    Returns 404 when no baseline has been recorded for this field.
+    """
+    from cultivos.db.models import CarbonBaseline
+    field = _get_field_for_farm(farm_id, field_id, db)
+    latest = (
+        db.query(CarbonBaseline)
+        .filter(CarbonBaseline.field_id == field.id)
+        .order_by(CarbonBaseline.measurement_date.desc(), CarbonBaseline.recorded_at.desc())
+        .first()
+    )
+    if latest is None:
+        raise HTTPException(status_code=404, detail="No carbon baseline recorded for this field")
+    hectares = field.hectares or 0.0
+    projection = compute_carbon_projection(
+        soc_percent=latest.soc_percent,
+        hectares=hectares,
+        lab_method=latest.lab_method,
+    )
+    return CarbonProjectionOut(field_id=field.id, **projection)

@@ -53,6 +53,7 @@ class Field(Base):
     thermal_results = relationship("ThermalResult", back_populates="field", cascade="all, delete-orphan")
     microbiome_records = relationship("MicrobiomeRecord", back_populates="field", cascade="all, delete-orphan")
     harvest_records = relationship("HarvestRecord", back_populates="field", cascade="all, delete-orphan")
+    carbon_baselines = relationship("CarbonBaseline", back_populates="field", cascade="all, delete-orphan")
 
 
 class FlightLog(Base):
@@ -446,6 +447,20 @@ class AgronomistTip(Base):
     source = Column(String(150), nullable=True)      # CIMMYT, INIFAP, agronomist name, etc.
     region = Column(String(100), nullable=True)      # jalisco, mexico, latam
     season = Column(String(50), nullable=True)       # dry, wet, all
+
+
+class CarbonBaseline(Base):
+    """Explicit SOC baseline measurement for carbon finance and grant reporting."""
+    __tablename__ = "carbon_baselines"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("fields.id"), nullable=False)
+    soc_percent = Column(Float, nullable=False)           # soil organic carbon %
+    measurement_date = Column(String(10), nullable=False) # YYYY-MM-DD
+    lab_method = Column(String(100), nullable=False)      # dry_combustion, loss_on_ignition, wet_oxidation, etc.
+    recorded_at = Column(DateTime, default=datetime.utcnow)
+
+    field = relationship("Field", back_populates="carbon_baselines")
 
 
 class FarmerVocabulary(Base):
