@@ -58,6 +58,8 @@ from cultivos.models.field_microclimate import FieldMicroclimateOut
 from cultivos.services.intelligence.field_microclimate import compute_field_microclimate
 from cultivos.models.yield_accuracy import YieldAccuracyOut
 from cultivos.services.intelligence.yield_accuracy import compute_yield_accuracy
+from cultivos.models.stress_composite import StressCompositeOut
+from cultivos.services.intelligence.stress_composite import compute_stress_composite
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -656,3 +658,22 @@ def field_microclimate(farm_id: int, field_id: int, db: Session = Depends(get_db
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_field_microclimate(field, db)
+
+
+# ── Field crop stress composite index ─────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/stress-index", response_model=StressCompositeOut)
+def stress_composite_index(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Return composite stress index for a field.
+
+    Combines water stress (40%), disease risk (35%), and thermal stress (25%)
+    into a single 0-100 score. Missing data defaults to neutral (50).
+    stress_level: none <20, low 20-39, moderate 40-59, high 60-79, critical ≥80.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_stress_composite(field, db)
