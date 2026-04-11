@@ -74,6 +74,77 @@ def list_ancestral_methods(
     return results
 
 
+@router.get("/search")
+def search_knowledge(
+    q: str = Query("", description="Search term — matches name, description, tip text (case-insensitive)"),
+    limit: int = Query(20, ge=1, le=200, description="Maximum results to return"),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    """Full-text search across ancestral methods, fertilizers, and agronomist tips.
+
+    Returns list of {type, id, name, summary} sorted with exact name matches first.
+    Unknown term returns empty list — never 404.
+    """
+    term = q.lower().strip()
+    results: list[dict] = []
+
+    # Ancestral methods — search name + description_es + benefits_es
+    ancestral = db.query(AncestralMethod).all()
+    for m in ancestral:
+        searchable = " ".join([
+            m.name or "",
+            m.description_es or "",
+            m.benefits_es or "",
+        ]).lower()
+        if not term or term in searchable:
+            results.append({
+                "type": "ancestral_method",
+                "id": m.id,
+                "name": m.name,
+                "summary": (m.description_es or "")[:120],
+                "_exact": term and term in (m.name or "").lower(),
+            })
+
+    # Fertilizers — search name + description_es
+    fertilizers = db.query(Fertilizer).all()
+    for f in fertilizers:
+        searchable = " ".join([
+            f.name or "",
+            f.description_es or "",
+        ]).lower()
+        if not term or term in searchable:
+            results.append({
+                "type": "fertilizer",
+                "id": f.id,
+                "name": f.name,
+                "summary": (f.description_es or "")[:120],
+                "_exact": term and term in (f.name or "").lower(),
+            })
+
+    # Agronomist tips — search tip_text_es + crop + problem
+    tips = db.query(AgronomistTip).all()
+    for t in tips:
+        searchable = " ".join([
+            t.tip_text_es or "",
+            t.crop or "",
+            t.problem or "",
+        ]).lower()
+        if not term or term in searchable:
+            results.append({
+                "type": "agronomist_tip",
+                "id": t.id,
+                "name": f"{t.crop} — {t.problem}",
+                "summary": (t.tip_text_es or "")[:120],
+                "_exact": False,
+            })
+
+    # Sort: exact name matches first
+    results.sort(key=lambda r: (0 if r["_exact"] else 1))
+    # Strip internal sort key and apply limit
+    cleaned = [{"type": r["type"], "id": r["id"], "name": r["name"], "summary": r["summary"]} for r in results]
+    return cleaned[:limit]
+
+
 @router.get("/crops/{crop_name}/varieties", response_model=list[CropVarietyOut])
 def list_crop_varieties(
     crop_name: str,
