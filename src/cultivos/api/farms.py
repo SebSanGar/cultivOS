@@ -56,6 +56,8 @@ from cultivos.models.alert_frequency import AlertFrequencyOut
 from cultivos.services.intelligence.alert_frequency import compute_alert_frequency
 from cultivos.models.field_microclimate import FieldMicroclimateOut
 from cultivos.services.intelligence.field_microclimate import compute_field_microclimate
+from cultivos.models.yield_accuracy import YieldAccuracyOut
+from cultivos.services.intelligence.yield_accuracy import compute_yield_accuracy
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -620,6 +622,22 @@ def alert_frequency(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_alert_frequency(farm, db)
+
+
+# ── Yield prediction accuracy summary ────────────────────────────────────────
+
+@router.get("/{farm_id}/yield-accuracy", response_model=YieldAccuracyOut)
+def yield_accuracy(farm_id: int, db: Session = Depends(get_db)):
+    """Return yield prediction accuracy metrics for all fields in a farm.
+
+    Aggregates resolved PredictionSnapshots to compute per-field and farm-wide
+    accuracy scores. Accuracy grades: green >= 70%, yellow 60-70%, red < 60%.
+    Returns empty fields list and None overall when no resolved predictions exist.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_yield_accuracy(db, farm)
 
 
 # ── Field micro-climate summary ───────────────────────────────────────────────
