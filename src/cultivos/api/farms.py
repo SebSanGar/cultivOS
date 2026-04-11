@@ -47,6 +47,8 @@ from cultivos.models.alert_effectiveness import AlertEffectivenessOut
 from cultivos.services.intelligence.alert_effectiveness import compute_alert_effectiveness
 from cultivos.models.field_comparison import FieldComparisonItem
 from cultivos.services.intelligence.field_comparison import compute_field_comparison
+from cultivos.models.resilience_score import ResilienceScoreOut
+from cultivos.services.intelligence.resilience_score import compute_resilience_score
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -554,3 +556,21 @@ def field_comparison(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_field_comparison(farm, db)
+
+
+# ── Crop resilience score ─────────────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/resilience-score", response_model=ResilienceScoreOut)
+def resilience_score(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Holistic resilience score (0-100) combining health, soil pH, water stress, and disease risk.
+
+    Weights: health 40%, soil pH 20%, water stress inverse 20%, disease risk inverse 20%.
+    Missing components default to neutral (50) so one absent sensor doesn't collapse the score.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_resilience_score(field, db)
