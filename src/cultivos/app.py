@@ -530,6 +530,11 @@ def create_app() -> FastAPI:
             """Cooperative FODECIJAL evidence pack — 5 KPIs, 3 pillar bars, strength/weakness per coop."""
             return FileResponse(frontend_dir / "coop-evidencia.html")
 
+        @app.get("/coop-progreso-mensual")
+        async def serve_coop_progreso_mensual():
+            """Cooperative monthly progress — Chart.js line chart of avg health + regen score per month."""
+            return FileResponse(frontend_dir / "coop-progreso-mensual.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
