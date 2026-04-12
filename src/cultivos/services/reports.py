@@ -375,6 +375,7 @@ def generate_fodecijal_report_pdf(
     pipeline_status: list[dict],
     carbon_summary: dict,
     farm_details: list[dict],
+    cooperative_stats: list[dict] | None = None,
 ) -> bytes:
     """Generate a FODECIJAL grant narrative PDF showing TRL 4-5 maturity.
 
@@ -387,6 +388,8 @@ def generate_fodecijal_report_pdf(
         carbon_summary: dict with total_co2e_tonnes, avg_soc_tonnes_per_ha
         farm_details: list of dicts with name, municipality, state, hectares,
                       field_count, avg_health, treatment_count
+        cooperative_stats: optional list of dicts with name, state, farm_count,
+                           total_hectares, avg_health, total_co2e_tonnes
 
     Returns:
         PDF file content as bytes.
@@ -583,6 +586,69 @@ def generate_fodecijal_report_pdf(
         story.append(farm_table)
     else:
         story.append(Paragraph("Sin granjas registradas en el portafolio.", styles["normal"]))
+
+    # -- Section 6: Cooperativas --
+    coops = cooperative_stats or []
+    if coops:
+        story.append(Spacer(1, 16))
+        story.append(Paragraph("6. Impacto Colectivo — Cooperativas", styles["heading"]))
+
+        total_coop_farms = sum(c.get("farm_count", 0) for c in coops)
+        total_coop_hectares = sum(c.get("total_hectares", 0) for c in coops)
+        total_coop_co2e = sum(c.get("total_co2e_tonnes", 0) for c in coops)
+
+        coop_summary_data = [
+            ["Cooperativas activas", str(len(coops))],
+            ["Granjas miembro", str(total_coop_farms)],
+            ["Superficie colectiva", f"{total_coop_hectares:,.1f} hectareas"],
+            ["CO2e colectivo", f"{total_coop_co2e:,.1f} toneladas"],
+        ]
+        coop_summary_table = Table(coop_summary_data, colWidths=[3.5 * inch, 3.5 * inch])
+        coop_summary_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), _LIGHT_BG),
+            ("TEXTCOLOR", (0, 0), (-1, -1), _DARK),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+        ]))
+        story.append(coop_summary_table)
+        story.append(Spacer(1, 12))
+
+        coop_header = ["Cooperativa", "Estado", "Granjas", "Hectareas", "Salud", "CO2e (ton)"]
+        coop_rows = [coop_header]
+        for c in coops:
+            health = c.get("avg_health", 0)
+            health_str = f"{health:.1f}" if health else "—"
+            coop_rows.append([
+                c.get("name", "—"),
+                c.get("state", "—"),
+                str(c.get("farm_count", 0)),
+                f"{c.get('total_hectares', 0):,.0f}",
+                health_str,
+                f"{c.get('total_co2e_tonnes', 0):,.1f}",
+            ])
+
+        coop_table = Table(coop_rows, colWidths=[1.8 * inch, 0.9 * inch, 0.7 * inch, 0.9 * inch, 0.8 * inch, 1.0 * inch])
+        coop_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), _GREEN),
+            ("TEXTCOLOR", (0, 0), (-1, 0), _WHITE),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("GRID", (0, 0), (-1, -1), 0.5, _GRAY),
+            ("ALIGN", (2, 0), (-1, -1), "CENTER"),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [_WHITE, _LIGHT_BG]),
+        ]))
+        story.append(coop_table)
+        story.append(Spacer(1, 8))
+        story.append(Paragraph(
+            "Las cooperativas representan el modelo colectivo de agricultura "
+            "regenerativa que FODECIJAL busca impulsar. El impacto agregado "
+            "demuestra que la organizacion cooperativa multiplica los beneficios "
+            "ambientales y economicos de la agricultura de precision.",
+            styles["normal"],
+        ))
 
     # -- Footer --
     story.append(Spacer(1, 30))

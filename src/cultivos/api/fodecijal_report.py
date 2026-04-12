@@ -9,7 +9,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from cultivos.db.models import (
-    AncestralMethod, CropType, Farm, Fertilizer, Field,
+    AncestralMethod, Cooperative, CropType, Farm, Fertilizer, Field,
     HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis,
     ThermalResult, TreatmentRecord,
 )
@@ -146,12 +146,39 @@ def get_fodecijal_report(db: Session = Depends(get_db)):
             "treatment_count": treatment_count,
         })
 
+    # -- Cooperative stats --
+    cooperatives = db.query(Cooperative).all()
+    cooperative_stats = []
+    for coop in cooperatives:
+        coop_farms = db.query(Farm).filter(Farm.cooperative_id == coop.id).all()
+        coop_farm_ids = [f.id for f in coop_farms]
+        coop_hectares = sum(f.total_hectares or 0 for f in coop_farms)
+
+        coop_avg_health = None
+        if coop_farm_ids:
+            coop_avg_health = (
+                db.query(func.avg(HealthScore.score))
+                .join(Field, HealthScore.field_id == Field.id)
+                .filter(Field.farm_id.in_(coop_farm_ids))
+                .scalar()
+            )
+
+        cooperative_stats.append({
+            "name": coop.name,
+            "state": coop.state or "Jalisco",
+            "farm_count": len(coop_farms),
+            "total_hectares": coop_hectares,
+            "avg_health": float(coop_avg_health) if coop_avg_health else 0,
+            "total_co2e_tonnes": coop_hectares * 1.36 * 3.67,
+        })
+
     pdf_bytes = generate_fodecijal_report_pdf(
         platform_stats=platform_stats,
         cerebro_summary=cerebro_summary,
         pipeline_status=pipeline_status,
         carbon_summary=carbon_summary,
         farm_details=farm_details,
+        cooperative_stats=cooperative_stats,
     )
 
     return Response(

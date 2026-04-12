@@ -175,6 +175,74 @@ class TestGenerateFodecijalReportPdf:
         assert b"Plataforma" in result
         assert b"Tratamiento" in result or b"tratamiento" in result
 
+    # -- Cooperative section tests --
+
+    def _make_cooperative_stats(self):
+        return [
+            {
+                "name": "Cooperativa Agave Azul",
+                "state": "Jalisco",
+                "farm_count": 8,
+                "total_hectares": 320.0,
+                "avg_health": 71.2,
+                "total_co2e_tonnes": 1589.3,
+            },
+            {
+                "name": "Cooperativa Maiz del Valle",
+                "state": "Jalisco",
+                "farm_count": 5,
+                "total_hectares": 180.0,
+                "avg_health": 64.8,
+                "total_co2e_tonnes": 897.6,
+            },
+        ]
+
+    def test_contains_cooperative_section(self):
+        result = generate_fodecijal_report_pdf(
+            platform_stats=self._make_platform_stats(),
+            cerebro_summary=self._make_cerebro_summary(),
+            pipeline_status=self._make_pipeline_status(),
+            carbon_summary=self._make_carbon_summary(),
+            farm_details=self._make_farm_details(),
+            cooperative_stats=self._make_cooperative_stats(),
+        )
+        assert b"Cooperativa" in result
+
+    def test_cooperative_names_in_pdf(self):
+        result = generate_fodecijal_report_pdf(
+            platform_stats=self._make_platform_stats(),
+            cerebro_summary=self._make_cerebro_summary(),
+            pipeline_status=self._make_pipeline_status(),
+            carbon_summary=self._make_carbon_summary(),
+            farm_details=self._make_farm_details(),
+            cooperative_stats=self._make_cooperative_stats(),
+        )
+        assert b"Agave Azul" in result
+        assert b"Maiz del Valle" in result
+
+    def test_empty_cooperatives_still_generates(self):
+        result = generate_fodecijal_report_pdf(
+            platform_stats=self._make_platform_stats(),
+            cerebro_summary=self._make_cerebro_summary(),
+            pipeline_status=self._make_pipeline_status(),
+            carbon_summary=self._make_carbon_summary(),
+            farm_details=self._make_farm_details(),
+            cooperative_stats=[],
+        )
+        assert isinstance(result, bytes)
+        assert result[:5] == b"%PDF-"
+
+    def test_no_cooperative_stats_backward_compatible(self):
+        result = generate_fodecijal_report_pdf(
+            platform_stats=self._make_platform_stats(),
+            cerebro_summary=self._make_cerebro_summary(),
+            pipeline_status=self._make_pipeline_status(),
+            carbon_summary=self._make_carbon_summary(),
+            farm_details=self._make_farm_details(),
+        )
+        assert isinstance(result, bytes)
+        assert result[:5] == b"%PDF-"
+
 
 # ---------------------------------------------------------------------------
 # Dynamic stats tests
@@ -265,6 +333,30 @@ class TestFodecijalReportEndpoint:
         resp = client.get("/api/reports/fodecijal")
         assert resp.status_code == 200
         assert b"Rancho Test FODECIJAL" in resp.content
+
+    def test_with_cooperative_data(self, client, db):
+        """PDF should include cooperative membership stats when cooperatives exist."""
+        from cultivos.db.models import Cooperative, Farm, Field
+
+        coop = Cooperative(name="Cooperativa Test FODECIJAL", state="Jalisco")
+        db.add(coop)
+        db.flush()
+
+        farm = Farm(
+            name="Granja Coop Test",
+            municipality="Tequila",
+            state="Jalisco",
+            total_hectares=30.0,
+            cooperative_id=coop.id,
+        )
+        db.add(farm)
+        db.flush()
+        db.add(Field(farm_id=farm.id, name="Parcela C", crop_type="agave", hectares=15.0))
+        db.commit()
+
+        resp = client.get("/api/reports/fodecijal")
+        assert resp.status_code == 200
+        assert b"Cooperativa Test FODECIJAL" in resp.content
 
     def test_with_complete_data(self, client, db):
         """With full pipeline data, PDF generates without error."""
