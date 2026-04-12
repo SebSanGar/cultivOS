@@ -20,7 +20,9 @@ from cultivos.models.crop_variety import CropVarietyOut
 from cultivos.models.farmer_vocabulary import FarmerVocabularyOut
 from cultivos.models.fertilizer import FertilizerOut
 from cultivos.models.treatment_outcomes import TreatmentOutcomeItem
+from cultivos.models.treatment_success_rates import TreatmentSuccessRateItem
 from cultivos.services.intelligence.treatment_outcomes import compute_treatment_outcomes
+from cultivos.services.intelligence.treatment_success_rates import compute_treatment_success_rates
 
 router = APIRouter(
     prefix="/api/knowledge",
@@ -314,4 +316,18 @@ def get_treatment_outcomes(
     follow-up HealthScore are included. Sorted by avg_health_delta descending.
     """
     return compute_treatment_outcomes(db, crop_type=crop_type, start_date=start_date, end_date=end_date)
+
+
+@router.get("/treatment-success-rates", response_model=list[TreatmentSuccessRateItem])
+def get_treatment_success_rates(
+    crop_type: Optional[str] = Query(None, description="Filter by crop type (e.g. maiz, agave)"),
+    db: Session = Depends(get_db),
+):
+    """Organic treatment success rates per (crop_type, problema).
+
+    Aggregates TreatmentRecord + 30-day HealthScore follow-up. Returns the
+    percentage of treatments that produced a positive health delta, alongside
+    the average delta and total count. Sorted by success_rate_pct descending.
+    """
+    return compute_treatment_success_rates(db, crop_type=crop_type)
 
