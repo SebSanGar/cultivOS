@@ -24,6 +24,7 @@ from cultivos.models.upcoming_treatments import UpcomingTreatmentOut
 from cultivos.models.carbon_baseline import CarbonBaselineIn, CarbonBaselineOut, CarbonProjectionOut
 from cultivos.models.forecast_alerts import ForecastAlertsOut
 from cultivos.models.field_timeline import FieldTimelineOut
+from cultivos.models.annual_report import AnnualReportOut
 from cultivos.models.progress_report import ProgressReportOut
 from cultivos.models.regen_trajectory import RegenTrajectoryOut
 from cultivos.models.water_stress import WaterStressOut
@@ -38,6 +39,7 @@ from cultivos.services.intelligence.stress_report import compute_field_stress_re
 from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_treatments
 from cultivos.services.intelligence.carbon import compute_carbon_projection
 from cultivos.services.intelligence.field_timeline import compute_field_timeline
+from cultivos.services.intelligence.annual_report import compute_annual_report
 from cultivos.services.intelligence.progress_report import compute_progress_report
 from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
@@ -452,6 +454,27 @@ def farm_progress_report(
     except ValueError:
         raise HTTPException(status_code=422, detail="Dates must be YYYY-MM-DD format")
     return compute_progress_report(farm, start, end, db)
+
+
+# ── Annual farm performance summary ───────────────────────────────────────────
+
+@router.get("/{farm_id}/annual-report", response_model=AnnualReportOut)
+def farm_annual_report(
+    farm_id: int,
+    year: Optional[int] = Query(None, description="Year (defaults to current year)"),
+    db: Session = Depends(get_db),
+):
+    """Per-field + farm-level annual performance rollup.
+
+    Per field: avg/min/max HealthScore, NDVI trend, soil_pH delta, treatments
+    applied, regen_score (% organic). Farm level: best_field, most_improved_field,
+    total CO2e sequestered, total treatments.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    target_year = year if year is not None else datetime.utcnow().year
+    return compute_annual_report(farm, target_year, db)
 
 
 # ── Soil carbon baseline + projection ─────────────────────────────────────────
