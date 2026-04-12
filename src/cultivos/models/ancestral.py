@@ -1,6 +1,6 @@
 """Pydantic schemas for ancestral farming methods knowledge base."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class AncestralMethodOut(BaseModel):
@@ -15,3 +15,8 @@ class AncestralMethodOut(BaseModel):
     problems: list[str] = []
 
     model_config = {"from_attributes": True}
+
+    @field_validator("problems", "crops", mode="before")
+    @classmethod
+    def _none_to_empty_list(cls, v):
+        return v if v is not None else []
