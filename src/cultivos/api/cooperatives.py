@@ -20,7 +20,11 @@ from cultivos.models.carbon_summary import CoopCarbonSummaryOut
 from cultivos.models.regen_adoption import RegenAdoptionOut
 from cultivos.models.fodecijal_readiness import FodecijalReadinessOut
 from cultivos.models.outbreak_risk import CoopOutbreakRiskOut
+from cultivos.models.coop_treatment_effectiveness import CoopTreatmentEffectivenessOut
 from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
+from cultivos.services.intelligence.coop_treatment_effectiveness import (
+    compute_coop_treatment_effectiveness,
+)
 from cultivos.services.intelligence.fodecijal_readiness import compute_fodecijal_readiness
 from cultivos.services.intelligence.outbreak_risk import compute_outbreak_risk
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
@@ -247,3 +251,15 @@ def outbreak_risk(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_outbreak_risk(coop, db)
+
+
+@router.get(
+    "/{coop_id}/treatment-effectiveness",
+    response_model=CoopTreatmentEffectivenessOut,
+)
+def treatment_effectiveness(coop_id: int, db: Session = Depends(get_db)):
+    """Aggregate treatment effectiveness across all member farms, grouped by (crop, problema)."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_treatment_effectiveness(coop, db)
