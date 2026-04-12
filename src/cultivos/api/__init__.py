@@ -3,6 +3,7 @@
 from cultivos.api import (
     action_timeline,
     alert_config,
+    alert_escalations,
     alert_history,
     alerts,
     anomalies,
@@ -64,6 +65,7 @@ from cultivos.api import (
 all_routers = [
     action_timeline.router,
     alert_config.router,
+    alert_escalations.router,
     alert_history.router,
     alerts.router,
     anomalies.router,
