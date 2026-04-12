@@ -535,6 +535,11 @@ def create_app() -> FastAPI:
             """Cooperative monthly progress — Chart.js line chart of avg health + regen score per month."""
             return FileResponse(frontend_dir / "coop-progreso-mensual.html")
 
+        @app.get("/historial-enfermedades")
+        async def serve_historial_enfermedades():
+            """Field disease history — Chart.js bar chart of monthly diseases + recurring list (#215)."""
+            return FileResponse(frontend_dir / "historial-enfermedades.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

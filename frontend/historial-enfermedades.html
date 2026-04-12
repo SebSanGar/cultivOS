@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Enfermedades — Parcela</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .dh-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .dh-header { margin-bottom: 1.5rem; }
+        .dh-header h1 { margin: 0 0 0.25rem; }
+        .dh-header p { color: var(--text-muted, #888); margin: 0; }
+        .dh-selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 720px; margin-bottom: 1.5rem; }
+        .dh-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .dh-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .dh-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .dh-kpi { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.1rem 1.2rem; }
+        .dh-kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 0.4rem; }
+        .dh-kpi-value { font-size: 1.7rem; font-weight: 700; color: #4ade80; }
+        .dh-kpi-value.warn { color: #fbbf24; }
+        .dh-kpi-value.danger { color: #f87171; }
+        .dh-chart-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem; }
+        .dh-chart-card canvas { max-height: 360px; }
+        .dh-list-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.2rem; }
+        .dh-list-card h3 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.05em; }
+        .dh-list { list-style: none; padding: 0; margin: 0; }
+        .dh-list li { padding: 0.55rem 0.75rem; background: rgba(255, 255, 255, 0.03); border-left: 3px solid #f87171; border-radius: 4px; margin-bottom: 0.45rem; }
+        .dh-list li.empty { border-left-color: #4ade80; color: var(--text-muted, #888); }
+        .dh-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="dh-container">
+        <header class="dh-header">
+            <h1>Historial de Enfermedades</h1>
+            <p>Recurrencia mensual de enfermedades por parcela en los últimos 12 meses, identificando patrones para guiar al agrónomo.</p>
+        </header>
+
+        <div class="dh-selectors">
+            <div>
+                <label for="dh-farm-select">Finca</label>
+                <select id="dh-farm-select">
+                    <option value="">Seleccione una finca...</option>
+                </select>
+            </div>
+            <div>
+                <label for="dh-field-select">Parcela (Campo)</label>
+                <select id="dh-field-select" disabled>
+                    <option value="">Seleccione primero una finca...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="dh-content" style="display:none;">
+            <div class="dh-kpi-row">
+                <div class="dh-kpi">
+                    <div class="dh-kpi-label">Meses sin enfermedad</div>
+                    <div class="dh-kpi-value" id="dh-free-counter">--</div>
+                </div>
+                <div class="dh-kpi">
+                    <div class="dh-kpi-label">Enfermedad más común</div>
+                    <div class="dh-kpi-value" id="dh-top-disease" style="font-size:1.15rem;">--</div>
+                </div>
+                <div class="dh-kpi">
+                    <div class="dh-kpi-label">Recurrencia detectada</div>
+                    <div class="dh-kpi-value" id="dh-recurrence-flag" style="font-size:1.15rem;">--</div>
+                </div>
+            </div>
+
+            <div class="dh-chart-card">
+                <canvas id="dh-chart"></canvas>
+            </div>
+
+            <div class="dh-list-card">
+                <h3>Enfermedades Recurrentes</h3>
+                <ul class="dh-list" id="dh-recurring"></ul>
+            </div>
+        </div>
+
+        <div id="dh-empty" class="dh-empty">Seleccione una finca y una parcela para ver el historial.</div>
+    </div>
+
+    <script src="/historial-enfermedades.js"></script>
+</body>
+</html>
