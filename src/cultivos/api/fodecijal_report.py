@@ -1,5 +1,8 @@
 """FODECIJAL grant narrative report endpoint."""
 
+import ast
+from pathlib import Path
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 from sqlalchemy import func
@@ -15,6 +18,52 @@ from cultivos.services.reports import generate_fodecijal_report_pdf
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+
+def compute_platform_stats() -> dict:
+    """Count route files, frontend pages, tests, and endpoints from the codebase."""
+    api_dir = _PROJECT_ROOT / "src" / "cultivos" / "api"
+    route_files = [
+        f for f in api_dir.glob("*.py")
+        if not f.name.startswith("__")
+    ]
+
+    frontend_dir = _PROJECT_ROOT / "frontend"
+    html_pages = list(frontend_dir.glob("*.html"))
+
+    test_dir = _PROJECT_ROOT / "tests"
+    test_count = 0
+    for tf in test_dir.glob("test_*.py"):
+        try:
+            tree = ast.parse(tf.read_text())
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_"):
+                test_count += 1
+
+    endpoint_count = 0
+    for rf in route_files:
+        try:
+            tree = ast.parse(rf.read_text())
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                for dec in node.decorator_list:
+                    attr = getattr(dec, "attr", None) or getattr(getattr(dec, "func", None), "attr", None)
+                    if attr in ("get", "post", "put", "delete", "patch"):
+                        endpoint_count += 1
+                        break
+
+    return {
+        "api_endpoints": endpoint_count,
+        "frontend_pages": len(html_pages),
+        "passing_tests": test_count,
+        "route_files": len(route_files),
+    }
+
 
 @router.get("/fodecijal")
 def get_fodecijal_report(db: Session = Depends(get_db)):
@@ -25,11 +74,9 @@ def get_fodecijal_report(db: Session = Depends(get_db)):
     total_fields = db.query(func.count(Field.id)).scalar() or 0
     total_hectares = db.query(func.coalesce(func.sum(Farm.total_hectares), 0)).scalar()
 
+    codebase_stats = compute_platform_stats()
     platform_stats = {
-        "api_endpoints": 100,
-        "frontend_pages": 53,
-        "passing_tests": 2221,
-        "route_files": 40,
+        **codebase_stats,
         "total_farms": total_farms,
         "total_fields": total_fields,
         "total_hectares": float(total_hectares),

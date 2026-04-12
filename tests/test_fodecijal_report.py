@@ -177,6 +177,48 @@ class TestGenerateFodecijalReportPdf:
 
 
 # ---------------------------------------------------------------------------
+# Dynamic stats tests
+# ---------------------------------------------------------------------------
+
+class TestComputePlatformStats:
+    """Verify platform stats are computed dynamically, not hardcoded."""
+
+    def test_route_files_above_minimum(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        assert stats["route_files"] >= 50
+
+    def test_frontend_pages_above_minimum(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        assert stats["frontend_pages"] >= 60
+
+    def test_passing_tests_above_minimum(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        assert stats["passing_tests"] >= 3000
+
+    def test_api_endpoints_above_minimum(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        assert stats["api_endpoints"] >= 100
+
+    def test_stats_not_stale_hardcoded_values(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        assert stats["frontend_pages"] != 53, "Still hardcoded at 53"
+        assert stats["passing_tests"] != 2221, "Still hardcoded at 2221"
+        assert stats["route_files"] != 40, "Still hardcoded at 40"
+
+    def test_returns_all_expected_keys(self):
+        from cultivos.api.fodecijal_report import compute_platform_stats
+        stats = compute_platform_stats()
+        for key in ("api_endpoints", "frontend_pages", "passing_tests", "route_files"):
+            assert key in stats
+            assert isinstance(stats[key], int)
+
+
+# ---------------------------------------------------------------------------
 # API endpoint tests
 # ---------------------------------------------------------------------------
 
