@@ -66,6 +66,8 @@ from cultivos.models.stress_composite import StressCompositeOut
 from cultivos.services.intelligence.stress_composite import compute_stress_composite
 from cultivos.models.soil_trajectory import SoilTrajectoryOut
 from cultivos.services.intelligence.soil_trajectory import compute_soil_trajectory
+from cultivos.models.soil_nutrients import SoilNutrientsOut
+from cultivos.services.intelligence.soil_nutrients import compute_soil_nutrients
 from cultivos.models.ndvi_trajectory import NDVITrajectoryOut
 from cultivos.services.intelligence.ndvi_trajectory import compute_ndvi_trajectory
 from cultivos.models.treatment_impact import TreatmentImpactOut
@@ -766,6 +768,34 @@ def soil_trajectory(farm_id: int, field_id: int, db: Session = Depends(get_db)):
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_soil_trajectory(field, db)
+
+
+# ── Field soil nutrient trajectory (N/P/K + organic matter) ──────────────────
+
+@router.get(
+    "/{farm_id}/fields/{field_id}/soil-nutrients",
+    response_model=SoilNutrientsOut,
+)
+def soil_nutrients(
+    farm_id: int,
+    field_id: int,
+    months: int = Query(12, ge=1, le=24),
+    db: Session = Depends(get_db),
+):
+    """Monthly N/P/K and organic matter trajectory for the field.
+
+    Default window is 12 months (configurable 1-24). Each month returns
+    averaged nitrogen_ppm, phosphorus_ppm, potassium_ppm, organic_matter_pct
+    from SoilAnalysis records sampled in that calendar month. Independent
+    trend per nutrient compares last 2 months vs prior 2 months.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_soil_nutrients(field, db, months=months)
 
 
 # ── Field NDVI 90-day trajectory ──────────────────────────────────────────────
