@@ -23,12 +23,16 @@ from cultivos.models.outbreak_risk import CoopOutbreakRiskOut
 from cultivos.models.coop_action_plan import CoopActionPlanOut
 from cultivos.models.coop_treatment_effectiveness import CoopTreatmentEffectivenessOut
 from cultivos.models.coop_tek_adoption import CoopTekAdoptionOut
+from cultivos.models.coop_regen_trajectory import CoopRegenTrajectoryOut
 from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
 from cultivos.services.intelligence.coop_action_plan import compute_coop_action_plan
 from cultivos.services.intelligence.coop_treatment_effectiveness import (
     compute_coop_treatment_effectiveness,
 )
 from cultivos.services.intelligence.coop_tek_adoption import compute_coop_tek_adoption
+from cultivos.services.intelligence.coop_regen_trajectory import (
+    compute_coop_regen_trajectory,
+)
 from cultivos.services.intelligence.fodecijal_readiness import compute_fodecijal_readiness
 from cultivos.services.intelligence.outbreak_risk import compute_outbreak_risk
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
@@ -294,3 +298,12 @@ def coop_tek_adoption(
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_coop_tek_adoption(coop, month, db)
+
+
+@router.get("/{coop_id}/regen-trajectory", response_model=CoopRegenTrajectoryOut)
+def coop_regen_trajectory(coop_id: int, db: Session = Depends(get_db)):
+    """Cooperative regen trajectory aggregate across all member farms."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_regen_trajectory(coop, db)
