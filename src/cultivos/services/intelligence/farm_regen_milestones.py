@@ -19,6 +19,8 @@ Returns ordered list so the "next" milestone is the first unachieved entry.
 from __future__ import annotations
 
 from collections import defaultdict
+
+from cultivos.services.intelligence.regen_score_util import compute_regen_score
 from datetime import datetime
 from typing import Optional
 
@@ -211,7 +213,7 @@ def _compute_monthly_regen_scores(field_ids: list[int], db: Session) -> list[tup
         avg_health = sum(health_scores) / len(health_scores)
         t = treatment_by_month.get(m, {"total": 0, "organic": 0})
         organic_pct = (t["organic"] / t["total"] * 100.0) if t["total"] > 0 else 0.0
-        regen_score = organic_pct * 0.6 + avg_health * 0.4
+        regen_score = compute_regen_score(organic_pct, avg_health)
         result.append((m, regen_score))
     return result
 

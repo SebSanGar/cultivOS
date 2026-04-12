@@ -13,6 +13,8 @@ Trend compares last-half vs first-half avg regen_score:
 from __future__ import annotations
 
 from collections import defaultdict
+
+from cultivos.services.intelligence.regen_score_util import compute_regen_score
 from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
@@ -117,7 +119,7 @@ def compute_coop_monthly_progress(coop_id: int, months: int, db: Session) -> dic
         t = treatments_by_month.get(key, {"total": 0, "organic": 0})
         total = t["total"]
         organic_pct = (t["organic"] / total * 100.0) if total > 0 else 0.0
-        regen = (organic_pct * 0.6) + (avg_health * 0.4)
+        regen = compute_regen_score(organic_pct, avg_health)
 
         mom_delta = 0.0 if prev_regen is None else regen - prev_regen
         prev_regen = regen

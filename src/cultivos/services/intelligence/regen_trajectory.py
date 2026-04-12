@@ -13,6 +13,8 @@ trend:
 from __future__ import annotations
 
 from collections import defaultdict
+
+from cultivos.services.intelligence.regen_score_util import compute_regen_score
 from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
@@ -75,7 +77,7 @@ def compute_regen_trajectory(farm: Farm, db: Session) -> dict:
         total = t["total"]
         organic_pct = (t["organic"] / total * 100.0) if total > 0 else 0.0
 
-        regen_score = (organic_pct * 0.6) + (avg_health * 0.4)
+        regen_score = compute_regen_score(organic_pct, avg_health)
 
         month_entries.append({
             "month": month_key,
