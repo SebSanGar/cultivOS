@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidencia FODECIJAL — Cooperativa</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .evid-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .evid-header { margin-bottom: 1.5rem; }
+        .evid-header h1 { margin: 0 0 0.25rem; }
+        .evid-header p { color: var(--text-muted, #888); margin: 0; }
+        .evid-selector { margin-bottom: 1.5rem; }
+        .evid-selector label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .evid-selector select { width: 100%; max-width: 420px; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .evid-kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .evid-kpi { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.1rem 1.2rem; border: 1px solid var(--border, #2a2a3e); text-align: center; }
+        .evid-kpi .value { font-size: 1.9rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .evid-kpi .label { font-size: 0.82rem; color: var(--text-muted, #888); margin-top: 0.3rem; }
+        .evid-pill { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+        .evid-pill.high { background: #7f1d1d; color: #f87171; }
+        .evid-pill.medium { background: #854d0e; color: #fbbf24; }
+        .evid-pill.low { background: #166534; color: #4ade80; }
+        .evid-pill.none { background: #1e293b; color: #94a3b8; }
+        .evid-pillars { margin-bottom: 1.5rem; }
+        .evid-pillar { margin-bottom: 0.9rem; }
+        .evid-pillar .pillar-head { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.35rem; }
+        .evid-pillar .pillar-bar { height: 10px; background: var(--border, #2a2a3e); border-radius: 999px; overflow: hidden; }
+        .evid-pillar .pillar-fill { height: 100%; background: var(--accent, #4ade80); transition: width 0.4s ease; }
+        .evid-text-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .evid-text-card { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.1rem 1.2rem; border: 1px solid var(--border, #2a2a3e); }
+        .evid-text-card h3 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.05em; }
+        .evid-text-card p { margin: 0; line-height: 1.5; }
+        .evid-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+        @media (max-width: 640px) { .evid-text-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="evid-container">
+        <header class="evid-header">
+            <h1>Evidencia FODECIJAL — Cooperativa</h1>
+            <p>Panel de evidencia para revisores del programa: lectura de un solo vistazo con indicadores agregados por cooperativa.</p>
+        </header>
+
+        <div class="evid-selector">
+            <label for="coop-evidence-select">Cooperativa</label>
+            <select id="coop-evidence-select">
+                <option value="">Seleccione una cooperativa...</option>
+            </select>
+        </div>
+
+        <div id="coop-evidence-content" style="display:none;">
+            <div class="evid-kpis">
+                <div class="evid-kpi">
+                    <div class="value" id="coop-evidence-readiness">--</div>
+                    <div class="label">Preparacion FODECIJAL</div>
+                </div>
+                <div class="evid-kpi">
+                    <div class="value" id="coop-evidence-health">--</div>
+                    <div class="label">Salud Promedio</div>
+                </div>
+                <div class="evid-kpi">
+                    <div class="value" id="coop-evidence-regen">--</div>
+                    <div class="label">Adopcion Regen. (%)</div>
+                </div>
+                <div class="evid-kpi">
+                    <div class="value" id="coop-evidence-co2e">--</div>
+                    <div class="label">CO2e Secuestrado (t)</div>
+                </div>
+                <div class="evid-kpi">
+                    <div class="value" id="coop-evidence-diversity">--</div>
+                    <div class="label">Diversidad de Cultivos</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <span class="evid-pill none" id="coop-evidence-outbreak">Riesgo de brote: --</span>
+            </div>
+
+            <div class="evid-pillars">
+                <div class="evid-pillar">
+                    <div class="pillar-head"><span>Pilar: Preparacion</span><span id="coop-evidence-pillar-readiness-label">--</span></div>
+                    <div class="pillar-bar"><div class="pillar-fill" id="coop-evidence-pillar-readiness" style="width:0%"></div></div>
+                </div>
+                <div class="evid-pillar">
+                    <div class="pillar-head"><span>Pilar: Salud del Portafolio</span><span id="coop-evidence-pillar-health-label">--</span></div>
+                    <div class="pillar-bar"><div class="pillar-fill" id="coop-evidence-pillar-health" style="width:0%"></div></div>
+                </div>
+                <div class="evid-pillar">
+                    <div class="pillar-head"><span>Pilar: Adopcion Regenerativa</span><span id="coop-evidence-pillar-regen-label">--</span></div>
+                    <div class="pillar-bar"><div class="pillar-fill" id="coop-evidence-pillar-regen" style="width:0%"></div></div>
+                </div>
+            </div>
+
+            <div class="evid-text-grid">
+                <div class="evid-text-card">
+                    <h3>Fortaleza principal</h3>
+                    <p id="coop-evidence-strength">--</p>
+                </div>
+                <div class="evid-text-card">
+                    <h3>Debilidad principal</h3>
+                    <p id="coop-evidence-weakness">--</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="coop-evidence-empty" class="evid-empty">Seleccione una cooperativa para ver la evidencia.</div>
+    </div>
+
+    <script src="/coop-evidencia.js"></script>
+</body>
+</html>

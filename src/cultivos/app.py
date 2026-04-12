@@ -524,6 +524,11 @@ def create_app() -> FastAPI:
             """Crop photo analysis — upload field photos for instant visual classification."""
             return FileResponse(frontend_dir / "fotos.html")
 
+        @app.get("/coop-evidencia")
+        async def serve_coop_evidencia():
+            """Cooperative FODECIJAL evidence pack — 5 KPIs, 3 pillar bars, strength/weakness per coop."""
+            return FileResponse(frontend_dir / "coop-evidencia.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
