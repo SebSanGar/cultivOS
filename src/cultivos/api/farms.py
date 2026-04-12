@@ -66,6 +66,8 @@ from cultivos.models.stress_composite import StressCompositeOut
 from cultivos.services.intelligence.stress_composite import compute_stress_composite
 from cultivos.models.soil_trajectory import SoilTrajectoryOut
 from cultivos.services.intelligence.soil_trajectory import compute_soil_trajectory
+from cultivos.models.ndvi_trajectory import NDVITrajectoryOut
+from cultivos.services.intelligence.ndvi_trajectory import compute_ndvi_trajectory
 from cultivos.models.treatment_impact import TreatmentImpactOut
 from cultivos.services.intelligence.treatment_impact import compute_treatment_impact
 from cultivos.models.feedback_trend import FeedbackTrendOut
@@ -764,6 +766,26 @@ def soil_trajectory(farm_id: int, field_id: int, db: Session = Depends(get_db)):
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
     return compute_soil_trajectory(field, db)
+
+
+# ── Field NDVI 90-day trajectory ──────────────────────────────────────────────
+
+@router.get("/{farm_id}/fields/{field_id}/ndvi-trajectory", response_model=NDVITrajectoryOut)
+def ndvi_trajectory(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """Monthly NDVI and stress% trajectory for the last 90 days.
+
+    Groups NDVIResult records by calendar month, averages ndvi_mean and
+    stress_pct per month. ndvi_trend rises when NDVI improves;
+    stress_trend improves when stress% drops.
+    Returns empty months list with stable trends when no NDVI data exists.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_ndvi_trajectory(field, db)
 
 
 # ── Farm treatment impact summary ─────────────────────────────────────────────
