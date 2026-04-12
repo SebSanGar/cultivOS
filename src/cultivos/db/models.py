@@ -495,3 +495,19 @@ class FarmerObservation(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     field = relationship("Field", back_populates="observations")
+
+
+class TEKAdoption(Base):
+    """Farm-level log of ancestral method adoption — closes the TEK feedback loop."""
+    __tablename__ = "tek_adoptions"
+    __table_args__ = (
+        Index("ix_tek_adoptions_farm_adopted", "farm_id", "adopted_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farms.id"), nullable=False)
+    method_name = Column(String(100), nullable=False)
+    adopted_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    fields_applied = Column(JSON, nullable=False, default=list)  # list[int] of field_ids
+    farmer_notes_es = Column(Text, nullable=True, default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
