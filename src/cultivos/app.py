@@ -164,6 +164,7 @@ def create_app() -> FastAPI:
             {"name": "harvests", "description": "Harvest yield records and prediction accuracy closure — links actual yields to AI predictions"},
             {"name": "observations", "description": "Farmer ground-truth observations — completes the data loop (drone + sensor + farmer eyes). Required for WhatsApp integration."},
             {"name": "water", "description": "Water use efficiency — stress index, optimal irrigation mm, and liters wasted per field"},
+            {"name": "fields", "description": "Global field queries across all farms — crop type listing and filtering"},
         ],
     )
 
