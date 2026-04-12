@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI de Tratamientos — Retorno por Tratamiento</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .roi-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .roi-header { margin-bottom: 1.5rem; }
+        .roi-header h1 { margin: 0 0 0.25rem; }
+        .roi-header p { color: var(--text-muted, #888); margin: 0; }
+        .roi-selectors { max-width: 420px; margin-bottom: 1.5rem; }
+        .roi-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .roi-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .roi-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .roi-kpi { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.1rem 1.2rem; }
+        .roi-kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 0.4rem; }
+        .roi-kpi-value { font-size: 1.2rem; font-weight: 700; }
+        .roi-pill { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; }
+        .roi-pill.excelente { background: rgba(74,222,128,0.2); color: #4ade80; }
+        .roi-pill.buena { background: rgba(96,165,250,0.2); color: #60a5fa; }
+        .roi-pill.cuestionable { background: rgba(251,191,36,0.2); color: #fbbf24; }
+        .roi-pill.sin-mejora { background: rgba(248,113,113,0.2); color: #f87171; }
+        .roi-table-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1rem 1.2rem; }
+        .roi-table { width: 100%; border-collapse: collapse; }
+        .roi-table th, .roi-table td { padding: 0.7rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border, #2a2a3e); font-size: 0.95rem; }
+        .roi-table th { color: var(--text-muted, #888); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .roi-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="roi-container">
+        <header class="roi-header">
+            <h1>ROI de Tratamientos</h1>
+            <p>Costo por punto de salud recuperado — evidencia de efectividad económica por tipo de tratamiento (últimos 90 días).</p>
+        </header>
+
+        <div class="roi-selectors">
+            <label for="roi-farm-select">Finca</label>
+            <select id="roi-farm-select">
+                <option value="">Seleccione una finca...</option>
+            </select>
+        </div>
+
+        <div id="roi-content" style="display:none;">
+            <div class="roi-kpi-row">
+                <div class="roi-kpi">
+                    <div class="roi-kpi-label">Mejor ROI (tratamiento)</div>
+                    <div class="roi-kpi-value" id="roi-best-treatment">--</div>
+                </div>
+                <div class="roi-kpi">
+                    <div class="roi-kpi-label">Peor ROI (tratamiento)</div>
+                    <div class="roi-kpi-value" id="roi-worst-treatment">--</div>
+                </div>
+                <div class="roi-kpi">
+                    <div class="roi-kpi-label">Recomendación</div>
+                    <div><span class="roi-pill" id="roi-recommendation-pill">--</span></div>
+                </div>
+            </div>
+
+            <div class="roi-table-card">
+                <table class="roi-table">
+                    <thead>
+                        <tr>
+                            <th>Tratamiento</th>
+                            <th>Aplicaciones</th>
+                            <th>Costo Total (MXN)</th>
+                            <th>Δ Salud Promedio</th>
+                            <th title="cost_per_health_point">Costo / Punto</th>
+                            <th>Recomendación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roi-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="roi-empty" class="roi-empty">Seleccione una finca para ver el ROI por tratamiento.</div>
+    </div>
+
+    <script src="/roi-tratamientos.js"></script>
+</body>
+</html>

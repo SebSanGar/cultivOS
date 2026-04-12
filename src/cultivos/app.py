@@ -545,6 +545,11 @@ def create_app() -> FastAPI:
             """Field soil nutrient trajectory — Chart.js multi-line N/P/K/OM trend per month (#221)."""
             return FileResponse(frontend_dir / "nutrientes-suelo.html")
 
+        @app.get("/roi-tratamientos")
+        async def serve_roi_tratamientos():
+            """Farm treatment ROI — cost per health point per treatment type + recommendation (#222)."""
+            return FileResponse(frontend_dir / "roi-tratamientos.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
