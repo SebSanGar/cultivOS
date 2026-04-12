@@ -25,6 +25,7 @@ from cultivos.models.carbon_baseline import CarbonBaselineIn, CarbonBaselineOut,
 from cultivos.models.forecast_alerts import ForecastAlertsOut
 from cultivos.models.field_timeline import FieldTimelineOut
 from cultivos.models.annual_report import AnnualReportOut
+from cultivos.models.observation_insights import ObservationInsightsOut
 from cultivos.models.progress_report import ProgressReportOut
 from cultivos.models.regen_trajectory import RegenTrajectoryOut
 from cultivos.models.water_stress import WaterStressOut
@@ -40,6 +41,7 @@ from cultivos.services.intelligence.upcoming_treatments import compute_upcoming_
 from cultivos.services.intelligence.carbon import compute_carbon_projection
 from cultivos.services.intelligence.field_timeline import compute_field_timeline
 from cultivos.services.intelligence.annual_report import compute_annual_report
+from cultivos.services.intelligence.observation_insights import compute_observation_insights
 from cultivos.services.intelligence.progress_report import compute_progress_report
 from cultivos.services.intelligence.regen_trajectory import compute_regen_trajectory
 from cultivos.services.intelligence.water_stress import compute_water_stress
@@ -475,6 +477,25 @@ def farm_annual_report(
         raise HTTPException(status_code=404, detail="Farm not found")
     target_year = year if year is not None else datetime.utcnow().year
     return compute_annual_report(farm, target_year, db)
+
+
+# ── Farmer observation insights (#190) ────────────────────────────────────────
+
+@router.get("/{farm_id}/observation-insights", response_model=ObservationInsightsOut)
+def farm_observation_insights(
+    farm_id: int,
+    days: int = Query(30, ge=1, le=365, description="Lookback window in days"),
+    db: Session = Depends(get_db),
+):
+    """Aggregate farmer observations across a farm's fields.
+
+    Returns counts by observation_type (problem/success/neutral), percentages,
+    and the last_observed_at timestamp. FODECIJAL farmer-engagement evidence.
+    """
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if farm is None:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_observation_insights(farm, days, db)
 
 
 # ── Soil carbon baseline + projection ─────────────────────────────────────────
