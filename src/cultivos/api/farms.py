@@ -82,6 +82,8 @@ from cultivos.models.active_alerts_summary import ActiveAlertsSummaryOut
 from cultivos.services.intelligence.active_alerts_summary import compute_active_alerts_summary
 from cultivos.models.whatsapp_status import WhatsAppStatusOut
 from cultivos.services.intelligence.whatsapp_status import compute_whatsapp_status
+from cultivos.models.health_prediction import HealthPredictionOut
+from cultivos.services.intelligence.health_prediction import compute_health_prediction
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -886,3 +888,15 @@ def whatsapp_status(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_whatsapp_status(farm, db)
+
+
+@router.get("/{farm_id}/fields/{field_id}/health-prediction", response_model=HealthPredictionOut)
+def health_prediction(farm_id: int, field_id: int, db: Session = Depends(get_db)):
+    """30-day health prediction based on linear trend of last 60 days of HealthScore data."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    field = db.query(Field).filter(Field.id == field_id, Field.farm_id == farm_id).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+    return compute_health_prediction(field, db)
