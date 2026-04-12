@@ -24,6 +24,7 @@ from cultivos.models.coop_action_plan import CoopActionPlanOut
 from cultivos.models.coop_treatment_effectiveness import CoopTreatmentEffectivenessOut
 from cultivos.models.coop_tek_adoption import CoopTekAdoptionOut
 from cultivos.models.coop_regen_trajectory import CoopRegenTrajectoryOut
+from cultivos.models.coop_health_prediction import CoopHealthPredictionOut
 from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
 from cultivos.services.intelligence.coop_action_plan import compute_coop_action_plan
 from cultivos.services.intelligence.coop_treatment_effectiveness import (
@@ -32,6 +33,9 @@ from cultivos.services.intelligence.coop_treatment_effectiveness import (
 from cultivos.services.intelligence.coop_tek_adoption import compute_coop_tek_adoption
 from cultivos.services.intelligence.coop_regen_trajectory import (
     compute_coop_regen_trajectory,
+)
+from cultivos.services.intelligence.coop_health_prediction import (
+    compute_coop_health_prediction,
 )
 from cultivos.services.intelligence.fodecijal_readiness import compute_fodecijal_readiness
 from cultivos.services.intelligence.outbreak_risk import compute_outbreak_risk
@@ -307,3 +311,12 @@ def coop_regen_trajectory(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_coop_regen_trajectory(coop, db)
+
+
+@router.get("/{coop_id}/health-prediction", response_model=CoopHealthPredictionOut)
+def coop_health_prediction(coop_id: int, db: Session = Depends(get_db)):
+    """Cooperative 30-day health prediction aggregate across all member farm fields."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_health_prediction(coop, db)
