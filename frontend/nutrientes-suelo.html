@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrientes del Suelo — Parcela</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .sn-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .sn-header { margin-bottom: 1.5rem; }
+        .sn-header h1 { margin: 0 0 0.25rem; }
+        .sn-header p { color: var(--text-muted, #888); margin: 0; }
+        .sn-selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 720px; margin-bottom: 1.5rem; }
+        .sn-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .sn-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .sn-pill-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .sn-pill { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.1rem 1.2rem; }
+        .sn-pill-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 0.4rem; }
+        .sn-pill-value { font-size: 1.2rem; font-weight: 700; }
+        .sn-pill-value.improving { color: #4ade80; }
+        .sn-pill-value.stable { color: #fbbf24; }
+        .sn-pill-value.declining { color: #f87171; }
+        .sn-chart-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem; }
+        .sn-chart-card canvas { max-height: 380px; }
+        .sn-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="sn-container">
+        <header class="sn-header">
+            <h1>Nutrientes del Suelo</h1>
+            <p>Trayectoria mensual de Nitrógeno, Fósforo, Potasio y materia orgánica en los últimos 12 meses.</p>
+        </header>
+
+        <div class="sn-selectors">
+            <div>
+                <label for="sn-farm-select">Finca</label>
+                <select id="sn-farm-select">
+                    <option value="">Seleccione una finca...</option>
+                </select>
+            </div>
+            <div>
+                <label for="sn-field-select">Parcela (Campo)</label>
+                <select id="sn-field-select" disabled>
+                    <option value="">Seleccione primero una finca...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="sn-content" style="display:none;">
+            <div class="sn-pill-row">
+                <div class="sn-pill">
+                    <div class="sn-pill-label">Nitrógeno (N)</div>
+                    <div class="sn-pill-value" id="sn-nitrogen-trend">--</div>
+                </div>
+                <div class="sn-pill">
+                    <div class="sn-pill-label">Fósforo (P)</div>
+                    <div class="sn-pill-value" id="sn-phosphorus-trend">--</div>
+                </div>
+                <div class="sn-pill">
+                    <div class="sn-pill-label">Potasio (K)</div>
+                    <div class="sn-pill-value" id="sn-potassium-trend">--</div>
+                </div>
+                <div class="sn-pill">
+                    <div class="sn-pill-label">Materia Orgánica</div>
+                    <div class="sn-pill-value" id="sn-organic-trend">--</div>
+                </div>
+            </div>
+
+            <div class="sn-chart-card">
+                <canvas id="sn-chart"></canvas>
+            </div>
+        </div>
+
+        <div id="sn-empty" class="sn-empty">Seleccione una finca y una parcela para ver la trayectoria de nutrientes.</div>
+    </div>
+
+    <script src="/nutrientes-suelo.js"></script>
+</body>
+</html>

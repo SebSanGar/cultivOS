@@ -540,6 +540,11 @@ def create_app() -> FastAPI:
             """Field disease history — Chart.js bar chart of monthly diseases + recurring list (#215)."""
             return FileResponse(frontend_dir / "historial-enfermedades.html")
 
+        @app.get("/nutrientes-suelo")
+        async def serve_nutrientes_suelo():
+            """Field soil nutrient trajectory — Chart.js multi-line N/P/K/OM trend per month (#221)."""
+            return FileResponse(frontend_dir / "nutrientes-suelo.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
