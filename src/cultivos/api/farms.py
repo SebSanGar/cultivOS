@@ -80,6 +80,8 @@ from cultivos.models.regional_benchmark import RegionalBenchmarkOut
 from cultivos.services.intelligence.regional_benchmark import compute_regional_benchmark
 from cultivos.models.active_alerts_summary import ActiveAlertsSummaryOut
 from cultivos.services.intelligence.active_alerts_summary import compute_active_alerts_summary
+from cultivos.models.whatsapp_status import WhatsAppStatusOut
+from cultivos.services.intelligence.whatsapp_status import compute_whatsapp_status
 
 router = APIRouter(prefix="/api/farms", tags=["farms"])
 
@@ -875,3 +877,12 @@ def active_alerts_summary(farm_id: int, db: Session = Depends(get_db)):
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
     return compute_active_alerts_summary(farm, db)
+
+
+@router.get("/{farm_id}/whatsapp-status", response_model=WhatsAppStatusOut)
+def whatsapp_status(farm_id: int, db: Session = Depends(get_db)):
+    """3-line Spanish WhatsApp message composing current alert state for the farm."""
+    farm = db.query(Farm).filter(Farm.id == farm_id).first()
+    if not farm:
+        raise HTTPException(status_code=404, detail="Farm not found")
+    return compute_whatsapp_status(farm, db)
