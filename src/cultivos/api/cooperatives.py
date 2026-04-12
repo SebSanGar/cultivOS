@@ -20,11 +20,15 @@ from cultivos.models.carbon_summary import CoopCarbonSummaryOut
 from cultivos.models.regen_adoption import RegenAdoptionOut
 from cultivos.models.fodecijal_readiness import FodecijalReadinessOut
 from cultivos.models.outbreak_risk import CoopOutbreakRiskOut
+from cultivos.models.coop_action_plan import CoopActionPlanOut
 from cultivos.models.coop_treatment_effectiveness import CoopTreatmentEffectivenessOut
+from cultivos.models.coop_tek_adoption import CoopTekAdoptionOut
 from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
+from cultivos.services.intelligence.coop_action_plan import compute_coop_action_plan
 from cultivos.services.intelligence.coop_treatment_effectiveness import (
     compute_coop_treatment_effectiveness,
 )
+from cultivos.services.intelligence.coop_tek_adoption import compute_coop_tek_adoption
 from cultivos.services.intelligence.fodecijal_readiness import compute_fodecijal_readiness
 from cultivos.services.intelligence.outbreak_risk import compute_outbreak_risk
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
@@ -263,3 +267,30 @@ def treatment_effectiveness(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_coop_treatment_effectiveness(coop, db)
+
+
+@router.get("/{coop_id}/action-plan", response_model=CoopActionPlanOut)
+def coop_action_plan(
+    coop_id: int,
+    days: int = Query(7, ge=1, le=30),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    """Cooperative weekly action plan aggregate across all member farm fields."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_action_plan(coop, days, limit, db)
+
+
+@router.get("/{coop_id}/tek-adoption", response_model=CoopTekAdoptionOut)
+def coop_tek_adoption(
+    coop_id: int,
+    month: int | None = Query(None, ge=1, le=12),
+    db: Session = Depends(get_db),
+):
+    """Cooperative TEK practice adoption rate across all member farm fields."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_coop_tek_adoption(coop, month, db)
