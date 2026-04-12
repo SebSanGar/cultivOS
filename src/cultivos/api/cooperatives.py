@@ -19,8 +19,10 @@ from cultivos.models.field_leaderboard import FieldLeaderboardOut
 from cultivos.models.carbon_summary import CoopCarbonSummaryOut
 from cultivos.models.regen_adoption import RegenAdoptionOut
 from cultivos.models.fodecijal_readiness import FodecijalReadinessOut
+from cultivos.models.outbreak_risk import CoopOutbreakRiskOut
 from cultivos.services.intelligence.carbon_summary import compute_coop_carbon_summary
 from cultivos.services.intelligence.fodecijal_readiness import compute_fodecijal_readiness
+from cultivos.services.intelligence.outbreak_risk import compute_outbreak_risk
 from cultivos.services.intelligence.cooperative_portfolio import compute_portfolio_health
 from cultivos.services.intelligence.cooperative_ranking import compute_member_ranking
 from cultivos.services.intelligence.field_leaderboard import compute_field_leaderboard
@@ -236,3 +238,12 @@ def fodecijal_readiness(coop_id: int, db: Session = Depends(get_db)):
     if not coop:
         raise HTTPException(status_code=404, detail="Cooperative not found")
     return compute_fodecijal_readiness(coop, db)
+
+
+@router.get("/{coop_id}/outbreak-risk", response_model=CoopOutbreakRiskOut)
+def outbreak_risk(coop_id: int, db: Session = Depends(get_db)):
+    """Cooperative-level disease outbreak risk aggregate across all member farms."""
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if not coop:
+        raise HTTPException(status_code=404, detail="Cooperative not found")
+    return compute_outbreak_risk(coop, db)
