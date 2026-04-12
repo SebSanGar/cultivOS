@@ -264,5 +264,20 @@
         });
     }
 
+    function loadPlatformStats() {
+        fetchJSON("/api/intel/carbon").then(function (data) {
+            if (!data) return;
+            var co2e = document.getElementById("platform-co2e-value");
+            var fields = document.getElementById("platform-fields-value");
+            var hectares = document.getElementById("platform-hectares-value");
+            var soc = document.getElementById("platform-soc-value");
+            if (co2e) co2e.textContent = (data.total_sequestration_tonnes || 0).toFixed(1);
+            if (fields) fields.textContent = data.total_fields || 0;
+            if (hectares) hectares.textContent = (data.total_hectares || 0).toFixed(1);
+            if (soc) soc.textContent = (data.avg_soc_tonnes_per_ha || 0).toFixed(2);
+        });
+    }
+
     loadFarms();
+    loadPlatformStats();
 })();
