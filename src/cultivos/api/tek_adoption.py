@@ -32,12 +32,18 @@ def _get_farm(farm_id: int, db: Session) -> Farm:
     return farm
 
 
-@router.post("", response_model=TEKAdoptionOut, status_code=201)
+@router.post(
+    "",
+    response_model=TEKAdoptionOut,
+    status_code=201,
+    description="Record a farm's adoption of an ancestral/TEK method on one or more of its fields.",
+)
 def post_tek_adoption(
     farm_id: int,
     payload: TEKAdoptionIn,
     db: Session = Depends(get_db),
 ) -> TEKAdoptionOut:
+    """Record a farm's adoption of an ancestral/TEK method."""
     farm = _get_farm(farm_id, db)
     try:
         row, method = create_adoption(
@@ -65,11 +71,16 @@ def post_tek_adoption(
     )
 
 
-@router.get("", response_model=TEKAdoptionListOut)
+@router.get(
+    "",
+    response_model=TEKAdoptionListOut,
+    description="List a farm's ancestral method adoptions, newest first, with ecological benefit.",
+)
 def get_tek_adoptions(
     farm_id: int,
     db: Session = Depends(get_db),
 ) -> TEKAdoptionListOut:
+    """List a farm's ancestral method adoptions."""
     farm = _get_farm(farm_id, db)
     result = list_adoptions(farm, db)
     return TEKAdoptionListOut(**result)
