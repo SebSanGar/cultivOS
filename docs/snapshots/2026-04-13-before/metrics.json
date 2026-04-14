@@ -1,0 +1,31 @@
+{
+  "backend_loc_total": 30956,
+  "backend_loc_by_subpackage": {
+    "api": 8644,
+    "services": 16150,
+    "models": 3421,
+    "db": 1897,
+    "utils": 65
+  },
+  "frontend_loc": {
+    "html": 9694,
+    "js": 15605,
+    "css": 3897
+  },
+  "test_count": "3449 tests",
+  "pytest_baseline": {
+    "passed": 3449,
+    "failed": 0,
+    "skipped": 0,
+    "wall_seconds": 973.54
+  },
+  "route_count": 218,
+  "pydantic_model_count": 321,
+  "hardcoded_spanish_sample": 371,
+  "aria_attribute_count": 0,
+  "font_size_under_075rem_count": 17,
+  "orphan_html_count": 7,
+  "alembic_present": false,
+  "ci_present": false,
+  "auth_enabled_default": false
+}

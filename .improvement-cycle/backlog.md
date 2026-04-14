@@ -16,7 +16,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 
 ### GRANT-SAFE (runnable now through 2026-05-14)
 
-- [ ] **N0 · Phase 0 — baseline snapshot**  `GRANT-SAFE`
+- [x] **N0 · Phase 0 — baseline snapshot**  `GRANT-SAFE`
   - Create `docs/snapshots/2026-04-13-before/` with:
     - `metrics.json` — machine-captured scalar metrics. Keys snake_case. Collect:
       - `backend_loc_total` — `wc -l $(find src/cultivos -name "*.py") | tail -1`
