@@ -79,7 +79,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 - [ ] **N13 · Phase 3 — design tokens extraction**  `POST-GRANT` — advisor review; zero visual diff required
 - [ ] **N14 · Phase 3 — ARIA pass**  `POST-GRANT`
 - [ ] **N15 · Phase 3 — i18n skeleton + market toggle**  `POST-GRANT`
-- [ ] **N16 · Phase 3 — orphan page cleanup**  `POST-GRANT` — verify via grep no links exist before deleting
+- [ ] **N16 · Phase 3 — orphan page cleanup**  `POST-GRANT` — true orphan detection: a page is only orphan if (a) no other HTML file links to it via `href=` and (b) it loads no script that exists in `frontend/`. Basename-matching alone is wrong — `index.html` pairs with `app.js`, not `index.js`. Scan scripts and links before deleting. Verify via `grep -rE 'href=.*{name}|src=.*{name}' frontend/` for each candidate.
 - [ ] **N17 · Phase 3 — Playwright smoke tests**  `POST-GRANT`
 - [ ] **N18 · Phase 3 — OpenTelemetry instrumentation**  `POST-GRANT` — optional env-gated
 - [ ] **N19 · Phase 3 — Vite bundler decision**  `POST-GRANT` — advisor review; stretch, may be declined
@@ -91,18 +91,33 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 
 ## Session protocol
 
-Each overnight session must follow this protocol exactly.
+Each overnight session must follow this protocol exactly. Step order matters — the log and checkbox flip must be staged BEFORE the commit, not after, so everything lands in a single atomic commit and there is no commit-hash-prediction problem.
 
-1. **Gate check** — read current Toronto date. Before 2026-05-15 → skip all `POST-GRANT` items.
-2. **Tests on arrival** — `pytest tests/`. If red before any changes, log `BLOCKED: tests red on arrival` and exit without touching code.
-3. **Pick one** — first `[ ]` item matching the gate. If none, log `IDLE: queue empty` and exit cleanly.
+1. **Gate check** — read current Toronto date (`TZ=America/Toronto date +%Y-%m-%d`). Before 2026-05-15 → skip all `POST-GRANT` items. On/after → all items eligible.
+2. **Tests on arrival** — `pytest tests/`. If red before any changes, follow the BLOCKED flow below and exit without touching code.
+3. **Pick one** — first `[ ]` item matching the gate. If none, follow the IDLE flow below and exit cleanly.
 4. **Execute** — follow the item's instructions verbatim. Do not combine items, refactor adjacent code, or add "nice-to-haves."
-5. **Tests again** — `pytest tests/` must pass before commit.
-6. **One commit** — use the exact commit message from the item spec.
-7. **Status log** — append a single line to `docs/snapshots/overnight-log.md` (create if missing): `YYYY-MM-DD HH:MM Toronto — <item id> — <DONE|BLOCKED|IDLE> — <commit hash or reason>`.
-8. **Mark done** — flip the item's checkbox to `[x]` in this file. Include this flip in the same commit as the item's changes.
-9. **Push** — `git push origin improvement-cycle`. Never push to main. Never force-push.
-10. **Exit** — one item per session. Do not pick a second.
+5. **Tests again** — `pytest tests/` must pass. If you cannot get it green without deviating from the item spec, follow the BLOCKED flow.
+6. **Status log** — append a single line to `docs/snapshots/overnight-log.md` (create if missing). Format: `YYYY-MM-DD HH:MM Toronto — <item id> — DONE — <short summary of what shipped>`. **Do NOT include a commit short-hash** — you do not know it yet, and the git log is the authoritative trail. Readers can resolve item→commit via `git log --grep="(N<item>)"`.
+7. **Mark done** — flip the item's checkbox from `[ ]` to `[x]` in this file.
+8. **Stage everything** — `git add` the item's changes + `.improvement-cycle/backlog.md` + `docs/snapshots/overnight-log.md`. Verify with `git status` that nothing else is staged.
+9. **One commit** — use the exact commit message from the item spec. Single commit. No amends.
+10. **Push** — `git push origin improvement-cycle`. Never push to main. Never force-push.
+11. **Exit** — one item per session. Do not pick a second.
+
+### BLOCKED flow (tests red on arrival, test regression, ambiguous spec, or any unsafe condition)
+
+1. Do NOT revert or clean up any partial work — let `git status` show what you touched.
+2. If you have local changes, `git stash` them (do not commit them).
+3. Append a single line to `docs/snapshots/overnight-log.md`: `YYYY-MM-DD HH:MM Toronto — <item id> — BLOCKED — <specific reason>`.
+4. Stage only `docs/snapshots/overnight-log.md` and commit with message `overnight: log BLOCKED for <item id>`.
+5. Push and exit. Do not mark the item `[x]` — it remains `[ ]` for the next session or human review.
+
+### IDLE flow (no eligible item found)
+
+1. Append a single line to `docs/snapshots/overnight-log.md`: `YYYY-MM-DD HH:MM Toronto — — IDLE — <reason e.g. "grant-safe queue empty, waiting for 2026-05-15">`.
+2. Stage only `docs/snapshots/overnight-log.md` and commit with message `overnight: log IDLE — <short reason>`.
+3. Push and exit. No item is touched.
 
 ## Safety clamps
 
