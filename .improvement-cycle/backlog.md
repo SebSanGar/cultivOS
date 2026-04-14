@@ -86,6 +86,13 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 - [ ] **N20 · Phase 4 — closing snapshot `docs/snapshots/uplifted-YYYY-MM-DD/`**  `POST-GRANT`
 - [ ] **N21 · Phase 4 — DELTA.md diff report**  `POST-GRANT`
 - [ ] **N22 · Phase 4 — promote improvement-cycle pattern to `.improvement-cycle/PATTERN.md`**  `POST-GRANT`
+- [ ] **N23 · Phase 3 — shared nav component (structural fix)**  `POST-GRANT`
+  - Problem: 69 HTML files in `frontend/` each hardcode their own `<ul class="nav-tabs">`. The sets diverge (5-7 tabs each, different items, different order). A surgical fix on 2026-04-14 (`734752f` on main) added 7 tabs to `index.html` to unblock grant reviewers, but the chronic divergence remains.
+  - Goal: one source of truth for the nav. Every page renders the same 7-9 main tabs with the correct `active` state set automatically.
+  - Approach: small JS module `frontend/nav.js` exporting `renderNav(activeId)` which writes the `<ul class="nav-tabs">` innerHTML into a `<nav id="main-nav">` shell. Each page replaces its hardcoded nav with `<nav id="main-nav"></nav>` + `<script src="/nav.js"></script>` + an inline call like `renderNav('granjas')`. Single canonical tab list lives in `nav.js`.
+  - Don't try to render the nav server-side. This is vanilla-JS no-bundler by design (ADR-0002). Keep it simple.
+  - Test coverage: Playwright smoke (N17) should assert every main page renders the same top-level nav item count and includes the "Inteligencia" link.
+  - Commit message: `refactor: shared nav component across all frontend pages (N23)`
 
 ---
 
