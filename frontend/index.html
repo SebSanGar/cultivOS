@@ -89,9 +89,10 @@
     </div>
 
     <!-- Farm creation -->
-    <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-bottom:0.75rem">
-        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()">Descargar Reporte de Portafolio</button>
+    <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap">
         <button class="field-panel-back" id="btn-seed-demo" onclick="seedDemoData()">Cargar datos de ejemplo</button>
+        <a class="export-csv-btn" href="/recorrido" style="text-decoration:none;display:inline-flex;align-items:center">Asistente guiado</a>
+        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()">Descargar Reporte de Portafolio</button>
         <button class="export-csv-btn" onclick="toggleFarmForm()">+ Nueva Granja</button>
     </div>
     <form id="farm-create-form" class="soil-entry-form" style="display:none" onsubmit="createFarm(event)">

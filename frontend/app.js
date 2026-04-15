@@ -131,8 +131,8 @@ function renderFarms() {
         farmGrid.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">&#x1f33e;</div>
-                <div class="empty-state-title">Sin granjas registradas</div>
-                <div class="empty-state-text">Crea una granja con "+ Nueva Granja" o carga datos de ejemplo con "Cargar datos de ejemplo"</div>
+                <div class="empty-state-title">Bienvenido a cultivOS</div>
+                <div class="empty-state-text">Toca <strong>Cargar datos de ejemplo</strong> para ver cultivOS en accion con una granja de Jalisco. O usa el <a href="/recorrido">asistente guiado</a> para crear la tuya en 3 pasos.</div>
             </div>`;
         return;
     }
