@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitos Regenerativos — Progreso por Finca</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .hitos-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .hitos-header { margin-bottom: 1.5rem; }
+        .hitos-header h1 { margin: 0 0 0.25rem; }
+        .hitos-header p { color: var(--text-muted, #888); margin: 0; }
+        .hitos-selectors { max-width: 420px; margin-bottom: 1.5rem; }
+        .hitos-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .hitos-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .hitos-progress-section { margin-bottom: 1.5rem; }
+        .hitos-progress-label { font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.5rem; }
+        .hitos-progress-track { width: 100%; height: 12px; background: var(--border, #2a2a3e); border-radius: 6px; overflow: hidden; }
+        .hitos-progress-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #22d3ee); border-radius: 6px; transition: width 0.4s ease; }
+        .hitos-next { font-size: 0.9rem; color: var(--text-muted, #888); margin-top: 0.5rem; }
+        .hitos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .hitos-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.2rem; position: relative; }
+        .hitos-card.achieved { border-color: #4ade80; }
+        .hitos-card.locked { opacity: 0.55; }
+        .hitos-card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .hitos-card-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
+        .hitos-card-desc { font-size: 0.85rem; color: var(--text-muted, #888); }
+        .hitos-card-date { font-size: 0.75rem; color: #4ade80; margin-top: 0.5rem; }
+        .hitos-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+        .hitos-badge.achieved { background: rgba(74,222,128,0.2); color: #4ade80; }
+        .hitos-badge.locked { background: rgba(148,163,184,0.15); color: #94a3b8; }
+        .hitos-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="hitos-container">
+        <div class="hitos-header">
+            <h1>Hitos Regenerativos</h1>
+            <p>Progreso de la finca hacia la agricultura regenerativa</p>
+        </div>
+        <div class="hitos-selectors">
+            <label for="hitos-farm-select">Finca</label>
+            <select id="hitos-farm-select">
+                <option value="">Seleccionar finca...</option>
+            </select>
+        </div>
+        <div class="hitos-progress-section">
+            <div class="hitos-progress-label" id="hitos-progress-label">Progreso: 0 / 7 hitos</div>
+            <div class="hitos-progress-track">
+                <div class="hitos-progress-fill" id="hitos-progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="hitos-next" id="hitos-next-milestone"></div>
+        </div>
+        <div class="hitos-grid" id="hitos-milestones"></div>
+    </div>
+    <script src="/hitos-regenerativos.js"></script>
+</body>
+</html>

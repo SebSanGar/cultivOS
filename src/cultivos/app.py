@@ -545,6 +545,11 @@ def create_app() -> FastAPI:
             """Field soil nutrient trajectory — Chart.js multi-line N/P/K/OM trend per month (#221)."""
             return FileResponse(frontend_dir / "nutrientes-suelo.html")
 
+        @app.get("/hitos-regenerativos")
+        async def serve_hitos_regenerativos():
+            """Farm regen milestones — 7-step regenerative progression per farm (#223)."""
+            return FileResponse(frontend_dir / "hitos-regenerativos.html")
+
         @app.get("/roi-tratamientos")
         async def serve_roi_tratamientos():
             """Farm treatment ROI — cost per health point per treatment type + recommendation (#222)."""
