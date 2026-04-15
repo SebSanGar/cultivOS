@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efectividad de Intervenciones — cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .ei-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; color: #e0e0e0; }
+        .ei-header { text-align: center; margin-bottom: 2rem; }
+        .ei-header h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+        .ei-header p { color: #999; font-size: 0.9rem; }
+        .ei-selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .ei-selectors label { font-size: 0.85rem; color: #aaa; }
+        .ei-selectors select { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #e0e0e0; font-size: 0.9rem; }
+        .ei-selectors .ei-sel-group { flex: 1; min-width: 180px; }
+        .ei-kpi-strip { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .ei-kpi { flex: 1; min-width: 140px; background: #1a1a2e; border-radius: 8px; padding: 1rem; text-align: center; }
+        .ei-kpi .ei-kpi-value { font-size: 1.8rem; font-weight: 700; }
+        .ei-kpi .ei-kpi-label { font-size: 0.75rem; color: #999; margin-top: 0.25rem; }
+        .ei-card-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .ei-card { flex: 1; min-width: 200px; background: #1a1a2e; border-radius: 8px; padding: 1rem; }
+        .ei-card h3 { font-size: 0.85rem; color: #999; margin: 0 0 0.5rem; }
+        .ei-card .ei-card-name { font-size: 1.1rem; font-weight: 600; }
+        .ei-card .ei-card-delta { font-size: 0.85rem; color: #aaa; margin-top: 0.25rem; }
+        .ei-recommendation { background: #1a1a2e; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: #ccc; }
+        .ei-chart-wrap { background: #1a1a2e; border-radius: 8px; padding: 1rem; }
+        .ei-empty { text-align: center; color: #666; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="ei-container">
+        <div class="ei-header">
+            <h1>Efectividad de Intervenciones</h1>
+            <p>Clasificacion de tratamientos por parcela</p>
+        </div>
+
+        <div class="ei-selectors">
+            <div class="ei-sel-group">
+                <label for="ei-farm-select">Finca</label>
+                <select id="ei-farm-select"><option value="">-- Seleccionar finca --</option></select>
+            </div>
+            <div class="ei-sel-group">
+                <label for="ei-field-select">Parcela</label>
+                <select id="ei-field-select" disabled><option value="">-- Seleccionar parcela --</option></select>
+            </div>
+        </div>
+
+        <div class="ei-kpi-strip">
+            <div class="ei-kpi">
+                <div class="ei-kpi-value" id="ei-effectiveness-rate">--</div>
+                <div class="ei-kpi-label">Tasa de efectividad (%)</div>
+            </div>
+            <div class="ei-kpi">
+                <div class="ei-kpi-value" id="ei-treatments-evaluated">--</div>
+                <div class="ei-kpi-label">Tratamientos evaluados</div>
+            </div>
+        </div>
+
+        <div class="ei-card-row">
+            <div class="ei-card" id="ei-best-treatment">
+                <h3>Mejor tratamiento</h3>
+                <div class="ei-card-name" id="ei-best-name">--</div>
+                <div class="ei-card-delta" id="ei-best-delta"></div>
+            </div>
+            <div class="ei-card" id="ei-worst-treatment">
+                <h3>Peor tratamiento</h3>
+                <div class="ei-card-name" id="ei-worst-name">--</div>
+                <div class="ei-card-delta" id="ei-worst-delta"></div>
+            </div>
+        </div>
+
+        <div class="ei-recommendation" id="ei-recommendation">
+            Seleccione una finca y parcela para ver la efectividad de intervenciones.
+        </div>
+
+        <div class="ei-chart-wrap">
+            <canvas id="ei-donut" height="300"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/efectividad-intervenciones.js"></script>
+</body>
+</html>
