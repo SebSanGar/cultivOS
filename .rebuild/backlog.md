@@ -18,7 +18,7 @@
 
 ## Queue
 
-- [ ] **R0 · Scaffold Next.js + Tailwind + shadcn + proof-of-concept**
+- [x] **R0 · Scaffold Next.js + Tailwind + shadcn + proof-of-concept**
   - From the repo root (on `frontend-v2` branch), create a `frontend-v2/` directory.
   - Inside, run: `npx create-next-app@latest . --ts --tailwind --app --src-dir --import-alias '@/*' --no-eslint --use-npm`. Accept all defaults except what the flags force.
   - Initialize shadcn/ui: `npx shadcn@latest init -d` (defaults, Tailwind CSS variables, New York style, Neutral base, CSS variables yes).

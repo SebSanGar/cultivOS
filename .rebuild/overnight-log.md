@@ -1,0 +1,1 @@
+2026-04-15 00:00 Toronto — R0 — DONE — Next.js 16 + Tailwind v3 + shadcn components scaffolded manually (ui.shadcn.com blocked; CLI workaround: manual setup with radix-ui packages + CVA); static export verified with out/index.html; FarmsProof POC component live
