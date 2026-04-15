@@ -42,7 +42,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Commit message: `snapshot: cultivOS pre-improvement baseline (N0)`
   - Do not create a git tag — tagging is a separate human-reviewed step.
 
-- [ ] **N1 · GitHub Actions CI — test + build**  `GRANT-SAFE`
+- [x] **N1 · GitHub Actions CI — test + build**  `GRANT-SAFE`
   - Create `.github/workflows/test.yml`: Python 3.12, cache pip, install `requirements.txt`, run `pytest tests/`. Triggers on push to `main` and `improvement-cycle`, and on PRs targeting `main`.
   - Create `.github/workflows/build.yml`: Docker build using the existing `Dockerfile`. Triggers on tag push matching `v*`. Pushes to GitHub Container Registry (`ghcr.io/sebsangar/cultivos`).
   - Zero source file touches. `.github/` is greenfield.
