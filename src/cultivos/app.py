@@ -585,6 +585,11 @@ def create_app() -> FastAPI:
             """Risk-weighted field priority — ranked cards by urgency (#228)."""
             return FileResponse(frontend_dir / "prioridad-riesgo.html")
 
+        @app.get("/diversidad-cultivos")
+        async def serve_diversidad_cultivos():
+            """Cooperative crop diversity — Shannon index, top crops bar chart, per-farm table (#231)."""
+            return FileResponse(frontend_dir / "diversidad-cultivos.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

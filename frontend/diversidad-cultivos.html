@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diversidad de Cultivos — Cooperativa</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <style>
+        .div-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .div-header { margin-bottom: 1.5rem; }
+        .div-header h1 { margin: 0 0 0.25rem; }
+        .div-header p { color: var(--text-muted, #888); margin: 0; }
+        .div-selector { margin-bottom: 1.5rem; }
+        .div-selector label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .div-selector select { width: 100%; max-width: 420px; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .div-kpi { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.5rem; border: 1px solid var(--border, #2a2a3e); text-align: center; margin-bottom: 1.5rem; max-width: 280px; }
+        .div-kpi .value { font-size: 2.2rem; font-weight: 700; color: var(--accent, #4ade80); }
+        .div-kpi .label { font-size: 0.85rem; color: var(--text-muted, #888); margin-top: 0.3rem; }
+        .div-chart-wrap { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.2rem; border: 1px solid var(--border, #2a2a3e); margin-bottom: 1.5rem; max-width: 700px; }
+        .div-table-wrap { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 1.2rem; border: 1px solid var(--border, #2a2a3e); overflow-x: auto; }
+        .div-table-wrap h2 { margin: 0 0 0.8rem; font-size: 1.1rem; }
+        .div-table { width: 100%; border-collapse: collapse; }
+        .div-table th, .div-table td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border, #2a2a3e); }
+        .div-table th { font-size: 0.82rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.05em; }
+        .div-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="div-container">
+        <header class="div-header">
+            <h1>Diversidad de Cultivos — Cooperativa</h1>
+            <p>Indice de diversidad Shannon, principales cultivos y desglose por finca.</p>
+        </header>
+
+        <div class="div-selector">
+            <label for="diversity-coop-select">Cooperativa</label>
+            <select id="diversity-coop-select">
+                <option value="">Seleccione una cooperativa...</option>
+            </select>
+        </div>
+
+        <div id="diversity-content" style="display:none;">
+            <div class="div-kpi">
+                <div class="value" id="diversity-shannon">--</div>
+                <div class="label">Indice Shannon (H)</div>
+            </div>
+
+            <div class="div-chart-wrap">
+                <h2>Principales Cultivos (hectareas)</h2>
+                <canvas id="diversity-bar-chart" height="180"></canvas>
+            </div>
+
+            <div class="div-table-wrap">
+                <h2>Cultivos por Finca</h2>
+                <table class="div-table">
+                    <thead>
+                        <tr>
+                            <th>Finca</th>
+                            <th>Cultivos Distintos</th>
+                            <th>Tipos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="diversity-farm-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="diversity-empty" class="div-empty">
+            Seleccione una cooperativa para ver la diversidad de cultivos.
+        </div>
+    </div>
+
+    <script src="/diversidad-cultivos.js"></script>
+</body>
+</html>
