@@ -4,9 +4,11 @@
 **Day branch**: `main` (FODECIJAL grant sprint; the overnight agent never touches main)
 **Rule**: Overnight trigger picks the first `[ ]` item in the Queue, executes it end-to-end from the repo root, runs pytest, commits on `improvement-cycle`, appends a status line to `docs/snapshots/overnight-log.md`, marks the item `[x]`, pushes, then exits. One item per night, no scope creep.
 
-**Grant safety gate**: While the FODECIJAL grant sprint is live (deadline **2026-05-14**), only items tagged `GRANT-SAFE` may run. `POST-GRANT` items unlock on **2026-05-15**. The agent checks the current Toronto date at the start of every session and respects the gate.
+**Conflict safety gate**: The day sprint autoagent (FODECIJAL D-items) still runs on `main` and touches backend files. Overnight items that edit `src/cultivos/` must pick a moment when the day sprint isn't holding contested files. In practice: backend hardening items (N9/N10/N18) are safe because day sprint focuses on feature additions, not auth/migration/observability. Grand-safe date-gating is RELAXED as of 2026-04-14 — Seb confirmed the grant is internal motivation, not an external dependency. Items run whenever the queue allows, subject only to the one-commit-per-session clamp and conflict avoidance.
 
 **Why this exists**: cultivOS is the agency's first project to go through a full audit → improvement → case-study cycle. The output of this backlog — the snapshot format, the delegation cadence, the DELTA.md artifact — becomes the agency's template for every future project. This isn't cleanup; it's building the pattern.
+
+**Strategic reframe 2026-04-14**: The frontend will be rebuilt from scratch on the `frontend-v2` branch in the agency's canonical stack (Next.js App Router + Tailwind + shadcn/ui), not incrementally retrofitted. All frontend UX / structural items (N5–N8, N11–N17, N19, N23–N26) are SUPERSEDED. The improvement-cycle branch continues to own backend/ops hardening only. See `~/.claude/projects/-Users-SebSan/memory/project_cultivos_rebuild.md` for the full decision and the rebuild track.
 
 All paths below are **relative to the repo root** (the checkout the remote sandbox clones). Never absolute, never referencing any local filesystem outside the clone.
 
@@ -66,26 +68,35 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Assert as agency standards. Frame as "we do it this way because it works for us," not "chosen per industry convention X."
   - Commit message: `docs: seed architecture decision records (N4)`
 
-### POST-GRANT (unlocks 2026-05-15)
+### ACTIVE — backend + ops (unaffected by rebuild, runs on this branch)
 
-- [ ] **N5 · Phase 1 UX — badge contrast**  `POST-GRANT` — `frontend/styles.css` `.health-badge.{good,warning,critical}`: dark text on saturated bg, WCAG AA verified
-- [ ] **N6 · Phase 1 UX — text size minimums**  `POST-GRANT` — raise all `font-size < 0.75rem` to 0.75rem; labels to 0.8rem
-- [ ] **N7 · Phase 1 UX — touch target sizing**  `POST-GRANT` — buttons `min-height: 44px`, inputs `40px`
-- [ ] **N8 · Phase 1 UX — keyboard focus indicators**  `POST-GRANT` — `:focus-visible` global rule in `frontend/styles.css`
-- [ ] **N9 · Phase 2 — Alembic migrations**  `POST-GRANT` — needs advisor/human review before ship
-- [ ] **N10 · Phase 2 — field-level RBAC**  `POST-GRANT` — needs advisor/human review before ship
-- [ ] **N11 · Phase 2 — semantic link refactor**  `POST-GRANT` — `<div onclick>` → `<a href>` in `frontend/app.js`, `frontend/field.js`
-- [ ] **N12 · Phase 2 — error recovery + toast helper**  `POST-GRANT` — `fetchJSON` retry + user-visible failure toast
-- [ ] **N13 · Phase 3 — design tokens extraction**  `POST-GRANT` — advisor review; zero visual diff required
-- [ ] **N14 · Phase 3 — ARIA pass**  `POST-GRANT`
-- [ ] **N15 · Phase 3 — i18n skeleton + market toggle**  `POST-GRANT`
-- [ ] **N16 · Phase 3 — orphan page cleanup**  `POST-GRANT` — true orphan detection: a page is only orphan if (a) no other HTML file links to it via `href=` and (b) it loads no script that exists in `frontend/`. Basename-matching alone is wrong — `index.html` pairs with `app.js`, not `index.js`. Scan scripts and links before deleting. Verify via `grep -rE 'href=.*{name}|src=.*{name}' frontend/` for each candidate.
-- [ ] **N17 · Phase 3 — Playwright smoke tests**  `POST-GRANT`
-- [ ] **N18 · Phase 3 — OpenTelemetry instrumentation**  `POST-GRANT` — optional env-gated
-- [ ] **N19 · Phase 3 — Vite bundler decision**  `POST-GRANT` — advisor review; stretch, may be declined
-- [ ] **N20 · Phase 4 — closing snapshot `docs/snapshots/uplifted-YYYY-MM-DD/`**  `POST-GRANT`
-- [ ] **N21 · Phase 4 — DELTA.md diff report**  `POST-GRANT`
-- [ ] **N22 · Phase 4 — promote improvement-cycle pattern to `.improvement-cycle/PATTERN.md`**  `POST-GRANT`
+- [ ] **N9 · Alembic migrations**  — needs advisor/human review before ship
+- [ ] **N10 · Field-level RBAC**  — needs advisor/human review before ship; frontend-v2 will consume `/api/auth/me` role to render role-aware nav, so this unblocks the rebuild side too
+- [ ] **N18 · OpenTelemetry instrumentation**  — optional env-gated
+- [ ] **N20 · Closing snapshot `docs/snapshots/uplifted-YYYY-MM-DD/`**  — runs at the end of the rebuild cycle
+- [ ] **N21 · DELTA.md diff report**  — pairs with N20; compares pre-improvement snapshot to post-rebuild state
+- [ ] **N22 · Promote improvement-cycle pattern to `.improvement-cycle/PATTERN.md`**  — agency template artifact
+
+### SUPERSEDED by frontend-v2 rebuild (do NOT execute — reference only)
+
+**Strategic reframe 2026-04-14**: Seb decided to rebuild the frontend from scratch in the agency's canonical stack (Next.js App Router + Tailwind + shadcn/ui) rather than incrementally retrofit the vanilla-JS pile. These items were all frontend UX / structural fixes on the old `frontend/` directory. They are replaced by the new rebuild track on the `frontend-v2` branch (see `~/.claude/projects/-Users-SebSan/memory/project_cultivos_rebuild.md`). The old `frontend/` stays in the repo as a fallback until parity is reached on `frontend-v2`, then gets removed.
+
+- [x] ~~N5 · Phase 1 UX — badge contrast~~ → covered by frontend-v2 tokens + components
+- [x] ~~N6 · Phase 1 UX — text size minimums~~ → covered by frontend-v2 type scale
+- [x] ~~N7 · Phase 1 UX — touch target sizing~~ → covered by frontend-v2 button component
+- [x] ~~N8 · Phase 1 UX — keyboard focus indicators~~ → covered by frontend-v2 (shadcn defaults)
+- [x] ~~N11 · Phase 2 — semantic link refactor~~ → irrelevant; frontend-v2 uses Next.js `<Link>`
+- [x] ~~N12 · Phase 2 — error recovery + toast helper~~ → covered by frontend-v2 (shadcn Toast + React Query retry)
+- [x] ~~N13 · Phase 3 — design tokens extraction~~ → covered by frontend-v2 Tailwind config
+- [x] ~~N14 · Phase 3 — ARIA pass~~ → covered by frontend-v2 (shadcn is WCAG AA)
+- [x] ~~N15 · Phase 3 — i18n skeleton + market toggle~~ → covered by frontend-v2 (next-intl or similar)
+- [x] ~~N16 · Phase 3 — orphan page cleanup~~ → the whole old `frontend/` dir gets deleted when frontend-v2 reaches parity
+- [x] ~~N17 · Phase 3 — Playwright smoke tests~~ → moves to frontend-v2 track, runs on every PR
+- [x] ~~N19 · Phase 3 — Vite bundler decision~~ → moot; frontend-v2 uses Next.js, no Vite needed
+- [x] ~~N23 · Phase 3 — shared nav component~~ → frontend-v2 has this by default (Next.js layouts)
+- [x] ~~N24 · Phase 3 — MAYA canonical nav labels~~ → shipped directly as the frontend-v2 information architecture
+- [x] ~~N25 · Phase 3 — agronomic metric tooltips~~ → covered by frontend-v2 components (shadcn Tooltip + `<Glossary>` helper)
+- [x] ~~N26 · Phase 3 — role-aware nav rendering~~ → covered by frontend-v2 once N10 lands
 - [ ] **N23 · Phase 3 — shared nav component (structural fix)**  `POST-GRANT`
   - Problem: 69 HTML files in `frontend/` each hardcode their own `<ul class="nav-tabs">`. The sets diverge (5-7 tabs each, different items, different order). A surgical fix on 2026-04-14 (`734752f` on main) added 7 tabs to `index.html` to unblock grant reviewers, but the chronic divergence remains.
   - Goal: one source of truth for the nav. Every page renders the same 7-9 main tabs with the correct `active` state set automatically.
