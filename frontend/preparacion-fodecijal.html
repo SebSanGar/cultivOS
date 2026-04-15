@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparacion FODECIJAL — Cooperativa</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .fod-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .fod-header { margin-bottom: 1.5rem; }
+        .fod-header h1 { margin: 0 0 0.25rem; }
+        .fod-header p { color: var(--text-muted, #888); margin: 0; }
+        .fod-selector { margin-bottom: 1.5rem; }
+        .fod-selector label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .fod-selector select { width: 100%; max-width: 420px; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .fod-score-card { background: var(--card-bg, #1a1a2e); border-radius: 12px; padding: 2rem; border: 1px solid var(--border, #2a2a3e); text-align: center; margin-bottom: 1.5rem; max-width: 320px; position: relative; }
+        .fod-ring { width: 140px; height: 140px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 6px solid var(--border, #2a2a3e); margin-bottom: 0.5rem; }
+        .fod-ring.green { border-color: #4ade80; }
+        .fod-ring.amber { border-color: #fbbf24; }
+        .fod-ring.red { border-color: #f87171; }
+        .fod-ring .value { font-size: 2.4rem; font-weight: 700; }
+        .fod-grade { display: inline-block; padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; }
+        .fod-grade.listo { background: rgba(74,222,128,0.15); color: #4ade80; }
+        .fod-grade.avanzado { background: rgba(96,165,250,0.15); color: #60a5fa; }
+        .fod-grade.progreso { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .fod-grade.inicial { background: rgba(248,113,113,0.15); color: #f87171; }
+        .fod-pillars { margin-bottom: 1.5rem; }
+        .fod-pillars h2 { font-size: 1.1rem; margin: 0 0 1rem; }
+        .fod-pillar { background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 0.8rem 1rem; border: 1px solid var(--border, #2a2a3e); margin-bottom: 0.6rem; }
+        .fod-pillar-label { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.4rem; }
+        .fod-pillar-label .name { font-weight: 600; }
+        .fod-pillar-label .pct { color: var(--text-muted, #888); }
+        .fod-bar-track { height: 10px; background: var(--border, #2a2a3e); border-radius: 5px; overflow: hidden; }
+        .fod-bar-fill { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+        .fod-bar-fill.green { background: #4ade80; }
+        .fod-bar-fill.amber { background: #fbbf24; }
+        .fod-bar-fill.red { background: #f87171; }
+        .fod-evidence { font-size: 0.8rem; color: var(--text-muted, #888); margin-top: 0.3rem; }
+        .fod-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="fod-container">
+        <header class="fod-header">
+            <h1>Preparacion FODECIJAL — Cooperativa</h1>
+            <p>Puntaje de preparacion para la convocatoria FODECIJAL 2026 con 5 pilares de evaluacion.</p>
+        </header>
+
+        <div class="fod-selector">
+            <label for="fodecijal-coop-select">Cooperativa</label>
+            <select id="fodecijal-coop-select">
+                <option value="">Seleccione una cooperativa...</option>
+            </select>
+        </div>
+
+        <div id="fodecijal-content" style="display:none;">
+            <div class="fod-score-card">
+                <div class="fod-ring" id="fodecijal-ring">
+                    <span class="value" id="fodecijal-readiness-score">--</span>
+                </div>
+                <div>Puntaje General</div>
+                <div class="fod-grade" id="fodecijal-grade">--</div>
+            </div>
+
+            <div class="fod-pillars">
+                <h2>Pilares de Evaluacion</h2>
+                <div class="fod-pillar" id="pillar-data_completeness">
+                    <div class="fod-pillar-label">
+                        <span class="name">Completitud de Datos (20%)</span>
+                        <span class="pct" id="pct-data_completeness">--</span>
+                    </div>
+                    <div class="fod-bar-track"><div class="fod-bar-fill" id="bar-data_completeness"></div></div>
+                    <div class="fod-evidence" id="ev-data_completeness"></div>
+                </div>
+                <div class="fod-pillar" id="pillar-regen_score">
+                    <div class="fod-pillar-label">
+                        <span class="name">Puntaje Regenerativo (20%)</span>
+                        <span class="pct" id="pct-regen_score">--</span>
+                    </div>
+                    <div class="fod-bar-track"><div class="fod-bar-fill" id="bar-regen_score"></div></div>
+                    <div class="fod-evidence" id="ev-regen_score"></div>
+                </div>
+                <div class="fod-pillar" id="pillar-tek_alignment">
+                    <div class="fod-pillar-label">
+                        <span class="name">Alineacion TEK-Sensor (25%)</span>
+                        <span class="pct" id="pct-tek_alignment">--</span>
+                    </div>
+                    <div class="fod-bar-track"><div class="fod-bar-fill" id="bar-tek_alignment"></div></div>
+                    <div class="fod-evidence" id="ev-tek_alignment"></div>
+                </div>
+                <div class="fod-pillar" id="pillar-sensor_freshness">
+                    <div class="fod-pillar-label">
+                        <span class="name">Frescura de Sensores (15%)</span>
+                        <span class="pct" id="pct-sensor_freshness">--</span>
+                    </div>
+                    <div class="fod-bar-track"><div class="fod-bar-fill" id="bar-sensor_freshness"></div></div>
+                    <div class="fod-evidence" id="ev-sensor_freshness"></div>
+                </div>
+                <div class="fod-pillar" id="pillar-treatment_effectiveness">
+                    <div class="fod-pillar-label">
+                        <span class="name">Efectividad de Tratamientos (20%)</span>
+                        <span class="pct" id="pct-treatment_effectiveness">--</span>
+                    </div>
+                    <div class="fod-bar-track"><div class="fod-bar-fill" id="bar-treatment_effectiveness"></div></div>
+                    <div class="fod-evidence" id="ev-treatment_effectiveness"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fodecijal-empty" class="fod-empty">
+            Seleccione una cooperativa para ver la preparacion FODECIJAL.
+        </div>
+    </div>
+
+    <script src="/preparacion-fodecijal.js"></script>
+</body>
+</html>

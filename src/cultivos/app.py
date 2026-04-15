@@ -590,6 +590,11 @@ def create_app() -> FastAPI:
             """Cooperative crop diversity — Shannon index, top crops bar chart, per-farm table (#231)."""
             return FileResponse(frontend_dir / "diversidad-cultivos.html")
 
+        @app.get("/preparacion-fodecijal")
+        async def serve_preparacion_fodecijal():
+            """Cooperative FODECIJAL readiness — 5-pillar readiness score with grade (#237)."""
+            return FileResponse(frontend_dir / "preparacion-fodecijal.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
