@@ -570,6 +570,11 @@ def create_app() -> FastAPI:
             """Field stress composite index — big number + 3 sub-score gauges (#233)."""
             return FileResponse(frontend_dir / "indice-estres.html")
 
+        @app.get("/frescura-sensores")
+        async def serve_frescura_sensores():
+            """Sensor data freshness — per-field sensor grid with stale indicators (#229)."""
+            return FileResponse(frontend_dir / "frescura-sensores.html")
+
         @app.get("/prioridad-riesgo")
         async def serve_prioridad_riesgo():
             """Risk-weighted field priority — ranked cards by urgency (#228)."""

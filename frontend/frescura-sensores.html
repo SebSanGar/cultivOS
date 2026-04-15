@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frescura de Sensores — Estado de Datos por Campo</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .freshness-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .freshness-header { margin-bottom: 1.5rem; }
+        .freshness-header h1 { margin: 0 0 0.25rem; }
+        .freshness-header p { color: var(--text-muted, #888); margin: 0; }
+        .freshness-selectors { max-width: 420px; margin-bottom: 1.5rem; }
+        .freshness-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .freshness-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .freshness-kpi { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .freshness-kpi-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1rem 1.2rem; min-width: 180px; }
+        .freshness-kpi-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 0.25rem; }
+        .freshness-kpi-value { font-size: 1.8rem; font-weight: 800; }
+        .freshness-table { width: 100%; border-collapse: collapse; background: var(--card-bg, #1a1a2e); border-radius: 8px; overflow: hidden; }
+        .freshness-table th { text-align: left; padding: 0.7rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted, #888); border-bottom: 1px solid var(--border, #2a2a3e); }
+        .freshness-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border, #2a2a3e); }
+        .fresh-green { color: #22c55e; font-weight: 600; }
+        .fresh-amber { color: #f59e0b; font-weight: 600; }
+        .fresh-red { color: #ef4444; font-weight: 600; }
+        .freshness-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+        .stale-badge { display: inline-block; background: #ef4444; color: #fff; border-radius: 4px; padding: 0.15rem 0.45rem; font-size: 0.75rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="freshness-container">
+        <header class="freshness-header">
+            <h1>Frescura de Sensores</h1>
+            <p>Estado de los datos por campo — identifique sensores desactualizados.</p>
+        </header>
+
+        <div class="freshness-selectors">
+            <label for="freshness-farm-select">Finca</label>
+            <select id="freshness-farm-select">
+                <option value="">Seleccione una finca...</option>
+            </select>
+        </div>
+
+        <div id="freshness-content" style="display:none;">
+            <div class="freshness-kpi">
+                <div class="freshness-kpi-card">
+                    <div class="freshness-kpi-label">Sensores desactualizados</div>
+                    <div class="freshness-kpi-value" id="freshness-stale-count">--</div>
+                </div>
+            </div>
+            <table class="freshness-table" id="freshness-grid">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Cultivo</th>
+                        <th>NDVI</th>
+                        <th>Suelo</th>
+                        <th>Salud</th>
+                        <th>Clima</th>
+                        <th>Desactualizados</th>
+                    </tr>
+                </thead>
+                <tbody id="freshness-grid-body"></tbody>
+            </table>
+        </div>
+
+        <div id="freshness-empty" class="freshness-empty">Seleccione una finca para ver la frescura de sensores.</div>
+    </div>
+
+    <script src="/frescura-sensores.js"></script>
+</body>
+</html>
