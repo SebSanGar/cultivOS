@@ -575,6 +575,11 @@ def create_app() -> FastAPI:
             """Sensor data freshness — per-field sensor grid with stale indicators (#229)."""
             return FileResponse(frontend_dir / "frescura-sensores.html")
 
+        @app.get("/escalaciones-alertas")
+        async def serve_escalaciones_alertas():
+            """Alert escalation backlog — unaddressed alerts sorted by days pending (#230)."""
+            return FileResponse(frontend_dir / "escalaciones-alertas.html")
+
         @app.get("/prioridad-riesgo")
         async def serve_prioridad_riesgo():
             """Risk-weighted field priority — ranked cards by urgency (#228)."""
