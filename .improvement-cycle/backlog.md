@@ -91,8 +91,42 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Goal: one source of truth for the nav. Every page renders the same 7-9 main tabs with the correct `active` state set automatically.
   - Approach: small JS module `frontend/nav.js` exporting `renderNav(activeId)` which writes the `<ul class="nav-tabs">` innerHTML into a `<nav id="main-nav">` shell. Each page replaces its hardcoded nav with `<nav id="main-nav"></nav>` + `<script src="/nav.js"></script>` + an inline call like `renderNav('granjas')`. Single canonical tab list lives in `nav.js`.
   - Don't try to render the nav server-side. This is vanilla-JS no-bundler by design (ADR-0002). Keep it simple.
-  - Test coverage: Playwright smoke (N17) should assert every main page renders the same top-level nav item count and includes the "Inteligencia" link.
+  - Test coverage: Playwright smoke (N17) should assert every main page renders the same top-level nav item count and includes the "Mi Campo" link (see N24 for the canonical labels).
   - Commit message: `refactor: shared nav component across all frontend pages (N23)`
+
+- [ ] **N24 · Phase 3 — MAYA canonical nav labels (5-tab farmer nav)**  `POST-GRANT` — depends on N23
+  - **Why**: UX analysis on 2026-04-14 found 3-way semantic overlap between `Inteligencia` / `Conocimiento` / `Cerebro IA` / `Precision IA` / `Recomendaciones` / `Regenerativo` / `Plataforma` / `Estado`. A farmer cannot distinguish these labels. MAYA fail — "most advanced yet approachable" demands that a first-time user guesses correctly on first try. Seb approved the canonical 5-tab set on 2026-04-14.
+  - **Canonical set** (farmer-facing, Spanish-first):
+    | Tab | Route | Absorbs |
+    |---|---|---|
+    | **Granjas** | `/` | portfolio, overview, farm list (no change) |
+    | **Mi Campo** | `/campo` (or new `/mi-campo`) | field detail + Inteligencia + Cerebro IA + Precision IA drill-down |
+    | **Acciones** | `/recomendaciones` | Recomendaciones + Regenerativo scorecard |
+    | **Sabiduría** | `/conocimiento` | knowledge base + ancestral methods + Tek + Alertas Estacionales |
+    | **Sistema** | `/estado` | Notificaciones + Plataforma + Estado |
+  - **Hidden from farmer nav** (moved to admin drill-down or removed entirely): Cerebro IA analytics (`/cerebro-analytics`), Precision IA accuracy tracker (`/precision-ia`), Plataforma catalog (`/plataforma`). These stay accessible via direct URL for grant reviewers and admins but do not clutter the farmer surface.
+  - **Execution**: ride on top of N23's shared `nav.js`. The canonical label set lives in `nav.js` as a single constant. No per-page edits required once N23 lands.
+  - **Farmer impact**: cognitive load drops from ~8 overlapping labels to 5 distinct ones. First-time legibility matches MAYA.
+  - **Risk**: the rename touches user muscle memory if anyone has been using the old labels. Acceptable — the overlap was confusing to begin with, and the rename lands before external farmers onboard.
+  - **Test coverage**: Playwright smoke (N17) asserts the 5 canonical labels render on every main page with correct `href`.
+  - **Open decisions** (Seb owns — do not resolve autonomously):
+    - Should `Mi Campo` route be `/campo` (piggyback on existing field.html) or a new `/mi-campo` landing that lists the user's fields first? Depends on whether a farmer has multiple fields and needs a picker.
+    - Should `Acciones` route default to the highest-priority recommendation, or show the full list? (MAYA: show the highest, with "ver mas" drill-down.)
+  - **Commit message**: `refactor: MAYA canonical 5-tab farmer nav labels (N24)`
+
+- [ ] **N25 · Phase 3 — Agronomic metric tooltips (approachability polish)**  `POST-GRANT`
+  - **Why**: First-time farmers see "Salud: 65", "NDVI 0.42", "CO2e 12.3 t/ha", "SOC 2.1%" without any explanation of what they mean or how they're calculated. MAYA "approachable" half fails — sophistication without legibility is just alienation.
+  - **Scope**: add hover tooltips (or tap-to-expand on mobile) on every agronomic metric label across the frontend. Target pages: `index.html` stat strip, `field.html` health bar + soil panel, `carbon.html`, `regenerative.html`, `intel.html`.
+  - **Approach**: one small `frontend/tooltips.js` file exporting a `explain(metricKey)` helper, plus a CSS rule for `[data-tooltip]` attributes. HTML marks up labels with `data-tooltip="ndvi"` and the helper writes a styled tooltip on hover. Zero dependencies. Vanilla JS.
+  - **Glossary source**: create `frontend/glossary.json` with ~15 entries — NDVI, SOC, CO2e, Salud, Regeneration score, Stress %, etc. Each entry has `short` (one-sentence farmer-friendly explanation) and `long` (agronomist-level detail for drill-down).
+  - **MAYA fit**: the farmer sees "Salud" with a "?" icon; hover/tap reveals "Calculado de NDVI + condicion visible + historial. Escala 0-100, mayor es mejor." The sophistication is earned, not front-loaded.
+  - **Commit message**: `ux: agronomic metric tooltips (N25)`
+
+- [ ] **N26 · Phase 3 — Role-aware nav rendering (hide admin surfaces from farmer view)**  `POST-GRANT` — depends on N10 (RBAC), N23 (shared nav), N24 (canonical labels)
+  - **Why**: Admin-only surfaces (Cerebro IA analytics, Precision IA, Plataforma catalog, API docs, gestion) currently appear in many pages' navs regardless of user role. MAYA: a farmer shouldn't see concepts they don't need, and an admin shouldn't lose access to them.
+  - **Scope**: extend the shared `nav.js` from N23 to take a `userRole` argument and conditionally include admin-only items. Default to `farmer` if no role is known. Admin users see a "+" tab that expands the full admin drill-down.
+  - **Dependencies**: N10 (field-level RBAC) must be landed first so the backend exposes user roles on `/api/auth/me`. N23 must provide the shared nav. N24 provides the canonical label set.
+  - **Commit message**: `feat: role-aware nav rendering (N26)`
 
 ---
 
