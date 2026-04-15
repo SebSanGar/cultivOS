@@ -565,6 +565,11 @@ def create_app() -> FastAPI:
             """Field intervention effectiveness — doughnut chart + best/worst treatment cards (#225)."""
             return FileResponse(frontend_dir / "efectividad-intervenciones.html")
 
+        @app.get("/indice-estres")
+        async def serve_indice_estres():
+            """Field stress composite index — big number + 3 sub-score gauges (#233)."""
+            return FileResponse(frontend_dir / "indice-estres.html")
+
         @app.get("/prioridad-riesgo")
         async def serve_prioridad_riesgo():
             """Risk-weighted field priority — ranked cards by urgency (#228)."""

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Índice de Estrés — Compuesto por Campo</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .stress-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        .stress-header { margin-bottom: 1.5rem; }
+        .stress-header h1 { margin: 0 0 0.25rem; }
+        .stress-header p { color: var(--text-muted, #888); margin: 0; }
+        .stress-selectors { display: flex; gap: 1rem; flex-wrap: wrap; max-width: 600px; margin-bottom: 1.5rem; }
+        .stress-selectors .sel-group { flex: 1; min-width: 200px; }
+        .stress-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .stress-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .stress-panel { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 10px; padding: 1.5rem; }
+        .stress-top { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .stress-ring { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+        .stress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .stress-ring circle { fill: none; stroke-width: 10; }
+        .stress-ring .bg { stroke: var(--border, #2a2a3e); }
+        .stress-ring .fg { stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+        .stress-ring-value { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .stress-big { font-size: 2rem; font-weight: 800; line-height: 1; }
+        .stress-label-small { font-size: 0.75rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.04em; }
+        .stress-pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+        .pill-none { background: #166534; color: #bbf7d0; }
+        .pill-low { background: #065f46; color: #a7f3d0; }
+        .pill-moderate { background: #78350f; color: #fde68a; }
+        .pill-high { background: #7c2d12; color: #fed7aa; }
+        .pill-critical { background: #7f1d1d; color: #fecaca; }
+        .stress-meta { display: flex; flex-direction: column; gap: 0.5rem; }
+        .stress-gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .gauge-card { background: var(--bg, #0f0f1a); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1rem; }
+        .gauge-label { font-size: 0.8rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+        .gauge-bar-bg { height: 10px; border-radius: 5px; background: var(--border, #2a2a3e); overflow: hidden; margin-bottom: 0.3rem; }
+        .gauge-bar-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .gauge-value { font-size: 1.1rem; font-weight: 700; }
+        .stress-rec { margin-top: 1.2rem; padding: 0.8rem 1rem; background: var(--bg, #0f0f1a); border-left: 3px solid var(--accent, #22c55e); border-radius: 4px; font-size: 0.9rem; color: var(--text-muted, #888); font-style: italic; }
+        .stress-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="stress-container">
+        <header class="stress-header">
+            <h1>Índice de Estrés</h1>
+            <p>Índice compuesto de estrés por campo — agua (40%), enfermedad (35%), térmico (25%).</p>
+        </header>
+
+        <div class="stress-selectors">
+            <div class="sel-group">
+                <label for="stress-farm-select">Finca</label>
+                <select id="stress-farm-select">
+                    <option value="">Seleccione una finca...</option>
+                </select>
+            </div>
+            <div class="sel-group">
+                <label for="stress-field-select">Campo</label>
+                <select id="stress-field-select" disabled>
+                    <option value="">Seleccione un campo...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="stress-content" style="display:none;">
+            <div class="stress-panel">
+                <div class="stress-top">
+                    <div class="stress-ring">
+                        <svg viewBox="0 0 160 160">
+                            <circle class="bg" cx="80" cy="80" r="65"/>
+                            <circle class="fg" id="stress-ring-arc" cx="80" cy="80" r="65"
+                                    stroke-dasharray="408.4" stroke-dashoffset="408.4"/>
+                        </svg>
+                        <div class="stress-ring-value">
+                            <span class="stress-big" id="stress-big-number">--</span>
+                            <span class="stress-label-small">Estrés</span>
+                        </div>
+                    </div>
+                    <div class="stress-meta">
+                        <span class="stress-pill" id="stress-level-pill">--</span>
+                    </div>
+                </div>
+                <div class="stress-gauges">
+                    <div class="gauge-card" id="stress-water">
+                        <div class="gauge-label">Agua (40%)</div>
+                        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="gauge-water-fill"></div></div>
+                        <div class="gauge-value" id="gauge-water-value">--</div>
+                    </div>
+                    <div class="gauge-card" id="stress-disease">
+                        <div class="gauge-label">Enfermedad (35%)</div>
+                        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="gauge-disease-fill"></div></div>
+                        <div class="gauge-value" id="gauge-disease-value">--</div>
+                    </div>
+                    <div class="gauge-card" id="stress-thermal">
+                        <div class="gauge-label">Térmico (25%)</div>
+                        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="gauge-thermal-fill"></div></div>
+                        <div class="gauge-value" id="gauge-thermal-value">--</div>
+                    </div>
+                </div>
+                <div class="stress-rec" id="stress-recommendation" style="display:none;"></div>
+            </div>
+        </div>
+
+        <p class="stress-empty" id="stress-empty">Seleccione una finca y un campo para ver el índice de estrés.</p>
+    </div>
+
+    <script src="/indice-estres.js"></script>
+</body>
+</html>
