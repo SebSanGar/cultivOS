@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prioridad de Riesgo — Campos por Urgencia</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .risk-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+        .risk-header { margin-bottom: 1.5rem; }
+        .risk-header h1 { margin: 0 0 0.25rem; }
+        .risk-header p { color: var(--text-muted, #888); margin: 0; }
+        .risk-selectors { max-width: 420px; margin-bottom: 1.5rem; }
+        .risk-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .risk-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .risk-hero { background: var(--card-bg, #1a1a2e); border: 2px solid #ef4444; border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+        .risk-hero-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted, #888); margin-bottom: 0.3rem; }
+        .risk-hero-field { font-size: 1.3rem; font-weight: 700; }
+        .risk-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .risk-card { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 8px; padding: 1.1rem 1.2rem; border-left: 4px solid var(--border, #2a2a3e); }
+        .risk-card.urgency-red { border-left-color: #ef4444; }
+        .risk-card.urgency-amber { border-left-color: #f59e0b; }
+        .risk-card.urgency-green { border-left-color: #22c55e; }
+        .risk-card-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem; }
+        .risk-card-crop { font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.6rem; }
+        .risk-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .risk-stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted, #888); }
+        .risk-stat-value { font-size: 1rem; font-weight: 600; }
+        .risk-score-big { font-size: 1.4rem; font-weight: 800; }
+        .risk-recommendation { font-size: 0.85rem; color: var(--text-muted, #888); margin-top: 0.4rem; font-style: italic; }
+        .risk-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="risk-container">
+        <header class="risk-header">
+            <h1>Prioridad de Riesgo</h1>
+            <p>Campos ordenados por puntuación de riesgo — atienda primero el campo con mayor urgencia.</p>
+        </header>
+
+        <div class="risk-selectors">
+            <label for="risk-farm-select">Finca</label>
+            <select id="risk-farm-select">
+                <option value="">Seleccione una finca...</option>
+            </select>
+        </div>
+
+        <div id="risk-content" style="display:none;">
+            <div id="risk-hero-card" class="risk-hero" style="display:none;">
+                <div class="risk-hero-label">Campo prioritario — actuar primero</div>
+                <div class="risk-hero-field" id="risk-hero-name">--</div>
+                <div id="risk-hero-score" class="risk-score-big">--</div>
+            </div>
+            <div id="risk-field-cards" class="risk-cards"></div>
+        </div>
+
+        <div id="risk-empty" class="risk-empty">Seleccione una finca para ver la prioridad de riesgo por campo.</div>
+    </div>
+
+    <script src="/prioridad-riesgo.js"></script>
+</body>
+</html>
