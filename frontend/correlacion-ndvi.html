@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correlacion NDVI-Salud — cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .cn-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; color: #e0e0e0; }
+        .cn-header { text-align: center; margin-bottom: 2rem; }
+        .cn-header h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+        .cn-header p { color: #999; font-size: 0.9rem; }
+        .cn-selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .cn-selectors label { font-size: 0.85rem; color: #aaa; }
+        .cn-selectors select { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #e0e0e0; font-size: 0.9rem; }
+        .cn-selectors .cn-sel-group { flex: 1; min-width: 180px; }
+        .cn-kpi-strip { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .cn-kpi { flex: 1; min-width: 140px; background: #1a1a2e; border-radius: 8px; padding: 1rem; text-align: center; }
+        .cn-kpi .cn-kpi-value { font-size: 1.8rem; font-weight: 700; }
+        .cn-kpi .cn-kpi-label { font-size: 0.75rem; color: #999; margin-top: 0.25rem; }
+        .cn-pill { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+        .cn-pill-strong { background: #1b5e20; color: #a5d6a7; }
+        .cn-pill-moderate { background: #0d47a1; color: #90caf9; }
+        .cn-pill-weak { background: #e65100; color: #ffcc80; }
+        .cn-pill-none { background: #424242; color: #bdbdbd; }
+        .cn-pill-insufficient { background: #37474f; color: #90a4ae; }
+        .cn-interpretation { background: #1a1a2e; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: #ccc; }
+        .cn-chart-wrap { background: #1a1a2e; border-radius: 8px; padding: 1rem; }
+        .cn-empty { text-align: center; color: #666; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="cn-container">
+        <div class="cn-header">
+            <h1>Correlacion NDVI-Salud</h1>
+            <p>Confianza del sensor NDVI por parcela</p>
+        </div>
+
+        <div class="cn-selectors">
+            <div class="cn-sel-group">
+                <label for="cn-farm-select">Finca</label>
+                <select id="cn-farm-select"><option value="">-- Seleccionar finca --</option></select>
+            </div>
+            <div class="cn-sel-group">
+                <label for="cn-field-select">Parcela</label>
+                <select id="cn-field-select" disabled><option value="">-- Seleccionar parcela --</option></select>
+            </div>
+        </div>
+
+        <div class="cn-kpi-strip">
+            <div class="cn-kpi">
+                <div class="cn-kpi-value" id="cn-r-value">--</div>
+                <div class="cn-kpi-label">Coeficiente r</div>
+            </div>
+            <div class="cn-kpi">
+                <div id="cn-strength-pill" class="cn-pill cn-pill-none">--</div>
+                <div class="cn-kpi-label">Fuerza</div>
+            </div>
+            <div class="cn-kpi">
+                <div class="cn-kpi-value" id="cn-sample-size">--</div>
+                <div class="cn-kpi-label">Muestras</div>
+            </div>
+        </div>
+
+        <div class="cn-interpretation" id="cn-interpretation">
+            Seleccione una finca y parcela para ver la correlacion NDVI-salud.
+        </div>
+
+        <div class="cn-chart-wrap">
+            <canvas id="cn-scatter" height="300"></canvas>
+        </div>
+    </div>
+
+    <script src="/correlacion-ndvi.js"></script>
+</body>
+</html>

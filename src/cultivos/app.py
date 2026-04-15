@@ -555,6 +555,11 @@ def create_app() -> FastAPI:
             """Farm treatment ROI — cost per health point per treatment type + recommendation (#222)."""
             return FileResponse(frontend_dir / "roi-tratamientos.html")
 
+        @app.get("/correlacion-ndvi")
+        async def serve_correlacion_ndvi():
+            """Field NDVI-health correlation — scatter plot + strength pill per field (#224)."""
+            return FileResponse(frontend_dir / "correlacion-ndvi.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
