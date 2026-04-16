@@ -620,6 +620,11 @@ def create_app() -> FastAPI:
             """Field TEK sensor alignment — ancestral practices vs sensor data with score ring and practice cards (#240)."""
             return FileResponse(frontend_dir / "alineacion-tek.html")
 
+        @app.get("/ranking-miembros")
+        async def serve_ranking_miembros():
+            """Cooperative member farm ranking — leaderboard with medal badges and composite scores (#236)."""
+            return FileResponse(frontend_dir / "ranking-miembros.html")
+
         @app.get("/benchmark-regional")
         async def serve_benchmark_regional():
             """Farm regional benchmark — own health vs state peers with percentile rank (#235)."""

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking de Miembros — cultivOS</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 200px; }
+
+        .farm-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem; }
+        .farm-card.rank-1 { border-color: var(--gold); }
+        .farm-card.rank-2 { border-color: var(--silver); }
+        .farm-card.rank-3 { border-color: var(--bronze); }
+
+        .medal { font-size: 1.5rem; min-width: 2rem; text-align: center; }
+        .rank-num { font-size: 1.3rem; font-weight: 700; min-width: 2rem; text-align: center; color: var(--muted); }
+
+        .farm-info { flex: 1; }
+        .farm-name { font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; }
+        .farm-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .stat { font-size: 0.8rem; color: var(--muted); }
+        .stat .stat-value { color: var(--text); font-weight: 600; }
+
+        .composite-score { font-size: 1.5rem; font-weight: 700; min-width: 4rem; text-align: right; }
+        .composite-label { font-size: 0.7rem; color: var(--muted); text-align: right; }
+
+        .no-data { color: var(--muted); text-align: center; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>Ranking de Miembros</h1>
+
+    <div class="selectors">
+        <label>Cooperativa
+            <select id="rank-coop-select"><option value="">Seleccionar cooperativa...</option></select>
+        </label>
+    </div>
+
+    <div id="rank-cards"></div>
+
+    <div id="rank-no-data" class="no-data" style="display:none;">Sin datos disponibles para esta cooperativa.</div>
+
+    <script src="/ranking-miembros.js"></script>
+</body>
+</html>
