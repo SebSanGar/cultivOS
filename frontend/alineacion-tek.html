@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alineación TEK — cultivOS</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 200px; }
+        .score-ring { display: flex; align-items: center; justify-content: center; margin: 1.5rem auto; width: 160px; height: 160px; border-radius: 50%; border: 8px solid var(--border); position: relative; }
+        .score-ring .value { font-size: 2.5rem; font-weight: 700; }
+        .score-ring .label { position: absolute; bottom: -1.5rem; font-size: 0.8rem; color: var(--muted); }
+        .practice-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+        .practice-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .practice-card .evidence { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+        .support-pill { display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+        .support-confirmed { background: #166534; color: #bbf7d0; }
+        .support-nodata { background: #374151; color: #9ca3af; }
+        .no-data-msg { text-align: center; color: var(--muted); padding: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>Alineación TEK — Sensores vs Conocimiento Ancestral</h1>
+
+    <div class="selectors">
+        <label>Finca
+            <select id="tek-farm-select"><option value="">Cargando...</option></select>
+        </label>
+        <label>Campo
+            <select id="tek-field-select"><option value="">Seleccione finca</option></select>
+        </label>
+        <label>Mes
+            <select id="tek-month-select">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </label>
+    </div>
+
+    <div style="text-align:center;">
+        <div class="score-ring" id="tek-score-ring">
+            <span class="value" id="tek-score">--</span>
+            <span class="label">Alineación %</span>
+        </div>
+    </div>
+
+    <div id="tek-practices"></div>
+
+    <script src="/alineacion-tek.js"></script>
+</body>
+</html>

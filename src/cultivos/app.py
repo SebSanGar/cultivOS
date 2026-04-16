@@ -615,6 +615,11 @@ def create_app() -> FastAPI:
             """Field crop resilience score — composite 0-100 with 4 component bars and Spanish grade (#234)."""
             return FileResponse(frontend_dir / "resiliencia.html")
 
+        @app.get("/alineacion-tek")
+        async def serve_alineacion_tek():
+            """Field TEK sensor alignment — ancestral practices vs sensor data with score ring and practice cards (#240)."""
+            return FileResponse(frontend_dir / "alineacion-tek.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
