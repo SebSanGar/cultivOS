@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediccion de Salud — Campo a 30 Dias</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .pred-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        .pred-header { margin-bottom: 1.5rem; }
+        .pred-header h1 { margin: 0 0 0.25rem; }
+        .pred-header p { color: var(--text-muted, #888); margin: 0; }
+        .pred-selectors { display: flex; gap: 1rem; flex-wrap: wrap; max-width: 600px; margin-bottom: 1.5rem; }
+        .pred-selectors .sel-group { flex: 1; min-width: 200px; }
+        .pred-selectors label { display: block; font-size: 0.9rem; color: var(--text-muted, #888); margin-bottom: 0.35rem; }
+        .pred-selectors select { width: 100%; padding: 0.55rem 0.75rem; background: var(--card-bg, #1a1a2e); color: inherit; border: 1px solid var(--border, #2a2a3e); border-radius: 6px; }
+        .pred-panel { background: var(--card-bg, #1a1a2e); border: 1px solid var(--border, #2a2a3e); border-radius: 10px; padding: 2rem; }
+        .pred-scores { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .pred-score-card { text-align: center; min-width: 140px; }
+        .pred-score-label { font-size: 0.8rem; color: var(--text-muted, #888); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+        .pred-score-value { font-size: 2.4rem; font-weight: 800; line-height: 1.1; }
+        .pred-trend-row { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+        .pred-trend-arrow { font-size: 1.6rem; font-weight: 700; }
+        .pred-trend-arrow.up { color: #4ade80; }
+        .pred-trend-arrow.down { color: #f87171; }
+        .pred-trend-arrow.flat { color: #fbbf24; }
+        .pred-delta { font-size: 1rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 6px; }
+        .pred-delta.positive { background: rgba(74,222,128,0.15); color: #4ade80; }
+        .pred-delta.negative { background: rgba(248,113,113,0.15); color: #f87171; }
+        .pred-delta.neutral { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .pred-pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+        .pred-pill.alta { background: rgba(74,222,128,0.15); color: #4ade80; }
+        .pred-pill.media { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .pred-pill.baja { background: rgba(248,113,113,0.15); color: #f87171; }
+        .pred-meta { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .pred-risk-warning { margin-top: 1rem; padding: 0.8rem 1rem; background: rgba(248,113,113,0.1); border-left: 3px solid #f87171; border-radius: 4px; font-size: 0.9rem; color: #fca5a5; display: none; }
+        .pred-empty { text-align: center; padding: 3rem; color: var(--text-muted, #888); }
+    </style>
+</head>
+<body>
+    <div class="pred-container">
+        <header class="pred-header">
+            <h1>Prediccion de Salud — Campo</h1>
+            <p>Proyeccion a 30 dias de la salud del campo basada en tendencia lineal de los ultimos 60 dias.</p>
+        </header>
+
+        <div class="pred-selectors">
+            <div class="sel-group">
+                <label for="pred-farm-select">Finca</label>
+                <select id="pred-farm-select">
+                    <option value="">Seleccione una finca...</option>
+                </select>
+            </div>
+            <div class="sel-group">
+                <label for="pred-field-select">Campo</label>
+                <select id="pred-field-select" disabled>
+                    <option value="">Seleccione un campo...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="pred-content" style="display:none;">
+            <div class="pred-panel">
+                <div class="pred-scores">
+                    <div class="pred-score-card">
+                        <div class="pred-score-label">Salud Actual</div>
+                        <div class="pred-score-value" id="pred-current-score">--</div>
+                    </div>
+                    <div class="pred-score-card">
+                        <div class="pred-score-label">Prediccion 30d</div>
+                        <div class="pred-score-value" id="pred-predicted-score">--</div>
+                    </div>
+                </div>
+
+                <div class="pred-trend-row">
+                    <span id="pred-trend-arrow" class="pred-trend-arrow">--</span>
+                    <span id="pred-delta-badge" class="pred-delta neutral">--</span>
+                </div>
+
+                <div class="pred-meta">
+                    <span>Confianza:</span>
+                    <span id="pred-confidence-pill" class="pred-pill media">--</span>
+                </div>
+
+                <div id="pred-risk-flag" class="pred-risk-warning">
+                    Alerta: La salud proyectada esta por debajo de 50. Se recomienda intervencion inmediata.
+                </div>
+            </div>
+        </div>
+
+        <div id="pred-empty" class="pred-empty" style="display:none;">
+            No hay datos de prediccion para este campo.
+        </div>
+    </div>
+
+    <script src="/prediccion-salud.js"></script>
+</body>
+</html>
