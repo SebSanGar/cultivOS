@@ -605,6 +605,11 @@ def create_app() -> FastAPI:
             """Field weekly action plan — prioritized actions by stress, treatment, and TEK (#239)."""
             return FileResponse(frontend_dir / "plan-accion.html")
 
+        @app.get("/reporte-anual")
+        async def serve_reporte_anual():
+            """Farm annual report — year-over-year performance per field with KPIs (#232)."""
+            return FileResponse(frontend_dir / "reporte-anual.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
