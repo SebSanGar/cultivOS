@@ -35,7 +35,7 @@
   - Commit message: `scaffold: initialize Next.js frontend-v2 + shadcn (R0)`
   - Safety: do not touch anything outside `frontend-v2/` except `.rebuild/backlog.md` (checkbox flip) and `.rebuild/overnight-log.md`.
 
-- [ ] **R1 · App shell + MAYA 5-tab nav component**
+- [x] **R1 · App shell + MAYA 5-tab nav component**
   - Create `frontend-v2/src/app/layout.tsx` as the root layout wrapping every page with a shared header.
   - Shared header component at `frontend-v2/src/components/layout/main-nav.tsx` (client component). Renders 5 nav items using shadcn `NavigationMenu`:
     1. **Granjas** → `/`

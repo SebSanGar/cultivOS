@@ -1,1 +1,2 @@
 2026-04-15 00:00 Toronto — R0 — DONE — Next.js 16 + Tailwind v3 + shadcn components scaffolded manually (ui.shadcn.com blocked; CLI workaround: manual setup with radix-ui packages + CVA); static export verified with out/index.html; FarmsProof POC component live
+2026-04-16 00:00 Toronto — R1 — DONE — App shell shipped: sticky dark header with 5-tab NavigationMenu (Granjas/Mi Campo/Acciones/Sabiduría/Sistema), active-state via usePathname + aria-current, footer, dark mode via html.dark class, 4 placeholder routes; all 6 routes build to static
