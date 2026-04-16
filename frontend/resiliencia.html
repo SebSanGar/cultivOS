@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resiliencia del Campo — cultivOS</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 200px; }
+        .score-ring { display: flex; align-items: center; justify-content: center; margin: 1.5rem auto; width: 160px; height: 160px; border-radius: 50%; border: 8px solid var(--border); position: relative; }
+        .score-ring .value { font-size: 2.5rem; font-weight: 700; }
+        .score-ring .label { position: absolute; bottom: -1.5rem; font-size: 0.8rem; color: var(--muted); }
+        .grade-pill { display: inline-block; padding: 0.35rem 1rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; margin: 1.5rem auto; text-align: center; }
+        .grade-excelente { background: #166534; color: #bbf7d0; }
+        .grade-buena { background: #065f46; color: #a7f3d0; }
+        .grade-regular { background: #78350f; color: #fde68a; }
+        .grade-vulnerable { background: #7f1d1d; color: #fecaca; }
+        .components { max-width: 500px; margin: 1.5rem auto; }
+        .comp-row { display: flex; align-items: center; margin-bottom: 0.75rem; }
+        .comp-label { width: 140px; font-size: 0.85rem; color: var(--muted); }
+        .comp-weight { width: 40px; font-size: 0.75rem; color: var(--muted); text-align: right; margin-right: 0.5rem; }
+        .comp-track { flex: 1; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
+        .comp-fill { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
+        .comp-val { width: 50px; text-align: right; font-size: 0.85rem; margin-left: 0.5rem; }
+        .interpretation { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .center { text-align: center; }
+        .no-data { color: var(--muted); font-style: italic; margin-top: 2rem; text-align: center; }
+        #res-content { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Resiliencia del Campo</h1>
+
+    <div class="selectors">
+        <div>
+            <label>Finca</label>
+            <select id="res-farm-select"><option value="">Seleccione una finca</option></select>
+        </div>
+        <div>
+            <label>Campo</label>
+            <select id="res-field-select" disabled><option value="">Seleccione un campo</option></select>
+        </div>
+    </div>
+
+    <div id="res-no-data" class="no-data" style="display:none;">Sin datos de resiliencia disponibles.</div>
+
+    <div id="res-content">
+        <div class="center">
+            <div class="score-ring" id="res-score-ring">
+                <span class="value" id="res-score">--</span>
+                <span class="label">/ 100</span>
+            </div>
+            <div id="res-grade-pill" class="grade-pill">--</div>
+        </div>
+
+        <div class="components">
+            <div class="comp-row">
+                <span class="comp-label">Salud</span>
+                <span class="comp-weight">40%</span>
+                <div class="comp-track"><div class="comp-fill" id="res-bar-health" style="width:0%;background:var(--green);"></div></div>
+                <span class="comp-val" id="res-val-health">--</span>
+            </div>
+            <div class="comp-row">
+                <span class="comp-label">pH del suelo</span>
+                <span class="comp-weight">20%</span>
+                <div class="comp-track"><div class="comp-fill" id="res-bar-soil-ph" style="width:0%;background:var(--blue);"></div></div>
+                <span class="comp-val" id="res-val-soil-ph">--</span>
+            </div>
+            <div class="comp-row">
+                <span class="comp-label">Estres hidrico inv.</span>
+                <span class="comp-weight">20%</span>
+                <div class="comp-track"><div class="comp-fill" id="res-bar-water-stress" style="width:0%;background:var(--amber);"></div></div>
+                <span class="comp-val" id="res-val-water-stress">--</span>
+            </div>
+            <div class="comp-row">
+                <span class="comp-label">Riesgo enfermedad inv.</span>
+                <span class="comp-weight">20%</span>
+                <div class="comp-track"><div class="comp-fill" id="res-bar-disease-risk" style="width:0%;background:var(--red);"></div></div>
+                <span class="comp-val" id="res-val-disease-risk">--</span>
+            </div>
+        </div>
+
+        <div class="interpretation" id="res-interpretation"></div>
+    </div>
+
+    <script src="/resiliencia.js"></script>
+</body>
+</html>

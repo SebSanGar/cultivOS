@@ -610,6 +610,11 @@ def create_app() -> FastAPI:
             """Farm annual report — year-over-year performance per field with KPIs (#232)."""
             return FileResponse(frontend_dir / "reporte-anual.html")
 
+        @app.get("/resiliencia")
+        async def serve_resiliencia():
+            """Field crop resilience score — composite 0-100 with 4 component bars and Spanish grade (#234)."""
+            return FileResponse(frontend_dir / "resiliencia.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app
