@@ -600,6 +600,11 @@ def create_app() -> FastAPI:
             """Field 30-day health prediction — current vs predicted scores with trend and confidence (#238)."""
             return FileResponse(frontend_dir / "prediccion-salud.html")
 
+        @app.get("/plan-accion")
+        async def serve_plan_accion():
+            """Field weekly action plan — prioritized actions by stress, treatment, and TEK (#239)."""
+            return FileResponse(frontend_dir / "plan-accion.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

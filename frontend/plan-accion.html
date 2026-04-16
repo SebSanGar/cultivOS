@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Accion Semanal | cultivOS</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; margin: 0; padding: 20px; background: #0f172a; color: #e2e8f0; }
+        .page-header { text-align: center; margin-bottom: 32px; }
+        .page-header h1 { font-size: 1.8rem; margin: 0 0 8px; }
+        .page-header p { color: #94a3b8; margin: 0; }
+        .selectors { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+        .selectors select { padding: 8px 16px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #e2e8f0; font-size: 0.95rem; min-width: 180px; }
+        .kpi-strip { display: flex; justify-content: center; gap: 24px; margin-bottom: 28px; }
+        .kpi-card { background: #1e293b; border-radius: 12px; padding: 16px 28px; text-align: center; }
+        .kpi-card .value { font-size: 2.2rem; font-weight: 700; color: #38bdf8; }
+        .kpi-card .label { font-size: 0.85rem; color: #94a3b8; margin-top: 4px; }
+        .action-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .action-card { background: #1e293b; border-radius: 10px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 14px; border-left: 4px solid #475569; }
+        .action-card.high { border-left-color: #ef4444; }
+        .action-card.medium { border-left-color: #f59e0b; }
+        .action-card.low { border-left-color: #22c55e; }
+        .priority-badge { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; flex-shrink: 0; margin-top: 2px; }
+        .priority-badge.high { background: #7f1d1d; color: #fca5a5; }
+        .priority-badge.medium { background: #78350f; color: #fcd34d; }
+        .priority-badge.low { background: #14532d; color: #86efac; }
+        .source-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 500; margin-left: 6px; }
+        .source-badge.stress { background: #1e3a5f; color: #7dd3fc; }
+        .source-badge.treatment { background: #365314; color: #bef264; }
+        .source-badge.tek { background: #4a1d96; color: #c4b5fd; }
+        .action-body { flex: 1; }
+        .action-body .action-text { font-size: 0.95rem; margin: 0 0 6px; }
+        .action-body .action-source { font-size: 0.8rem; color: #94a3b8; }
+        .empty-state { text-align: center; color: #64748b; padding: 40px; }
+        a.back-link { color: #38bdf8; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <a class="back-link" href="/">← Volver al inicio</a>
+        <h1>Plan de Accion Semanal</h1>
+        <p>Acciones prioritarias para tu campo esta semana</p>
+    </div>
+
+    <div class="selectors">
+        <select id="accion-farm-select"><option value="">Seleccionar Finca...</option></select>
+        <select id="accion-field-select" disabled><option value="">Seleccionar Campo...</option></select>
+    </div>
+
+    <div class="kpi-strip">
+        <div class="kpi-card">
+            <div class="value" id="accion-count">--</div>
+            <div class="label">Acciones pendientes</div>
+        </div>
+    </div>
+
+    <div id="accion-cards" class="action-list">
+        <div class="empty-state">Selecciona una finca y un campo para ver el plan de accion.</div>
+    </div>
+
+    <script src="/plan-accion.js"></script>
+</body>
+</html>
