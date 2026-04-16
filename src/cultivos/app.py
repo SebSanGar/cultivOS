@@ -620,6 +620,11 @@ def create_app() -> FastAPI:
             """Field TEK sensor alignment — ancestral practices vs sensor data with score ring and practice cards (#240)."""
             return FileResponse(frontend_dir / "alineacion-tek.html")
 
+        @app.get("/benchmark-regional")
+        async def serve_benchmark_regional():
+            """Farm regional benchmark — own health vs state peers with percentile rank (#235)."""
+            return FileResponse(frontend_dir / "benchmark-regional.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

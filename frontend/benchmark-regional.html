@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark Regional — cultivOS</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 200px; }
+
+        .percentile-big { display: flex; align-items: center; justify-content: center; margin: 1.5rem auto; width: 160px; height: 160px; border-radius: 50%; border: 8px solid var(--border); position: relative; flex-direction: column; }
+        .percentile-big .value { font-size: 2.5rem; font-weight: 700; }
+        .percentile-big .label { font-size: 0.8rem; color: var(--muted); }
+
+        .badge { display: inline-block; padding: 0.35rem 1rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; margin: 0.5rem auto; text-align: center; }
+        .badge-green { background: #166534; color: #bbf7d0; }
+        .badge-amber { background: #78350f; color: #fde68a; }
+        .badge-red { background: #7f1d1d; color: #fecaca; }
+        .badge-gray { background: #374151; color: #d1d5db; }
+
+        .bars-container { display: flex; gap: 2rem; justify-content: center; margin: 1.5rem auto; max-width: 500px; }
+        .bar-wrapper { flex: 1; text-align: center; }
+        .bar-wrapper .bar-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; }
+        .bar-track { width: 100%; height: 20px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 10px; transition: width 0.3s; }
+        .bar-value { font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem; }
+
+        .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1rem auto; max-width: 500px; text-align: center; }
+        .info-card .info-label { font-size: 0.8rem; color: var(--muted); }
+        .info-card .info-value { font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem; }
+
+        .no-data { color: var(--muted); text-align: center; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>Benchmark Regional</h1>
+
+    <div class="selectors">
+        <label>Finca
+            <select id="bench-farm-select"><option value="">Seleccionar finca...</option></select>
+        </label>
+    </div>
+
+    <div id="bench-content" style="display:none; text-align:center;">
+        <div class="percentile-big" id="bench-percentile-ring">
+            <span class="value" id="bench-percentile">--</span>
+            <span class="label">Percentil</span>
+        </div>
+
+        <div class="badge badge-gray" id="bench-better-pct">--</div>
+
+        <div class="bars-container">
+            <div class="bar-wrapper">
+                <div class="bar-label">Tu finca</div>
+                <div class="bar-track"><div class="bar-fill" id="bench-own-bar" style="width:0%; background:var(--green);"></div></div>
+                <div class="bar-value" id="bench-own-value">--</div>
+            </div>
+            <div class="bar-wrapper">
+                <div class="bar-label">Promedio regional</div>
+                <div class="bar-track"><div class="bar-fill" id="bench-regional-bar" style="width:0%; background:var(--blue);"></div></div>
+                <div class="bar-value" id="bench-regional-value">--</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Estado</div>
+            <div class="info-value" id="bench-state">--</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">Fincas comparadas</div>
+            <div class="info-value" id="bench-peer-count">--</div>
+        </div>
+    </div>
+
+    <div id="bench-no-data" class="no-data" style="display:none;">Sin datos disponibles para esta finca.</div>
+
+    <script src="/benchmark-regional.js"></script>
+</body>
+</html>
