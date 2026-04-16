@@ -49,7 +49,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Run `pytest tests/` as a sanity check before committing.
   - Commit message: `ci: add test + build workflows (N1)`
 
-- [ ] **N2 · Auth gating hardening**  `GRANT-SAFE`
+- [x] **N2 · Auth gating hardening**  `GRANT-SAFE`
   - `src/cultivos/config.py:18` — flip `auth_enabled: bool = False` → `auth_enabled: bool = True`.
   - `src/cultivos/app.py` startup — add a boot check: if `settings.auth_enabled` and `settings.jwt_secret_key == ""`, raise `RuntimeError("AUTH_ENABLED=true but JWT_SECRET_KEY is empty")`.
   - Grep `src/cultivos/api/` for every router file. For any endpoint missing `Depends(require_role(...))` or equivalent auth (exclude `/auth/login`, `/auth/register`, `/health` as intentional exceptions), add the guard. Document additions in the commit body.

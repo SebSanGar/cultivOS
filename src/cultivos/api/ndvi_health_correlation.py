@@ -6,6 +6,7 @@ GET /api/farms/{farm_id}/fields/{field_id}/ndvi-health-correlation?days=90
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.ndvi_health_correlation import NdviHealthCorrelationOut
@@ -16,6 +17,7 @@ from cultivos.services.intelligence.ndvi_health_correlation import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/ndvi-health-correlation",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

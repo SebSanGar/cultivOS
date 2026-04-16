@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, MicrobiomeRecord
 from cultivos.db.session import get_db
 from cultivos.models.microbiome import MicrobiomeCreate, MicrobiomeOut, classify_microbiome
@@ -10,6 +11,7 @@ from cultivos.models.microbiome import MicrobiomeCreate, MicrobiomeOut, classify
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/microbiome",
     tags=["microbiome"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

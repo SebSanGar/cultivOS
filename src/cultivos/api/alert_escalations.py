@@ -7,6 +7,7 @@ GET /api/farms/{farm_id}/alert-escalations?days=30 — lists alerts older than
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm
 from cultivos.db.session import get_db
 from cultivos.models.alert_escalations import (
@@ -20,6 +21,7 @@ from cultivos.services.intelligence.alert_escalations import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/alert-escalations",
     tags=["alerts"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

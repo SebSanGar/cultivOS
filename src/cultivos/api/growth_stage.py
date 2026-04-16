@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.growth_stage import GrowthStageOut
@@ -11,6 +12,7 @@ from cultivos.services.crop.phenology import compute_growth_stage, get_all_stage
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/growth-stage",
     tags=["growth-stage"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore
 from cultivos.db.session import get_db
 from cultivos.models.seasonal_alert import (
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.seasonal_calendar import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}",
     tags=["seasonal-alerts"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

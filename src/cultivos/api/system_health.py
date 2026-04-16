@@ -9,13 +9,14 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import (
     Farm, Field, SoilAnalysis, NDVIResult, ThermalResult,
     TreatmentRecord, Alert, FlightLog, WeatherRecord,
 )
 from cultivos.db.session import get_db
 
-router = APIRouter(prefix="/api/system", tags=["system"])
+router = APIRouter(prefix="/api/system", tags=["system"], dependencies=[Depends(get_current_user)])
 
 _start_time = time.monotonic()
 

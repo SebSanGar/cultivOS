@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import (
     Farm, Field, HealthScore, NDVIResult, ThermalResult,
     SoilAnalysis, MicrobiomeRecord, WeatherRecord, TreatmentRecord,
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.yield_model import predict_yield
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, SoilAnalysis
 from cultivos.db.session import get_db
 from cultivos.models.carbon import CarbonReportOut, FarmCarbonSummaryOut, SOCEstimateOut
@@ -12,6 +13,7 @@ from cultivos.services.intelligence.carbon import estimate_soc, compute_carbon_t
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/carbon",
     tags=["carbon"],
+    dependencies=[Depends(get_current_user)]
 )
 
 farm_carbon_router = APIRouter(

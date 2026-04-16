@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import AlertConfig, Farm
 from cultivos.db.session import get_db
 from cultivos.models.alert_config import AlertConfigCreate, AlertConfigOut, AlertConfigUpdate
@@ -10,6 +11,7 @@ from cultivos.models.alert_config import AlertConfigCreate, AlertConfigOut, Aler
 router = APIRouter(
     prefix="/api/farms/{farm_id}/alert-config",
     tags=["alert-config"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

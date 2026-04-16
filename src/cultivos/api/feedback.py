@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, FarmerFeedback, Field, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.feedback import FeedbackIn, FeedbackOut
@@ -10,6 +11,7 @@ from cultivos.models.feedback import FeedbackIn, FeedbackOut
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/feedback",
     tags=["feedback"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

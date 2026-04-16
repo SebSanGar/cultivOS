@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, SoilAnalysis
 from cultivos.db.session import get_db
 from cultivos.models.rotation import MultiYearPlanOut, RotationPlanOut
@@ -15,6 +16,7 @@ from cultivos.services.intelligence.rotation import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/rotation",
     tags=["rotation"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

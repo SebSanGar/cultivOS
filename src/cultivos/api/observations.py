@@ -12,6 +12,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, FarmerObservation, Field
 from cultivos.db.session import get_db
 from cultivos.models.observation import (
@@ -24,6 +25,7 @@ from sqlalchemy.orm import Session
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/observations",
     tags=["observations"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

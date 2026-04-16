@@ -6,6 +6,7 @@ GET /api/farms/{farm_id}/fields/{field_id}/weather-alert-history?days=90
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.field_weather_alert_history import (
@@ -19,6 +20,7 @@ from cultivos.services.intelligence.field_weather_alert_history import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/weather-alert-history",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

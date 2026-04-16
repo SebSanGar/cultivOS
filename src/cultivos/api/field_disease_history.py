@@ -7,6 +7,7 @@ aggregates disease-risk triggers by month over weather + NDVI + soil data.
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.field_disease_history import FieldDiseaseHistoryOut
@@ -14,7 +15,7 @@ from cultivos.services.intelligence.field_disease_history import (
     compute_field_disease_history,
 )
 
-router = APIRouter(tags=["intelligence"])
+router = APIRouter(tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 
 @router.get(

@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore, NDVIResult
 from cultivos.db.session import get_db
 from cultivos.models.anomaly import FieldAnomaliesOut
@@ -11,6 +12,7 @@ from cultivos.services.intelligence.anomaly import detect_health_anomalies, dete
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/anomalies",
     tags=["anomalies"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

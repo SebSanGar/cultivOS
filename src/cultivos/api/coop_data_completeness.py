@@ -8,6 +8,7 @@ worst_farm, and per-grade counts (A/B/C/D).
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Cooperative
 from cultivos.db.session import get_db
 from cultivos.models.coop_data_completeness import (
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.coop_data_completeness import (
 router = APIRouter(
     prefix="/api/cooperatives/{coop_id}/data-completeness",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

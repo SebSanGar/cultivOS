@@ -7,6 +7,7 @@ GET  /api/farms/{farm_id}/tek-adoptions
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm
 from cultivos.db.session import get_db
 from cultivos.models.tek_adoption import (
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.tek_adoption import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/tek-adoptions",
     tags=["tek-adoption"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

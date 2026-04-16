@@ -8,6 +8,7 @@ needing attention and a one-line Spanish summary.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Cooperative
 from cultivos.db.session import get_db
 from cultivos.models.coop_whatsapp_digest import (
@@ -21,6 +22,7 @@ from cultivos.services.intelligence.coop_whatsapp_digest import (
 router = APIRouter(
     prefix="/api/cooperatives/{coop_id}/whatsapp-digest",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

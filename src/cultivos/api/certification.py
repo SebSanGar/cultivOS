@@ -3,11 +3,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.session import get_db
 from cultivos.models.certification import CertificationReadinessOut
 from cultivos.services.intelligence.certification import compute_certification_readiness
 
-router = APIRouter(tags=["intelligence"])
+router = APIRouter(tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 
 @router.get(

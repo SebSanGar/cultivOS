@@ -6,6 +6,7 @@ GET /api/farms/{farm_id}/fields/{field_id}/water-efficiency
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.water_efficiency import WaterEfficiencyOut
@@ -14,6 +15,7 @@ from cultivos.services.intelligence.water_efficiency import compute_water_effici
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/water-efficiency",
     tags=["water"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

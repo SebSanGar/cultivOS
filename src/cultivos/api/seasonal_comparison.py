@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.services.intelligence.seasonal_comparison import compute_seasonal_comparison
@@ -12,6 +13,7 @@ from cultivos.services.intelligence.seasonal_comparison import compute_seasonal_
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/seasonal-comparison",
     tags=["seasonal-comparison"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

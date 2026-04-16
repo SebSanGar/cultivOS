@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, File
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, SoilAnalysis
 from cultivos.db.session import get_db
 from cultivos.models.soil import SoilAnalysisCreate, SoilAnalysisUpdate, SoilAnalysisOut
@@ -11,6 +12,7 @@ from cultivos.services.pipeline.ingest import parse_soil_csv
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/soil",
     tags=["soil"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

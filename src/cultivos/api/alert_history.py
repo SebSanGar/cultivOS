@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Alert, AlertLog
 from cultivos.db.session import get_db
 from cultivos.models.alert import AlertAnalyticsOut
@@ -13,6 +14,7 @@ from cultivos.models.alert import AlertAnalyticsOut
 router = APIRouter(
     prefix="/api/alerts",
     tags=["alert-history"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

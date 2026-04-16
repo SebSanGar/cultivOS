@@ -4,6 +4,7 @@ import numpy as np
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, ThermalResult
 from cultivos.db.session import get_db
 from cultivos.models.thermal import ThermalResultCreate, ThermalResultOut
@@ -12,6 +13,7 @@ from cultivos.services.crop.thermal import compute_thermal_stress
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/thermal",
     tags=["thermal"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

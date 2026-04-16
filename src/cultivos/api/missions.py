@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.mission import MissionPlanOut
@@ -11,6 +12,7 @@ from cultivos.services.drone.mission import generate_mission_plan
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["missions"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

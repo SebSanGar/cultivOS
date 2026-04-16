@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, SoilAnalysis, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.irrigation import IrrigationScheduleOut
@@ -11,6 +12,7 @@ from cultivos.services.intelligence.irrigation import compute_irrigation_schedul
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/irrigation",
     tags=["irrigation"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

@@ -3,12 +3,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.session import get_db
 from cultivos.services.intelligence.completeness import compute_data_completeness
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/data-completeness",
     tags=["completeness"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

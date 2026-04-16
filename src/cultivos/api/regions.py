@@ -5,12 +5,13 @@ over HTTP so frontend pages and grant reviewers can inspect region-aware
 context (climate, soil, crops, currency) without touching service internals.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from cultivos.auth import get_current_user
 from cultivos.models.region import RegionListItem, RegionProfileOut
 from cultivos.services.intelligence.regions import _PROFILES
 
-router = APIRouter(prefix="/api/regions", tags=["regions"])
+router = APIRouter(prefix="/api/regions", tags=["regions"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=list[RegionListItem])

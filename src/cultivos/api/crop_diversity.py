@@ -7,6 +7,7 @@ diversity index, and top 3 crops by hectares across a cooperative's farms.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Cooperative
 from cultivos.db.session import get_db
 from cultivos.models.coop_crop_diversity import (
@@ -21,6 +22,7 @@ from cultivos.services.intelligence.coop_crop_diversity import (
 router = APIRouter(
     prefix="/api/cooperatives/{coop_id}/crop-diversity",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

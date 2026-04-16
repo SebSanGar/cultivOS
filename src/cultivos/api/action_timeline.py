@@ -9,6 +9,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, TreatmentRecord, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.action_timeline import ActionTimelineOut
@@ -17,6 +18,7 @@ from cultivos.services.intelligence.action_timeline import build_action_timeline
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["action-timeline"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

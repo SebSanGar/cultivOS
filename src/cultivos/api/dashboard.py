@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.dashboard import (
@@ -15,7 +16,7 @@ from cultivos.models.dashboard import (
     DashboardWeather,
 )
 
-router = APIRouter(prefix="/api/farms/{farm_id}", tags=["dashboard"])
+router = APIRouter(prefix="/api/farms/{farm_id}", tags=["dashboard"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("/dashboard", response_model=DashboardOut)

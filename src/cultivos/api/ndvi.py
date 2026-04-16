@@ -4,6 +4,7 @@ import numpy as np
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, NDVIResult
 from cultivos.db.session import get_db
 from cultivos.models.ndvi import NDVIResultCreate, NDVIResultOut
@@ -12,6 +13,7 @@ from cultivos.services.crop.ndvi import compute_ndvi, compute_ndvi_stats
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/ndvi",
     tags=["ndvi"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from sqlalchemy import func
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore, NDVIResult, SoilAnalysis, TreatmentRecord
 from cultivos.db.session import get_db
 
@@ -17,7 +18,7 @@ def _safe_filename(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9_-]', '', name.replace(" ", "_"))[:50]
 from cultivos.services.reports import generate_farm_export_csv, generate_farm_report_pdf
 
-router = APIRouter(prefix="/api/farms/{farm_id}", tags=["reports"])
+router = APIRouter(prefix="/api/farms/{farm_id}", tags=["reports"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("/report")

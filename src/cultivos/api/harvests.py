@@ -14,6 +14,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HarvestRecord, PredictionSnapshot
 from cultivos.db.session import get_db
 from cultivos.models.harvest import HarvestRecordIn, HarvestRecordOut
@@ -21,6 +22,7 @@ from cultivos.models.harvest import HarvestRecordIn, HarvestRecordOut
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/harvests",
     tags=["harvests"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

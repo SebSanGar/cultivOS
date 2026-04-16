@@ -10,6 +10,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.field_calendar import CalendarMonthEntry, FieldCalendarOut
@@ -18,6 +19,7 @@ from cultivos.services.intelligence.field_calendar import compute_field_calendar
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/calendar",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

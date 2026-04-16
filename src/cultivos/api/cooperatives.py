@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Cooperative, Farm, Field, HealthScore
 from cultivos.db.session import get_db
 from cultivos.models.cooperative import (
@@ -48,7 +49,7 @@ from cultivos.services.intelligence.cooperative_ranking import compute_member_ra
 from cultivos.services.intelligence.field_leaderboard import compute_field_leaderboard
 from cultivos.services.intelligence.regen_adoption import compute_regen_adoption
 
-router = APIRouter(prefix="/api/cooperatives", tags=["cooperatives"])
+router = APIRouter(prefix="/api/cooperatives", tags=["cooperatives"], dependencies=[Depends(get_current_user)])
 
 
 def _coop_to_out(coop: Cooperative, db: Session) -> dict:

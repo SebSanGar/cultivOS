@@ -5,11 +5,12 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Field
 from cultivos.db.session import get_db
 from cultivos.models.farm import FieldOut
 
-router = APIRouter(prefix="/api/fields", tags=["fields"])
+router = APIRouter(prefix="/api/fields", tags=["fields"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=list[FieldOut])

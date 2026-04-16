@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.session import get_db
 from cultivos.models.risk_map import FieldRiskItem
 from cultivos.services.intelligence.risk_map import compute_farm_risk_map
@@ -10,6 +11,7 @@ from cultivos.services.intelligence.risk_map import compute_farm_risk_map
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields",
     tags=["risk-map"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

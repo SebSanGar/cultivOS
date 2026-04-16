@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Alert, AlertConfig, Farm, Field, HealthScore, NDVIResult, SoilAnalysis, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.alert import AlertCheckResponse, AlertOut
@@ -13,6 +14,7 @@ from cultivos.services.intelligence.irrigation import compute_irrigation_schedul
 router = APIRouter(
     prefix="/api/farms/{farm_id}/alerts",
     tags=["alerts"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

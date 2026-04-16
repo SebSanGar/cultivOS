@@ -97,6 +97,9 @@ def create_app() -> FastAPI:
     """Application factory — creates and configures the FastAPI app."""
     settings = get_settings()
 
+    if settings.auth_enabled and settings.jwt_secret_key == "":
+        raise RuntimeError("AUTH_ENABLED=true but JWT_SECRET_KEY is empty")
+
     logging.basicConfig(
         level=getattr(logging, settings.log_level.upper(), logging.INFO),
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",

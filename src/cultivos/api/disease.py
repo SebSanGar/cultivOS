@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Disease, Farm, Field, NDVIResult, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.disease import DiseaseMatch, DiseaseOut, DiseaseRiskOut, IdentifyRequest
@@ -11,6 +12,7 @@ from cultivos.services.crop.disease import assess_disease_weather_risk, identify
 router = APIRouter(
     prefix="/api/knowledge/diseases",
     tags=["diseases"],
+    dependencies=[Depends(get_current_user)]
 )
 
 disease_risk_router = APIRouter(

@@ -9,11 +9,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.session import get_db
 from cultivos.services.intelligence.regen_scorecard import compute_farm_regen_scorecard_csv
 from cultivos.services.intelligence.regen_scorecard_pdf import generate_regen_scorecard_pdf
 
-router = APIRouter(tags=["intelligence"])
+router = APIRouter(tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 _CSV_HEADERS = [
     "field_id", "field_name", "crop_type", "hectares",

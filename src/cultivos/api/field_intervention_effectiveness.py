@@ -9,6 +9,7 @@ HealthScore lookups. Returns best/worst treatment + Spanish recommendation.
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.field_intervention_effectiveness import (
@@ -18,7 +19,7 @@ from cultivos.services.intelligence.field_intervention_effectiveness import (
     compute_field_intervention_effectiveness,
 )
 
-router = APIRouter(tags=["intelligence"])
+router = APIRouter(tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 
 @router.get(

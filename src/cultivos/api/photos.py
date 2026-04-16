@@ -3,12 +3,13 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, FieldPhoto
 from cultivos.db.session import get_db
 from cultivos.models.photo import PhotoAnalysis, PhotoOut
 from cultivos.services.crop.photo_analysis import analyze_crop_photo
 
-router = APIRouter(prefix="/api/farms/{farm_id}/fields/{field_id}/photos", tags=["photos"])
+router = APIRouter(prefix="/api/farms/{farm_id}/fields/{field_id}/photos", tags=["photos"], dependencies=[Depends(get_current_user)])
 
 
 def _get_field(farm_id: int, field_id: int, db: Session) -> Field:

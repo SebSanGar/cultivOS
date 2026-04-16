@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, HealthScore, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.economics import EconomicImpactOut
@@ -12,6 +13,7 @@ from cultivos.services.intelligence.economics import calculate_farm_savings
 router = APIRouter(
     prefix="/api/farms/{farm_id}/economic-impact",
     tags=["economics"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

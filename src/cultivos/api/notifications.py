@@ -3,11 +3,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import AlertLog, Farm
 from cultivos.db.session import get_db
 from cultivos.models.alert import AlertLogCreate, AlertLogOut
 
-router = APIRouter(prefix="/api/farms/{farm_id}/notifications", tags=["notifications"])
+router = APIRouter(prefix="/api/farms/{farm_id}/notifications", tags=["notifications"], dependencies=[Depends(get_current_user)])
 
 
 def _get_farm(farm_id: int, db: Session):

@@ -1,13 +1,15 @@
 """Multi-sensor fusion validation endpoint."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
+from cultivos.auth import get_current_user
 from cultivos.services.crop.fusion import validate_sensor_fusion
 
 router = APIRouter(
     prefix="/api/analysis",
     tags=["fusion"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

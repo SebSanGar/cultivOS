@@ -8,6 +8,7 @@ efficiency_pct = (1 - water_stress_index) * 100.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, ThermalResult, WeatherRecord
 from cultivos.db.session import get_db
 from cultivos.models.farm_irrigation_efficiency import (
@@ -20,6 +21,7 @@ from cultivos.services.intelligence.water_efficiency import compute_water_effici
 router = APIRouter(
     prefix="/api/farms/{farm_id}/irrigation-efficiency",
     tags=["water"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

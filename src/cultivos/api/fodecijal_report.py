@@ -8,6 +8,7 @@ from fastapi.responses import Response
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import (
     AncestralMethod, Cooperative, CropType, Farm, Fertilizer, Field,
     HealthScore, MicrobiomeRecord, NDVIResult, SoilAnalysis,
@@ -16,7 +17,7 @@ from cultivos.db.models import (
 from cultivos.db.session import get_db
 from cultivos.services.reports import generate_fodecijal_report_pdf
 
-router = APIRouter(prefix="/api/reports", tags=["reports"])
+router = APIRouter(prefix="/api/reports", tags=["reports"], dependencies=[Depends(get_current_user)])
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 

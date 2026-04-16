@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, FarmerFeedback, Field, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.intervention_score import InterventionScoreOut
@@ -15,6 +16,7 @@ from cultivos.services.intelligence.intervention_score import (
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["intervention-scores"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

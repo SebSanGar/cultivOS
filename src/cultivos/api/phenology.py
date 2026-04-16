@@ -1,10 +1,11 @@
 """Phenology calendar endpoint — returns all crop stage timelines."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from cultivos.auth import get_current_user
 from cultivos.services.crop.phenology import get_all_stages_info, _CROP_STAGE_DAYS
 
-router = APIRouter(prefix="/api/phenology", tags=["phenology"])
+router = APIRouter(prefix="/api/phenology", tags=["phenology"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("/calendar")

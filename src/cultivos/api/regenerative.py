@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.regenerative import RegenerativeScoreOut
@@ -11,6 +12,7 @@ from cultivos.services.intelligence.regenerative import compute_regenerative_sco
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

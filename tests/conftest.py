@@ -6,6 +6,24 @@ import pytest
 os.environ["DB_URL"] = "sqlite:///:memory:"
 os.environ["LOG_LEVEL"] = "WARNING"
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
+os.environ["AUTH_ENABLED"] = "false"
+
+
+@pytest.fixture(autouse=True)
+def _auth_baseline():
+    """Ensure AUTH_ENABLED=false and settings cache is fresh at the start of every test.
+
+    Test modules that need auth enabled (test_auth.py, test_intel.py, etc.) use their
+    own autouse fixtures to flip it to 'true'. This baseline fixture runs first in setup
+    (conftest fixtures precede module fixtures) and last in teardown, so it always
+    restores a clean auth-disabled state regardless of what the test changed.
+    """
+    from cultivos.config import get_settings
+    os.environ["AUTH_ENABLED"] = "false"
+    get_settings.cache_clear()
+    yield
+    os.environ["AUTH_ENABLED"] = "false"
+    get_settings.cache_clear()
 
 
 @pytest.fixture

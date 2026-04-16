@@ -9,6 +9,7 @@ improvement for FODECIJAL narrative.
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Cooperative
 from cultivos.db.session import get_db
 from cultivos.models.coop_monthly_progress import (
@@ -22,6 +23,7 @@ from cultivos.services.intelligence.coop_monthly_progress import (
 router = APIRouter(
     prefix="/api/cooperatives/{coop_id}/monthly-progress",
     tags=["intelligence"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

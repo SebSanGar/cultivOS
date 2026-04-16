@@ -3,13 +3,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.session import get_db
 from cultivos.models.farm_regen_milestones import FarmRegenMilestonesOut
 from cultivos.services.intelligence.farm_regen_milestones import (
     compute_farm_regen_milestones,
 )
 
-router = APIRouter(tags=["intelligence"])
+router = APIRouter(tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 
 @router.get(

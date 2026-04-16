@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm
 from cultivos.db.session import get_db
 from cultivos.models.intel import FarmerImpactOut
@@ -11,6 +12,7 @@ from cultivos.services.intelligence.analytics import compute_farmer_impact
 router = APIRouter(
     prefix="/api/farms/{farm_id}",
     tags=["farmer-impact"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

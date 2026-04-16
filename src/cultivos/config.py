@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # Auth
     jwt_secret_key: str = ""  # MUST be set via JWT_SECRET_KEY env var in production
-    auth_enabled: bool = False  # Set True in production
+    auth_enabled: bool = True  # Disable only for local dev: AUTH_ENABLED=false
 
     # WhatsApp
     whatsapp_api_token: str | None = None

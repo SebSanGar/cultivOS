@@ -8,6 +8,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVariety, FarmerVocabulary, Fertilizer
 
 _VALID_TYPES = {"vocab", "tips", "fertilizers", "ancestral"}
@@ -27,6 +28,7 @@ from cultivos.services.intelligence.treatment_success_rates import compute_treat
 router = APIRouter(
     prefix="/api/knowledge",
     tags=["knowledge"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

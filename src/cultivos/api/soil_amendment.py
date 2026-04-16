@@ -1,11 +1,12 @@
 """Soil amendment calculator API — organic prescriptions from soil analysis."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from cultivos.auth import get_current_user
 from cultivos.models.soil_amendment import SoilAmendmentRequest, SoilAmendmentResponse
 from cultivos.services.intelligence.soil_amendment import calculate_soil_amendments
 
-router = APIRouter(prefix="/api/intel", tags=["intelligence"])
+router = APIRouter(prefix="/api/intel", tags=["intelligence"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("/soil-amendment", response_model=SoilAmendmentResponse)

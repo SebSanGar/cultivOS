@@ -7,6 +7,7 @@ Returns per-treatment cost_mxn and health_delta — FODECIJAL "AI with measurabl
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field
 from cultivos.db.session import get_db
 from cultivos.models.intel import TreatmentCostEffectivenessItem
@@ -15,6 +16,7 @@ from cultivos.services.intelligence.analytics import compute_field_treatment_cos
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}",
     tags=["treatment-effectiveness"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

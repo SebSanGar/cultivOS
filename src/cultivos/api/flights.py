@@ -5,6 +5,7 @@ from collections import Counter
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import Farm, Field, FlightLog
 from cultivos.db.session import get_db
 from cultivos.models.flight import FlightLogCreate, FlightLogOut, FlightStatsOut
@@ -12,6 +13,7 @@ from cultivos.models.flight import FlightLogCreate, FlightLogOut, FlightStatsOut
 router = APIRouter(
     prefix="/api/farms/{farm_id}/fields/{field_id}/flights",
     tags=["flights"],
+    dependencies=[Depends(get_current_user)]
 )
 
 

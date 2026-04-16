@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from cultivos.auth import get_current_user
 from cultivos.db.models import (
     AncestralMethod,
     Farm,
@@ -35,6 +36,7 @@ from cultivos.services.intelligence.regions import get_region_profile
 router = APIRouter(
     prefix="/api/farms/{farm_id}/recommendations",
     tags=["recommendations"],
+    dependencies=[Depends(get_current_user)]
 )
 
 
