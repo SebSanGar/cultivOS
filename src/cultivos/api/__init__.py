@@ -76,6 +76,30 @@ from cultivos.api import (
     yield_pred,
 )
 
+# Routers explicitly mounted WITHOUT authentication. These are either:
+#   - unauthenticated flows that must stay open (login, register)
+#   - grant/demo-facing endpoints read by reviewers without credentials
+#   - system health / readiness probes called by infra
+# Everything else in `all_routers` is mounted with
+# `dependencies=[Depends(get_current_user)]` in app.py, so when AUTH_ENABLED
+# is true the route 401s on an unauthenticated caller. When AUTH_ENABLED is
+# false the dependency returns None and behavior is unchanged for tests +
+# demos. Per-route farm_id ownership enforcement is per-handler work still
+# on the backlog (see docs/AUDIT_2026-04-16.md §3.4).
+_PUBLIC_ROUTER_LIST = [
+    auth.router,
+    demo.router,
+    status.router,
+    system_health.router,
+    fodecijal_report.router,
+]
+# APIRouter is not hashable — keep identity lookup via id().
+PUBLIC_ROUTER_IDS = frozenset(id(r) for r in _PUBLIC_ROUTER_LIST)
+
+
+def is_public_router(r) -> bool:
+    return id(r) in PUBLIC_ROUTER_IDS
+
 # Flat list of every APIRouter that app.py should mount.
 all_routers = [
     action_timeline.router,

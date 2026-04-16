@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas Clima — cultivOS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 200px; }
+
+        .kpi-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; min-width: 180px; }
+        .kpi .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi .value { font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem; }
+
+        .pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+        .pill.rising { background: rgba(239,68,68,0.15); color: var(--red); }
+        .pill.falling { background: rgba(34,197,94,0.15); color: var(--green); }
+        .pill.stable { background: rgba(156,163,175,0.15); color: var(--muted); }
+        .pill.none { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+        .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+        .chart-card h2 { font-size: 1rem; color: var(--muted); margin-bottom: 0.75rem; font-weight: 500; }
+        .chart-wrap { position: relative; height: 320px; }
+
+        .no-data { color: var(--muted); text-align: center; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>Alertas Clima — Historial</h1>
+
+    <div class="selectors">
+        <label>Finca
+            <select id="ac-farm-select"><option value="">Seleccionar finca...</option></select>
+        </label>
+        <label>Campo
+            <select id="ac-field-select"><option value="">Seleccionar campo...</option></select>
+        </label>
+        <label>Ventana (días)
+            <select id="ac-days-select">
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="90" selected>90</option>
+                <option value="180">180</option>
+                <option value="365">365</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="kpi-row">
+        <div class="kpi">
+            <div class="label">Total alertas</div>
+            <div class="value" id="ac-total-alerts">--</div>
+        </div>
+        <div class="kpi">
+            <div class="label">Tipo más frecuente</div>
+            <div class="value" id="ac-most-frequent">--</div>
+        </div>
+        <div class="kpi">
+            <div class="label">Tendencia</div>
+            <div class="value"><span class="pill stable" id="ac-trend-pill">--</span></div>
+        </div>
+        <div class="kpi">
+            <div class="label">Alertas por mes</div>
+            <div class="value" id="ac-per-month">--</div>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h2>Alertas por tipo</h2>
+        <div class="chart-wrap">
+            <canvas id="ac-chart"></canvas>
+        </div>
+    </div>
+
+    <div id="ac-no-data" class="no-data" style="display:none;">Sin datos disponibles.</div>
+
+    <script src="/alertas-clima.js"></script>
+</body>
+</html>

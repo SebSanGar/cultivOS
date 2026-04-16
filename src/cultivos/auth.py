@@ -1,18 +1,21 @@
 """Authentication utilities — JWT tokens, password hashing, FastAPI dependencies."""
 
+import base64
 import hashlib
 import hmac
-import json
-import base64
 import time
 from typing import Optional
 
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from cultivos.config import get_settings
 from cultivos.db.session import get_db
+
+_JWT_ALG = "HS256"
+_TOKEN_TTL_SECONDS = 86400  # 24h
 
 _security = HTTPBearer(auto_error=False)
 
@@ -34,51 +37,41 @@ def verify_password(password: str, hashed: str) -> bool:
     return hmac.compare_digest(dk, stored_dk)
 
 
-def create_access_token(user_id: int, username: str, role: str, farm_id: Optional[int] = None) -> str:
-    """Create a simple JWT-like token (HS256)."""
+def _secret() -> str:
     settings = get_settings()
     if not settings.jwt_secret_key or len(settings.jwt_secret_key) < 16:
         raise HTTPException(status_code=500, detail="Server misconfigured: JWT secret not set")
+    return settings.jwt_secret_key
+
+
+def create_access_token(user_id: int, username: str, role: str, farm_id: Optional[int] = None) -> str:
+    """Create a signed JWT (HS256) via PyJWT."""
+    now = int(time.time())
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),  # RFC 7519 requires a string subject
         "username": username,
         "role": role,
         "farm_id": farm_id,
-        "exp": int(time.time()) + 86400,  # 24h
+        "exp": now + _TOKEN_TTL_SECONDS,
+        "iat": now,
     }
-    header = base64.urlsafe_b64encode(json.dumps({"alg": "HS256", "typ": "JWT"}).encode()).decode().rstrip("=")
-    body = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=")
-    signature_input = f"{header}.{body}".encode()
-    sig = hmac.new(settings.jwt_secret_key.encode(), signature_input, hashlib.sha256).digest()
-    signature = base64.urlsafe_b64encode(sig).decode().rstrip("=")
-    return f"{header}.{body}.{signature}"
+    return jwt.encode(payload, _secret(), algorithm=_JWT_ALG)
 
 
 def decode_access_token(token: str) -> dict:
-    """Decode and verify a JWT token. Raises HTTPException on failure."""
-    settings = get_settings()
-    if not settings.jwt_secret_key or len(settings.jwt_secret_key) < 16:
-        raise HTTPException(status_code=500, detail="Server misconfigured: JWT secret not set")
-    parts = token.split(".")
-    if len(parts) != 3:
-        raise HTTPException(status_code=401, detail="Invalid token format")
-
-    header_b, body_b, sig_b = parts
-    signature_input = f"{header_b}.{body_b}".encode()
-    expected_sig = hmac.new(settings.jwt_secret_key.encode(), signature_input, hashlib.sha256).digest()
-    # Pad base64
-    sig_padded = sig_b + "=" * (4 - len(sig_b) % 4)
-    actual_sig = base64.urlsafe_b64decode(sig_padded)
-
-    if not hmac.compare_digest(expected_sig, actual_sig):
-        raise HTTPException(status_code=401, detail="Invalid token signature")
-
-    body_padded = body_b + "=" * (4 - len(body_b) % 4)
-    payload = json.loads(base64.urlsafe_b64decode(body_padded))
-
-    if payload.get("exp", 0) < time.time():
+    """Decode and verify a JWT via PyJWT. Raises HTTPException on failure."""
+    try:
+        payload = jwt.decode(
+            token, _secret(), algorithms=[_JWT_ALG],
+            options={"require": ["exp", "sub"]},
+        )
+    except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
-
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    # Coerce sub back to int for downstream code that expects the original type
+    if isinstance(payload.get("sub"), str) and payload["sub"].isdigit():
+        payload["sub"] = int(payload["sub"])
     return payload
 
 

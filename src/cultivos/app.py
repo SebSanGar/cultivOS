@@ -8,13 +8,13 @@ import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from cultivos.api import all_routers
+from cultivos.api import all_routers, is_public_router
 from cultivos.config import get_settings
 from cultivos.middleware import register_error_handlers
 
@@ -180,9 +180,18 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Routers — registered from central api/__init__.py registry
+    # Routers — registered from central api/__init__.py registry.
+    # Non-public routers are mounted with a session-wide `get_current_user`
+    # dependency. When AUTH_ENABLED is false (default for dev/tests) the
+    # dependency returns None and behavior is unchanged. When AUTH_ENABLED
+    # is true the route 401s on an unauthenticated caller. Per-route
+    # farm_id ownership checks remain a follow-up.
+    from cultivos.auth import get_current_user
     for r in all_routers:
-        app.include_router(r)
+        if is_public_router(r):
+            app.include_router(r)
+        else:
+            app.include_router(r, dependencies=[Depends(get_current_user)])
 
     # Health check
     @app.get("/api/health")
@@ -629,6 +638,11 @@ def create_app() -> FastAPI:
         async def serve_benchmark_regional():
             """Farm regional benchmark — own health vs state peers with percentile rank (#235)."""
             return FileResponse(frontend_dir / "benchmark-regional.html")
+
+        @app.get("/alertas-clima")
+        async def serve_alertas_clima():
+            """Field weather alert history — alerts per type with trend and severity chart (#241)."""
+            return FileResponse(frontend_dir / "alertas-clima.html")
 
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
