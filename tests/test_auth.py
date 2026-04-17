@@ -168,3 +168,45 @@ class TestResearcherBypassesFarmAccessCheck:
         token = _login_user(client, "researcher_x", "secret123")
         resp = client.get(f"/api/farms/{seed_farm_other.id}/dashboard", headers=_auth_header(token))
         assert resp.status_code != 403
+
+
+class TestRegisterFarmIdValidation:
+    """S3 — farm_id ownership validation at self-registration.
+
+    Prevents: user registering as farmer against a nonexistent farm_id
+              or claiming a farm_id that another farmer already owns.
+    """
+
+    def test_register_farmer_with_nonexistent_farm_id_is_404(self, client, db):
+        resp = client.post("/api/auth/register", json={
+            "username": "ghost_farmer",
+            "password": "secret123",
+            "role": "farmer",
+            "farm_id": 99999,
+        })
+        assert resp.status_code == 404
+
+    def test_register_farmer_with_already_claimed_farm_id_is_409(self, client, db, seed_farm):
+        first = client.post("/api/auth/register", json={
+            "username": "real_owner",
+            "password": "secret123",
+            "role": "farmer",
+            "farm_id": seed_farm.id,
+        })
+        assert first.status_code == 201
+        second = client.post("/api/auth/register", json={
+            "username": "impostor",
+            "password": "secret123",
+            "role": "farmer",
+            "farm_id": seed_farm.id,
+        })
+        assert second.status_code == 409
+
+    def test_register_farmer_with_valid_unclaimed_farm_id_succeeds(self, client, db, seed_farm):
+        resp = client.post("/api/auth/register", json={
+            "username": "fresh_farmer",
+            "password": "secret123",
+            "role": "farmer",
+            "farm_id": seed_farm.id,
+        })
+        assert resp.status_code == 201
