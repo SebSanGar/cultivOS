@@ -93,6 +93,33 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         return response
 
 
+def _init_sentry(settings) -> None:
+    """Initialize Sentry error aggregation. No-op when SENTRY_DSN is blank
+    (dev, tests, and any env where the DSN has not been provisioned)."""
+    if not settings.sentry_dsn:
+        return
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.fastapi import FastApiIntegration
+        from sentry_sdk.integrations.starlette import StarletteIntegration
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.sentry_env,
+            traces_sample_rate=settings.sentry_traces_sample_rate,
+            # Attach usernames + IPs by default; disable via SENTRY_SEND_DEFAULT_PII=false
+            send_default_pii=True,
+            integrations=[
+                StarletteIntegration(transaction_style="endpoint"),
+                FastApiIntegration(transaction_style="endpoint"),
+            ],
+        )
+        logger.info("Sentry initialized for env=%s", settings.sentry_env)
+    except Exception as e:
+        # Never let Sentry init failure break app startup
+        logger.warning("Sentry init failed (continuing without): %s", e)
+
+
 def create_app() -> FastAPI:
     """Application factory — creates and configures the FastAPI app."""
     settings = get_settings()
@@ -101,6 +128,8 @@ def create_app() -> FastAPI:
         level=getattr(logging, settings.log_level.upper(), logging.INFO),
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
+
+    _init_sentry(settings)
 
     app = FastAPI(
         title="cultivOS API",

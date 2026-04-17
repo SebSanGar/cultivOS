@@ -12,3 +12,4 @@ Pillow>=10.0
 requests>=2.31
 reportlab
 python-multipart
+sentry-sdk[fastapi]>=2.0

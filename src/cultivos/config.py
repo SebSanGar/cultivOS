@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     cors_origins: str = "http://localhost:3000,http://localhost:8000"
 
+    # Observability — Sentry error aggregation (no-op when DSN is blank)
+    sentry_dsn: str = ""
+    sentry_env: str = "development"
+    sentry_traces_sample_rate: float = 0.0  # Set >0 in prod to enable perf tracing
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
