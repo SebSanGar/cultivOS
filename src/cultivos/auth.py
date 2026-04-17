@@ -119,3 +119,32 @@ def require_role(*roles: str):
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         return user
     return _check
+
+
+def require_farm_access(farm_id: int, user=Depends(get_current_user)):
+    """FastAPI dependency — enforce farm_id ownership for farm-scoped routes.
+
+    Rules:
+      - AUTH_ENABLED=false → no-op (local dev, tests without auth)
+      - admin / researcher → access any farm (platform-wide roles)
+      - farmer → only their own farm_id; 403 otherwise
+      - any role with user.farm_id is None → 403 (orphan account)
+
+    Mount at router level on any router whose prefix includes `{farm_id}`:
+        router = APIRouter(
+            prefix="/api/farms/{farm_id}/...",
+            dependencies=[Depends(require_farm_access)],
+        )
+
+    FastAPI binds the `farm_id` path param into the dep function signature
+    automatically — no per-handler plumbing needed.
+    """
+    if user is None:
+        return None  # Auth disabled
+    role = getattr(user, "role", None)
+    if role in ("admin", "researcher"):
+        return user
+    user_farm_id = getattr(user, "farm_id", None)
+    if role == "farmer" and user_farm_id is not None and user_farm_id == farm_id:
+        return user
+    raise HTTPException(status_code=403, detail="Forbidden: farm access denied")

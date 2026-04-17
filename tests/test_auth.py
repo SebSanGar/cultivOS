@@ -130,3 +130,41 @@ class TestUnauthenticatedReturns401:
             "state": "Jalisco", "country": "MX"
         })
         assert resp.status_code == 401
+
+
+class TestFarmerCannotAccessOtherFarm:
+    """require_farm_access dep: farmer role is scoped to their own farm_id only."""
+
+    def test_farmer_forbidden_on_other_farm(self, client, db, seed_farm, seed_farm_other):
+        """farmer on farm #1 -> GET /api/farms/2/... returns 403"""
+        _register_user(client, "farmer_a", "secret123", "farmer", farm_id=seed_farm.id)
+        token = _login_user(client, "farmer_a", "secret123")
+        # Any farm-scoped route works — pick one that always exists
+        resp = client.get(f"/api/farms/{seed_farm_other.id}/dashboard", headers=_auth_header(token))
+        assert resp.status_code == 403
+
+    def test_farmer_allowed_on_own_farm(self, client, db, seed_farm):
+        """farmer on farm #1 -> GET /api/farms/1/... is allowed (not 403)"""
+        _register_user(client, "farmer_b", "secret123", "farmer", farm_id=seed_farm.id)
+        token = _login_user(client, "farmer_b", "secret123")
+        resp = client.get(f"/api/farms/{seed_farm.id}/dashboard", headers=_auth_header(token))
+        # 200 or 404 are both fine (route may not have data seeded) — just NOT 403
+        assert resp.status_code != 403
+
+
+class TestAdminBypassesFarmAccessCheck:
+    def test_admin_can_reach_any_farm(self, client, db, seed_farm, seed_farm_other):
+        """admin -> any farm_id allowed"""
+        _register_user(client, "admin_x", "secret123", "admin", db=db)
+        token = _login_user(client, "admin_x", "secret123")
+        resp = client.get(f"/api/farms/{seed_farm_other.id}/dashboard", headers=_auth_header(token))
+        assert resp.status_code != 403
+
+
+class TestResearcherBypassesFarmAccessCheck:
+    def test_researcher_can_reach_any_farm(self, client, db, seed_farm, seed_farm_other):
+        """researcher -> any farm_id allowed"""
+        _register_user(client, "researcher_x", "secret123", "researcher")
+        token = _login_user(client, "researcher_x", "secret123")
+        resp = client.get(f"/api/farms/{seed_farm_other.id}/dashboard", headers=_auth_header(token))
+        assert resp.status_code != 403

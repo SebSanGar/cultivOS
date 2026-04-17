@@ -210,17 +210,20 @@ def create_app() -> FastAPI:
     )
 
     # Routers — registered from central api/__init__.py registry.
-    # Non-public routers are mounted with a session-wide `get_current_user`
-    # dependency. When AUTH_ENABLED is false (default for dev/tests) the
-    # dependency returns None and behavior is unchanged. When AUTH_ENABLED
-    # is true the route 401s on an unauthenticated caller. Per-route
-    # farm_id ownership checks remain a follow-up.
-    from cultivos.auth import get_current_user
+    # Non-public routers are mounted with `get_current_user` so auth is
+    # enforced when AUTH_ENABLED=true (no-op otherwise). Farm-scoped
+    # routers (prefix contains `{farm_id}`) additionally get
+    # `require_farm_access` which 403s a farmer who tries to reach a
+    # farm_id that is not their own. Admin + researcher roles see all.
+    from cultivos.auth import get_current_user, require_farm_access
     for r in all_routers:
         if is_public_router(r):
             app.include_router(r)
-        else:
-            app.include_router(r, dependencies=[Depends(get_current_user)])
+            continue
+        deps = [Depends(get_current_user)]
+        if "{farm_id}" in getattr(r, "prefix", ""):
+            deps.append(Depends(require_farm_access))
+        app.include_router(r, dependencies=deps)
 
     # Health check
     @app.get("/api/health")
