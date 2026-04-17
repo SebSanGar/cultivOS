@@ -673,6 +673,11 @@ def create_app() -> FastAPI:
             """Field weather alert history — alerts per type with trend and severity chart (#241)."""
             return FileResponse(frontend_dir / "alertas-clima.html")
 
+        @app.get("/calendario-campo")
+        async def serve_calendario_campo():
+            """Field crop calendar — 12-month event timeline composing health, treatments, observations, TEK (#242)."""
+            return FileResponse(frontend_dir / "calendario-campo.html")
+
         app.mount("/", StaticFiles(directory=str(frontend_dir)), name="frontend")
 
     return app

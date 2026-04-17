@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Campo — cultivOS</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --green: #22c55e;
+            --green-soft: #14532d;
+            --green-mid: #166534;
+            --green-dark: #052e16;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1.5rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .selectors { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .selectors label { font-size: 0.85rem; color: var(--muted); }
+        .selectors select { display: block; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); min-width: 180px; }
+        .kpi-strip { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; min-width: 180px; }
+        .kpi .label { font-size: 0.8rem; color: var(--muted); }
+        .kpi .value { font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+        @media (max-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        .month-cell { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem; cursor: pointer; transition: transform 0.1s ease; }
+        .month-cell:hover { transform: translateY(-2px); }
+        .month-cell .name { font-size: 0.85rem; color: var(--muted); }
+        .month-cell .count { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
+        .month-cell.busiest { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+        .heat-0 { background: var(--card); }
+        .heat-1 { background: var(--green-dark); }
+        .heat-2 { background: var(--green-soft); }
+        .heat-3 { background: var(--green-mid); }
+        .heat-4 { background: var(--green); color: #052e16; }
+        .expand-panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-top: 1rem; }
+        .expand-panel h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .breakdown-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .breakdown-row:last-child { border-bottom: none; }
+        .no-data-msg { text-align: center; color: var(--muted); padding: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>Calendario de Campo — Eventos Anuales</h1>
+
+    <div class="selectors">
+        <label>Finca
+            <select id="cal-farm-select"><option value="">Cargando...</option></select>
+        </label>
+        <label>Campo
+            <select id="cal-field-select"><option value="">Seleccione finca</option></select>
+        </label>
+        <label>Año
+            <select id="cal-year-select"></select>
+        </label>
+    </div>
+
+    <div class="kpi-strip">
+        <div class="kpi">
+            <div class="label">Total de eventos</div>
+            <div class="value" id="cal-total-events">--</div>
+        </div>
+        <div class="kpi">
+            <div class="label">Mes más activo</div>
+            <div class="value" id="cal-busiest-month">--</div>
+        </div>
+    </div>
+
+    <div class="grid" id="cal-grid"></div>
+
+    <div id="cal-expand"></div>
+
+    <script src="/calendario-campo.js"></script>
+</body>
+</html>
