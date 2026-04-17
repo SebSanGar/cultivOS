@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { MainNav } from '@/components/layout/main-nav'
 import { Footer } from '@/components/layout/footer'
+import { Providers } from '@/components/providers'
 
 export const metadata: Metadata = {
   title: 'cultivOS',
@@ -16,9 +17,11 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full antialiased dark">
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <MainNav />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <Providers>
+          <MainNav />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   )

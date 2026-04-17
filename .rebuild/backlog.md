@@ -51,7 +51,7 @@
   - Build must succeed. Visit all 5 routes in dev and confirm the shell renders.
   - Commit message: `feat: app shell + MAYA 5-tab nav (R1)`
 
-- [ ] **R2 · Granjas page (dashboard) — parity with current index.html**
+- [x] **R2 · Granjas page (dashboard) — parity with current index.html**
   - Build `frontend-v2/src/app/page.tsx` as the main Granjas dashboard.
   - Data fetch: a client component that calls `GET /api/farms`. Use `@tanstack/react-query` for caching, retries, loading/error states. Install it and set up `QueryClientProvider` in the root layout.
   - **Stat strip** at top: 4 shadcn `Card`s showing `farms_count`, `fields_count`, `avg_health`, `total_hectares`. Each card has a label, a big number, a small description. If all zero, render an "empty but welcoming" state per MAYA (not "0/0/--/0").
