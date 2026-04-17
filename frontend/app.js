@@ -13,6 +13,7 @@ let treatmentsByField = {};
 let rotationByField = {};
 let healthHistoryByField = {};
 let trendByField = {};
+let soilTrajectoryByField = {};
 
 // ── DOM refs ──
 const farmGrid = document.getElementById('farm-grid');
@@ -72,7 +73,7 @@ async function loadFieldsForFarm(farmId) {
 
     // Load all data for each field in parallel
     await Promise.all(fields.map(async (f) => {
-        const [healthList, ndviList, soilList, treatmentList, rotation, history, trend] = await Promise.all([
+        const [healthList, ndviList, soilList, treatmentList, rotation, history, trend, soilTraj] = await Promise.all([
             fetchJSON(`/farms/${farmId}/fields/${f.id}/health`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/ndvi`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/soil`),
@@ -80,6 +81,7 @@ async function loadFieldsForFarm(farmId) {
             fetchJSON(`/farms/${farmId}/fields/${f.id}/rotation`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/health/history`),
             fetchJSON(`/farms/${farmId}/fields/${f.id}/health/trend`),
+            fetchJSON(`/farms/${farmId}/fields/${f.id}/soil-trajectory`),
         ]);
         if (healthList && healthList.length > 0) {
             healthByField[f.id] = healthList[healthList.length - 1];
@@ -101,6 +103,9 @@ async function loadFieldsForFarm(farmId) {
         }
         if (trend) {
             trendByField[f.id] = trend.trend;
+        }
+        if (soilTraj && soilTraj.months) {
+            soilTrajectoryByField[f.id] = soilTraj;
         }
     }));
 
@@ -194,6 +199,27 @@ function buildSparkline(scores, trend) {
     </svg>`;
 }
 
+// ── Soil sparkline (OM / pH monthly trajectory) ──
+function buildSoilSparkline(series, trend) {
+    const values = (series || []).filter(v => v != null);
+    if (values.length < 2) return '';
+    const w = 60, h = 18, pad = 2;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    const points = values.map((v, i) => {
+        const x = pad + (i / (values.length - 1)) * (w - 2 * pad);
+        const y = pad + (1 - (v - min) / range) * (h - 2 * pad);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    let colorClass = 'sparkline-stable';
+    if (trend === 'improving') colorClass = 'sparkline-improving';
+    else if (trend === 'declining') colorClass = 'sparkline-declining';
+    return `<svg class="soil-sparkline ${colorClass}" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+        <polyline points="${points.join(' ')}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+}
+
 // ── Field panel rendering — the brain view ──
 function renderFields(farmId) {
     const farm = farms.find(f => f.id === farmId);
@@ -225,17 +251,22 @@ function renderFields(farmId) {
         let soilHtml = '';
         if (soil) {
             const phCls = phClass(soil.ph);
+            const traj = soilTrajectoryByField[f.id];
+            const phSeries = traj ? traj.months.map(m => m.avg_ph) : [];
+            const omSeries = traj ? traj.months.map(m => m.avg_organic_matter_pct) : [];
+            const phSpark = buildSoilSparkline(phSeries, traj && traj.ph_trend);
+            const omSpark = buildSoilSparkline(omSeries, traj && traj.organic_matter_trend);
             soilHtml = `
             <div class="field-section">
                 <div class="field-section-title">Analisis de Suelo</div>
                 <div class="soil-grid">
                     <div class="soil-item">
                         <span class="soil-label">pH</span>
-                        <span class="soil-value health-badge ${phCls}">${soil.ph}</span>
+                        <span class="soil-value health-badge ${phCls}">${soil.ph} ${phSpark}</span>
                     </div>
                     <div class="soil-item">
                         <span class="soil-label">Materia Organica</span>
-                        <span class="soil-value">${soil.organic_matter_pct}%</span>
+                        <span class="soil-value">${soil.organic_matter_pct}% ${omSpark}</span>
                     </div>
                     <div class="soil-item">
                         <span class="soil-label">N</span>

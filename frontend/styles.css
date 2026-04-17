@@ -263,6 +263,9 @@ nav {
 .sparkline-improving { color: var(--green); }
 .sparkline-stable { color: var(--yellow); }
 .sparkline-declining { color: var(--red); }
+.soil-sparkline {
+    display: inline-block; vertical-align: middle; margin-left: 4px; opacity: 0.9;
+}
 
 /* ── EMPTY STATE ── */
 .empty-state {
