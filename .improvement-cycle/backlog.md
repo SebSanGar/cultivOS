@@ -57,7 +57,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Run pytest. If tests fail because they depend on `auth_enabled=False`, prefer a test-mode env override (e.g., `AUTH_ENABLED=false` in test config) over reverting the default.
   - Commit message: `sec: enforce auth_enabled default + JWT secret on boot (N2)`
 
-- [ ] **N3 · Deployment runbook**  `GRANT-SAFE`
+- [x] **N3 · Deployment runbook**  `GRANT-SAFE`
   - Create `docs/DEPLOYMENT.md` covering: Railway deploy flow, env var checklist, DB init (current: `create_all` at startup; Alembic TBD), WhatsApp Business API token procurement, S3 bucket setup, JWT secret generation, CORS origins config, smoke-test checklist, rollback procedure.
   - Agency voice: write as "this is how we deploy cultivOS" — first-person, authoritative. No external "best practice" citations. Our way is the standard.
   - Commit message: `docs: add deployment runbook (N3)`
