@@ -228,6 +228,15 @@ def create_app() -> FastAPI:
         """Return a simple health check with the current API version."""
         return {"status": "ok", "version": "0.1.0"}
 
+    # Sentry debug endpoint — deliberately raises so the pipeline can be
+    # verified end-to-end in prod. Gated behind ENABLE_SENTRY_DEBUG so it
+    # cannot be left accidentally exposed.
+    if os.environ.get("ENABLE_SENTRY_DEBUG", "").lower() in ("1", "true", "yes"):
+        @app.get("/api/sentry-debug")
+        async def sentry_debug():
+            """Force a ZeroDivisionError so Sentry receives a live event."""
+            raise RuntimeError("Sentry debug event — intentional, safe to resolve")
+
     # Readiness probe — verifies DB connectivity
     @app.get("/api/readiness")
     def readiness():
