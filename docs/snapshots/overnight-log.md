@@ -6,3 +6,4 @@
 2026-04-15 02:45 Toronto — N1 — DONE — created .github/workflows/test.yml (pytest on push/PR) and build.yml (Docker push to ghcr.io on v* tags)
 2026-04-16 02:42 Toronto — N2 — DONE — flipped auth_enabled default to True, added JWT secret boot guard, added Depends(get_current_user) router-level dependency to 69 unguarded API router files, added AUTH_ENABLED=false test baseline fixture in conftest, updated .env.example
 2026-04-17 02:51 Toronto — N3 — DONE — created docs/DEPLOYMENT.md covering Railway deploy flow, env var checklist, DB init (create_all + volume note), JWT secret generation, CORS config, WhatsApp API setup, S3 bucket setup, smoke-test checklist, and rollback procedure
+2026-04-18 02:51 Toronto — N4 — DONE — created docs/adr/0001-sqlite-for-mvp.md, 0002-vanilla-js-no-bundler.md, 0003-routes-services-one-way.md; three ~150-word ADRs asserting our architecture decisions as agency standards

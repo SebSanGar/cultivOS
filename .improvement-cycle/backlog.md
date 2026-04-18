@@ -62,7 +62,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
   - Agency voice: write as "this is how we deploy cultivOS" — first-person, authoritative. No external "best practice" citations. Our way is the standard.
   - Commit message: `docs: add deployment runbook (N3)`
 
-- [ ] **N4 · Seed architecture decision records**  `GRANT-SAFE`
+- [x] **N4 · Seed architecture decision records**  `GRANT-SAFE`
   - Create `docs/adr/0001-sqlite-for-mvp.md`, `docs/adr/0002-vanilla-js-no-bundler.md`, `docs/adr/0003-routes-services-one-way.md`.
   - Each ~150 words, structure: Context / Decision / Consequences / Alternatives considered (and why rejected).
   - Assert as agency standards. Frame as "we do it this way because it works for us," not "chosen per industry convention X."
