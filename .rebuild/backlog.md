@@ -64,7 +64,7 @@
   - Build must succeed. Run `npm run build` and verify the out/ directory contains `index.html`.
   - Commit message: `feat: Granjas dashboard — farm list + stats + actions (R2)`
 
-- [ ] **R3 · Mi Campo page — field detail (hardest migration)**
+- [x] **R3 · Mi Campo page — field detail (hardest migration)**
   - This is the largest and highest-value page. The old `field.html` is 2,311 LOC; the new `/mi-campo` should reach ~60% feature parity in this session and defer the rest to a follow-up task if needed.
   - Route: `frontend-v2/src/app/mi-campo/page.tsx` with a `?farm=<id>` query param. If no farm specified, show a farm picker.
   - Data: `GET /api/farms/{id}` + `/fields` + `/health` + `/ndvi` + `/soil` + fetch in parallel with React Query.
