@@ -77,7 +77,7 @@
   - Everything else from field.html (thermal, microbiome, rotation, yield, disease, etc.) gets queued as R3.1, R3.2, etc. in follow-up sessions. Do NOT attempt all of it in one night.
   - Commit message: `feat: Mi Campo field detail page — 60% parity (R3)`
 
-- [ ] **R4 · Acciones page (recommendations + regenerative scorecard)**
+- [x] **R4 · Acciones page (recommendations + regenerative scorecard)**
   - Route: `/acciones`.
   - Sections:
     - **Prioridad alta** (top): one shadcn `Card` for each high-priority recommendation across all farms, from `GET /api/intel/recommendations?priority=high`.
