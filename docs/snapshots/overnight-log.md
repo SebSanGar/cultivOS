@@ -8,3 +8,4 @@
 2026-04-17 02:51 Toronto — N3 — DONE — created docs/DEPLOYMENT.md covering Railway deploy flow, env var checklist, DB init (create_all + volume note), JWT secret generation, CORS config, WhatsApp API setup, S3 bucket setup, smoke-test checklist, and rollback procedure
 2026-04-18 02:51 Toronto — N4 — DONE — created docs/adr/0001-sqlite-for-mvp.md, 0002-vanilla-js-no-bundler.md, 0003-routes-services-one-way.md; three ~150-word ADRs asserting our architecture decisions as agency standards
 2026-04-19 02:25 Toronto — N9 — BLOCKED — tests red on arrival; sqlalchemy and fastapi not importable after pip install -r requirements.txt (ModuleNotFoundError); environment needs investigation before any item can execute
+2026-04-20 02:35 Toronto — N9 — BLOCKED — needs advisor/human review — item explicitly flagged as requiring human review before ship; no detailed execution spec exists in backlog (only one-liner description); cannot execute without a spec and human sign-off
