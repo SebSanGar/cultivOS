@@ -86,7 +86,7 @@
   - MAYA: each recommendation card has a big verb ("Aplicar compost maduro"), a small why, a one-tap "Marcar hecho" button, a hover-to-see-more tooltip with the agronomic reasoning.
   - Commit message: `feat: Acciones page — recommendations + regen scorecard (R4)`
 
-- [ ] **R5 · Sabiduría page (knowledge base)**
+- [x] **R5 · Sabiduría page (knowledge base)**
   - Route: `/sabiduria`.
   - Reference library: ancestral methods (26 seeded), crops, fertilizers, diseases. Tabbed interface with shadcn Tabs.
   - Search input (client-side filter across the loaded lists).
