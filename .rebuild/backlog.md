@@ -94,7 +94,7 @@
   - Endpoint: `GET /api/knowledge/{ancestral|crops|fertilizers|diseases}` (verify these exist; if not, pick whichever endpoints the backend actually exposes).
   - Commit message: `feat: Sabiduría knowledge base page (R5)`
 
-- [ ] **R6 · Sistema page (alerts + status + settings + onboarding)**
+- [x] **R6 · Sistema page (alerts + status + settings + onboarding)**
   - Route: `/sistema`.
   - Combines what was scattered across `notifications.html`, `status.html`, `api-status.html`, `plataforma.html`, `onboarding.html`.
   - Sub-routes via shadcn Tabs: Alertas, Estado, Asistente, Configuración.
