@@ -101,7 +101,7 @@
   - Each tab fetches its own data. The Asistente tab contains the 3-step onboarding flow (currently at old `/recorrido`).
   - Commit message: `feat: Sistema page — alerts, status, onboarding (R6)`
 
-- [ ] **R7 · Build pipeline + Dockerfile integration (static export swap)**
+- [x] **R7 · Build pipeline + Dockerfile integration (static export swap)**
   - Update root `Dockerfile` to add a Node build stage: `FROM node:20-slim AS frontend-builder`, `WORKDIR /build`, `COPY frontend-v2/package*.json`, `RUN npm ci`, `COPY frontend-v2 .`, `RUN npm run build`. Then in the runtime stage, copy `/build/out` to `/app/frontend` (replacing the old frontend/).
   - Update `src/cultivos/app.py` static mount: confirm it still points at `frontend/` (no change needed since we rename in the Dockerfile).
   - Keep the old repo-root `frontend/` directory intact during this task — we only change the DOCKERFILE's COPY source.

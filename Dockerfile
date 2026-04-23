@@ -1,4 +1,13 @@
-# ---------- build stage ----------
+# ---------- frontend build stage ----------
+FROM node:20-slim AS frontend-builder
+
+WORKDIR /build
+COPY frontend-v2/package*.json ./
+RUN npm ci
+COPY frontend-v2 .
+RUN npm run build
+
+# ---------- python build stage ----------
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
@@ -12,7 +21,7 @@ WORKDIR /app
 
 COPY --from=builder /install /usr/local
 COPY src/ src/
-COPY frontend/ frontend/
+COPY --from=frontend-builder /build/out frontend/
 COPY scripts/ scripts/
 
 ENV PYTHONPATH=/app/src:/app
