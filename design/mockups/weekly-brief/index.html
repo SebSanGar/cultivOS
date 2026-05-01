@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>CultivOS — Resumen semanal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2D6A2D; --green-700:#234f23;
+    --cream:#FAF8F3; --cream-2:#F2EEE3;
+    --navy:#1B2A3B; --navy-2:#2C3E55;
+    --muted:#6B7785; --line:#E4E0D2;
+    --yellow:#F4B400; --red:#C0392B;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#1a1f2a;font-family:'Inter',system-ui,sans-serif;color:var(--navy)}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  #root{display:flex}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+
+<script type="text/babel">
+const C = {
+  green:'#2D6A2D', greenDark:'#234f23', cream:'#FAF8F3', cream2:'#F2EEE3',
+  navy:'#1B2A3B', navy2:'#2C3E55', muted:'#6B7785', line:'#E4E0D2',
+  yellow:'#F4B400', red:'#C0392B',
+};
+
+// ─── Header (CultivOS chat — original design) ───────────────
+function ChatHeader(){
+  return (
+    <div style={{
+      paddingTop:56, paddingBottom:12, padding:'56px 14px 12px',
+      background:'#fff',
+      borderBottom:`0.5px solid ${C.line}`,
+      display:'flex', alignItems:'center', gap:10,
+      position:'relative', zIndex:5,
+    }}>
+      <button style={{
+        width:32,height:32,borderRadius:9,border:`1px solid ${C.line}`,
+        background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',
+        padding:0, cursor:'pointer',
+      }}>
+        <svg width="13" height="13" viewBox="0 0 14 14"><path d="M9 2L4 7l5 5" stroke={C.navy} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+
+      {/* Avatar with cultivOS wordmark on green */}
+      <div style={{
+        width:42, height:42, borderRadius:'50%',
+        background:`linear-gradient(135deg, ${C.green}, ${C.greenDark})`,
+        display:'flex',alignItems:'center',justifyContent:'center',
+        boxShadow:'0 2px 6px rgba(45,106,45,.3)',
+        flexShrink:0, overflow:'hidden',
+      }}>
+        <img src="assets/wordmark.png" alt="cultivOS"
+             style={{width:32, height:'auto', filter:'brightness(0) invert(1)'}}/>
+      </div>
+
+      <div style={{flex:1, minWidth:0}}>
+        <div style={{
+          fontSize:14.5, fontWeight:600, color:C.navy, letterSpacing:'-.01em',
+          display:'flex', alignItems:'center', gap:6,
+        }}>
+          CultivOS Alertas
+          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1L7.5 4 11 4.5l-2.5 2.4.7 3.6L6 8.7 2.8 10.5l.7-3.6L1 4.5 4.5 4z" fill={C.green}/></svg>
+        </div>
+        <div style={{
+          fontSize:11.5, color:C.green, marginTop:1,
+          display:'flex', alignItems:'center', gap:5,
+        }}>
+          <span style={{width:6,height:6,borderRadius:'50%',background:C.green,
+            boxShadow:`0 0 0 2px rgba(45,106,45,.18)`}}/>
+          en línea
+        </div>
+      </div>
+
+      {/* trailing actions */}
+      <button style={{
+        width:32,height:32,borderRadius:9,border:`1px solid ${C.line}`,
+        background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',
+        padding:0, cursor:'pointer',
+      }}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="3" r="1.2" fill={C.navy2}/>
+          <circle cx="7" cy="7" r="1.2" fill={C.navy2}/>
+          <circle cx="7" cy="11" r="1.2" fill={C.navy2}/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+// ─── Date pill ────────────────────────────────────────────
+function DatePill({children}){
+  return (
+    <div style={{display:'flex',justifyContent:'center',margin:'14px 0 10px'}}>
+      <div style={{
+        background:'#fff', border:`0.5px solid ${C.line}`,
+        borderRadius:999, padding:'5px 12px',
+        fontSize:11, color:C.muted, fontWeight:500,
+        boxShadow:'0 1px 2px rgba(27,42,59,.04)',
+      }}>{children}</div>
+    </div>
+  );
+}
+
+// ─── Bubble (incoming, left) ─────────────────────────────
+function Bubble({children, time, tail=false, photo=false, padded=true}){
+  return (
+    <div style={{display:'flex', justifyContent:'flex-start', marginBottom:tail?14:3, paddingLeft:8, paddingRight:60}}>
+      <div style={{
+        background:'#fff', borderRadius:'14px 14px 14px 4px',
+        boxShadow:'0 1px 2px rgba(27,42,59,.06), 0 4px 10px rgba(27,42,59,.04)',
+        border:`0.5px solid ${C.line}`,
+        maxWidth:'100%',
+        padding: photo? 4 : (padded?'10px 12px 8px':'0'),
+        position:'relative',
+        fontSize:14, lineHeight:1.42, color:C.navy,
+        letterSpacing:'-.005em',
+      }}>
+        {children}
+        {time && (
+          <div style={{
+            fontSize:10, color:C.muted, marginTop:4, textAlign:'right',
+            fontVariantNumeric:'tabular-nums',
+            paddingRight: photo?6:0, paddingBottom: photo?4:0,
+          }}>{time}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Thermal/health parcel image (procedural SVG) ────────
+function ParcelThermal(){
+  return (
+    <div style={{
+      width:'100%', aspectRatio:'4/3', borderRadius:10, overflow:'hidden',
+      position:'relative',
+    }}>
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"
+           style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}}>
+        <defs>
+          <linearGradient id="tsoil" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#8c7a52"/>
+            <stop offset="1" stopColor="#5e4f30"/>
+          </linearGradient>
+          <linearGradient id="tcanopy" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#557a35"/>
+            <stop offset="1" stopColor="#2f4519"/>
+          </linearGradient>
+          <radialGradient id="tvg" cx=".5" cy=".5" r=".75">
+            <stop offset=".6" stopColor="#000" stopOpacity="0"/>
+            <stop offset="1" stopColor="#000" stopOpacity=".4"/>
+          </radialGradient>
+          <filter id="tgrain"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .3 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+          <filter id="tblur"><feGaussianBlur stdDeviation="1.4"/></filter>
+        </defs>
+
+        <rect width="400" height="300" fill="url(#tsoil)"/>
+
+        {/* Avocado-like canopy block */}
+        <rect x="20" y="30" width="360" height="240" fill="url(#tcanopy)" rx="6"/>
+
+        {/* Tree dots grid (avocado parcel) */}
+        <g opacity=".85">
+          {Array.from({length:8}).map((_,row)=>(
+            Array.from({length:12}).map((_,col)=>{
+              const x = 40 + col*30 + (row%2?15:0);
+              const y = 50 + row*28;
+              return <circle key={`${row}-${col}`} cx={x} cy={y} r="9" fill="#3b5320" stroke="#1f2e10" strokeWidth=".5"/>;
+            })
+          )).flat()}
+          {Array.from({length:8}).map((_,row)=>(
+            Array.from({length:12}).map((_,col)=>{
+              const x = 40 + col*30 + (row%2?15:0);
+              const y = 50 + row*28;
+              return <circle key={`h-${row}-${col}`} cx={x-2} cy={y-2} r="3" fill="#5d7a38" opacity=".7"/>;
+            })
+          )).flat()}
+        </g>
+
+        {/* THERMAL/STRESS OVERLAYS — yellow zones (2 zonas amarillas) */}
+        <g filter="url(#tblur)" opacity=".78">
+          <path d="M60 80 C 55 110, 70 145, 110 150 C 150 155, 175 130, 170 100 C 160 75, 110 65, 60 80 Z"
+                fill={C.yellow}/>
+          <path d="M250 170 C 240 200, 260 235, 305 235 C 345 235, 360 205, 350 180 C 335 155, 270 150, 250 170 Z"
+                fill={C.yellow}/>
+        </g>
+        <path d="M60 80 C 55 110, 70 145, 110 150 C 150 155, 175 130, 170 100 C 160 75, 110 65, 60 80 Z"
+              fill="none" stroke={C.yellow} strokeWidth="1.2" strokeDasharray="3 3" opacity=".95"/>
+        <path d="M250 170 C 240 200, 260 235, 305 235 C 345 235, 360 205, 350 180 C 335 155, 270 150, 250 170 Z"
+              fill="none" stroke={C.yellow} strokeWidth="1.2" strokeDasharray="3 3" opacity=".95"/>
+
+        {/* Zone labels */}
+        <g fontFamily="Inter" fontSize="9" fontWeight="700" fill="#fff" style={{paintOrder:'stroke'}} stroke="rgba(0,0,0,.5)" strokeWidth="2.5" strokeLinejoin="round">
+          <text x="85" y="116">Sector 3-A</text>
+          <text x="270" y="206">Sector 3-B</text>
+        </g>
+
+        {/* Healthy stable strip label (top right) */}
+        <g>
+          <rect x="305" y="40" width="80" height="22" rx="4" fill="rgba(45,106,45,.85)"/>
+          <text x="345" y="55" fontFamily="Inter" fontSize="9" fontWeight="700" fill="#fff" textAnchor="middle">Parcela 1 · OK</text>
+        </g>
+
+        {/* Grain + vignette */}
+        <rect width="400" height="300" filter="url(#tgrain)" opacity=".5"/>
+        <rect width="400" height="300" fill="url(#tvg)"/>
+
+        {/* Thermal scale (bottom-left) */}
+        <g transform="translate(12,260)">
+          <rect width="120" height="22" rx="4" fill="rgba(27,42,59,.78)"/>
+          <text x="8" y="10" fontFamily="JetBrains Mono" fontSize="7.5" fill="#fff">ESTRÉS HÍDRICO</text>
+          <rect x="8" y="13" width="14" height="5" fill="#2D6A2D"/>
+          <rect x="22" y="13" width="14" height="5" fill="#9CAF53"/>
+          <rect x="36" y="13" width="14" height="5" fill="#F4B400"/>
+          <rect x="50" y="13" width="14" height="5" fill="#D9712B"/>
+          <rect x="64" y="13" width="14" height="5" fill="#C0392B"/>
+          <text x="8" y="22" fontFamily="JetBrains Mono" fontSize="6.5" fill="#fff" opacity=".7">bajo</text>
+          <text x="78" y="22" fontFamily="JetBrains Mono" fontSize="6.5" fill="#fff" opacity=".7">alto</text>
+        </g>
+      </svg>
+
+      {/* GPS chip */}
+      <div style={{
+        position:'absolute', top:8, left:8,
+        background:'rgba(27,42,59,.78)', color:'#fff',
+        fontFamily:'JetBrains Mono, monospace', fontSize:8.5,
+        padding:'3px 7px', borderRadius:4, letterSpacing:'.02em',
+      }}>PARCELA 3 · NDVI 0.58</div>
+    </div>
+  );
+}
+
+// ─── Action card bubble ──────────────────────────────────
+function ActionBubble(){
+  return (
+    <div style={{display:'flex', justifyContent:'flex-start', marginBottom:14, paddingLeft:8, paddingRight:40}}>
+      <div style={{
+        background:'#fff', borderRadius:'14px 14px 14px 4px',
+        boxShadow:'0 1px 2px rgba(27,42,59,.06), 0 6px 14px rgba(27,42,59,.06)',
+        border:`0.5px solid ${C.line}`,
+        overflow:'hidden', width:'100%',
+      }}>
+        {/* header strip */}
+        <div style={{
+          background:C.cream, borderBottom:`1px dashed ${C.line}`,
+          padding:'9px 12px', display:'flex', alignItems:'center', gap:8,
+        }}>
+          <div style={{
+            width:6,height:6,borderRadius:'50%',background:C.green,
+            boxShadow:`0 0 0 3px rgba(45,106,45,.18)`,
+          }}/>
+          <span style={{
+            fontSize:9.5, fontWeight:700, letterSpacing:'.14em',
+            textTransform:'uppercase', color:C.green,
+          }}>Recomendación</span>
+          <span style={{marginLeft:'auto', fontSize:10, color:C.muted, fontFamily:'JetBrains Mono, monospace'}}>
+            Plan #842
+          </span>
+        </div>
+
+        <div style={{padding:'12px 14px'}}>
+          <div style={{fontSize:14.5, fontWeight:700, color:C.navy, letterSpacing:'-.01em'}}>
+            12 mm de riego, sector 3-B
+          </div>
+          <div style={{fontSize:12.5, color:C.navy2, marginTop:4, lineHeight:1.4}}>
+            Martes 8:00 AM · ventana sin viento · gota controlada
+          </div>
+
+          {/* ROI strip */}
+          <div style={{
+            marginTop:10, padding:'8px 10px',
+            background:'rgba(45,106,45,.08)',
+            border:`0.5px solid rgba(45,106,45,.18)`,
+            borderRadius:8,
+            display:'flex', alignItems:'center', gap:10,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 12 L 6 8 L 9 10 L 14 4" stroke={C.green} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M11 4 L 14 4 L 14 7" stroke={C.green} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div style={{flex:1}}>
+              <div style={{fontSize:10, color:C.muted, fontWeight:600, letterSpacing:'.08em', textTransform:'uppercase'}}>Te ahorras</div>
+              <div style={{fontSize:14, fontWeight:700, color:C.green, letterSpacing:'-.01em'}}>$1,200 MXN ahorrados</div>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div style={{display:'flex', gap:8, marginTop:12}}>
+            <button style={{
+              flex:1, background:C.green, color:'#fff', border:0,
+              borderRadius:10, padding:'10px 10px',
+              fontSize:12.5, fontWeight:600, fontFamily:'inherit',
+              boxShadow:'0 1px 0 rgba(0,0,0,.12) inset, 0 4px 10px rgba(45,106,45,.28)',
+              cursor:'pointer',
+            }}>Confirmar plan</button>
+            <button style={{
+              flex:1, background:'#fff', color:C.navy,
+              border:`1px solid ${C.line}`,
+              borderRadius:10, padding:'10px 10px',
+              fontSize:12.5, fontWeight:600, fontFamily:'inherit', cursor:'pointer',
+            }}>Hablar con agrónomo</button>
+          </div>
+        </div>
+
+        <div style={{
+          padding:'4px 12px 8px', fontSize:10, color:C.muted,
+          textAlign:'right', fontVariantNumeric:'tabular-nums',
+        }}>06:14</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Input bar ───────────────────────────────────────────
+function InputBar(){
+  return (
+    <div style={{
+      position:'absolute', left:0, right:0, bottom:0, zIndex:40,
+      paddingBottom:28, paddingTop:8, paddingLeft:10, paddingRight:10,
+      background:'rgba(255,255,255,.94)',
+      backdropFilter:'blur(20px) saturate(160%)',
+      borderTop:`0.5px solid ${C.line}`,
+      display:'flex', alignItems:'center', gap:8,
+    }}>
+      <button style={{
+        width:34,height:34,borderRadius:'50%',border:`1px solid ${C.line}`,
+        background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',
+        padding:0, cursor:'pointer', flexShrink:0,
+      }}>
+        <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke={C.navy2} strokeWidth="1.8" strokeLinecap="round"/></svg>
+      </button>
+
+      <div style={{
+        flex:1, height:36, borderRadius:18,
+        background:'#fff', border:`1px solid ${C.line}`,
+        display:'flex', alignItems:'center', gap:8,
+        padding:'0 12px',
+        fontSize:13, color:C.muted,
+      }}>
+        <span style={{flex:1}}>Mensaje…</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="3" y="4" width="10" height="8" rx="1.5" stroke={C.muted} strokeWidth="1.4"/>
+          <circle cx="8" cy="8" r="1.8" stroke={C.muted} strokeWidth="1.4"/>
+        </svg>
+      </div>
+
+      <button style={{
+        width:34,height:34,borderRadius:'50%',
+        background:C.green, border:0,
+        display:'flex',alignItems:'center',justifyContent:'center',
+        padding:0, cursor:'pointer', flexShrink:0,
+        boxShadow:'0 2px 6px rgba(45,106,45,.3)',
+      }}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1v10M3.5 5L7 1.5 10.5 5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" transform="rotate(0)"/>
+          <path d="M7 12.5v-2" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M3 12h8" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+// ─── Screen ─────────────────────────────────────────────
+function Screen(){
+  return (
+    <div style={{
+      width:'100%', height:'100%', position:'relative',
+      background:C.cream, overflow:'hidden',
+      display:'flex', flexDirection:'column',
+    }}>
+      <ChatHeader/>
+
+      {/* subtle paper-like backdrop pattern */}
+      <div style={{
+        flex:1, overflow:'auto',
+        backgroundImage:
+          `radial-gradient(rgba(27,42,59,.04) 1px, transparent 1px)`,
+        backgroundSize:'14px 14px',
+        padding:'0 8px 100px',
+      }}>
+        <DatePill>Lunes · 28 abr 2026</DatePill>
+
+        {/* Bubble 1 */}
+        <Bubble>
+          Buenos días Carlos. Resumen de la semana:
+        </Bubble>
+
+        {/* Bubble 2 */}
+        <Bubble time="06:14" tail>
+          <div style={{display:'flex',gap:8,alignItems:'flex-start',marginBottom:4}}>
+            <span>📍</span>
+            <span><b>2 zonas amarillas</b> detectadas (estrés hídrico moderado)</span>
+          </div>
+          <div style={{display:'flex',gap:8,alignItems:'flex-start',marginBottom:4}}>
+            <span>📍</span>
+            <span><b>1 zona verde estable</b> (aguacate parcela 1)</span>
+          </div>
+          <div style={{display:'flex',gap:8,alignItems:'flex-start'}}>
+            <span>📍</span>
+            <span>Próxima volada de revisión: <b>jueves 7 AM</b></span>
+          </div>
+        </Bubble>
+
+        {/* Photo bubble */}
+        <Bubble photo padded={false} time="06:15" tail>
+          <ParcelThermal/>
+          <div style={{padding:'8px 10px 0', fontSize:13.5, color:C.navy, lineHeight:1.4}}>
+            Parcela 3 — riega martes antes de las 9 AM
+          </div>
+        </Bubble>
+
+        {/* Action bubble */}
+        <ActionBubble/>
+
+        {/* Final bubble */}
+        <Bubble time="06:16" tail>
+          ¿Quieres reportes en español, inglés, o ambos? Solo responde con <b>'ES'</b>, <b>'EN'</b>, o <b>'ES+EN'</b>.
+        </Bubble>
+      </div>
+
+      <InputBar/>
+    </div>
+  );
+}
+
+function App(){
+  return <IOSDevice width={402} height={874}><Screen/></IOSDevice>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

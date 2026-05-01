@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand palette — locked */
+  --brand-green: #2D6A2D;
+  --brand-green-700: #234f23;
+  --brand-green-100: #E6EFE3;
+  --brand-cream: #FAF8F3;
+  --brand-cream-2: #F2EEE3;
+  --brand-navy: #1B2A3B;
+  --brand-navy-2: #2C3E55;
+  --brand-muted: #6B7785;
+  --brand-line: #E4E0D2;
+  --brand-line-2: #EAE6D8;
+  --brand-yellow: #F4B400;
+  --brand-red: #C0392B;
+  --brand-water: #A8C0CC;
+
+  --shadow-card: 0 1px 2px rgba(27, 42, 59, 0.05), 0 8px 24px rgba(27, 42, 59, 0.06);
+  --shadow-soft: 0 1px 2px rgba(27, 42, 59, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--brand-cream);
+  --color-foreground: var(--brand-navy);
+
+  --color-green: var(--brand-green);
+  --color-green-700: var(--brand-green-700);
+  --color-green-100: var(--brand-green-100);
+  --color-cream: var(--brand-cream);
+  --color-cream-2: var(--brand-cream-2);
+  --color-navy: var(--brand-navy);
+  --color-navy-2: var(--brand-navy-2);
+  --color-muted: var(--brand-muted);
+  --color-line: var(--brand-line);
+  --color-line-2: var(--brand-line-2);
+  --color-yellow: var(--brand-yellow);
+  --color-red: var(--brand-red);
+  --color-water: var(--brand-water);
+
+  --font-sans: var(--font-sans-stack), system-ui, sans-serif;
+  --font-serif: var(--font-serif-stack), Georgia, serif;
+  --font-mono: var(--font-mono-stack), ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--brand-cream);
+  color: var(--brand-navy);
+  font-family: var(--font-sans-stack), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "tnum", "ss01";
+}

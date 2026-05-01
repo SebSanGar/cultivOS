@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CultivOS — Season Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2D6A2D; --green-700:#234f23; --green-100:#E6EFE3;
+    --cream:#FAF8F3; --cream-2:#F2EEE3;
+    --navy:#1B2A3B; --navy-2:#2C3E55;
+    --muted:#6B7785; --line:#E4E0D2; --line-2:#EAE6D8;
+    --yellow:#F4B400; --red:#C0392B;
+    --gray-bar:#C7C0AE;
+    --shadow-card: 0 1px 2px rgba(27,42,59,.05), 0 8px 24px rgba(27,42,59,.06);
+    --shadow-soft: 0 1px 2px rgba(27,42,59,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#1B2A3B;font-family:'Inter',system-ui,sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+  .stage{
+    width:1600px; height:1000px; /* 16:10 */
+    background:var(--cream);
+    border-radius:8px; overflow:hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    transform-origin:center center;
+    display:grid; grid-template-rows: 76px 1fr;
+  }
+
+  /* Header */
+  .hdr{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 32px; background:#fff; border-bottom:1px solid var(--line);
+  }
+  .hdr-l h1{
+    margin:0; font-family:'Fraunces',serif; font-weight:500;
+    font-size:24px; letter-spacing:-.02em; color:var(--navy);
+  }
+  .hdr-l .sub{
+    font-size:12px; color:var(--muted); margin-top:3px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .hdr-l .sub .pip{width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .hdr-r{display:flex; align-items:center; gap:18px}
+  .hdr-r img{height:22px; display:block}
+  .pdfbtn{
+    border:1px solid var(--line); background:#fff;
+    border-radius:10px; padding:9px 14px;
+    font:600 12.5px/1 'Inter'; color:var(--navy);
+    display:flex; align-items:center; gap:8px; cursor:pointer;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Body */
+  .body{padding:24px 32px 28px; display:grid; gap:18px;
+    grid-template-rows: auto 1fr auto; min-height:0;}
+
+  /* Hero stats */
+  .hero{display:grid; grid-template-columns: repeat(4, 1fr); gap:16px}
+  .stat{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:18px 18px 16px; box-shadow:var(--shadow-card);
+    display:flex; flex-direction:column; gap:10px;
+    position:relative; overflow:hidden;
+  }
+  .stat .top{display:flex; align-items:center; justify-content:space-between}
+  .stat .icn{
+    width:36px;height:36px;border-radius:10px;
+    background:var(--cream); border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--navy);
+  }
+  .stat .chip{
+    font:600 11px/1 'Inter'; padding:4px 8px; border-radius:999px;
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  .chip.up{background:var(--green-100); color:var(--green)}
+  .chip.dn{background:var(--green-100); color:var(--green)}
+  .chip.flat{background:var(--cream-2); color:var(--muted)}
+  .stat .n{
+    font-family:'Fraunces',serif; font-weight:500;
+    font-size:48px; line-height:1; letter-spacing:-.03em; color:var(--navy);
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .lbl{font-size:12.5px; color:var(--muted); font-weight:500; letter-spacing:.01em}
+
+  /* Middle row: 50/50 */
+  .mid{display:grid; grid-template-columns: 1fr 1fr; gap:16px; min-height:0}
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; box-shadow:var(--shadow-card);
+    display:flex; flex-direction:column; gap:14px; min-height:0;
+  }
+  .card h3{
+    margin:0; font-size:14px; font-weight:600; color:var(--navy);
+    letter-spacing:-.005em;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .card .micro{font-size:10.5px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-weight:600}
+
+  /* Bar chart (cost-per-acre) */
+  .bars{display:flex; flex-direction:column; gap:12px}
+  .barrow{display:grid; grid-template-columns: 90px 1fr; gap:14px; align-items:center}
+  .barrow .cat{font-size:12.5px; color:var(--navy); font-weight:500}
+  .pair{display:flex; flex-direction:column; gap:5px}
+  .b{
+    height:18px; border-radius:4px; position:relative;
+    display:flex; align-items:center;
+  }
+  .b.conv{background:var(--gray-bar)}
+  .b.cult{background:var(--green)}
+  .b .v{
+    margin-left:auto; padding-right:8px;
+    font:600 11px/1 'Inter'; color:#fff; font-variant-numeric:tabular-nums;
+  }
+  .b.conv .v{color:#3a3327}
+  .blegend{display:flex; gap:14px; font-size:11px; color:var(--muted); margin-top:-2px}
+  .blegend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+  .total{
+    margin-top:auto; padding-top:12px; border-top:1px dashed var(--line);
+    display:flex; align-items:baseline; justify-content:space-between;
+  }
+  .total .a{font-size:11.5px; color:var(--muted); font-weight:500}
+  .total .b-num{font-family:'Fraunces',serif; font-size:22px; font-weight:500; color:var(--green); letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+  .total .b-num .arrow{color:var(--muted); margin:0 8px; font-family:'Inter'; font-size:14px}
+  .total .b-num .strike{color:var(--muted); text-decoration:line-through; font-weight:500; font-size:18px}
+
+  /* Benchmark */
+  .bench{display:flex; flex-direction:column; gap:11px}
+  .bench-row{display:grid; grid-template-columns: 80px 1fr 70px; gap:12px; align-items:center}
+  .bench-row .nm{font-size:12.5px; color:var(--navy); font-weight:500}
+  .bench-row .nm.you{color:var(--green); font-weight:700}
+  .bench-bar{height:20px; border-radius:4px; background:var(--cream-2); position:relative; overflow:hidden}
+  .bench-bar .fill{height:100%; border-radius:4px; background:var(--gray-bar)}
+  .bench-bar.you .fill{background:var(--green)}
+  .bench-row .vv{font-size:12px; color:var(--navy); font-variant-numeric:tabular-nums; text-align:right; font-weight:600}
+  .bench-row .vv.muted{color:var(--muted); font-weight:500}
+
+  .bench-foot{
+    margin-top:auto; padding:10px 12px; border-radius:10px;
+    background:var(--green-100); color:var(--green);
+    font-size:12.5px; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+
+  /* Bottom: timeline + CTA */
+  .bot{display:grid; grid-template-columns: 1fr 360px; gap:16px}
+  .timeline{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:18px 22px 22px; box-shadow:var(--shadow-card);
+  }
+  .timeline h3{margin:0 0 14px 0; font-size:14px; font-weight:600; color:var(--navy);
+    display:flex; justify-content:space-between; align-items:center;}
+  .timeline h3 .micro{font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+
+  .tl{
+    position:relative; height:200px; margin-top:8px;
+  }
+  .tl .axis{
+    position:absolute; left:0; right:0; top:80px; height:2px;
+    background:linear-gradient(90deg, var(--green-100), var(--green) 50%, var(--green-100));
+    border-radius:2px;
+  }
+  .tl .monthrow{
+    position:absolute; left:0; right:0; top:90px; height:18px;
+    border-bottom:1px dashed var(--line);
+  }
+  .tl .month{
+    position:absolute; top:2px; font-size:9.5px; color:var(--muted); font-weight:600;
+    letter-spacing:.12em;
+    transform:translateX(-50%);
+    background:#fff; padding:0 6px;
+  }
+  .tl .ev{
+    position:absolute; transform:translateX(-50%);
+  }
+  .tl .ev .dot{
+    width:14px; height:14px; border-radius:50%;
+    background:#fff; border:2.5px solid var(--green);
+    box-shadow:0 0 0 4px rgba(45,106,45,.12);
+    margin: 0 auto;
+  }
+  .tl .ev.alt .dot{border-color:var(--yellow); box-shadow:0 0 0 4px rgba(244,180,0,.18)}
+  .tl .ev.warn .dot{border-color:var(--red); box-shadow:0 0 0 4px rgba(192,57,43,.14)}
+  .tl .ev .lbl{
+    font-size:10.5px; color:var(--navy); font-weight:600; line-height:1.3;
+    width:120px; text-align:center; margin-top:6px;
+    letter-spacing:-.005em;
+  }
+  .tl .ev .lbl .d{display:block; font-weight:500; color:var(--muted); font-size:9.5px; margin-bottom:1px; letter-spacing:.04em; text-transform:uppercase}
+  .tl .ev.below{top:115px}
+  .tl .ev.above{bottom:125px; display:flex; flex-direction:column-reverse}
+  .tl .ev.above .lbl{margin-top:0; margin-bottom:6px}
+  .tl .ev .stem{
+    width:1px; height:14px; background:var(--line);
+    margin:0 auto;
+  }
+
+  /* Renewal CTA */
+  .renew{
+    background:var(--cream); border:1px solid var(--line);
+    border-left:3px solid var(--green);
+    border-radius:4px 14px 14px 4px;
+    padding:18px 20px;
+    display:flex; flex-direction:column; gap:10px;
+    box-shadow:var(--shadow-soft);
+  }
+  .renew .badge{
+    align-self:flex-start;
+    font:600 10px/1 'Inter'; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--green); padding:4px 8px; border-radius:4px;
+    background:rgba(45,106,45,.10);
+  }
+  .renew h4{
+    margin:0; font-family:'Fraunces',serif; font-weight:500;
+    font-size:22px; letter-spacing:-.02em; color:var(--navy); line-height:1.15;
+  }
+  .renew p{margin:0; font-size:12.5px; color:var(--navy-2); line-height:1.5}
+  .renew p b{color:var(--navy); font-weight:600}
+  .renew .price{
+    display:flex; align-items:baseline; gap:6px;
+    margin-top:2px;
+  }
+  .renew .price .big{
+    font-family:'Fraunces',serif; font-weight:500;
+    font-size:30px; color:var(--green); letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums; line-height:1;
+  }
+  .renew .price .u{font-size:12px; color:var(--muted); font-weight:500}
+  .renew .meta{font-size:11px; color:var(--muted); display:flex; gap:6px; align-items:center}
+  .renew .meta svg{flex-shrink:0}
+  .renew button{
+    margin-top:6px;
+    background:var(--green); color:#fff; border:0; border-radius:10px;
+    padding:12px 14px; font:600 13px/1 'Inter'; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 1px 0 rgba(0,0,0,.12) inset, 0 6px 16px rgba(45,106,45,.28);
+  }
+  .renew button:hover{background:var(--green-700)}
+
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+
+    <header class="hdr">
+      <div class="hdr-l">
+        <h1>White Church Farm — Season Report</h1>
+        <div class="sub">
+          <span class="pip"></span>
+          <span><b style="color:var(--navy);font-weight:600">May – Oct 2026</b></span>
+          <span style="color:var(--line)">•</span>
+          <span>400 ac · Mount Hope, ON</span>
+          <span style="color:var(--line)">•</span>
+          <span>Generated Oct 28, 2026</span>
+        </div>
+      </div>
+      <div class="hdr-r">
+        <button class="pdfbtn">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M6.5 1v8M3.5 6L6.5 9 9.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 11h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Download PDF
+        </button>
+        <img src="assets/wordmark.png" alt="cultivOS"/>
+      </div>
+    </header>
+
+    <div class="body">
+
+      <!-- HERO STATS -->
+      <section class="hero">
+        <div class="stat">
+          <div class="top">
+            <div class="icn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M11 6.5C10.5 5.5 9.5 5 9 5c-1.5 0-2.5 1-2.5 2s1 1.5 2.5 2 2.5 1 2.5 2-1 2-2.5 2c-.5 0-1.5-.5-2-1.5M9 4v1.2M9 12.8V14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="chip dn">
+              <svg width="9" height="9" viewBox="0 0 9 9"><path d="M4.5 8L1 3h7z" fill="currentColor"/></svg>
+              −34% vs '25
+            </span>
+          </div>
+          <div class="n">$48,400</div>
+          <div class="lbl">Inputs saved</div>
+        </div>
+
+        <div class="stat">
+          <div class="top">
+            <div class="icn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 13l4-4 3 2 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M11 5h3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <span class="chip up">
+              <svg width="9" height="9" viewBox="0 0 9 9"><path d="M4.5 1L8 6H1z" fill="currentColor"/></svg>
+              vs baseline
+            </span>
+          </div>
+          <div class="n">+12%</div>
+          <div class="lbl">Yield improvement</div>
+        </div>
+
+        <div class="stat">
+          <div class="top">
+            <div class="icn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="3" cy="3" r="2" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="15" cy="3" r="2" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="3" cy="15" r="2" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="15" cy="15" r="2" stroke="currentColor" stroke-width="1.3"/>
+                <rect x="6.5" y="6.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                <line x1="4.5" y1="4.5" x2="6.5" y2="6.5" stroke="currentColor" stroke-width="1.3"/>
+                <line x1="13.5" y1="4.5" x2="11.5" y2="6.5" stroke="currentColor" stroke-width="1.3"/>
+                <line x1="4.5" y1="13.5" x2="6.5" y2="11.5" stroke="currentColor" stroke-width="1.3"/>
+                <line x1="13.5" y1="13.5" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+            </div>
+            <span class="chip flat">5,840 ac scanned</span>
+          </div>
+          <div class="n">127</div>
+          <div class="lbl">Drone flights flown</div>
+        </div>
+
+        <div class="stat">
+          <div class="top">
+            <div class="icn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2l6 2v5c0 3.5-2.5 6-6 7-3.5-1-6-3.5-6-7V4l6-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="none"/>
+                <path d="M6 9l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <span class="chip up">3 events caught</span>
+          </div>
+          <div class="n">0</div>
+          <div class="lbl">Crop-loss incidents</div>
+        </div>
+      </section>
+
+      <!-- MIDDLE -->
+      <section class="mid">
+
+        <!-- Cost-per-acre -->
+        <div class="card">
+          <h3>Cost-per-acre breakdown <span class="micro">5 categories · $/ac</span></h3>
+
+          <div class="blegend">
+            <span><i style="background:var(--gray-bar)"></i>Conventional</span>
+            <span><i style="background:var(--green)"></i>CultivOS</span>
+          </div>
+
+          <div class="bars">
+            <div class="barrow">
+              <div class="cat">Scouting</div>
+              <div class="pair">
+                <div class="b conv" style="width:62%"><span class="v">$48</span></div>
+                <div class="b cult" style="width:24%"><span class="v">$18</span></div>
+              </div>
+            </div>
+            <div class="barrow">
+              <div class="cat">Pesticide</div>
+              <div class="pair">
+                <div class="b conv" style="width:92%"><span class="v">$112</span></div>
+                <div class="b cult" style="width:54%"><span class="v">$66</span></div>
+              </div>
+            </div>
+            <div class="barrow">
+              <div class="cat">Herbicide</div>
+              <div class="pair">
+                <div class="b conv" style="width:48%"><span class="v">$58</span></div>
+                <div class="b cult" style="width:32%"><span class="v">$39</span></div>
+              </div>
+            </div>
+            <div class="barrow">
+              <div class="cat">Fertilizer</div>
+              <div class="pair">
+                <div class="b conv" style="width:68%"><span class="v">$82</span></div>
+                <div class="b cult" style="width:44%"><span class="v">$53</span></div>
+              </div>
+            </div>
+            <div class="barrow">
+              <div class="cat">Labor</div>
+              <div class="pair">
+                <div class="b conv" style="width:48%"><span class="v">$57</span></div>
+                <div class="b cult" style="width:50%"><span class="v">$60</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="total">
+            <div class="a">Total per acre</div>
+            <div class="b-num">
+              <span class="strike">$357</span>
+              <span class="arrow">→</span>
+              $236
+              <span style="color:var(--muted);font-size:13px;font-family:'Inter';font-weight:500;margin-left:6px">= $121 saved/ac</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benchmark -->
+        <div class="card">
+          <h3>Your farm vs neighbors <span class="micro">Anonymized · $/ac saved</span></h3>
+
+          <div class="bench">
+            <div class="bench-row">
+              <div class="nm you">White Church <span style="color:var(--muted);font-weight:500;font-size:10.5px;display:block">your farm</span></div>
+              <div class="bench-bar you"><div class="fill" style="width:88%"></div></div>
+              <div class="vv">$121</div>
+            </div>
+            <div class="bench-row">
+              <div class="nm">Farm A</div>
+              <div class="bench-bar"><div class="fill" style="width:78%"></div></div>
+              <div class="vv muted">$108</div>
+            </div>
+            <div class="bench-row">
+              <div class="nm">Farm B</div>
+              <div class="bench-bar"><div class="fill" style="width:64%"></div></div>
+              <div class="vv muted">$88</div>
+            </div>
+            <div class="bench-row">
+              <div class="nm">Farm C</div>
+              <div class="bench-bar"><div class="fill" style="width:52%"></div></div>
+              <div class="vv muted">$72</div>
+            </div>
+            <div class="bench-row">
+              <div class="nm">Farm D</div>
+              <div class="bench-bar"><div class="fill" style="width:38%"></div></div>
+              <div class="vv muted">$53</div>
+            </div>
+          </div>
+
+          <div class="bench-foot">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1l1.8 3.7L13 5.3l-3 2.9.7 4.1L7 10.4 3.3 12.3 4 8.2 1 5.3l4.2-.6L7 1z" fill="currentColor"/>
+            </svg>
+            Top 25% of CultivOS Ontario farms
+            <span style="margin-left:auto; color:var(--muted); font-weight:500; font-size:11px">n = 64 farms</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTTOM -->
+      <section class="bot">
+        <div class="timeline">
+          <h3>Season timeline <span class="micro">May – Oct 2026 · 6 months</span></h3>
+          <div class="tl">
+            <div class="axis"></div>
+            <div class="monthrow"></div>
+            <!-- months -->
+            <div class="month" style="left:5%">MAY</div>
+            <div class="month" style="left:23%">JUN</div>
+            <div class="month" style="left:40%">JUL</div>
+            <div class="month" style="left:57%">AUG</div>
+            <div class="month" style="left:75%">SEP</div>
+            <div class="month" style="left:93%">OCT</div>
+
+            <!-- events: alternating above/below -->
+            <div class="ev above" style="left:5%">
+              <div class="lbl"><span class="d">May 8</span>First flight</div>
+              <div class="stem"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="ev below warn" style="left:25%">
+              <div class="dot"></div>
+              <div class="stem"></div>
+              <div class="lbl"><span class="d">Jun 14</span>Aphid event caught<br/><span style="color:var(--green);font-weight:600">saved 4.2 ac</span></div>
+            </div>
+            <div class="ev above alt" style="left:43%">
+              <div class="lbl"><span class="d">Jul 22</span>Drought stress treated</div>
+              <div class="stem"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="ev below" style="left:60%">
+              <div class="dot"></div>
+              <div class="stem"></div>
+              <div class="lbl"><span class="d">Aug 18</span>Mid-season optimization</div>
+            </div>
+            <div class="ev above" style="left:78%">
+              <div class="lbl"><span class="d">Sep 1</span>Harvest plan delivered</div>
+              <div class="stem"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="ev below" style="left:94%">
+              <div class="dot"></div>
+              <div class="stem"></div>
+              <div class="lbl"><span class="d">Oct 15</span>Season close</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="renew">
+          <span class="badge">Founding-100 rate</span>
+          <h4>Lock Premium tier for 2027</h4>
+          <div class="price">
+            <span class="big">$144</span>
+            <span class="u">/ ac · year</span>
+          </div>
+          <p>Founding-100 rate <b>guaranteed 3 more years</b>. Includes unlimited drone flights, agronomist hours, and yield-loss insurance.</p>
+          <div class="meta">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M3.5 5.5L5 7l3-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Renew before Dec 1 to keep this rate
+          </div>
+          <button>
+            <span>Renew now</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+  function fitStage(){
+    const stage = document.getElementById('stage');
+    const padding = 48;
+    const sx = (window.innerWidth - padding) / 1600;
+    const sy = (window.innerHeight - padding) / 1000;
+    const s = Math.min(sx, sy, 1);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fitStage);
+  window.addEventListener('load', fitStage);
+  fitStage();
+</script>
+</body>
+</html>

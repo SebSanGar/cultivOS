@@ -145,3 +145,15 @@ uvicorn src.cultivos.api:create_app --factory --reload --port 8000
 - Environmental: water quality, reforestation monitoring
 - Commercial: solar panel inspection, building inspection
 - Construction: progress monitoring, volumetric measurements
+
+---
+
+## UI Stack (agency defaults)
+
+Agency handles frontend dev. For any UI work — animations, layouts, polish:
+
+1. **Framer Motion** — animation library. `npm i framer-motion`. Prefer `motion` components over CSS keyframes for stateful animation (hover, tap, layout, presence).
+2. **UI/UX Pro Max** — Claude Code skill. Install + invoke for non-trivial design decisions (spacing, contrast, interaction patterns).
+3. **21st.dev** — default layout source. Pull hero/pricing/features/footer blocks from https://21st.dev before hand-rolling.
+
+Source: `~/Documents/autoagent/skills/ui-stack.md`

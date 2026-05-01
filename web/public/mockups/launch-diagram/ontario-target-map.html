@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Mockup 5 — Southwestern Ontario Target Map · CultivOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --green:#2D6A2D;
+    --green-700:#234E23;
+    --green-200:#A8C5A8;
+    --green-100:#D9E5D9;
+    --cream:#FAF8F3;
+    --cream-2:#F2EDE0;
+    --navy:#1B2A3B;
+    --muted:#6B7280;
+    --line:#E5E0D2;
+    --line-2:#D9D2BE;
+    --water:#A8C0CC;
+    --water-2:#C9D8E0;
+    --yellow:#F4B400;
+    --red:#C0392B;
+    --shadow-soft:0 1px 2px rgba(27,42,59,.04), 0 4px 14px rgba(27,42,59,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#E8E4D6;font-family:'Inter',sans-serif;color:var(--navy)}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:32px 16px}
+
+  .frame{
+    width:1920px; height:1080px;
+    background:var(--cream);
+    position:relative;
+    box-shadow:0 10px 40px rgba(27,42,59,.18), 0 2px 8px rgba(27,42,59,.08);
+    overflow:hidden;
+    transform-origin:top center;
+    font-feature-settings:"tnum","ss01";
+  }
+
+  /* paper texture */
+  .frame::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(180,160,110,.04) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(180,160,110,.04) 0, transparent 40%);
+    pointer-events:none;
+  }
+
+  /* HEADER */
+  .header{
+    position:absolute; top:48px; left:64px; right:64px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    z-index:30;
+  }
+  .title{
+    font-family:'Fraunces',serif; font-weight:500;
+    font-size:38px; line-height:1.05; letter-spacing:-.02em;
+    color:var(--navy); margin:0;
+  }
+  .subtitle{
+    font-size:13px; font-weight:500;
+    color:var(--muted); margin-top:8px;
+    letter-spacing:.02em;
+  }
+  .subtitle .dot{
+    display:inline-block; width:3px; height:3px; border-radius:50%;
+    background:var(--muted); vertical-align:middle; margin:0 8px 2px;
+  }
+  .brand{
+    display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+  }
+  .brand img{ height:24px; width:auto; display:block; }
+  .brand .meta{
+    font-size:10px; color:var(--muted); letter-spacing:.18em; text-transform:uppercase; font-weight:600;
+  }
+
+  /* MAP */
+  .map-wrap{
+    position:absolute; left:64px; right:64px; top:170px; bottom:64px;
+  }
+  svg.map{ width:100%; height:100%; display:block; overflow:visible; position:relative; z-index:2; }
+
+  /* Cards */
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:var(--shadow-soft);
+    position:absolute;
+    z-index:20;
+  }
+  .card .h{
+    font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted); font-weight:700;
+    padding:14px 18px 8px;
+    border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .card .h .num{ font-family:'JetBrains Mono',monospace; font-weight:500; letter-spacing:0; color:var(--green); font-size:9.5px;}
+
+  /* Facts strip (bottom-left) */
+  .facts{
+    left:0; bottom:0;
+    width:380px;
+  }
+  .facts ul{ list-style:none; padding:8px 0 12px; margin:0; }
+  .facts li{
+    display:flex; align-items:baseline; gap:14px;
+    padding:9px 18px;
+    border-bottom:1px dashed var(--line);
+    font-size:13px;
+  }
+  .facts li:last-child{ border-bottom:none; }
+  .facts li .k{
+    font-family:'Fraunces',serif; font-weight:500;
+    color:var(--navy); font-size:18px; letter-spacing:-.01em;
+    min-width:84px; font-variant-numeric:tabular-nums;
+  }
+  .facts li .v{ color:var(--muted); font-size:12px; line-height:1.4; }
+
+  /* Legend (bottom-right) */
+  .legend{
+    right:0; bottom:0;
+    width:380px;
+  }
+  .legend .body{ padding:10px 18px 16px; }
+  .legend .row{
+    display:flex; align-items:center; gap:12px;
+    padding:7px 0;
+    font-size:12px;
+  }
+  .legend .row .ic{
+    width:28px; height:28px; flex-shrink:0;
+    border-radius:50%; background:var(--cream-2);
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+  }
+  .legend .row .lbl{ color:var(--navy); font-weight:600;}
+  .legend .row .lbl .sub{ display:block; color:var(--muted); font-weight:400; font-size:10.5px; margin-top:1px;}
+
+  .legend .phases{
+    margin-top:6px; padding-top:12px; border-top:1px solid var(--line);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .legend .phases .p{
+    display:flex; align-items:center; gap:10px;
+    font-size:11px; color:var(--navy); font-weight:500;
+  }
+  .legend .phases .p .swatch{
+    width:30px; height:14px; flex-shrink:0;
+    border-radius:2px;
+  }
+
+  /* Map labels */
+  .ml{ font-family:'Inter'; pointer-events:none; }
+  .ml-city{ font-size:10px; font-weight:600; fill:var(--navy); letter-spacing:.01em;}
+  .ml-city-sub{ font-size:8.5px; font-weight:500; fill:var(--muted);}
+  .ml-water{ font-size:11px; font-weight:500; fill:#7A98A6; letter-spacing:.18em; text-transform:uppercase;}
+  .ml-state{ font-size:9.5px; font-weight:600; fill:#B7B0A0; letter-spacing:.22em; text-transform:uppercase;}
+  .ml-phase{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px; font-weight:500; fill:var(--green-700);
+    letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  /* corner ticks (editorial frame) */
+  .corner{ position:absolute; width:18px; height:18px; border:1.5px solid var(--navy); opacity:.55;}
+  .corner.tl{ top:24px; left:24px; border-right:none; border-bottom:none;}
+  .corner.tr{ top:24px; right:24px; border-left:none; border-bottom:none;}
+  .corner.bl{ bottom:24px; left:24px; border-right:none; border-top:none;}
+  .corner.br{ bottom:24px; right:24px; border-left:none; border-top:none;}
+
+  /* footer mark */
+  .colophon{
+    position:absolute; left:50%; transform:translateX(-50%); bottom:24px;
+    font-size:9.5px; color:var(--muted); letter-spacing:.18em;
+    text-transform:uppercase; font-weight:600;
+    z-index:25;
+  }
+  .colophon .sep{ margin:0 10px; color:var(--line-2); }
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+
+  <header class="header">
+    <div>
+      <h1 class="title">Launch Plan — Southwestern Ontario</h1>
+      <div class="subtitle">Trade-show radius rollout<span class="dot"></span>2026 – 2027<span class="dot"></span>Mockup 5 of 6</div>
+    </div>
+    <div class="brand">
+      <img src="assets/wordmark.png" alt="cultivOS"/>
+      <div class="meta">Field Operations · Strategy</div>
+    </div>
+  </header>
+
+  <div class="map-wrap">
+    <svg class="map" viewBox="234 50 1200 566" preserveAspectRatio="xMidYMid meet" id="mapSvg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <!-- subtle land paper -->
+        <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(27,42,59,0.025)" stroke-width="0.5"/>
+        </pattern>
+        <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(45,106,45,0.10)"/>
+          <stop offset="100%" stop-color="rgba(45,106,45,0)"/>
+        </radialGradient>
+        <radialGradient id="haloN" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(244,180,0,0.18)"/>
+          <stop offset="100%" stop-color="rgba(244,180,0,0)"/>
+        </radialGradient>
+      </defs>
+
+      <!-- =========== Real reference map (SVG image, exact coords) =========== -->
+      <image href="assets/sw-ontario.jpg" xlink:href="assets/sw-ontario.jpg" x="0" y="0" width="1792" height="846" preserveAspectRatio="xMidYMid slice" opacity="0.55"/>
+
+      <!-- subtle paper wash to mute the colors further -->
+      <rect x="0" y="0" width="1792" height="846" fill="#FAF8F3" opacity="0.35"/>
+
+      <!-- subtle grid overlay -->
+      <rect x="0" y="0" width="1792" height="846" fill="url(#grid)" opacity=".5" pointer-events="none"/>
+
+      <!-- =========== RADIUS RINGS (centered on Hamilton 834,333) ===========
+           Distance scale: Hamilton↔Toronto = 36 mi, on map ~108 px (sqrt((834-730)^2+(333-261)^2))
+           So 50 mi ≈ 150 px; 100 mi ≈ 300 px; 150 mi ≈ 450 px -->
+      <circle cx="834" cy="333" r="450" fill="none" stroke="#A8C5A8" stroke-width="1.2" stroke-dasharray="1 4" opacity=".95"/>
+      <circle cx="834" cy="333" r="300" fill="none" stroke="#5C8C5C" stroke-width="1.2" stroke-dasharray="6 4" opacity=".95"/>
+      <circle cx="834" cy="333" r="150" fill="rgba(45,106,45,0.10)" stroke="#2D6A2D" stroke-width="1.6"/>
+
+      <!-- Phase labels diagonal -->
+      <g>
+        <rect x="906" y="450" width="186" height="22" rx="3" fill="#FAF8F3" opacity=".95"/>
+        <text x="999" y="465" class="ml-phase" text-anchor="middle">Phase 1 · M 1–6 · 50 mi</text>
+      </g>
+      <g>
+        <rect x="1020" y="560" width="200" height="22" rx="3" fill="#FAF8F3" opacity=".95"/>
+        <text x="1120" y="575" class="ml-phase" text-anchor="middle">Phase 2 · M 7–12 · 100 mi</text>
+      </g>
+      <g>
+        <rect x="1140" y="680" width="200" height="22" rx="3" fill="#FAF8F3" opacity=".95"/>
+        <text x="1240" y="695" class="ml-phase" fill="#5C8C5C" text-anchor="middle">Phase 3 · Year 2 · 150 mi</text>
+      </g>
+
+      <!-- =========== Crop cluster halos =========== -->
+      <circle cx="950" cy="370" r="42" fill="url(#haloN)"/>
+      <circle cx="790" cy="410" r="34" fill="rgba(45,106,45,0.08)"/>
+      <circle cx="800" cy="230" r="32" fill="rgba(45,106,45,0.08)"/>
+      <circle cx="500" cy="600" r="36" fill="rgba(45,106,45,0.08)"/>
+
+      <!-- =========== City pins =========== -->
+      <!-- Hamilton (HQ) -->
+      <g>
+        <circle cx="834" cy="333" r="11" fill="#2D6A2D"/>
+        <circle cx="834" cy="333" r="17" fill="none" stroke="#2D6A2D" stroke-width="1.4" opacity=".55"/>
+        <circle cx="834" cy="333" r="3.5" fill="#fff"/>
+      </g>
+      <g>
+        <line x1="823" y1="341" x2="770" y2="395" stroke="#2D6A2D" stroke-width="1.2" opacity=".6"/>
+        <text x="765" y="410" font-size="14" font-weight="700" fill="#2D6A2D" font-family="Inter" text-anchor="end">Hamilton — HQ</text>
+        <text x="765" y="425" font-size="10.5" font-weight="600" fill="#5C8C5C" letter-spacing=".06em" text-anchor="end">PHASE 1 EPICENTER</text>
+      </g>
+
+      <!-- Toronto -->
+      <g><circle cx="730" cy="261" r="4" fill="#1B2A3B"/></g>
+      <text x="739" y="258" class="ml-city">Toronto</text>
+      <text x="739" y="270" class="ml-city-sub">GTA</text>
+
+      <!-- London -->
+      <g><circle cx="688" cy="396" r="3.5" fill="#1B2A3B"/></g>
+      <text x="680" y="393" class="ml-city" text-anchor="end">London</text>
+
+      <!-- Windsor / Detroit -->
+      <g><circle cx="521" cy="573" r="3.5" fill="#1B2A3B"/></g>
+      <text x="529" y="570" class="ml-city">Windsor</text>
+      <text x="529" y="582" class="ml-city-sub">↔ Detroit</text>
+
+      <!-- Sarnia / Port Huron -->
+      <g><circle cx="417" cy="417" r="3" fill="#1B2A3B"/></g>
+      <text x="409" y="414" class="ml-city" text-anchor="end">Sarnia</text>
+
+      <!-- Niagara Falls / St Catharines -->
+      <g><circle cx="1021" cy="365" r="3.5" fill="#1B2A3B"/></g>
+      <text x="1029" y="380" class="ml-city">Niagara Falls</text>
+
+      <!-- Buffalo (USA reference) -->
+      <g><circle cx="1146" cy="437" r="2.8" fill="#1B2A3B" opacity=".5"/></g>
+      <text x="1154" y="441" class="ml-city-sub">Buffalo</text>
+
+      <!-- Kitchener -->
+      <g><circle cx="688" cy="328" r="2.8" fill="#1B2A3B" opacity=".55"/></g>
+      <text x="680" y="324" class="ml-city-sub" text-anchor="end">Kitchener-Waterloo</text>
+
+      <!-- Owen Sound -->
+      <g><circle cx="688" cy="83" r="2.5" fill="#1B2A3B" opacity=".5"/></g>
+      <text x="696" y="81" class="ml-city-sub">Owen Sound</text>
+
+      <!-- =========== Crop cluster icon-labels =========== -->
+      <g transform="translate(950 370)">
+        <circle r="18" fill="#fff" stroke="#2D6A2D" stroke-width="1.2"/>
+        <g transform="translate(-9 -10)" fill="#5C8C5C">
+          <circle cx="4" cy="4" r="3"/><circle cx="10" cy="4" r="3"/><circle cx="16" cy="4" r="3"/>
+          <circle cx="7" cy="9" r="3"/><circle cx="13" cy="9" r="3"/><circle cx="10" cy="14" r="3"/>
+        </g>
+        <path d="M 10 -16 Q 14 -20 18 -18" stroke="#5C8C5C" stroke-width="1.2" fill="none"/>
+      </g>
+      <g transform="translate(950 370)" font-family="Inter">
+        <line x1="0" y1="20" x2="60" y2="86" stroke="#1B2A3B" stroke-width="0.8" opacity=".4"/>
+        <text x="66" y="100" font-size="12" font-weight="700" fill="#1B2A3B">Niagara Peninsula</text>
+        <text x="66" y="115" font-size="10" font-weight="600" fill="#5C8C5C" letter-spacing=".06em">TENDER FRUIT · VINEYARDS</text>
+        <text x="66" y="129" font-size="9.5" fill="#6B7280">90% of Ontario grapes</text>
+        <text x="66" y="141" font-size="9.5" fill="#6B7280">2/3 of Ontario tender fruit</text>
+      </g>
+
+      <g transform="translate(790 410)">
+        <circle r="16" fill="#fff" stroke="#2D6A2D" stroke-width="1.2"/>
+        <g transform="translate(-7 -8)">
+          <path d="M 7 4 L 11 16 L 3 16 Z" fill="#F4B400"/>
+          <path d="M 7 4 L 4 0 M 7 4 L 7 -1 M 7 4 L 10 0" stroke="#5C8C5C" stroke-width="1.2" fill="none"/>
+        </g>
+      </g>
+      <g transform="translate(790 410)">
+        <line x1="0" y1="16" x2="-26" y2="66" stroke="#1B2A3B" stroke-width="0.8" opacity=".4"/>
+        <text x="-30" y="80" font-size="12" font-weight="700" fill="#1B2A3B" text-anchor="end">Norfolk County</text>
+        <text x="-30" y="94" font-size="10" font-weight="600" fill="#5C8C5C" letter-spacing=".06em" text-anchor="end">SPECIALTY VEG · SAND BELT</text>
+      </g>
+
+      <g transform="translate(800 230)">
+        <circle r="16" fill="#fff" stroke="#2D6A2D" stroke-width="1.2"/>
+        <g transform="translate(-7 -8)">
+          <ellipse cx="7" cy="11" rx="5" ry="6" fill="#C0392B"/>
+          <path d="M 7 5 L 5 0 M 7 5 L 7 -1 M 7 5 L 9 0" stroke="#5C8C5C" stroke-width="1.2" fill="none"/>
+        </g>
+      </g>
+      <g transform="translate(800 230)">
+        <line x1="14" y1="0" x2="50" y2="-22" stroke="#1B2A3B" stroke-width="0.8" opacity=".4"/>
+        <text x="56" y="-26" font-size="12" font-weight="700" fill="#1B2A3B">Holland Marsh</text>
+        <text x="56" y="-12" font-size="10" font-weight="600" fill="#5C8C5C" letter-spacing=".06em">ROOT CROPS · GREENBELT</text>
+      </g>
+
+      <g transform="translate(500 600)">
+        <circle r="16" fill="#fff" stroke="#2D6A2D" stroke-width="1.2"/>
+        <g transform="translate(-9 -7)">
+          <rect x="0" y="6" width="18" height="8" fill="none" stroke="#5C8C5C" stroke-width="1.2"/>
+          <path d="M 0 6 L 9 0 L 18 6" fill="none" stroke="#5C8C5C" stroke-width="1.2"/>
+          <line x1="6" y1="14" x2="6" y2="6" stroke="#5C8C5C" stroke-width="0.8"/>
+          <line x1="12" y1="14" x2="12" y2="6" stroke="#5C8C5C" stroke-width="0.8"/>
+        </g>
+      </g>
+      <g transform="translate(500 600)">
+        <line x1="0" y1="-16" x2="-30" y2="-66" stroke="#1B2A3B" stroke-width="0.8" opacity=".4"/>
+        <text x="-34" y="-80" font-size="12" font-weight="700" fill="#1B2A3B" text-anchor="end">Leamington</text>
+        <text x="-34" y="-66" font-size="10" font-weight="600" fill="#5C8C5C" letter-spacing=".06em" text-anchor="end">GREENHOUSE</text>
+        <text x="-34" y="-52" font-size="9.5" fill="#6B7280" text-anchor="end">2,000+ ac glass · NA's largest</text>
+      </g>
+
+      <g transform="translate(820 360)">
+        <circle cx="-5" cy="-2" r="1.5" fill="#5C8C5C" opacity=".55"/>
+        <circle cx="-2" cy="-7" r="1.5" fill="#5C8C5C" opacity=".55"/>
+        <circle cx="3" cy="-5" r="1.5" fill="#5C8C5C" opacity=".55"/>
+        <circle cx="6" cy="-9" r="1.5" fill="#5C8C5C" opacity=".55"/>
+        <circle cx="-7" cy="3" r="1.5" fill="#5C8C5C" opacity=".55"/>
+        <path d="M 0 0 C -7 -10 -7 -16 0 -22 C 7 -16 7 -10 0 0 Z" fill="#2D6A2D" stroke="#fff" stroke-width="1"/>
+        <circle cx="0" cy="-15" r="2.5" fill="#fff"/>
+      </g>
+      <g transform="translate(820 360)">
+        <line x1="-6" y1="-8" x2="-46" y2="-30" stroke="#1B2A3B" stroke-width="0.8" opacity=".4"/>
+        <text x="-50" y="-44" font-size="12" font-weight="700" fill="#1B2A3B" text-anchor="end">White Church Farm</text>
+        <text x="-50" y="-30" font-size="10" font-weight="600" fill="#2D6A2D" letter-spacing=".06em" text-anchor="end">400-AC PILOT</text>
+        <text x="-50" y="-16" font-size="9.5" fill="#6B7280" text-anchor="end">Hamilton-Wentworth</text>
+      </g>
+
+      <!-- =========== Compass / scale =========== -->
+      <g transform="translate(60 760)">
+        <text font-size="9.5" font-weight="700" fill="#6B7280" letter-spacing=".18em" y="-8">N</text>
+        <line x1="0" y1="-22" x2="0" y2="0" stroke="#1B2A3B" stroke-width="1.2"/>
+        <polygon points="0,-26 -3,-18 3,-18" fill="#1B2A3B"/>
+        <line x1="40" y1="0" x2="220" y2="0" stroke="#1B2A3B" stroke-width="1"/>
+        <line x1="40" y1="-4" x2="40" y2="4" stroke="#1B2A3B" stroke-width="1"/>
+        <line x1="100" y1="-4" x2="100" y2="4" stroke="#1B2A3B" stroke-width="1"/>
+        <line x1="160" y1="-4" x2="160" y2="4" stroke="#1B2A3B" stroke-width="1"/>
+        <line x1="220" y1="-4" x2="220" y2="4" stroke="#1B2A3B" stroke-width="1"/>
+        <text x="40" y="16" font-size="9" fill="#6B7280" text-anchor="middle">0</text>
+        <text x="100" y="16" font-size="9" fill="#6B7280" text-anchor="middle">17</text>
+        <text x="160" y="16" font-size="9" fill="#6B7280" text-anchor="middle">33</text>
+        <text x="220" y="16" font-size="9" fill="#6B7280" text-anchor="middle">50 mi</text>
+      </g>
+    </svg>
+
+    <!-- ============== KEY FACTS CARD ============== -->
+    <div class="card facts">
+      <div class="h">Ontario · Market Snapshot <span class="num">Q2 · 2026</span></div>
+      <ul>
+        <li><span class="k">11.7 M</span><span class="v">Ontario farm acres in production</span></li>
+        <li><span class="k">78%</span><span class="v">GPS adoption among row-crop operators</span></li>
+        <li><span class="k">Lag</span><span class="v">Variable-rate adoption trails US Midwest by ~6 yrs</span></li>
+        <li><span class="k">Open</span><span class="v">Post-Deveron market vacuum · Nov 2025 exit</span></li>
+      </ul>
+    </div>
+
+    <!-- ============== LEGEND CARD ============== -->
+    <div class="card legend">
+      <div class="h">Legend</div>
+      <div class="body">
+        <div class="row">
+          <div class="ic">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <g fill="#5C8C5C">
+                <circle cx="3" cy="4" r="2"/><circle cx="7" cy="4" r="2"/><circle cx="11" cy="4" r="2"/>
+                <circle cx="5" cy="8" r="2"/><circle cx="9" cy="8" r="2"/><circle cx="7" cy="12" r="2"/>
+              </g>
+            </svg>
+          </div>
+          <div class="lbl">Tender fruit & vineyards<span class="sub">Niagara Peninsula</span></div>
+        </div>
+        <div class="row">
+          <div class="ic">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <path d="M 8 2 L 12 14 L 4 14 Z" fill="#F4B400"/>
+              <path d="M 8 2 L 5 -1 M 8 2 L 8 -2 M 8 2 L 11 -1" stroke="#5C8C5C" stroke-width="1" fill="none"/>
+            </svg>
+          </div>
+          <div class="lbl">Specialty vegetables<span class="sub">Norfolk · Holland Marsh</span></div>
+        </div>
+        <div class="row">
+          <div class="ic">
+            <svg width="18" height="14" viewBox="0 0 18 14">
+              <path d="M 1 6 L 9 1 L 17 6 L 17 13 L 1 13 Z" fill="none" stroke="#5C8C5C" stroke-width="1.2"/>
+              <line x1="6" y1="13" x2="6" y2="6" stroke="#5C8C5C" stroke-width="0.8"/>
+              <line x1="12" y1="13" x2="12" y2="6" stroke="#5C8C5C" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="lbl">Greenhouse glass<span class="sub">Leamington corridor</span></div>
+        </div>
+        <div class="row">
+          <div class="ic">
+            <svg width="14" height="16" viewBox="0 0 14 16">
+              <path d="M 7 1 C 1 1 1 8 7 15 C 13 8 13 1 7 1 Z" fill="#2D6A2D"/>
+              <circle cx="7" cy="6" r="2" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="lbl">Pilot farm<span class="sub">White Church · 400 ac</span></div>
+        </div>
+
+        <div class="phases">
+          <div class="p"><span class="swatch" style="background:rgba(45,106,45,0.10);border:1.5px solid #2D6A2D"></span>Phase 1 · Months 1–6 · 50 mi radius</div>
+          <div class="p"><span class="swatch" style="border:1px dashed #5C8C5C;background:transparent"></span>Phase 2 · Months 7–12 · 100 mi radius</div>
+          <div class="p"><span class="swatch" style="border:1px dotted #A8C5A8;background:transparent"></span>Phase 3 · Year 2 · 150 mi radius</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="colophon">CultivOS<span class="sep">·</span>Confidential — Strategy<span class="sep">·</span>v1.0</div>
+</div>
+
+<script>
+  // Scale to fit viewport
+  function fit(){
+    const f = document.getElementById('frame');
+    const pad = 32;
+    const sw = (window.innerWidth - pad*2) / 1920;
+    const sh = (window.innerHeight - pad*2) / 1080;
+    const s = Math.min(sw, sh, 1);
+    f.style.transform = `scale(${s})`;
+    document.body.style.minHeight = (1080*s + pad*2) + 'px';
+  }
+  fit();
+  window.addEventListener('resize', fit);
+</script>
+</body>
+</html>
