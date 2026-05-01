@@ -66,7 +66,7 @@ class TestFarmSaludoDiario:
         farm, _ = self._seed_farm(db, n_fields=1)
         db.add(WeatherRecord(
             farm_id=farm.id, temp_c=32.0, humidity_pct=75.0,
-            conditions="sunny", wind_kph=10.0,
+            description="soleado", wind_kmh=10.0, rainfall_mm=0.0,
             recorded_at=datetime.utcnow(),
         ))
         db.commit()
