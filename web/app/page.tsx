@@ -27,6 +27,7 @@ export default async function Home({
         <DemoTrioSection lang={lang} t={t} />
         <MexicoFoundationSection t={t} />
         <CompetitiveSection t={t} />
+        <IpDefensibilitySection t={t} />
         <DualMarketSection t={t} />
         <PricingSection t={t} />
         <CustomerPathSection t={t} />
@@ -619,6 +620,47 @@ function CompetitiveSection({ t }: { t: T }) {
         <p className="mt-6 max-w-3xl text-xs leading-relaxed text-muted">
           {t.competitive.sources}
         </p>
+      </div>
+    </section>
+  );
+}
+
+function IpDefensibilitySection({ t }: { t: T }) {
+  const items = [
+    { label: t.ip.tmLabel, copy: t.ip.tmCopy },
+    { label: t.ip.patentLabel, copy: t.ip.patentCopy },
+    { label: t.ip.licenseLabel, copy: t.ip.licenseCopy },
+    { label: t.ip.secretsLabel, copy: t.ip.secretsCopy },
+  ];
+  return (
+    <section className="border-b border-line/70 bg-cream py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
+        <div className="rounded-2xl border border-navy/20 bg-navy/[0.03] p-6 md:p-8">
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+            {t.ip.eyebrow}
+          </span>
+          <h3 className="mt-2 font-serif text-2xl tracking-tight text-navy md:text-3xl">
+            {t.ip.title}
+          </h3>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-navy-2">
+            {t.ip.body}
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {items.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl border border-line bg-white p-4"
+              >
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
+                  {item.label}
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-navy-2">
+                  {item.copy}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
