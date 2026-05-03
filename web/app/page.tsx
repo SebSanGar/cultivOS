@@ -31,7 +31,7 @@ export default async function Home({
         <DualMarketSection t={t} />
         <PricingSection t={t} />
         <LaunchPlanSection lang={lang} t={t} />
-        <InvestorsSection t={t} />
+        <WhereWeAreSection t={t} />
         <TeamSection t={t} lang={lang} />
         <ContactStrip lang={lang} />
       </main>
@@ -946,37 +946,21 @@ function LaunchPlanSection({ lang, t }: { lang: Lang; t: T }) {
   );
 }
 
-function InvestorsSection({ t }: { t: T }) {
-  const arr = [
-    { y: "Y1", ca: "1,000 ac · 4 customers", mx: "5 farms · 125 ha", arr: "$145K" },
-    { y: "Y2", ca: "6,250 ac · 25 customers", mx: "25 farms · 625 ha", arr: "$862K" },
-    { y: "Y3", ca: "20,000 ac · 80 customers", mx: "60 farms · 1,500 ha", arr: "$2.64M" },
-    { y: "Y4", ca: "45,000 ac · 180 customers", mx: "100 farms · 2,500 ha", arr: "$5.71M" },
-    { y: "Y5", ca: "80,000 ac · 320 customers", mx: "160 farms · 4,000 ha", arr: "$10–15M" },
+function WhereWeAreSection({ t }: { t: T }) {
+  const w = t.whereWeAre;
+  const landed = [w.landed1, w.landed2, w.landed3, w.landed4];
+  const motion = [w.motion1, w.motion2, w.motion3, w.motion4, w.motion5];
+  const workingOut = [w.workingOut1, w.workingOut2];
+  const funding = [
+    { flag: w.fund1Flag, name: w.fund1 },
+    { flag: w.fund2Flag, name: w.fund2 },
+    { flag: w.fund3Flag, name: w.fund3 },
+    { flag: w.fund4Flag, name: w.fund4 },
+    { flag: w.fund5Flag, name: w.fund5 },
+    { flag: w.fund6Flag, name: w.fund6 },
   ];
-  const useOfFunds = [
-    { pct: "45%", line: "Personnel — 3 founders + agronomist contractor (18 mo)" },
-    { pct: "25%", line: "Sales & marketing — 10× prior plan, trade shows, direct, field days" },
-    { pct: "17%", line: "Hardware — drone fleet (substantially offset by FODECIJAL match)" },
-    { pct: "8%", line: "Legal · incorporation · RPAS certs" },
-    { pct: "5%", line: "Pilot operations · field travel · insurance" },
-  ];
-  const fundingStack = [
-    { ar: "🇲🇽 FODECIJAL 2026 (Modalidad C)", note: "up to $2.5M MXN · TRL 3→4 · final May 14" },
-    { ar: "🇲🇽 Impulsora de Innovación", note: "up to $6M MXN seed co-investment · Sept window" },
-    { ar: "🇨🇦 NRC-IRAP", note: "up to $500K (subject to ITA verification) · clean tech stream" },
-    { ar: "🇨🇦 CAAIN Smart Farms", note: "up to $3M / project · $9M pool · 4 deadlines through Oct 2026" },
-    { ar: "🇨🇦 NSERC Alliance", note: "2:1 matching · rolling intake · requires university PI" },
-    { ar: "🇨🇦 SR&ED", note: "35%+ refundable · enhanced cap raised $3M → $6M (Budget 2025)" },
-  ];
-  const milestones = [
-    "CultivOS México S.A. de C.V. operational + FODECIJAL/Impulsora landed",
-    "CultivOS Canada Inc. incorporated + NRC-IRAP secured",
-    "Cerebro v1 in-field with farmers (not architecture-only)",
-    "4 paid Ontario pilots → 25 paying customers by Y1 close",
-    "Outdoor Farm Show launch (Sept 2026) + Founding-100 program live",
-    "ARR run-rate: $145K → trajectory to $862K Y2",
-  ];
+  const lookingFor = [w.lookingFor1, w.lookingFor2, w.lookingFor3];
+
   return (
     <section
       id="where-we-are"
@@ -985,98 +969,71 @@ function InvestorsSection({ t }: { t: T }) {
       <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex flex-col gap-3">
           <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-            {t.investors.eyebrow}
+            {w.eyebrow}
           </span>
           <h2 className="max-w-3xl font-serif text-4xl tracking-tight text-navy md:text-5xl">
-            {t.investors.title}
+            {w.title}
           </h2>
           <p className="mt-2 max-w-3xl text-base leading-relaxed text-navy-2 md:text-lg">
-            {t.investors.body} <b>{t.investors.bodyBold}</b>{t.investors.bodyEnd}
+            {w.body}
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-line bg-white p-6">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-              {t.investors.milestonesLabel}
+              {w.landedLabel}
             </span>
             <ul className="mt-4 space-y-3 text-sm text-navy-2">
-              {milestones.map((m) => (
-                <li key={m} className="flex items-start gap-3 leading-relaxed">
+              {landed.map((item) => (
+                <li key={item} className="flex items-start gap-3 leading-relaxed">
                   <span className="mt-2 h-1 w-3 flex-shrink-0 rounded-full bg-green" />
-                  <span>{m}</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="rounded-2xl border border-line bg-white p-6">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-              {t.investors.fundsLabel}
+              {w.motionLabel}
             </span>
             <ul className="mt-4 space-y-3 text-sm text-navy-2">
-              {useOfFunds.map((u) => (
-                <li key={u.line} className="flex items-start gap-3">
-                  <span className="font-mono text-base font-semibold text-navy w-12 flex-shrink-0">
-                    {u.pct}
-                  </span>
-                  <span className="leading-relaxed">{u.line}</span>
+              {motion.map((item) => (
+                <li key={item} className="flex items-start gap-3 leading-relaxed">
+                  <span className="mt-2 h-1 w-3 flex-shrink-0 rounded-full bg-gold" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-white">
-          <div className="flex items-center justify-between bg-cream-2/60 px-5 py-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              {t.investors.arrLabel}
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-              {t.investors.arrExit}
-            </span>
-          </div>
-          <table className="w-full border-collapse text-sm">
-            <thead className="text-left font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              <tr className="border-t border-line">
-                <th className="px-5 py-3 font-medium">{t.investors.colYear}</th>
-                <th className="px-5 py-3 font-medium">{t.investors.colCanada}</th>
-                <th className="px-5 py-3 font-medium">{t.investors.colMexico}</th>
-                <th className="px-5 py-3 font-medium text-right">{t.investors.colArr}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {arr.map((row) => (
-                <tr key={row.y} className="border-t border-line align-top">
-                  <td className="px-5 py-3 font-mono text-base font-semibold text-navy">
-                    {row.y}
-                  </td>
-                  <td className="px-5 py-3 leading-relaxed text-navy-2">
-                    {row.ca}
-                  </td>
-                  <td className="px-5 py-3 leading-relaxed text-navy-2">
-                    {row.mx}
-                  </td>
-                  <td className="px-5 py-3 text-right font-mono text-base font-semibold text-green">
-                    {row.arr}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            {w.workingOutLabel}
+          </span>
+          <ul className="mt-4 space-y-3 text-sm text-navy-2">
+            {workingOut.map((item) => (
+              <li key={item} className="flex items-start gap-3 leading-relaxed">
+                <span className="mt-2 h-1 w-3 flex-shrink-0 rounded-full bg-muted/40" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="mt-10">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-            {t.investors.ndLabel}
+            {w.fundingLabel}
           </span>
           <ul className="mt-4 grid gap-3 md:grid-cols-2">
-            {fundingStack.map((f) => (
+            {funding.map((f) => (
               <li
-                key={f.ar}
-                className="rounded-xl border border-line bg-white p-4 text-sm leading-relaxed text-navy-2"
+                key={f.name}
+                className="flex items-center gap-3 rounded-xl border border-line bg-white p-4 text-sm leading-relaxed text-navy-2"
               >
-                <div className="font-semibold text-navy">{f.ar}</div>
-                <div className="mt-1 text-xs text-muted">{f.note}</div>
+                <span className="text-lg">{f.flag}</span>
+                <span>{f.name}</span>
               </li>
             ))}
           </ul>
@@ -1084,38 +1041,21 @@ function InvestorsSection({ t }: { t: T }) {
 
         <div className="mt-12 rounded-2xl border border-navy bg-navy p-6 text-cream md:p-8">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/60">
-            {t.investors.pillarsLabel}
+            {w.lookingForLabel}
           </span>
-          <h3 className="mt-2 font-serif text-2xl tracking-tight text-cream md:text-3xl">
-            {t.investors.pillarsTitle}
-          </h3>
-          <div className="mt-6 grid gap-6 md:grid-cols-3 text-sm leading-relaxed text-cream/85">
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-                {t.investors.pillar1Label}
-              </div>
-              <p className="mt-2">{t.investors.pillar1Body}</p>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-                {t.investors.pillar2Label}
-              </div>
-              <p className="mt-2">
-                {t.investors.pillar2ConfirmedLabel} <b>ITESO</b> (Guadalajara) and <b>PLAi</b> (GDL university dept). <b>UWaterloo</b> via CTO Mubeen Zulfiqar (alumni). NSERC Alliance unlocks once a Canadian university Principal Investigator (PI) signs on — open to McMaster, Guelph, Waterloo and others.
-              </p>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-                {t.investors.pillar3Label}
-              </div>
-              <p className="mt-2">{t.investors.pillar3Body}</p>
-            </div>
-          </div>
+          <ul className="mt-6 space-y-4 text-sm leading-relaxed text-cream/85">
+            {lookingFor.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-2 h-1 w-3 flex-shrink-0 rounded-full bg-green" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
           <a
             href="mailto:hola@cultivosagro.com"
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-green px-6 py-3 text-sm font-semibold text-cream transition-colors hover:bg-green-700"
           >
-            {t.investors.ctaLabel}
+            {w.ctaLabel}
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path
                 d="M3 7h8M7.5 3.5L11 7l-3.5 3.5"
