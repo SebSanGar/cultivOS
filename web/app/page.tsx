@@ -30,7 +30,6 @@ export default async function Home({
         <IpDefensibilitySection t={t} />
         <DualMarketSection t={t} />
         <PricingSection t={t} />
-        <CustomerPathSection t={t} />
         <LaunchPlanSection lang={lang} t={t} />
         <InvestorsSection t={t} />
         <TeamSection t={t} lang={lang} />
@@ -73,7 +72,7 @@ function SiteNav({ lang, t }: { lang: Lang; t: T }) {
           <a className="hover:text-navy" href="#pricing">
             {t.nav.pricing}
           </a>
-          <a className="hover:text-navy" href="#investors">
+          <a className="hover:text-navy" href="#where-we-are">
             {t.nav.investors}
           </a>
         </nav>
@@ -155,10 +154,11 @@ function Hero({ lang, t }: { lang: Lang; t: T }) {
               </div>
             ))}
           </div>
-          <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-            {t.hero.footnote}
-          </p>
-          {lang === "es" ? null : null}
+          {t.hero.footnote && (
+            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+              {t.hero.footnote}
+            </p>
+          )}
         </div>
       </div>
     </section>
@@ -285,11 +285,13 @@ function ProblemSection({ t }: { t: T }) {
             </div>
           ))}
         </div>
-        <aside className="mt-10 rounded-2xl border border-red/30 bg-red/[0.04] px-6 py-5">
-          <p className="text-sm leading-relaxed text-navy">
-            {t.problem.aside}
-          </p>
-        </aside>
+        {t.problem.aside && (
+          <aside className="mt-10 rounded-2xl border border-red/30 bg-red/[0.04] px-6 py-5">
+            <p className="text-sm leading-relaxed text-navy">
+              {t.problem.aside}
+            </p>
+          </aside>
+        )}
       </div>
     </section>
   );
@@ -875,43 +877,9 @@ function PricingSection({ t }: { t: T }) {
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/60">
             {t.pricing.pilotBadge}
           </span>
-          <h3 className="mt-2 font-serif text-2xl tracking-tight text-cream md:text-3xl">
+          <p className="mt-3 text-sm leading-relaxed text-cream/85">
             {t.pricing.pilotTitle}
-          </h3>
-          <div className="mt-6 grid gap-3 md:grid-cols-4 text-sm">
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/55">
-                {t.pricing.col1Label}
-              </div>
-              <div className="mt-1 font-mono text-2xl font-semibold text-cream">
-                {t.pricing.col1Value}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/55">
-                {t.pricing.col2Label}
-              </div>
-              <div className="mt-1 font-mono text-2xl font-semibold text-cream">
-                {t.pricing.col2Value}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/55">
-                {t.pricing.col3Label}
-              </div>
-              <div className="mt-1 font-mono text-2xl font-semibold text-green">
-                {t.pricing.col3Value}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-cream/55">
-                {t.pricing.col4Label}
-              </div>
-              <div className="mt-1 font-mono text-2xl font-semibold text-cream">
-                {t.pricing.col4Value}
-              </div>
-            </div>
-          </div>
+          </p>
           <p className="mt-5 max-w-3xl text-xs text-cream/65 leading-relaxed">
             {t.pricing.sources}
           </p>
@@ -921,72 +889,6 @@ function PricingSection({ t }: { t: T }) {
   );
 }
 
-function CustomerPathSection({ t }: { t: T }) {
-  const steps = [
-    {
-      label: t.customerPath.step1Label,
-      value: t.customerPath.step1Value,
-      sub: t.customerPath.step1Sub,
-    },
-    {
-      label: t.customerPath.step2Label,
-      value: t.customerPath.step2Value,
-      sub: t.customerPath.step2Sub,
-    },
-    {
-      label: t.customerPath.step3Label,
-      value: t.customerPath.step3Value,
-      sub: t.customerPath.step3Sub,
-    },
-    {
-      label: t.customerPath.step4Label,
-      value: t.customerPath.step4Value,
-      sub: t.customerPath.step4Sub,
-    },
-  ];
-  return (
-    <section className="border-b border-line/70 bg-cream-2/60 py-24 md:py-28">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
-        <div className="flex flex-col gap-2">
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-            {t.customerPath.eyebrow}
-          </span>
-          <h2 className="max-w-3xl font-serif text-3xl tracking-tight text-navy md:text-5xl">
-            {t.customerPath.title}
-          </h2>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-navy-2 md:text-lg">
-            {t.customerPath.body}
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-0 md:grid-cols-4">
-          {steps.map((step, i) => (
-            <div key={step.label} className="relative flex flex-col">
-              {i < steps.length - 1 && (
-                <div className="absolute right-0 top-8 hidden h-0.5 w-full translate-x-1/2 bg-line md:block" aria-hidden="true" />
-              )}
-              <div className="relative z-10 rounded-2xl border border-line bg-white p-6 mx-2">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                  {step.label}
-                </div>
-                <div className="mt-2 font-serif text-5xl font-medium tracking-tight text-green">
-                  {step.value}
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-navy-2">
-                  {step.sub}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-8 max-w-3xl font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-          {t.customerPath.conversionNote}
-        </p>
-      </div>
-    </section>
-  );
-}
 
 function LaunchPlanSection({ lang, t }: { lang: Lang; t: T }) {
   const phases = [
@@ -1078,7 +980,7 @@ function InvestorsSection({ t }: { t: T }) {
   ];
   return (
     <section
-      id="investors"
+      id="where-we-are"
       className="border-b border-line/70 bg-cream-2/40 py-24 md:py-28"
     >
       <div className="mx-auto max-w-7xl px-6 md:px-10">
