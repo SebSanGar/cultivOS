@@ -629,10 +629,9 @@ function CompetitiveSection({ t }: { t: T }) {
 
 function IpDefensibilitySection({ t }: { t: T }) {
   const items = [
-    { label: t.ip.tmLabel, copy: t.ip.tmCopy },
-    { label: t.ip.patentLabel, copy: t.ip.patentCopy },
-    { label: t.ip.licenseLabel, copy: t.ip.licenseCopy },
-    { label: t.ip.secretsLabel, copy: t.ip.secretsCopy },
+    { label: t.ip.item1Label, copy: t.ip.item1Copy },
+    { label: t.ip.item2Label, copy: t.ip.item2Copy },
+    { label: t.ip.item3Label, copy: t.ip.item3Copy },
   ];
   return (
     <section className="border-b border-line/70 bg-cream py-16 md:py-20">
@@ -647,7 +646,7 @@ function IpDefensibilitySection({ t }: { t: T }) {
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-navy-2">
             {t.ip.body}
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {items.map((item) => (
               <div
                 key={item.label}
