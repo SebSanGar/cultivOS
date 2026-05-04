@@ -484,17 +484,26 @@ function MexicoFoundationSection({ t }: { t: T }) {
               </div>
             ))}
           </div>
+          <p className="mt-5 text-xs leading-relaxed text-muted">
+            <span className="font-mono uppercase tracking-[0.14em]">{t.mexico.sponsorLabel}:</span>{" "}
+            {t.mexico.sponsorLine}
+          </p>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-green/30 bg-green/[0.04] px-6 py-5 flex flex-col gap-1 md:flex-row md:items-center md:gap-8">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
-            {t.mexico.entityLabel}
-          </span>
-          <span className="font-serif text-xl tracking-tight text-navy">
-            {t.mexico.entityTitle}
-          </span>
+        <div className="mt-8 rounded-2xl border border-green/30 bg-green/[0.04] px-6 py-5 flex flex-col gap-1">
+          <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-8">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green">
+              {t.mexico.entityLabel}
+            </span>
+            <span className="font-serif text-xl tracking-tight text-navy">
+              {t.mexico.entityTitle}
+            </span>
+          </div>
           <span className="font-mono text-[11px] text-muted">
             {t.mexico.entityStatus}
+          </span>
+          <span className="font-mono text-[11px] text-muted">
+            {t.mexico.entityAddress}
           </span>
         </div>
       </div>
