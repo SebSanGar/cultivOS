@@ -59,7 +59,7 @@ function SiteNav({ lang, t }: { lang: Lang; t: T }) {
             className="h-9 w-9 md:h-10 md:w-10"
           />
           <span className="font-serif text-2xl tracking-tight text-navy md:text-[28px] leading-none">
-            cultiv<span className="text-green italic">OS</span>
+            cultiv<span className="text-green">OS</span>
           </span>
         </a>
         <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
@@ -563,7 +563,7 @@ function CompetitiveSection({ t }: { t: T }) {
       status: "Launching 2026 · MX foundation, CA expansion",
       price: "$36–$216 CAD/ac",
       crop: "Specialty crops",
-      d2f: "Yes — WhatsApp + voice + color cards",
+      d2f: "Yes — channel by market (WhatsApp / dashboard)",
       bundle: "Drone services + AI prescriptions + agronomist contractor + bilingual",
       muted: false,
       highlight: true,
