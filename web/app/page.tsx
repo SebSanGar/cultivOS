@@ -348,25 +348,6 @@ function SolutionSection({ lang, t }: { lang: Lang; t: T }) {
             {t.solution.mockupCaption}
           </p>
         </div>
-        <aside className="mt-12 rounded-2xl border border-line bg-cream-2/50 p-6 md:p-8">
-          <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between md:gap-8">
-            <div>
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-green">
-                {t.solution.asideEyebrow}
-              </span>
-              <p className="mt-2 max-w-3xl text-base leading-relaxed text-navy md:text-lg">
-                {t.solution.asideBody1} <b>{t.solution.asideWeight}</b>
-                {t.solution.asideBody2}{" "}
-                <b className="text-green">{t.solution.cosecheraName}</b>{" "}
-                {t.solution.cosecheraGloss}{" "}
-                <span className="text-muted">{t.solution.asideNote}</span>
-              </p>
-            </div>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-green font-semibold whitespace-nowrap">
-              <b className="text-navy">{t.solution.asideTag}</b> {t.solution.asideTagSuffix}
-            </span>
-          </div>
-        </aside>
       </div>
     </section>
   );
