@@ -25,25 +25,25 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://cultivosagro.com"),
   title: "cultivOS — The Intelligence Layer for Precision Agriculture",
   description:
-    "Mexican company building tech for Mexico's agricultural industries. Precision agriculture delivered through WhatsApp — the interface farmers already use. $121/ac saved on inputs. Pilot partner locked in: White Church Farm, Haldimand County (400+ ac, expanding).",
+    "Mexican company digitizing the farmers big agtech wrote off. Drone + AI farm intelligence delivered through the interface each farmer actually uses (WhatsApp in Mexico, dashboard in Canada). Pre-release · Jalisco pilots in motion · Ontario pilot locked at White Church Farm, Haldimand County (400+ ac, expanding).",
   applicationName: "cultivOS",
   keywords: [
     "precision agriculture",
     "agtech",
     "drone agriculture",
     "specialty crops",
-    "WhatsApp agriculture",
     "NDVI",
     "thermal imaging",
     "Mexico agtech",
     "Ontario agtech",
     "Jalisco",
+    "smallholder agriculture",
   ],
   authors: [{ name: "cultivOS" }],
   openGraph: {
     title: "cultivOS — The Intelligence Layer for Precision Agriculture",
     description:
-      "Hecho en México. We digitize the demographic big agtech wrote off. Drone data → one decision per acre, delivered through WhatsApp.",
+      "Hecho en México. We digitize the demographic big agtech wrote off. Drone data → one decision per acre, delivered through the channel each market actually uses.",
     url: "https://cultivosagro.com",
     siteName: "cultivOS",
     locale: "en_CA",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "cultivOS — The Intelligence Layer for Precision Agriculture",
     description:
-      "Hecho en México. Drone-fed AI brain delivered through WhatsApp. $121/ac saved.",
+      "Hecho en México. Drone-fed AI brain. One decision per acre, delivered through the channel each market actually uses.",
     images: ["/brand/cultivOS_drop.png"],
   },
   icons: {
