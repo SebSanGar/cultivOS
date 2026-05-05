@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://cultivosagro.com"),
   title: "cultivOS — The Intelligence Layer for Precision Agriculture",
   description:
-    "Mexican company digitizing the farmers big agtech wrote off. Drone + AI farm intelligence delivered through the interface each farmer actually uses (WhatsApp in Mexico, dashboard in Canada). Pre-release · Jalisco pilots in motion · Ontario pilot locked at White Church Farm, Haldimand County (400+ ac, expanding).",
+    "Mexican company digitizing the farmers big agtech wrote off. Drone + AI farm intelligence delivered through the interface each farmer actually uses (WhatsApp in Mexico, dashboard in Canada). Pre-release · Jalisco fieldwork via ITESO partnership · Ontario anchor pilot confirmed at White Church Farm, Haldimand County (400+ ac, expanding).",
   applicationName: "cultivOS",
   keywords: [
     "precision agriculture",
