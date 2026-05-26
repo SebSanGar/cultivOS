@@ -3,3 +3,9 @@ builder = "DOCKERFILE"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
+startCommand = "alembic upgrade head && python -m uvicorn cultivos.app:create_app --factory --host 0.0.0.0 --port $PORT"
+
+[deploy.healthcheck]
+path = "/api/health"
+initialDelaySeconds = 10
+timeoutSeconds = 5

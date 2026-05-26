@@ -14,8 +14,10 @@ COPY --from=builder /install /usr/local
 COPY src/ src/
 COPY frontend/ frontend/
 COPY scripts/ scripts/
+COPY alembic/ alembic/
+COPY alembic.ini .
 
 ENV PYTHONPATH=/app/src:/app
 ENV PORT=8000
 
-CMD python -m uvicorn cultivos.app:create_app --factory --host 0.0.0.0 --port $PORT
+CMD ["/bin/sh", "scripts/start.sh"]

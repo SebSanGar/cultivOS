@@ -4,14 +4,18 @@ cultivOS configuration — Pydantic settings from .env file.
 
 from functools import lru_cache
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     """All settings from environment variables / .env file."""
 
-    # Database
-    db_url: str = "sqlite:///cultivos.db"
+    # Database — accepts DB_URL (local dev) or DATABASE_URL (Railway Postgres add-on)
+    db_url: str = Field(
+        default="sqlite:///cultivos.db",
+        validation_alias=AliasChoices("DB_URL", "DATABASE_URL"),
+    )
 
     # Auth
     jwt_secret_key: str = ""  # MUST be set via JWT_SECRET_KEY env var in production
