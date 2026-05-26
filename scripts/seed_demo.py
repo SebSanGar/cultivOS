@@ -78,7 +78,9 @@ def seed_demo_data(session):
         return
 
     now = datetime.utcnow()
-    six_months_ago = now - timedelta(days=182)
+    # 13 months ensures both Jalisco seasons (temporal Jun-Oct, secas Nov-May)
+    # are always represented regardless of when the seed runs.
+    six_months_ago = now - timedelta(days=396)
 
     # --- Farms ---
     farms_data = [
@@ -277,12 +279,12 @@ def seed_demo_data(session):
 
 
 def _seed_field_history(session, farm, field, now, start_date, region="jalisco"):
-    """Seed 6 months of time-series data for a single field.
+    """Seed time-series data for a single field (window determined by caller).
 
     Data shows a clear before-regenerative -> after-regenerative improvement arc:
-    - Weeks 1-8: degraded baseline (low NDVI, low health, high stress)
-    - Weeks 9-12: first treatments applied, early recovery
-    - Weeks 13-26: sustained improvement, strong health scores
+    - Early weeks: degraded baseline (low NDVI, low health, high stress)
+    - Mid weeks: first treatments applied, early recovery
+    - Later weeks: sustained improvement, strong health scores
 
     Returns list of treatment record IDs for farmer feedback.
     """

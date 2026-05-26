@@ -74,7 +74,7 @@ def test_monthly_avg_calculation(client, db):
     """3 alerts spread across 3 months → monthly_avg = 0.5 (3 alerts / 6 months)."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # 3 alerts spread across months 1, 2, 3 ago
     for months_ago in [1, 2, 3]:
@@ -95,7 +95,7 @@ def test_dominant_type_most_frequent(client, db):
     """dominant_type = alert_type that appears most often in 6-month window."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # 3 irrigation alerts, 1 pest alert
     for i in range(3):
@@ -113,7 +113,7 @@ def test_trend_increasing(client, db):
     """trend=increasing when last 2 months have more alerts than prior 2 months."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # last 2 months: 4 alerts
     for i in range(4):
@@ -132,7 +132,7 @@ def test_trend_decreasing(client, db):
     """trend=decreasing when last 2 months have fewer alerts than prior 2 months."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # last 2 months: 1 alert
     _make_alert(db, farm.id, field.id, sent_at=now - timedelta(days=10))
@@ -151,7 +151,7 @@ def test_trend_stable_equal_counts(client, db):
     """trend=stable when last 2 months = prior 2 months alert count."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # last 2 months: 2 alerts
     _make_alert(db, farm.id, field.id, sent_at=now - timedelta(days=10))
@@ -172,7 +172,7 @@ def test_overall_alert_load(client, db):
     farm = _make_farm(db)
     field1 = _make_field(db, farm.id, name="Campo Uno")
     field2 = _make_field(db, farm.id, name="Campo Dos")
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # field1: 6 alerts in 6 months → avg = 1.0
     for i in range(6):
