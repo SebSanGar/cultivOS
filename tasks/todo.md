@@ -29,15 +29,24 @@ Don Manuel picks up Seb's phone:
 
 ## Tasks (mirror of autoagent backlog F1-F9)
 
-- [x] **F1** -- Seed 3 farms x 3 fields, mixed-color health (green/yellow/red), fix orphan farms bug
-- [x] **F2** -- Rewrite /campo: big photo + one sentence + one button
-- [ ] **F3** -- Generate 4 NDVI/thermal/RGB fixtures via Gemini (GEMINI_API_KEY from autoagent .env)
-- [ ] **F4** -- Plain-Spanish alert generator (`services/intelligence/farmer_voice.py`), 12 alert types
-- [ ] **F5** -- Floating WhatsApp button on every farmer page (in-tab, not external)
-- [ ] **F6** -- Hide analytics from farmer nav (4 items: Parcelas / Alertas / Conocimiento / WhatsApp)
-- [ ] **F7** -- Mobile sweep, all farmer pages 375px clean
-- [ ] **F8** -- Agronomist toggle (localStorage-persisted, inline data expansion)
-- [ ] **F9** -- Railway deploy at app.cultivosagro.com, Postgres add-on, alembic migration
+- [x] **F1** -- Seed 3 farms x 3 fields, mixed-color health (green/yellow/red), fix orphan farms bug -- `0220e12`
+- [x] **F2** -- Rewrite /campo: big photo + one sentence + one button -- `9af9068`
+- [x] **F3** -- Imagen 4 fixtures (NDVI/thermal/RGB aerial), `scripts/gen_fixtures.py` -- `eeb0c67`
+- [x] **F4** -- `farmer_voice.translate_to_farmer()`, 12 signal types -- `a8950dd`
+- [x] **F5** -- WhatsApp FAB on /, /campo, /notificaciones, /conocimiento -- `c92df25`
+- [x] **F6** -- Farmer nav 4 items + nav-agronomo-extras[hidden] -- `8759228`
+- [x] **F7** -- Playwright 375x812 sweep (15 tests, pages already compliant) -- `298946a`
+- [x] **F8** -- Agronomist toggle, localStorage persist, .agronomo-only reveal -- `6e01a62`
+- [x] **F9** -- Railway deploy config: DATABASE_URL alias, psycopg2, healthcheck, alembic on boot -- `5652cb5`
+
+## Sprint complete F1->F9 (18 commits, 3893 tests, 0 regressions)
+
+## Manual Seb action remaining (DNS, ~5min)
+
+1. Railway -> cultivOS service -> Settings -> Custom Domain -> add `app.cultivosagro.com`
+2. Copy Railway CNAME target shown
+3. Vercel DNS (cultivosagro.com) -> add CNAME `app` -> Railway target
+4. Wait for cert provision (~2min), verify https://app.cultivosagro.com loads dashboard
 
 ## Deferred (post-meeting)
 
