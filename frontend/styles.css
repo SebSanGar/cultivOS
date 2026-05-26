@@ -58,6 +58,26 @@ nav {
 .nav-tab:hover { background: var(--green-light); color: var(--green-dark); }
 .nav-tab.active { background: var(--green); color: #fff; }
 
+/* F8 — Agronomist toggle button */
+.agronomo-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--green, #22c55e);
+    color: var(--green, #22c55e);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+.agronomo-toggle-btn:hover,
+.agronomo-toggle-btn[aria-pressed="true"] {
+    background: var(--green, #22c55e);
+    color: #fff;
+}
+
 @media (max-width: 768px) {
     nav { padding: 0 12px; }
     .nav-inner { gap: 8px; }

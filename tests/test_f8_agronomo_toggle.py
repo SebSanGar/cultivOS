@@ -70,18 +70,27 @@ def pw_browser():
         browser.close()
 
 
-def open_page_farmer(pw_browser, base_url: str, filename: str, view_mode: str = "farmer"):
-    """Return (context, page) at 375x812 in farmer mode (default).
+def open_page_farmer(pw_browser, base_url: str, filename: str, view_mode: str = "farmer",
+                     inject_mode: bool = True):
+    """Return (context, page) at 375x812.
 
     Injects cultivOS_token to bypass auth-guard.js.
     view_mode: 'farmer' (default) or 'agronomist'
+    inject_mode: if False, only auth token injected (not cultivos_view_mode).
+                 Use for persistence tests where click sets the value.
     """
     ctx = pw_browser.new_context(viewport=VIEWPORT)
-    ctx.add_init_script(f"""
-        window.localStorage.setItem('cultivOS_token', 'test-token-f8');
-        window.localStorage.setItem('cultivOS_user', 'TestUser');
-        window.localStorage.setItem('cultivos_view_mode', '{view_mode}');
-    """)
+    if inject_mode:
+        ctx.add_init_script(f"""
+            window.localStorage.setItem('cultivOS_token', 'test-token-f8');
+            window.localStorage.setItem('cultivOS_user', 'TestUser');
+            window.localStorage.setItem('cultivos_view_mode', '{view_mode}');
+        """)
+    else:
+        ctx.add_init_script("""
+            window.localStorage.setItem('cultivOS_token', 'test-token-f8');
+            window.localStorage.setItem('cultivOS_user', 'TestUser');
+        """)
     pg = ctx.new_page()
     pg.goto(f"{base_url}/{filename}", wait_until="domcontentloaded", timeout=12000)
     return ctx, pg
@@ -276,11 +285,13 @@ class TestF8Persistence:
 
     def test_agronomo_mode_persists_reload(self, pw_browser, frontend_server):
         """Set mode to agronomist, reload page, nav-agronomo-extras still visible."""
-        ctx, pg = open_page_farmer(pw_browser, frontend_server, "index.html", "farmer")
+        # inject_mode=False so init_script does NOT re-inject cultivos_view_mode on reload
+        ctx, pg = open_page_farmer(pw_browser, frontend_server, "index.html", "farmer",
+                                   inject_mode=False)
         try:
             # Click to switch to agronomo mode
             pg.click("#agronomo-toggle")
-            # Reload same page
+            # Reload same page — init_script runs again but only sets auth token, not view_mode
             pg.reload(wait_until="domcontentloaded", timeout=12000)
             visible = pg.evaluate(
                 """() => {
