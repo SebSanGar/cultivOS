@@ -105,7 +105,7 @@ class TestIrrigation:
 class TestAnomalyHealthDrop:
     def test_returns_spanish_string(self):
         out = _check({"type": "anomaly_health_drop", "drop_pct": 15})
-        assert any(w in out.lower() for w in ("bajo", "perdio", "perdiendo", "cambio", "rapido", "baja")), out
+        assert any(w in out.lower() for w in ("bajo", "bajó", "perdio", "perdió", "perdiendo", "cambio", "cambió", "rapido", "rápido", "baja")), out
 
     def test_no_jargon(self):
         out = translate_to_farmer({"type": "anomaly_health_drop", "drop_pct": 20})
