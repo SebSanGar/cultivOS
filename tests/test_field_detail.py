@@ -59,7 +59,8 @@ def test_field_detail_page_loads(client):
     assert resp.status_code == 200
     html = resp.text
     assert "cultivOS" in html
-    assert "Detalle de Campo" in html
+    # F2: farmer-first rewrite — page title changed, detail label in agronomo section
+    assert "Mi Parcela" in html or "Detalle de Campo" in html
 
 
 def test_field_sections_present(client):

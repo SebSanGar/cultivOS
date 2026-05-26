@@ -35,8 +35,10 @@ async function fetchJSON(path) {
 // -- Load all field data --
 async function loadFieldDetail() {
     if (!farmId || !fieldId) {
-        document.getElementById('campo-title').textContent = 'Error: parametros faltantes';
-        document.getElementById('campo-subtitle').textContent = 'URL debe incluir ?farm=ID&field=ID';
+        const nombreEl = document.getElementById('campo-nombre');
+        if (nombreEl) nombreEl.textContent = 'Error: parametros faltantes';
+        const granjaEl = document.getElementById('campo-granja');
+        if (granjaEl) granjaEl.textContent = 'URL debe incluir ?farm=ID&field=ID';
         return;
     }
 
@@ -85,33 +87,90 @@ async function loadFieldDetail() {
     // Find this field
     const field = fields ? fields.find(f => f.id === parseInt(fieldId)) : null;
 
-    // Header
+    // ---- FARMER VIEW: populate visible elements ----
     if (field) {
-        document.getElementById('campo-title').textContent = field.name;
-        document.getElementById('campo-subtitle').textContent =
-            (field.crop_type ? field.crop_type : '') + ' — ' + field.hectares + ' ha';
-        document.getElementById('campo-hectares').textContent = field.hectares;
-        document.getElementById('campo-crop').textContent = field.crop_type || '--';
+        // h1 field name
+        const nombreEl = document.getElementById('campo-nombre');
+        if (nombreEl) nombreEl.textContent = field.name;
+
+        // Farm subtitle (crop + hectares)
+        const granjaEl = document.getElementById('campo-granja');
+        if (granjaEl) {
+            granjaEl.textContent = (field.crop_type ? field.crop_type : '') +
+                (field.hectares ? ' · ' + field.hectares + ' ha' : '');
+        }
+
+        // Agronomo-only: hectares + crop stat cards
+        const haEl = document.getElementById('campo-hectares');
+        if (haEl) haEl.textContent = field.hectares;
+        const cropEl = document.getElementById('campo-crop');
+        if (cropEl) cropEl.textContent = field.crop_type || '--';
     }
 
-    // Back button links to farm
-    document.getElementById('btn-back').onclick = function() {
-        window.location.href = '/';
-    };
+    // Health score — drive farmer summary chip + resumen sentence
+    const latestHealth = healthList && healthList.length > 0 ? healthList[healthList.length - 1] : null;
+    const healthScore = latestHealth ? latestHealth.score : null;
 
-    // Field boundary map
+    // Farmer-voice health chip
+    const chip = document.getElementById('campo-salud-chip');
+    if (chip) {
+        if (healthScore == null) {
+            chip.textContent = 'Sin datos aun';
+            chip.className = 'campo-salud-chip none';
+        } else if (healthScore > 70) {
+            chip.textContent = 'Saludable';
+            chip.className = 'campo-salud-chip green';
+        } else if (healthScore >= 40) {
+            chip.textContent = 'Atencion';
+            chip.className = 'campo-salud-chip yellow';
+        } else {
+            chip.textContent = 'Necesita ayuda';
+            chip.className = 'campo-salud-chip red';
+        }
+    }
+
+    // Farmer-voice resumen sentence (plain Spanish, no jargon)
+    const resumenEl = document.getElementById('campo-resumen');
+    if (resumenEl) {
+        const cropName = (field && field.crop_type) ? field.crop_type.toLowerCase() : 'tu cultivo';
+        if (healthScore == null) {
+            resumenEl.textContent = 'Aun no hay datos para esta parcela.';
+        } else if (healthScore > 70) {
+            resumenEl.textContent = 'Tu ' + cropName + ' esta bien esta semana.';
+        } else if (healthScore >= 40) {
+            resumenEl.textContent = 'Tu ' + cropName + ' necesita un poco de atencion.';
+        } else {
+            resumenEl.textContent = 'Tu ' + cropName + ' tiene sed — revisa el riego hoy.';
+        }
+    }
+
+    // Farmer-voice recommendation
+    const recTexto = document.getElementById('recomendacion-texto');
+    if (recTexto) {
+        if (actionTimeline && actionTimeline.actions && actionTimeline.actions.length > 0) {
+            const top = actionTimeline.actions[0];
+            recTexto.textContent = top.description || top.action || 'Revisa la humedad del suelo hoy.';
+        } else if (healthScore != null && healthScore < 40) {
+            recTexto.textContent = 'Riega 3 horas manana en la madrugada.';
+        } else if (healthScore != null && healthScore < 70) {
+            recTexto.textContent = 'Observa si hay hojas amarillas en los bordes.';
+        } else {
+            recTexto.textContent = 'Sigue el mismo programa de riego esta semana.';
+        }
+    }
+
+    // Agronomo-only: health stat card
+    const healthEl = document.getElementById('campo-health');
+    if (healthEl && latestHealth) {
+        healthEl.textContent = Math.round(latestHealth.score);
+        healthEl.className = 'stat-value health-badge ' + healthClass(latestHealth.score);
+    }
+
+    // Field boundary map (agronomo-only section)
     renderFieldMap(field);
 
-    // Cerebro intelligence summary
+    // Cerebro intelligence summary (agronomo-only section)
     renderCerebro(intelligence);
-
-    // Health score
-    const latestHealth = healthList && healthList.length > 0 ? healthList[healthList.length - 1] : null;
-    if (latestHealth) {
-        const el = document.getElementById('campo-health');
-        el.textContent = Math.round(latestHealth.score);
-        el.className = 'stat-value health-badge ' + healthClass(latestHealth.score);
-    }
 
     // NDVI
     const latestNdvi = ndviList && ndviList.length > 0 ? ndviList[ndviList.length - 1] : null;
@@ -2305,6 +2364,17 @@ function renderTreatmentEffectiveness(results) {
     });
     html += '</div>';
     el.innerHTML = html;
+}
+
+// -- Farmer CTA: toggle recommendation box --
+function toggleRecomendacion() {
+    const box = document.getElementById('recomendacion');
+    if (!box) return;
+    box.classList.toggle('visible');
+    const btn = document.getElementById('cta-que-hago');
+    if (btn) {
+        btn.textContent = box.classList.contains('visible') ? 'Listo' : 'Que hago?';
+    }
 }
 
 // -- Init --

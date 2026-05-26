@@ -2,29 +2,151 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Detalle de Campo</title>
-    <meta name="description" content="Detalle de campo — salud, NDVI, suelo, riego, rotacion y recomendaciones.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>cultivOS — Mi Parcela</title>
+    <meta name="description" content="Estado y recomendaciones de tu parcela.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ---- F2: Farmer-first campo styles ---- */
+        .campo-farmer {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 16px 80px;
+        }
+
+        .campo-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: var(--text-muted, #9ca3af);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 12px 0;
+            font-family: inherit;
+        }
+
+        .campo-back:hover { color: var(--text-primary, #f9fafb); }
+
+        .campo-nombre {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 4px;
+            color: var(--text-primary, #f9fafb);
+            line-height: 1.2;
+        }
+
+        .campo-granja {
+            font-size: 14px;
+            color: var(--text-muted, #9ca3af);
+            margin: 0 0 16px;
+        }
+
+        .campo-hero {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: var(--surface-2, #1f2937);
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .campo-salud-chip {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .campo-salud-chip.green { background: #166534; color: #bbf7d0; }
+        .campo-salud-chip.yellow { background: #713f12; color: #fef08a; }
+        .campo-salud-chip.red { background: #7f1d1d; color: #fecaca; }
+        .campo-salud-chip.none { background: #374151; color: #9ca3af; }
+
+        .campo-resumen-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary, #f9fafb);
+            line-height: 1.5;
+            margin: 0 0 24px;
+        }
+
+        .cta-primary {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: inherit;
+            background: var(--accent, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            min-height: 44px;
+        }
+        .cta-primary:hover { background: #15803d; }
+        .cta-primary:active { background: #166534; }
+
+        .recomendacion-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--surface-2, #1f2937);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent, #16a34a);
+            display: none;
+        }
+        .recomendacion-box.visible { display: block; }
+
+        .recomendacion-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted, #9ca3af);
+            margin-bottom: 8px;
+        }
+
+        .recomendacion-texto {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-primary, #f9fafb);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Farmer nav — 4 items only */
+        .nav-farmer-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; }
+        .nav-farmer-tabs li a {
+            display: block;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--text-muted, #9ca3af);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .nav-farmer-tabs li a:hover { color: var(--text-primary, #f9fafb); }
+    </style>
 </head>
 <body class="intel-body">
 
-<!-- NAV -->
+<!-- NAV: farmer 4-item nav -->
 <nav>
     <div class="nav-inner">
         <a href="/" class="nav-logo">cultiv<span>OS</span></a>
-        <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab">Inteligencia</a></li>
-            <li><a href="/vuelos" class="nav-tab">Vuelos</a></li>
-            <li><a href="/notificaciones" class="nav-tab">Notificaciones</a></li>
-            <li><a href="/conocimiento" class="nav-tab">Conocimiento</a></li>
-            <li><a href="/estado" class="nav-tab">Estado</a></li>
+        <ul class="nav-farmer-tabs">
+            <li><a href="/">Mis Parcelas</a></li>
+            <li><a href="/notificaciones">Alertas</a></li>
+            <li><a href="/conocimiento">Conocimiento</a></li>
+            <li><a href="/whatsapp-demo">WhatsApp</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
@@ -33,397 +155,434 @@
     </div>
 </nav>
 
-<!-- FIELD DETAIL -->
-<main class="dashboard">
-    <!-- Back + Header -->
-    <div class="campo-header">
-        <button class="field-panel-back" id="btn-back" onclick="history.back()">Volver</button>
-        <div>
-            <h1 class="dash-title" id="campo-title">Detalle de Campo</h1>
-            <p class="dash-subtitle" id="campo-subtitle"></p>
-        </div>
-        <button class="campo-download-btn" id="btn-download-report" onclick="downloadReport()">Descargar Reporte</button>
+<!-- FARMER VIEW -->
+<main class="campo-farmer">
+    <button class="campo-back" onclick="history.back()">&#8592; Volver</button>
+
+    <h1 class="campo-nombre" id="campo-nombre">Mi Parcela</h1>
+    <p class="campo-granja" id="campo-granja"></p>
+
+    <!-- Hero image — F3 will populate real fixtures -->
+    <img
+        id="campo-imagen"
+        class="campo-hero"
+        src="/images/fixtures/healthy-orchard-ndvi.png"
+        alt="Vista de la parcela"
+        onerror="this.style.background='#1f2937';this.removeAttribute('src')"
+    >
+
+    <span class="campo-salud-chip none" id="campo-salud-chip">Cargando...</span>
+
+    <!-- ONE Spanish sentence summary -->
+    <p class="campo-resumen-text" id="campo-resumen">Revisando tu parcela...</p>
+
+    <!-- ONE primary CTA -->
+    <button id="cta-que-hago" class="cta-primary" onclick="toggleRecomendacion()">
+        Que hago?
+    </button>
+
+    <!-- Recommendation (hidden until CTA tapped) -->
+    <div id="recomendacion" class="recomendacion-box" aria-live="polite">
+        <div class="recomendacion-label">Esta semana</div>
+        <p class="recomendacion-texto" id="recomendacion-texto">Cargando recomendacion...</p>
     </div>
 
-    <!-- Stats strip -->
-    <div class="stats-strip" id="campo-stats">
-        <div class="stat-card">
-            <div class="stat-value" id="campo-health">--</div>
-            <div class="stat-label">Salud</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="campo-ndvi">--</div>
-            <div class="stat-label">NDVI</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="campo-hectares">--</div>
-            <div class="stat-label">Hectareas</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="campo-crop">--</div>
-            <div class="stat-label">Cultivo</div>
-        </div>
-    </div>
+    <!-- =========================================================
+         AGRONOMO-ONLY SECTIONS — hidden in farmer view (F8 reveals)
+         ========================================================= -->
+    <div class="agronomo-only" id="agronomo-bloque-principal" hidden>
 
-    <!-- Field Boundary Map -->
-    <div class="campo-section" id="section-map">
-        <div class="campo-section-title">Mapa del Campo</div>
-        <div id="field-map" class="field-map"></div>
-        <div id="map-placeholder" class="campo-placeholder" style="display:none">Sin coordenadas de limite disponibles</div>
-    </div>
+        <!-- Agronomo header with download button -->
+        <div class="campo-header">
+            <div>
+                <h2 class="dash-title" id="campo-title">Detalle de Campo</h2>
+                <p class="dash-subtitle" id="campo-subtitle"></p>
+            </div>
+            <button class="campo-download-btn" id="btn-download-report" onclick="downloadReport()">Descargar Reporte</button>
+        </div>
 
-    <!-- Cerebro Intelligence Summary — the brain overview -->
-    <div class="campo-section" id="section-cerebro">
-        <div class="campo-section-title">Resumen Cerebro</div>
-        <div id="cerebro-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando inteligencia...</div>
+        <!-- Stats strip (NDVI / health score / etc.) -->
+        <div class="stats-strip" id="campo-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="campo-health">--</div>
+                <div class="stat-label">Salud</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="campo-ndvi">--</div>
+                <div class="stat-label">NDVI</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="campo-hectares">--</div>
+                <div class="stat-label">Hectareas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="campo-crop">--</div>
+                <div class="stat-label">Cultivo</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Anomaly Detection -->
-    <div class="campo-section" id="section-anomalies">
-        <div class="campo-section-title">Anomalias Detectadas</div>
-        <div id="anomalies-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin anomalias detectadas</div>
+        <!-- Cerebro Intelligence Summary -->
+        <div class="campo-section" id="section-cerebro">
+            <div class="campo-section-title">Resumen Cerebro</div>
+            <div id="cerebro-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando inteligencia...</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Sensor Fusion Quality -->
-    <div class="campo-section" id="section-fusion">
-        <div class="campo-section-title">Validacion Multi-Sensor</div>
-        <div id="fusion-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin datos de fusion disponibles</div>
+        <!-- Field Boundary Map -->
+        <div class="campo-section" id="section-map">
+            <div class="campo-section-title">Mapa del Campo</div>
+            <div id="field-map" class="field-map"></div>
+            <div id="map-placeholder" class="campo-placeholder" style="display:none">Sin coordenadas de limite disponibles</div>
         </div>
-    </div>
 
-    <!-- Regional Recommendations — Jalisco-specific context -->
-    <div class="campo-section" id="section-regional">
-        <div class="campo-section-title">Contexto Regional</div>
-        <div id="regional-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando contexto regional...</div>
+        <!-- Anomaly Detection -->
+        <div class="campo-section" id="section-anomalies">
+            <div class="campo-section-title">Anomalias Detectadas</div>
+            <div id="anomalies-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin anomalias detectadas</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Seasonal Risk Alerts -->
-    <div class="campo-section" id="section-seasonal-alerts">
-        <div class="campo-section-title">Alertas Estacionales</div>
-        <div id="seasonal-alerts-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin alertas estacionales</div>
+        <!-- Sensor Fusion Quality -->
+        <div class="campo-section" id="section-fusion">
+            <div class="campo-section-title">Validacion Multi-Sensor</div>
+            <div id="fusion-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos de fusion disponibles</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Action Timeline — Cerebro "what to do this week" -->
-    <div class="campo-section" id="section-timeline">
-        <div class="campo-section-title">Acciones de la Semana</div>
-        <div id="timeline-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando acciones...</div>
+        <!-- Regional Context -->
+        <div class="campo-section" id="section-regional">
+            <div class="campo-section-title">Contexto Regional</div>
+            <div id="regional-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando contexto regional...</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Data Completeness -->
-    <div class="campo-section" id="section-completeness">
-        <div class="campo-section-title">Completitud de Datos</div>
-        <div id="completeness-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando completitud...</div>
+        <!-- Seasonal Risk Alerts -->
+        <div class="campo-section" id="section-seasonal-alerts">
+            <div class="campo-section-title">Alertas Estacionales</div>
+            <div id="seasonal-alerts-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin alertas estacionales</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Health history chart -->
-    <div class="campo-section" id="section-health">
-        <div class="campo-section-title">Historial de Salud</div>
-        <div class="campo-chart-container">
-            <canvas id="health-chart"></canvas>
+        <!-- Action Timeline -->
+        <div class="campo-section" id="section-timeline">
+            <div class="campo-section-title">Acciones de la Semana</div>
+            <div id="timeline-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando acciones...</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Regenerative Score -->
-    <div class="campo-section" id="section-regenerative">
-        <div class="campo-section-title">Puntuacion Regenerativa</div>
-        <div id="regenerative-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando puntuacion regenerativa...</div>
+        <!-- Data Completeness -->
+        <div class="campo-section" id="section-completeness">
+            <div class="campo-section-title">Completitud de Datos</div>
+            <div id="completeness-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando completitud...</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Soil Carbon -->
-    <div class="campo-section" id="section-carbon">
-        <div class="campo-section-title">Carbono del Suelo</div>
-        <div id="carbon-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando datos de carbono...</div>
-        </div>
-    </div>
-
-    <!-- Seasonal Comparison -->
-    <div class="campo-section" id="section-seasonal">
-        <div class="campo-section-title" style="display:flex;align-items:center;justify-content:space-between;">
-            <span>Comparacion Estacional</span>
-            <select id="seasonal-year-select" class="campo-select" style="display:none;"></select>
-        </div>
-        <div id="seasonal-content" class="campo-section-body">
-            <div class="campo-placeholder">Cargando comparacion estacional...</div>
-        </div>
-    </div>
-
-    <!-- Seasonal Performance Chart -->
-    <div class="campo-section" id="section-seasonal-perf">
-        <div class="campo-section-title">Rendimiento Estacional</div>
-        <div id="seasonal-perf-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin datos de rendimiento estacional</div>
-        </div>
-        <div class="campo-chart-container">
-            <canvas id="seasonal-perf-chart"></canvas>
-        </div>
-    </div>
-
-    <!-- Mission Plan -->
-    <div class="campo-section" id="section-mission">
-        <div class="campo-section-title">Plan de Vuelo</div>
-        <div id="mission-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin plan de mision disponible</div>
-        </div>
-    </div>
-
-    <!-- Flight Log History -->
-    <div class="campo-section" id="section-flights">
-        <div class="campo-section-title">Historial de Vuelos</div>
-        <div id="flights-stats" class="campo-section-body">
-            <div class="campo-placeholder">Cargando estadisticas de vuelo...</div>
-        </div>
-        <div id="flights-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin vuelos registrados</div>
-        </div>
-    </div>
-
-    <!-- Growth Stage -->
-    <div class="campo-section" id="section-growth">
-        <div class="campo-section-title">Etapa de Crecimiento</div>
-        <div id="growth-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin datos de fenologia</div>
-        </div>
-    </div>
-
-    <!-- Weather Forecast -->
-    <div class="campo-section" id="section-weather">
-        <div class="campo-section-title">Pronostico del Clima</div>
-        <div id="weather-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin datos de clima</div>
-        </div>
-    </div>
-
-    <!-- Two-column grid for data sections -->
-    <div class="campo-grid">
-        <!-- NDVI -->
-        <div class="campo-section" id="section-ndvi">
-            <div class="campo-section-title">NDVI — Indice de Vegetacion</div>
-            <div class="campo-section-subtitle">Tendencia NDVI</div>
+        <!-- Health history chart -->
+        <div class="campo-section" id="section-health">
+            <div class="campo-section-title">Historial de Salud</div>
             <div class="campo-chart-container">
-                <canvas id="ndvi-chart"></canvas>
-            </div>
-            <div id="ndvi-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos NDVI</div>
+                <canvas id="health-chart"></canvas>
             </div>
         </div>
 
-        <!-- Thermal -->
-        <div class="campo-section" id="section-thermal">
-            <div class="campo-section-title">Estres Termico</div>
-            <div id="thermal-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos termicos</div>
+        <!-- Regenerative Score -->
+        <div class="campo-section" id="section-regenerative">
+            <div class="campo-section-title">Puntuacion Regenerativa</div>
+            <div id="regenerative-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando puntuacion regenerativa...</div>
             </div>
         </div>
 
-        <!-- Suelo -->
-        <div class="campo-section" id="section-soil">
-            <div class="campo-section-title">Analisis de Suelo</div>
-            <div id="soil-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin analisis de suelo</div>
+        <!-- Soil Carbon -->
+        <div class="campo-section" id="section-carbon">
+            <div class="campo-section-title">Carbono del Suelo</div>
+            <div id="carbon-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando datos de carbono...</div>
             </div>
         </div>
 
-        <!-- Soil History Timeline -->
-        <div class="campo-section" id="section-soil-history">
-            <div class="campo-section-title">Historial de Suelo</div>
-            <div id="soil-history-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin historial de suelo</div>
+        <!-- Seasonal Comparison -->
+        <div class="campo-section" id="section-seasonal">
+            <div class="campo-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Comparacion Estacional</span>
+                <select id="seasonal-year-select" class="campo-select" style="display:none;"></select>
+            </div>
+            <div id="seasonal-content" class="campo-section-body">
+                <div class="campo-placeholder">Cargando comparacion estacional...</div>
             </div>
         </div>
 
-        <!-- Soil Data Entry Form -->
-        <div class="campo-section" id="section-soil-entry">
-            <div class="campo-section-title" style="cursor:pointer" onclick="document.getElementById('soil-entry-form').style.display = document.getElementById('soil-entry-form').style.display === 'none' ? 'grid' : 'none'">
-                Registrar Analisis de Suelo <span class="soil-timeline-expand">&#9660;</span>
+        <!-- Seasonal Performance Chart -->
+        <div class="campo-section" id="section-seasonal-perf">
+            <div class="campo-section-title">Rendimiento Estacional</div>
+            <div id="seasonal-perf-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos de rendimiento estacional</div>
             </div>
-            <form id="soil-entry-form" class="soil-entry-form" style="display:none">
-                <div class="soil-form-field">
-                    <label for="soil-ph">pH</label>
-                    <input type="number" id="soil-ph" name="ph" step="0.1" min="0" max="14" placeholder="6.5">
+            <div class="campo-chart-container">
+                <canvas id="seasonal-perf-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Mission Plan -->
+        <div class="campo-section" id="section-mission">
+            <div class="campo-section-title">Plan de Vuelo</div>
+            <div id="mission-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin plan de mision disponible</div>
+            </div>
+        </div>
+
+        <!-- Flight Log History -->
+        <div class="campo-section" id="section-flights">
+            <div class="campo-section-title">Historial de Vuelos</div>
+            <div id="flights-stats" class="campo-section-body">
+                <div class="campo-placeholder">Cargando estadisticas de vuelo...</div>
+            </div>
+            <div id="flights-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin vuelos registrados</div>
+            </div>
+        </div>
+
+        <!-- Growth Stage -->
+        <div class="campo-section" id="section-growth">
+            <div class="campo-section-title">Etapa de Crecimiento</div>
+            <div id="growth-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos de fenologia</div>
+            </div>
+        </div>
+
+        <!-- Weather Forecast -->
+        <div class="campo-section" id="section-weather">
+            <div class="campo-section-title">Pronostico del Clima</div>
+            <div id="weather-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin datos de clima</div>
+            </div>
+        </div>
+
+        <!-- Two-column grid -->
+        <div class="campo-grid">
+            <!-- NDVI -->
+            <div class="campo-section" id="section-ndvi">
+                <div class="campo-section-title">Indice de Vegetacion — NDVI</div>
+                <div class="campo-section-subtitle">Tendencia NDVI</div>
+                <div class="campo-chart-container">
+                    <canvas id="ndvi-chart"></canvas>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-organic-matter">Materia Organica (%)</label>
-                    <input type="number" id="soil-organic-matter" name="organic_matter_pct" step="0.1" min="0" max="100" placeholder="3.0">
+                <div id="ndvi-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin datos de vegetacion</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-nitrogen">Nitrogeno (ppm)</label>
-                    <input type="number" id="soil-nitrogen" name="nitrogen_ppm" step="0.1" min="0" placeholder="30">
+            </div>
+
+            <!-- Thermal -->
+            <div class="campo-section" id="section-thermal">
+                <div class="campo-section-title">Estres Termico</div>
+                <div id="thermal-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin datos termicos</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-phosphorus">Fosforo (ppm)</label>
-                    <input type="number" id="soil-phosphorus" name="phosphorus_ppm" step="0.1" min="0" placeholder="20">
+            </div>
+
+            <!-- Suelo -->
+            <div class="campo-section" id="section-soil">
+                <div class="campo-section-title">Analisis de Suelo</div>
+                <div id="soil-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin analisis de suelo</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-potassium">Potasio (ppm)</label>
-                    <input type="number" id="soil-potassium" name="potassium_ppm" step="0.1" min="0" placeholder="150">
+            </div>
+
+            <!-- Soil History Timeline -->
+            <div class="campo-section" id="section-soil-history">
+                <div class="campo-section-title">Historial de Suelo</div>
+                <div id="soil-history-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin historial de suelo</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-texture">Textura</label>
-                    <select id="soil-texture" name="texture">
-                        <option value="">-- Seleccionar --</option>
-                        <option value="arenoso">Arenoso</option>
-                        <option value="franco-arenoso">Franco-Arenoso</option>
-                        <option value="franco">Franco</option>
-                        <option value="franco-arcilloso">Franco-Arcilloso</option>
-                        <option value="arcilloso">Arcilloso</option>
-                        <option value="limoso">Limoso</option>
-                    </select>
+            </div>
+
+            <!-- Soil Data Entry Form -->
+            <div class="campo-section" id="section-soil-entry">
+                <div class="campo-section-title" style="cursor:pointer" onclick="document.getElementById('soil-entry-form').style.display = document.getElementById('soil-entry-form').style.display === 'none' ? 'grid' : 'none'">
+                    Registrar Analisis de Suelo <span class="soil-timeline-expand">&#9660;</span>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-moisture">Humedad (%)</label>
-                    <input type="number" id="soil-moisture" name="moisture_pct" step="0.1" min="0" max="100" placeholder="25">
+                <form id="soil-entry-form" class="soil-entry-form" style="display:none">
+                    <div class="soil-form-field">
+                        <label for="soil-ph">pH</label>
+                        <input type="number" id="soil-ph" name="ph" step="0.1" min="0" max="14" placeholder="6.5">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-organic-matter">Materia Organica (%)</label>
+                        <input type="number" id="soil-organic-matter" name="organic_matter_pct" step="0.1" min="0" max="100" placeholder="3.0">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-nitrogen">Nitrogeno (ppm)</label>
+                        <input type="number" id="soil-nitrogen" name="nitrogen_ppm" step="0.1" min="0" placeholder="30">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-phosphorus">Fosforo (ppm)</label>
+                        <input type="number" id="soil-phosphorus" name="phosphorus_ppm" step="0.1" min="0" placeholder="20">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-potassium">Potasio (ppm)</label>
+                        <input type="number" id="soil-potassium" name="potassium_ppm" step="0.1" min="0" placeholder="150">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-texture">Textura</label>
+                        <select id="soil-texture" name="texture">
+                            <option value="">-- Seleccionar --</option>
+                            <option value="arenoso">Arenoso</option>
+                            <option value="franco-arenoso">Franco-Arenoso</option>
+                            <option value="franco">Franco</option>
+                            <option value="franco-arcilloso">Franco-Arcilloso</option>
+                            <option value="arcilloso">Arcilloso</option>
+                            <option value="limoso">Limoso</option>
+                        </select>
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-moisture">Humedad (%)</label>
+                        <input type="number" id="soil-moisture" name="moisture_pct" step="0.1" min="0" max="100" placeholder="25">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-ec">Conductividad Electrica (dS/m)</label>
+                        <input type="number" id="soil-ec" name="electrical_conductivity" step="0.01" min="0" placeholder="1.2">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-depth">Profundidad (cm)</label>
+                        <input type="number" id="soil-depth" name="depth_cm" step="1" min="0" placeholder="30">
+                    </div>
+                    <div class="soil-form-field">
+                        <label for="soil-sampled-at">Fecha de Muestreo</label>
+                        <input type="datetime-local" id="soil-sampled-at" name="sampled_at" required>
+                    </div>
+                    <div class="soil-form-field" style="grid-column: 1 / -1">
+                        <label for="soil-notes">Notas</label>
+                        <textarea id="soil-notes" name="notes" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+                    <div class="soil-form-actions" style="grid-column: 1 / -1">
+                        <button type="submit" id="soil-submit-btn" class="soil-submit-btn">Guardar Analisis</button>
+                        <span id="soil-form-msg" class="soil-form-msg"></span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Disease risk -->
+            <div class="campo-section" id="section-disease">
+                <div class="campo-section-title">Riesgo de Enfermedades</div>
+                <div id="disease-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin evaluacion de riesgo</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-ec">Conductividad Electrica (dS/m)</label>
-                    <input type="number" id="soil-ec" name="electrical_conductivity" step="0.01" min="0" placeholder="1.2">
+            </div>
+
+            <!-- Riego -->
+            <div class="campo-section" id="section-irrigation">
+                <div class="campo-section-title">Plan de Riego</div>
+                <div id="irrigation-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin plan de riego</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-depth">Profundidad (cm)</label>
-                    <input type="number" id="soil-depth" name="depth_cm" step="1" min="0" placeholder="30">
+            </div>
+
+            <!-- Treatment Timing -->
+            <div class="campo-section" id="section-treatment-timing">
+                <div class="campo-section-title">Momento Optimo de Aplicacion</div>
+                <div id="treatment-timing-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin datos de tratamiento o clima</div>
                 </div>
-                <div class="soil-form-field">
-                    <label for="soil-sampled-at">Fecha de Muestreo</label>
-                    <input type="datetime-local" id="soil-sampled-at" name="sampled_at" required>
+            </div>
+
+            <!-- Yield -->
+            <div class="campo-section" id="section-yield">
+                <div class="campo-section-title">Prediccion de Rendimiento</div>
+                <div id="yield-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin prediccion</div>
                 </div>
-                <div class="soil-form-field" style="grid-column: 1 / -1">
-                    <label for="soil-notes">Notas</label>
-                    <textarea id="soil-notes" name="notes" rows="2" placeholder="Observaciones adicionales..."></textarea>
+            </div>
+
+            <!-- Intervention Scores -->
+            <div class="campo-section" id="section-interventions">
+                <div class="campo-section-title">Intervenciones Prioritarias</div>
+                <div id="interventions-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin intervenciones</div>
                 </div>
-                <div class="soil-form-actions" style="grid-column: 1 / -1">
-                    <button type="submit" id="soil-submit-btn" class="soil-submit-btn">Guardar Analisis</button>
-                    <span id="soil-form-msg" class="soil-form-msg"></span>
+            </div>
+
+            <!-- Treatments -->
+            <div class="campo-section" id="section-treatments">
+                <div class="campo-section-title">Tratamientos Recomendados</div>
+                <div id="treatments-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin tratamientos</div>
                 </div>
+            </div>
+
+            <!-- Treatment Effectiveness -->
+            <div class="campo-section" id="section-treatment-effectiveness">
+                <div class="campo-section-title">Efectividad de Tratamientos</div>
+                <div id="treatment-effectiveness-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin datos de efectividad</div>
+                </div>
+            </div>
+
+            <!-- Rotation -->
+            <div class="campo-section" id="section-rotation">
+                <div class="campo-section-title">Plan de Rotacion</div>
+                <div id="rotation-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin plan de rotacion</div>
+                </div>
+            </div>
+
+            <!-- Microbiome -->
+            <div class="campo-section" id="section-microbiome">
+                <div class="campo-section-title">Salud del Microbioma</div>
+                <div id="microbiome-content" class="campo-section-body">
+                    <div class="campo-placeholder">Sin datos de microbioma</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment History Timeline -->
+        <div class="campo-section" id="section-treatment-history">
+            <div class="campo-section-title">Historial de Tratamientos</div>
+            <div id="treatment-history-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin historial de tratamientos</div>
+            </div>
+        </div>
+
+        <!-- Farmer Feedback -->
+        <div class="campo-section" id="section-feedback">
+            <div class="campo-section-title">Retroalimentacion</div>
+            <form id="feedback-form" class="feedback-form" onsubmit="submitFeedback(event)">
+                <div class="feedback-form-row">
+                    <label class="feedback-label">Tratamiento
+                        <select id="feedback-treatment" class="feedback-input" required>
+                            <option value="">Seleccionar...</option>
+                        </select>
+                    </label>
+                    <label class="feedback-label">Calificacion (1-5)
+                        <input type="number" id="feedback-rating" class="feedback-input" min="1" max="5" required>
+                    </label>
+                    <label class="feedback-label feedback-check">
+                        <input type="checkbox" id="feedback-worked"> Funciono
+                    </label>
+                </div>
+                <div class="feedback-form-row">
+                    <label class="feedback-label feedback-wide">Notas
+                        <input type="text" id="feedback-notes" class="feedback-input" placeholder="Observaciones del agricultor...">
+                    </label>
+                    <label class="feedback-label">Metodo alternativo
+                        <input type="text" id="feedback-alt" class="feedback-input" placeholder="Metodo tradicional...">
+                    </label>
+                </div>
+                <button type="submit" class="feedback-submit">Enviar Retroalimentacion</button>
             </form>
-        </div>
-
-        <!-- Disease risk -->
-        <div class="campo-section" id="section-disease">
-            <div class="campo-section-title">Riesgo de Enfermedades</div>
-            <div id="disease-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin evaluacion de riesgo</div>
+            <div id="feedback-content" class="campo-section-body">
+                <div class="campo-placeholder">Sin retroalimentacion</div>
             </div>
         </div>
 
-        <!-- Riego -->
-        <div class="campo-section" id="section-irrigation">
-            <div class="campo-section-title">Plan de Riego</div>
-            <div id="irrigation-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin plan de riego</div>
-            </div>
-        </div>
+    </div><!-- /agronomo-bloque-principal -->
 
-        <!-- Treatment Timing -->
-        <div class="campo-section" id="section-treatment-timing">
-            <div class="campo-section-title">Momento Optimo de Aplicacion</div>
-            <div id="treatment-timing-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de tratamiento o clima</div>
-            </div>
-        </div>
-
-        <!-- Yield -->
-        <div class="campo-section" id="section-yield">
-            <div class="campo-section-title">Prediccion de Rendimiento</div>
-            <div id="yield-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin prediccion</div>
-            </div>
-        </div>
-
-        <!-- Intervention Scores -->
-        <div class="campo-section" id="section-interventions">
-            <div class="campo-section-title">Intervenciones Prioritarias</div>
-            <div id="interventions-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin intervenciones</div>
-            </div>
-        </div>
-
-        <!-- Treatments -->
-        <div class="campo-section" id="section-treatments">
-            <div class="campo-section-title">Tratamientos Recomendados</div>
-            <div id="treatments-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin tratamientos</div>
-            </div>
-        </div>
-
-        <!-- Treatment Effectiveness -->
-        <div class="campo-section" id="section-treatment-effectiveness">
-            <div class="campo-section-title">Efectividad de Tratamientos</div>
-            <div id="treatment-effectiveness-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de efectividad</div>
-            </div>
-        </div>
-
-        <!-- Rotation -->
-        <div class="campo-section" id="section-rotation">
-            <div class="campo-section-title">Plan de Rotacion</div>
-            <div id="rotation-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin plan de rotacion</div>
-            </div>
-        </div>
-
-        <!-- Microbiome -->
-        <div class="campo-section" id="section-microbiome">
-            <div class="campo-section-title">Salud del Microbioma</div>
-            <div id="microbiome-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de microbioma</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Treatment History Timeline -->
-    <div class="campo-section" id="section-treatment-history">
-        <div class="campo-section-title">Historial de Tratamientos</div>
-        <div id="treatment-history-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin historial de tratamientos</div>
-        </div>
-    </div>
-
-    <!-- Farmer Feedback -->
-    <div class="campo-section" id="section-feedback">
-        <div class="campo-section-title">Retroalimentacion</div>
-        <form id="feedback-form" class="feedback-form" onsubmit="submitFeedback(event)">
-            <div class="feedback-form-row">
-                <label class="feedback-label">Tratamiento
-                    <select id="feedback-treatment" class="feedback-input" required>
-                        <option value="">Seleccionar...</option>
-                    </select>
-                </label>
-                <label class="feedback-label">Calificacion (1-5)
-                    <input type="number" id="feedback-rating" class="feedback-input" min="1" max="5" required>
-                </label>
-                <label class="feedback-label feedback-check">
-                    <input type="checkbox" id="feedback-worked"> Funciono
-                </label>
-            </div>
-            <div class="feedback-form-row">
-                <label class="feedback-label feedback-wide">Notas
-                    <input type="text" id="feedback-notes" class="feedback-input" placeholder="Observaciones del agricultor...">
-                </label>
-                <label class="feedback-label">Metodo alternativo
-                    <input type="text" id="feedback-alt" class="feedback-input" placeholder="Metodo tradicional...">
-                </label>
-            </div>
-            <button type="submit" class="feedback-submit">Enviar Retroalimentacion</button>
-        </form>
-        <div id="feedback-content" class="campo-section-body">
-            <div class="campo-placeholder">Sin retroalimentacion</div>
-        </div>
-    </div>
 </main>
 
 <script src="/auth-guard.js"></script>
