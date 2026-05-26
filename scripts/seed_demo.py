@@ -837,6 +837,209 @@ def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
         day += 2  # every other day
 
 
+def seed_iteso_demo(session):
+    """Seed exactly 3 ITESO demo farms × 3 fields with mixed health scores.
+
+    Designed for the ITESO meeting demo:
+      - 3 green cards (latest health score > 70)
+      - 4 yellow cards (40 <= score <= 70)
+      - 2 red cards (score < 40)
+
+    Idempotent: deletes existing farms with these exact names before inserting.
+    Does NOT touch other [DEMO] farms or non-demo farms.
+    """
+    now = datetime.utcnow()
+
+    # Farm + field data with per-field health score sequences
+    # Each field gets 5 weekly scores; the LAST one determines card color.
+    ITESO_FARMS = [
+        {
+            "name": f"Rancho Don Manuel {DEMO_MARKER}",
+            "owner_name": "Manuel García López",
+            "location_lat": 20.6597,
+            "location_lon": -103.3496,
+            "total_hectares": 12.0,
+            "municipality": "Zapopan",
+            "state": "Jalisco",
+            "country": "MX",
+            "fields": [
+                {
+                    "name": "Parcela Norte",
+                    "crop_type": "aguacate",
+                    "hectares": 4.0,
+                    "health_scores": [60.0, 67.0, 73.0, 78.0, 82.0],  # → GREEN
+                },
+                {
+                    "name": "Parcela Centro",
+                    "crop_type": "aguacate",
+                    "hectares": 4.0,
+                    "health_scores": [55.0, 58.0, 61.0, 63.0, 65.0],  # → YELLOW
+                },
+                {
+                    "name": "Parcela Sur",
+                    "crop_type": "aguacate",
+                    "hectares": 4.0,
+                    "health_scores": [50.0, 44.0, 38.0, 32.0, 28.0],  # → RED
+                },
+            ],
+        },
+        {
+            "name": f"Aguacates La Joya {DEMO_MARKER}",
+            "owner_name": "Rosa Elena Martínez",
+            "location_lat": 20.5881,
+            "location_lon": -103.2765,
+            "total_hectares": 18.0,
+            "municipality": "Tonalá",
+            "state": "Jalisco",
+            "country": "MX",
+            "fields": [
+                {
+                    "name": "Lote A",
+                    "crop_type": "aguacate",
+                    "hectares": 6.0,
+                    "health_scores": [58.0, 62.0, 67.0, 71.0, 75.0],  # → GREEN
+                },
+                {
+                    "name": "Lote B",
+                    "crop_type": "aguacate",
+                    "hectares": 6.0,
+                    "health_scores": [48.0, 50.0, 52.0, 53.0, 55.0],  # → YELLOW
+                },
+                {
+                    "name": "Lote C",
+                    "crop_type": "aguacate",
+                    "hectares": 6.0,
+                    "health_scores": [40.0, 43.0, 45.0, 47.0, 48.0],  # → YELLOW
+                },
+            ],
+        },
+        {
+            "name": f"Tierras Altas {DEMO_MARKER}",
+            "owner_name": "Javier Mendoza Torres",
+            "location_lat": 20.7823,
+            "location_lon": -103.5641,
+            "total_hectares": 22.5,
+            "municipality": "Tlajomulco de Zúñiga",
+            "state": "Jalisco",
+            "country": "MX",
+            "fields": [
+                {
+                    "name": "Huerta Principal",
+                    "crop_type": "aguacate",
+                    "hectares": 8.0,
+                    "health_scores": [62.0, 66.0, 70.0, 74.0, 78.0],  # → GREEN
+                },
+                {
+                    "name": "Milpa Baja",
+                    "crop_type": "maiz",
+                    "hectares": 7.5,
+                    "health_scores": [45.0, 44.0, 43.0, 43.0, 42.0],  # → YELLOW
+                },
+                {
+                    "name": "Zona Seca",
+                    "crop_type": "aguacate",
+                    "hectares": 7.0,
+                    "health_scores": [45.0, 40.0, 35.0, 28.0, 22.0],  # → RED
+                },
+            ],
+        },
+    ]
+
+    iteso_names = [f["name"] for f in ITESO_FARMS]
+
+    # Idempotency: delete existing ITESO farms (cascade deletes all child data)
+    existing_farms = session.query(Farm).filter(Farm.name.in_(iteso_names)).all()
+    for farm in existing_farms:
+        session.delete(farm)
+    session.flush()
+
+    # Insert farms and fields
+    for farm_data in ITESO_FARMS:
+        fields_data = farm_data.pop("fields")
+        farm = Farm(**farm_data)
+        session.add(farm)
+        session.flush()  # get farm.id
+
+        for field_spec in fields_data:
+            scores = field_spec.pop("health_scores")
+            field = Field(farm_id=farm.id, **field_spec)
+            session.add(field)
+            session.flush()  # get field.id
+
+            # 5 weekly HealthScore rows (oldest first, 4 weeks back → recent)
+            for week_idx, score in enumerate(scores):
+                weeks_ago = 4 - week_idx  # 4, 3, 2, 1, 0
+                scored_at = now - timedelta(weeks=weeks_ago)
+                session.add(HealthScore(
+                    field_id=field.id,
+                    score=score,
+                    ndvi_mean=round(0.4 + score / 200, 2),
+                    ndvi_std=round(0.05 + (70 - score) / 500, 2),
+                    thermal_max=round(35.0 + (70 - score) / 10, 1),
+                    thermal_min=round(18.0, 1),
+                    stress_pct=round(max(0, (70 - score) / 70 * 100), 1),
+                    soil_ph=6.5,
+                    sources=["ndvi", "soil"],
+                    breakdown={"ndvi": score * 0.6, "soil": score * 0.4},
+                    trend=("improving" if week_idx > 0 and score > scores[week_idx - 1]
+                           else "declining" if week_idx > 0 and score < scores[week_idx - 1]
+                           else "stable"),
+                    scored_at=scored_at,
+                ))
+
+            # 6 weekly NDVIResult rows (6 weeks back → 1 week back)
+            for ndvi_week in range(6):
+                weeks_ago = 5 - ndvi_week
+                analyzed_at = now - timedelta(weeks=weeks_ago)
+                ndvi_mean = round(0.3 + ndvi_week * 0.04, 2)
+                session.add(NDVIResult(
+                    field_id=field.id,
+                    ndvi_mean=ndvi_mean,
+                    ndvi_std=0.08,
+                    ndvi_min=round(ndvi_mean - 0.15, 2),
+                    ndvi_max=round(ndvi_mean + 0.20, 2),
+                    pixels_total=10000,
+                    stress_pct=round(max(0, (0.4 - ndvi_mean) / 0.4 * 100), 1),
+                    zones=[
+                        {"zone": "north", "ndvi_mean": ndvi_mean},
+                        {"zone": "south", "ndvi_mean": round(ndvi_mean - 0.03, 2)},
+                    ],
+                    analyzed_at=analyzed_at,
+                ))
+
+            # 1 ThermalResult
+            session.add(ThermalResult(
+                field_id=field.id,
+                temp_mean=32.5,
+                temp_std=2.1,
+                temp_min=26.0,
+                temp_max=41.0,
+                pixels_total=10000,
+                stress_pct=12.0,
+                irrigation_deficit=False,
+                analyzed_at=now - timedelta(days=7),
+            ))
+
+            # 1 SoilAnalysis
+            session.add(SoilAnalysis(
+                field_id=field.id,
+                ph=6.5,
+                organic_matter_pct=3.2,
+                nitrogen_ppm=45.0,
+                phosphorus_ppm=18.0,
+                potassium_ppm=210.0,
+                texture="loam",
+                moisture_pct=24.0,
+                depth_cm=30.0,
+                sampled_at=now - timedelta(days=14),
+            ))
+
+        # Restore farm_data (pop was in-place) — not needed since we iterated
+        # farm was already created above
+
+    session.commit()
+
+
 if __name__ == "__main__":
     from cultivos.db.session import get_engine
     from sqlalchemy.orm import sessionmaker
