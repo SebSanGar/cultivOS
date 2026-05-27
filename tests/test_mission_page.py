@@ -133,10 +133,12 @@ class TestMissionAPI:
         assert "area_hectares" in data
         assert "pattern" in data
 
-    def test_mission_plan_400_no_boundary(self, client, db):
+    def test_mission_plan_no_boundary_returns_default(self, client, db):
+        # H5: graceful degradation — no boundary → 200 with synthetic default plan
         farm, f_with, f_no = _seed_mission_data(db)
         resp = client.get(f"/api/farms/{farm.id}/fields/{f_no.id}/mission-plan")
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        assert "waypoints" in resp.json()
 
     def test_mission_plan_404_missing_farm(self, client, db):
         resp = client.get("/api/farms/9999/fields/1/mission-plan")

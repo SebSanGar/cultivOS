@@ -129,7 +129,7 @@ def test_api_mission_plan_success(client, admin_headers, farm_and_field):
 
 
 def test_api_mission_plan_no_boundary(client, admin_headers):
-    """Field without boundary coordinates → 400."""
+    """Field without boundary coordinates → H5 graceful default, returns 200."""
     resp = client.post("/api/farms", json={
         "name": "Rancho Sin Limites",
     }, headers=admin_headers)
@@ -142,8 +142,8 @@ def test_api_mission_plan_no_boundary(client, admin_headers):
         f"/api/farms/{farm_id}/fields/{field_id}/mission-plan",
         headers=admin_headers,
     )
-    assert resp.status_code == 400
-    assert "boundary" in resp.json()["error"]["message"].lower()
+    assert resp.status_code == 200
+    assert "waypoints" in resp.json()
 
 
 def test_api_mission_plan_custom_params(client, admin_headers, farm_and_field):
