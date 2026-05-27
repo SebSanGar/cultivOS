@@ -23,6 +23,46 @@ from cultivos.db.models import (
 
 DEMO_MARKER = "[DEMO]"
 
+
+def _make_zones(ndvi_mean: float, pixels_total: int) -> list[dict]:
+    """Return 2 NDVIZoneOut-compatible zone dicts for a given ndvi_mean.
+
+    Splits field into north (55%) and south (45%) zones.
+    classification mapped from ndvi_mean: alto>=0.7, moderado>=0.5, bajo>=0.3, estres<0.3.
+    """
+    def classify(v: float) -> str:
+        if v >= 0.7:
+            return "alto"
+        if v >= 0.5:
+            return "moderado"
+        if v >= 0.3:
+            return "bajo"
+        return "estres"
+
+    north_ndvi = round(ndvi_mean + 0.02, 3)
+    south_ndvi = round(max(ndvi_mean - 0.02, 0.0), 3)
+    north_pct = 55.0
+    south_pct = 45.0
+    north_px = int(pixels_total * north_pct / 100)
+    south_px = pixels_total - north_px
+    return [
+        {
+            "classification": classify(north_ndvi),
+            "min_ndvi": round(max(north_ndvi - 0.08, 0.0), 3),
+            "max_ndvi": round(min(north_ndvi + 0.08, 1.0), 3),
+            "pixel_count": north_px,
+            "percentage": north_pct,
+        },
+        {
+            "classification": classify(south_ndvi),
+            "min_ndvi": round(max(south_ndvi - 0.08, 0.0), 3),
+            "max_ndvi": round(min(south_ndvi + 0.08, 1.0), 3),
+            "pixel_count": south_px,
+            "percentage": south_pct,
+        },
+    ]
+
+
 # Jalisco seasons: temporal (rainy) June-October, secas (dry) November-May
 TEMPORAL_MONTHS = {6, 7, 8, 9, 10}
 
@@ -322,10 +362,7 @@ def _seed_field_history(session, farm, field, now, start_date, region="jalisco")
             ndvi_max=round(min(ndvi_mean + 0.12, 0.95), 3),
             pixels_total=50000,
             stress_pct=round(max(35 - week * 1.4, 2), 1),
-            zones=[
-                {"zone": "norte", "ndvi_mean": round(ndvi_mean + 0.02, 3)},
-                {"zone": "sur", "ndvi_mean": round(ndvi_mean - 0.02, 3)},
-            ],
+            zones=_make_zones(ndvi_mean, 50000),
             analyzed_at=ts,
         ))
 
@@ -1002,10 +1039,7 @@ def seed_iteso_demo(session):
                     ndvi_max=round(ndvi_mean + 0.20, 2),
                     pixels_total=10000,
                     stress_pct=round(max(0, (0.4 - ndvi_mean) / 0.4 * 100), 1),
-                    zones=[
-                        {"zone": "north", "ndvi_mean": ndvi_mean},
-                        {"zone": "south", "ndvi_mean": round(ndvi_mean - 0.03, 2)},
-                    ],
+                    zones=_make_zones(ndvi_mean, 10000),
                     analyzed_at=analyzed_at,
                 ))
 
