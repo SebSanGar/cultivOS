@@ -28,6 +28,14 @@ const statAvgHealth = document.getElementById('stat-avg-health');
 const statHectares = document.getElementById('stat-hectares');
 
 // ── Helpers ──
+
+// H3 — Strip seed-script marker ` [DEMO]` from farm names before display.
+// DB rows remain unchanged; this is a presentation-only transform.
+function displayName(name) {
+    if (!name) return name;
+    return name.replace(/\s*\[DEMO\]$/i, '');
+}
+
 function healthClass(score) {
     if (score == null) return 'none';
     if (score > 70) return 'good';
@@ -158,7 +166,7 @@ function renderFarms() {
         <div class="farm-card" onclick="selectFarm(${farm.id})">
             <div class="farm-card-header">
                 <div>
-                    <div class="farm-name">${esc(farm.name)}</div>
+                    <div class="farm-name">${esc(displayName(farm.name))}</div>
                     <div class="farm-location">${esc(farm.municipality || '')}${farm.municipality && farm.state ? ', ' : ''}${esc(farm.state || '')}</div>
                 </div>
                 <div class="health-badge ${cls}">
@@ -225,7 +233,7 @@ function renderFields(farmId) {
     const farm = farms.find(f => f.id === farmId);
     const fields = fieldsByFarm[farmId] || [];
 
-    fieldPanelTitle.textContent = `Campos — ${farm ? farm.name : ''}`;
+    fieldPanelTitle.textContent = `Campos — ${farm ? displayName(farm.name) : ''}`;
 
     if (fields.length === 0) {
         fieldList.innerHTML = `
@@ -466,7 +474,7 @@ async function loadWeather(farmId) {
     const farm = farms.find(f => f.id === farmId);
 
     document.getElementById('weather-widget').style.display = '';
-    document.getElementById('weather-farm-name').textContent = farm ? farm.name : '';
+    document.getElementById('weather-farm-name').textContent = farm ? displayName(farm.name) : '';
     document.getElementById('weather-temp').textContent = Math.round(w.temp_c) + '\u00B0C';
     document.getElementById('weather-desc').textContent = esc(w.description);
     document.getElementById('weather-humidity').textContent = Math.round(w.humidity_pct) + '%';
@@ -934,7 +942,7 @@ async function loadDashboardSummary(farmId) {
     }
 
     container.style.display = '';
-    document.getElementById('summary-farm-name').textContent = data.farm.name || '';
+    document.getElementById('summary-farm-name').textContent = displayName(data.farm.name) || '';
     document.getElementById('summary-fields').textContent = data.fields.length;
 
     const totalHa = data.fields.reduce((s, f) => s + (f.hectares || 0), 0);

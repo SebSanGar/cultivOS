@@ -2,6 +2,12 @@
 
 let allNotifications = [];
 
+// H3 — Strip seed-script marker ` [DEMO]` from farm names before display.
+function displayName(name) {
+    if (!name) return name;
+    return name.replace(/\s*\[DEMO\]$/i, '');
+}
+
 function esc(str) {
     if (!str) return '';
     const d = document.createElement('div');
@@ -39,7 +45,7 @@ async function loadNotifications() {
         farms.map(async (farm) => {
             const notifs = await fetchJSON(`/api/farms/${farm.id}/notifications`);
             if (!notifs) return [];
-            return notifs.map(n => ({ ...n, farm_name: farm.name }));
+            return notifs.map(n => ({ ...n, farm_name: displayName(farm.name) }));
         })
     );
 
