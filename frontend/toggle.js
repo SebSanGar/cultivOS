@@ -68,15 +68,30 @@
         applyMode(next);
     }
 
+    // H2 — Mobile hamburger nav toggle
+    function initHamburger() {
+        var hamburger = document.getElementById('nav-hamburger');
+        if (!hamburger) return;
+        hamburger.addEventListener('click', function () {
+            var inner = hamburger.closest('.nav-inner');
+            if (!inner) return;
+            var isOpen = inner.classList.toggle('nav-open');
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    }
+
     function init() {
         // Apply persisted mode on load
         applyMode(getMode());
 
-        // Wire up button
+        // Wire up agronomo toggle button
         var btn = document.getElementById('agronomo-toggle');
         if (btn) {
             btn.addEventListener('click', handleToggleClick);
         }
+
+        // Wire up hamburger
+        initHamburger();
     }
 
     // Run after DOM is ready

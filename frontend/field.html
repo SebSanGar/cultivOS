@@ -134,6 +134,18 @@
             white-space: nowrap;
         }
         .nav-farmer-tabs li a:hover { color: var(--text-primary, #f9fafb); }
+
+        /* H2 — mobile hamburger: override inline display at 600px */
+        @media (max-width: 600px) {
+            .nav-farmer-tabs { display: none; }
+            .nav-inner.nav-open .nav-farmer-tabs {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                padding: 4px 0 12px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+        }
     </style>
 </head>
 <body class="intel-body">
@@ -142,6 +154,9 @@
 <nav>
     <div class="nav-inner">
         <a href="/" class="nav-logo">cultiv<span>OS</span></a>
+        <button id="nav-hamburger" class="nav-hamburger" aria-label="Abrir menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
         <ul class="nav-farmer-tabs">
             <li><a href="/">Mis Parcelas</a></li>
             <li><a href="/notificaciones">Alertas</a></li>
