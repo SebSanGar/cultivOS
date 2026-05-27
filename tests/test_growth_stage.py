@@ -167,7 +167,7 @@ class TestGrowthStageAPI:
         assert "water_multiplier" in data
 
     def test_get_growth_stage_no_planted_at(self, client, db, admin_headers):
-        """Field without planted_at should return 422."""
+        """H5: no planted_at → graceful 200 with pre-siembra stage."""
         from cultivos.db.models import Farm, Field
         farm = Farm(name="Test Farm")
         db.add(farm)
@@ -177,7 +177,8 @@ class TestGrowthStageAPI:
         db.commit()
 
         resp = client.get(f"/api/farms/{farm.id}/fields/{field.id}/growth-stage")
-        assert resp.status_code == 422
+        assert resp.status_code == 200
+        assert resp.json().get("stage") == "pre_planting"
 
     def test_field_create_with_planted_at(self, client, db, admin_headers):
         """Creating a field with planted_at should persist it."""
