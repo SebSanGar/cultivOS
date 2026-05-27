@@ -28,10 +28,19 @@ def get_growth_stage(
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
 
+    # H5 — Graceful degradation: return "pre-siembra" default when planted_at is
+    # missing. Frontend /campo loads this on page load; a 422 breaks the page.
     if not field.planted_at:
-        raise HTTPException(
-            status_code=422,
-            detail="No planted_at date set for this field. Update the field with a planting date.",
+        return GrowthStageOut(
+            crop_type=field.crop_type or "desconocido",
+            stage="pre_planting",
+            stage_es="Pre-siembra",
+            days_since_planting=0,
+            days_in_stage=0,
+            days_until_next_stage=None,
+            water_multiplier=1.0,
+            nutrient_focus="preparacion de suelo",
+            all_stages=[],
         )
 
     crop = field.crop_type or "desconocido"

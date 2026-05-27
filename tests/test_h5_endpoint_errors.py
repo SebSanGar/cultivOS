@@ -85,7 +85,7 @@ class TestH5MissionPlanGraceful:
         )
         assert resp.status_code == 200
         body = resp.json()
-        for key in ("waypoints", "flight_params", "coverage_area_ha", "estimated_duration_min"):
+        for key in ("waypoints", "pattern", "area_hectares", "estimated_duration_min"):
             assert key in body, f"Response missing '{key}' field"
 
     def test_mission_plan_with_boundary_still_200(self, client, db):

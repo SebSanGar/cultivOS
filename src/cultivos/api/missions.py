@@ -36,13 +36,30 @@ def get_mission_plan(
 ):
     """Generate a drone mission plan for a field based on its boundary coordinates, mission type, and drone type."""
     field = _get_field(farm_id, field_id, db)
+
+    # H5 — Graceful degradation: when field has no boundary_coordinates,
+    # generate a default 10-ha square plan. Frontend /campo loads this endpoint
+    # on page load; a 400 breaks the page even when no flight is planned.
     if not field.boundary_coordinates:
-        raise HTTPException(
-            status_code=400,
-            detail="Field has no boundary coordinates — cannot generate mission plan",
-        )
+        hectares = field.hectares or 10.0
+        # Default square centered on Jalisco (20.5N, -103.5W)
+        import math
+        clat, clon = 20.5, -103.5
+        side_km = math.sqrt(hectares / 100)
+        dlat = side_km / 110.6 / 2
+        dlon = side_km / (104.5 * math.cos(math.radians(clat))) / 2
+        boundary = [
+            [round(clon - dlon, 6), round(clat - dlat, 6)],
+            [round(clon + dlon, 6), round(clat - dlat, 6)],
+            [round(clon + dlon, 6), round(clat + dlat, 6)],
+            [round(clon - dlon, 6), round(clat + dlat, 6)],
+            [round(clon - dlon, 6), round(clat - dlat, 6)],
+        ]
+    else:
+        boundary = field.boundary_coordinates
+
     plan = generate_mission_plan(
-        boundary_coordinates=field.boundary_coordinates,
+        boundary_coordinates=boundary,
         mission_type=mission_type,
         drone_type=drone_type,
     )
