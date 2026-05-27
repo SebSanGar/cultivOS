@@ -41,12 +41,30 @@ Don Manuel picks up Seb's phone:
 
 ## Sprint complete F1->F9 (18 commits, 3893 tests, 0 regressions)
 
-## Manual Seb action remaining (DNS, ~5min)
+## Hotfix sprint complete H1-H5 (2026-05-27)
 
-1. Railway -> cultivOS service -> Settings -> Custom Domain -> add `app.cultivosagro.com`
-2. Copy Railway CNAME target shown
-3. Vercel DNS (cultivosagro.com) -> add CNAME `app` -> Railway target
-4. Wait for cert provision (~2min), verify https://app.cultivosagro.com loads dashboard
+Surfaced by manual Playwright visual sweep post-F-sprint. Tests-green != demo-ready lesson learned, council now requires Playwright visual gate per H-task.
+
+- [x] **H1** -- F1 NDVI zone shape match NDVIZoneOut (classification/min/max/pixel_count/percentage) -- `fe8e7e0`
+- [x] **H2** -- Mobile nav hamburger at 390px, no overflow -- `7d318a9`
+- [x] **H3** -- Strip [DEMO] tag from farmer-view display -- `6fc04fa`
+- [x] **H4** -- field.js error msg corrected ?farm/?field -- `ee96e83`
+- [x] **H5** -- Graceful degradation on /mission-plan + /growth-stage -- `fb7dbc0`
+
+## Visual verification 2026-05-27 (HX-* screenshots in /tmp/cultivos-screenshots/)
+- Dashboard 390px: nav clean, no [DEMO], 3 farms wired, WhatsApp FAB present
+- /campo farmer view: hero NDVI image + Spanish sentence + "Que hago?" CTA
+- /campo agronomo view: 30+ data sections render w/ real seed data (no Cargando cascade)
+- /notificaciones: nav clean, stats placeholders show -- (alerts table empty by design, not a bug)
+- **0 HTTP errors across 4 pages**
+
+## Stashed (NOT applied)
+- `stash@{0}` — S1 auth WIP: agency started enabling auth_enabled=True by default mid-session. Demo would re-break (login wall). Decision pending Seb: keep auth disabled for demo OR ship auth + provide demo creds.
+
+## Manual Seb action remaining
+
+1. **Railway DNS** (~5min) — Railway dashboard -> custom domain `app.cultivosagro.com` -> copy CNAME -> Vercel DNS add CNAME `app` -> Railway target
+2. **S1 auth decision** — `git stash show -p stash@{0}` to review; `git stash drop` to discard OR `git stash pop` to apply
 
 ## Deferred (post-meeting)
 
