@@ -6,6 +6,16 @@ import pytest
 os.environ["DB_URL"] = "sqlite:///:memory:"
 os.environ["LOG_LEVEL"] = "WARNING"
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
+os.environ["AUTH_ENABLED"] = "false"
+
+
+@pytest.fixture(autouse=True)
+def _ensure_auth_disabled():
+    """Reset AUTH_ENABLED=false between tests — prevents leakage from auth-testing fixtures."""
+    os.environ["AUTH_ENABLED"] = "false"
+    from cultivos.config import get_settings
+    get_settings.cache_clear()
+    yield
 
 
 @pytest.fixture
