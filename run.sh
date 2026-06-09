@@ -37,7 +37,7 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 echo -e "${CYAN}Starting → http://localhost:8000${NC}"
-PYTHONPATH="$PWD/src" uvicorn cultivos.app:create_app --factory --reload --port 8000 &
+PYTHONPATH="$PWD/src" uvicorn cultivos.app:create_app --factory --reload --reload-dir "$PWD/src" --port 8000 &
 BACKEND_PID=$!
 
 echo ""
