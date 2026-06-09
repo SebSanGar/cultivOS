@@ -1104,16 +1104,6 @@ function TeamSection({ t, lang }: { t: T; lang: Lang }) {
         "Director, DevGate Canada · ships infrastructure systems prototype to production",
       ],
     },
-    {
-      name: "Víctor Hernández Quintana",
-      role: "Director, Mexico Operations",
-      city: "Guadalajara, MX",
-      bullets: [
-        "Former CONAGUA infrastructure builder · public-sector execution track record",
-        "Operates 5-state agricultural logistics network across western Mexico",
-        "Pursuing AFAC RPAS pilot certification · grounds Mexican field ops in local relationships",
-      ],
-    },
   ];
 
   const teamEs = [
@@ -1137,16 +1127,6 @@ function TeamSection({ t, lang }: { t: T; lang: Lang }) {
         "Director, DevGate Canada · lleva sistemas de infraestructura de prototipo a producción",
       ],
     },
-    {
-      name: "Víctor Hernández Quintana",
-      role: "Director de Operaciones México",
-      city: "Guadalajara, MX",
-      bullets: [
-        "Ex constructor de infraestructura CONAGUA · historial de ejecución en sector público",
-        "Opera red de logística agrícola de 5 estados en el occidente de México",
-        "En proceso de certificación RPAS AFAC · ancla las operaciones de campo con relaciones locales",
-      ],
-    },
   ];
 
   const members = isEs ? teamEs : team;
@@ -1163,7 +1143,7 @@ function TeamSection({ t, lang }: { t: T; lang: Lang }) {
         <h2 className="mt-3 max-w-3xl font-serif text-4xl tracking-tight text-navy md:text-5xl">
           {t.team.title}
         </h2>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
           {members.map((m) => (
             <article
               key={m.name}
