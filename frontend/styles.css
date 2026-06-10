@@ -1232,27 +1232,27 @@ nav {
    ════════════════════════════════════════════════════════════════ */
 
 .intel-body {
-    --intel-bg: #0f1117;
-    --intel-surface: #1a1d27;
-    --intel-border: #2a2d3a;
-    --intel-text: #e5e7eb;
-    --intel-muted: #9ca3af;
+    --intel-bg: var(--bg);
+    --intel-surface: var(--surface);
+    --intel-border: var(--border);
+    --intel-text: var(--text);
+    --intel-muted: var(--text-muted);
     background: var(--intel-bg);
     color: var(--intel-text);
 }
 
-/* Nav override for dark */
+/* Nav override for intel pages */
 .intel-body nav {
-    background: rgba(15,17,23,0.95); backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--intel-border);
 }
-.intel-logo { color: #e5e7eb !important; }
+.intel-logo { color: var(--text) !important; }
 .intel-logo span { color: var(--green) !important; }
 .intel-tab {
     color: var(--intel-muted) !important; text-decoration: none;
     padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
 }
-.intel-tab:hover { background: rgba(22,163,74,0.15); color: #e5e7eb !important; }
+.intel-tab:hover { background: rgba(22,163,74,0.1); color: var(--text) !important; }
 .intel-tab.active { background: var(--green); color: #fff !important; }
 
 /* Main layout */
@@ -1266,7 +1266,7 @@ nav {
 }
 .intel-title {
     font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
-    color: #f9fafb;
+    color: var(--text);
 }
 .intel-subtitle {
     font-size: 0.85rem; color: var(--intel-muted); margin-top: 2px;
@@ -1293,7 +1293,7 @@ nav {
 .intel-stat:nth-child(6) { animation-delay: 0.3s; }
 @keyframes cultivFadeUp { to { opacity: 1; transform: translateY(0); } }
 .intel-stat-value {
-    font-size: 1.6rem; font-weight: 800; color: #f9fafb;
+    font-size: 1.6rem; font-weight: 800; color: var(--text);
     font-variant-numeric: tabular-nums;
 }
 .intel-stat-label {
@@ -1329,7 +1329,7 @@ nav {
     animation-delay: 0.2s;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
-.intel-panel:hover { border-color: rgba(22,163,74,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+.intel-panel:hover { border-color: rgba(22,163,74,0.3); box-shadow: var(--shadow-lg); }
 .intel-grid .intel-panel:nth-child(1) { animation-delay: 0.15s; }
 .intel-grid .intel-panel:nth-child(2) { animation-delay: 0.25s; }
 .intel-grid .intel-panel:nth-child(3) { animation-delay: 0.35s; }
@@ -2445,7 +2445,7 @@ nav {
 }
 .compare-header-row [data-sort]:hover,
 .compare-sortable:hover {
-    color: #e5e7eb;
+    color: var(--text);
 }
 .compare-header-row [data-sort].sort-asc::after {
     content: " \25B2";
@@ -3585,28 +3585,28 @@ nav {
 
 /* ── Treatment Timing Card ─────────────────────────────────── */
 .timing-rain-warning {
-    background: rgba(239, 68, 68, 0.15); color: #fca5a5; padding: 8px 12px;
+    background: var(--color-danger-light); color: var(--color-danger); padding: 8px 12px;
     border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem;
 }
 .timing-forecast {
     display: flex; gap: 8px; margin-bottom: 12px;
 }
 .timing-forecast-day {
-    flex: 1; background: #1e1e2e; border-radius: 6px; padding: 8px;
-    text-align: center; font-size: 0.8rem; color: #9ca3af;
+    flex: 1; background: var(--neutral-100); border-radius: 6px; padding: 8px;
+    text-align: center; font-size: 0.8rem; color: var(--text-muted);
 }
 .timing-rain-day {
     border: 1px solid rgba(96, 165, 250, 0.4); background: rgba(96, 165, 250, 0.08);
 }
-.timing-forecast-label { display: block; font-weight: 600; color: #e5e7eb; margin-bottom: 2px; }
+.timing-forecast-label { display: block; font-weight: 600; color: var(--text); margin-bottom: 2px; }
 .timing-forecast-temp { display: block; }
-.timing-forecast-rain { display: block; color: #60a5fa; font-size: 0.75rem; }
+.timing-forecast-rain { display: block; color: #2563eb; font-size: 0.75rem; }
 .timing-card {
-    background: #1e1e2e; border-radius: 8px; padding: 12px;
+    background: var(--neutral-100); border-radius: 8px; padding: 12px;
     margin-bottom: 8px;
 }
 .timing-card-type {
-    font-weight: 600; color: #e5e7eb; margin-bottom: 6px; font-size: 0.9rem;
+    font-weight: 600; color: var(--text); margin-bottom: 6px; font-size: 0.9rem;
 }
 .timing-card-best {
     display: flex; gap: 12px; align-items: baseline; margin-bottom: 6px;
@@ -3703,12 +3703,12 @@ nav {
 .weather-day {
     display: grid; grid-template-columns: 80px 1fr 50px 120px auto auto;
     align-items: center; gap: 8px; padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid var(--border);
 }
-.weather-day-label { font-weight: 600; color: #e5e7eb; font-size: 0.85rem; }
-.weather-day-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.weather-day-label { font-weight: 600; color: var(--text); font-size: 0.85rem; }
+.weather-day-bar-track { height: 6px; background: var(--neutral-200); border-radius: 3px; overflow: hidden; }
 .weather-day-bar { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); border-radius: 3px; transition: width 0.3s; }
-.weather-day-temp { font-weight: 600; color: #f3f4f6; font-size: 0.88rem; text-align: right; }
+.weather-day-temp { font-weight: 600; color: var(--text); font-size: 0.88rem; text-align: right; }
 .weather-day-desc { color: #9ca3af; font-size: 0.82rem; }
 .weather-day-rain-amt { color: #60a5fa; font-size: 0.78rem; font-weight: 600; }
 .weather-day-humidity { color: #6b7280; font-size: 0.78rem; }
