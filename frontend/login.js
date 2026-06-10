@@ -22,9 +22,7 @@
     // Fetch farms for the registration dropdown
     (async function loadFarms() {
         try {
-            var resp = await fetch(API + '/api/farms', {
-                headers: { 'Authorization': 'Bearer anonymous' }
-            });
+            var resp = await fetch(API + '/api/farms/public');
             if (resp.ok) {
                 var data = await resp.json();
                 var farms = data.items || data || [];

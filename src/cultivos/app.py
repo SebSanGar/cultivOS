@@ -143,6 +143,7 @@ def create_app() -> FastAPI:
         lifespan=_lifespan,
         openapi_tags=[
             {"name": "farms", "description": "Farm and field CRUD operations"},
+            {"name": "farms-public", "description": "Public farm list for unauthenticated registration"},
             {"name": "auth", "description": "User registration and JWT authentication"},
             {"name": "ndvi", "description": "NDVI vegetation index analysis from drone imagery"},
             {"name": "thermal", "description": "Thermal stress detection from drone imagery"},

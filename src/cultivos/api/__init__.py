@@ -32,6 +32,7 @@ from cultivos.api import (
     farm_digest,
     farm_saludo_diario,
     farms,
+    farms_public,
     fields,
     feedback,
     field_calendar,
@@ -99,6 +100,7 @@ _PUBLIC_ROUTER_LIST = [
     demo.router,
     status.router,
     system_health.router,
+    farms_public.router,
     fodecijal_report.router,
 ]
 # APIRouter is not hashable — keep identity lookup via id().
@@ -141,6 +143,7 @@ all_routers = [
     farm_regen_milestones.router,
     farm_digest.router,
     farm_saludo_diario.router,
+    farms_public.router,
     farms.router,
     fields.router,
     feedback.router,
