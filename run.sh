@@ -22,6 +22,20 @@ if [ -d "venv" ]; then
     echo -e "${CYAN}Using venv${NC}"
 fi
 
+# Require Python 3.11+ — the codebase uses PEP 604 `X | None` unions that error on 3.9/3.10
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' 2>/dev/null; then
+    echo -e "${CYAN}Error: cultivOS needs Python 3.11+. Rebuild the venv:${NC}"
+    echo "  rm -rf venv && python3.11 -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+    exit 1
+fi
+
+# First run: create a local .env (dev JWT secret + AUTH_ENABLED=false) so login and the
+# farm dropdown work out of the box. Production sets these via real env vars, not this file.
+if [ ! -f .env ]; then
+    cp .env.example .env
+    echo -e "${CYAN}Created .env from .env.example (local dev defaults)${NC}"
+fi
+
 echo -e "${CYAN}[0/2] Checking dependencies...${NC}"
 pip install -r requirements.txt -q 2>/dev/null
 echo -e "${CYAN}Dependencies OK${NC}"
