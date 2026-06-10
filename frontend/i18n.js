@@ -65,7 +65,12 @@
             'role.researcher': 'Investigador',
             'user.logout': 'Salir',
             'toggle.agronomo': 'Vista agronomo',
-            'toggle.farmer': 'Vista productor'
+            'toggle.farmer': 'Vista productor',
+            'notif.historyTitle': 'Historial de Notificaciones',
+            'notif.historySubtitle': 'Alertas y recomendaciones de todas las granjas',
+            'notif.refresh': 'Actualizar',
+            'field.cta': 'Que hago?',
+            'knowledge.title': 'Base de Conocimiento'
         },
         en: {
             'nav.farms': 'My Plots',
@@ -125,7 +130,12 @@
             'role.researcher': 'Researcher',
             'user.logout': 'Log out',
             'toggle.agronomo': 'Agronomist view',
-            'toggle.farmer': 'Farmer view'
+            'toggle.farmer': 'Farmer view',
+            'notif.historyTitle': 'Notification History',
+            'notif.historySubtitle': 'Alerts and recommendations from all farms',
+            'notif.refresh': 'Refresh',
+            'field.cta': 'What do I do?',
+            'knowledge.title': 'Knowledge Base'
         }
     };
 

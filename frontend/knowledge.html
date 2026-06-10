@@ -20,18 +20,22 @@
         </button>
         <!-- NAV: farmer 4-item nav — F6 -->
         <ul class="nav-farmer-tabs">
-            <li><a href="/">Mis Parcelas</a></li>
-            <li><a href="/notificaciones">Alertas</a></li>
-            <li><a href="/conocimiento" class="active">Conocimiento</a></li>
-            <li><a href="/whatsapp-demo">WhatsApp</a></li>
+            <li><a href="/" data-i18n="nav.farms">Mis Parcelas</a></li>
+            <li><a href="/notificaciones" data-i18n="nav.alerts">Alertas</a></li>
+            <li><a href="/conocimiento" class="active" data-i18n="nav.knowledge">Conocimiento</a></li>
+            <li><a href="/whatsapp-demo" data-i18n="nav.whatsapp">WhatsApp</a></li>
         </ul>
         <!-- NAV: agronomist extras — hidden by default, revealed by F8 toggle -->
         <ul class="nav-agronomo-extras" hidden>
-            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
-            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intel">Inteligencia</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab" data-i18n="nav.flights">Vuelos</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Estado</a></li>
         </ul>
-        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false">Vista agronomo</button>
+        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Vista agronomo</button>
+        <div class="nav-lang-toggle" role="group" aria-label="Language">
+            <span data-lang="es" class="active">ES</span>
+            <span data-lang="en">EN</span>
+        </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
             <a href="#" id="nav-logout" class="nav-logout">Salir</a>
@@ -44,7 +48,7 @@
     <!-- Header -->
     <div class="knowledge-header">
         <div>
-            <h1 class="knowledge-title">Base de Conocimiento</h1>
+            <h1 class="knowledge-title" data-i18n="knowledge.title">Base de Conocimiento</h1>
             <p class="knowledge-subtitle">Sabiduria ancestral + ciencia moderna — metodos, cultivos y fertilizantes naturales</p>
         </div>
     </div>
@@ -128,6 +132,7 @@
 <script src="/auth-guard.js"></script>
 <script src="/toggle.js"></script>
 <script src="/knowledge.js"></script>
+<script src="/i18n.js"></script>
 <script src="/tour.js"></script>
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>

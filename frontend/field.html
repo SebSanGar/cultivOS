@@ -158,12 +158,16 @@
             <span></span><span></span><span></span>
         </button>
         <ul class="nav-farmer-tabs">
-            <li><a href="/">Mis Parcelas</a></li>
-            <li><a href="/notificaciones">Alertas</a></li>
-            <li><a href="/conocimiento">Conocimiento</a></li>
-            <li><a href="/whatsapp-demo">WhatsApp</a></li>
+            <li><a href="/" data-i18n="nav.farms">Mis Parcelas</a></li>
+            <li><a href="/notificaciones" data-i18n="nav.alerts">Alertas</a></li>
+            <li><a href="/conocimiento" data-i18n="nav.knowledge">Conocimiento</a></li>
+            <li><a href="/whatsapp-demo" data-i18n="nav.whatsapp">WhatsApp</a></li>
         </ul>
-        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false">Vista agronomo</button>
+        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Vista agronomo</button>
+        <div class="nav-lang-toggle" role="group" aria-label="Language">
+            <span data-lang="es" class="active">ES</span>
+            <span data-lang="en">EN</span>
+        </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
             <a href="#" id="nav-logout" class="nav-logout">Salir</a>
@@ -193,7 +197,7 @@
     <p class="campo-resumen-text" id="campo-resumen">Revisando tu parcela...</p>
 
     <!-- ONE primary CTA -->
-    <button id="cta-que-hago" class="cta-primary" onclick="toggleRecomendacion()">
+    <button id="cta-que-hago" class="cta-primary" onclick="toggleRecomendacion()" data-i18n="field.cta">
         Que hago?
     </button>
 
@@ -601,6 +605,7 @@
 
 </main>
 
+<script src="/i18n.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/toggle.js"></script>
 <script src="/field.js"></script>
