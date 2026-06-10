@@ -280,7 +280,7 @@ class TestPlaywrightLangToggleIndex:
             ctx.close()
 
         assert nav_text_es is not None, "NB-B2: nav.farms element not found on index.html"
-        assert nav_text_en == "My Plots", (
+        assert nav_text_en == "My Crops", (
             f"NB-B2: nav.farms did not switch to English. Got: {nav_text_en!r}"
         )
 

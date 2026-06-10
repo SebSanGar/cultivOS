@@ -47,9 +47,10 @@ async function loadNotifications() {
     listEl.innerHTML = '<div class="loading"><div class="loading-spinner"></div><span data-i18n="notif.loading">Loading notifications...</span></div>';
     localizeInjected();
 
-    // Fetch all farms
-    const farms = await fetchJSON('/api/farms');
-    if (!farms || farms.length === 0) {
+    // Fetch all farms (/api/farms returns {data:[...], meta} — unwrap it; was crashing on farms.map → stuck spinner)
+    const farmsResp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (farmsResp && (farmsResp.data || farmsResp.items)) || (Array.isArray(farmsResp) ? farmsResp : []);
+    if (!farms.length) {
         listEl.innerHTML = '<div class="notif-empty" data-i18n="notif.emptyNoFarms">No farms registered. Create a farm first.</div>';
         localizeInjected();
         updateSummary([]);

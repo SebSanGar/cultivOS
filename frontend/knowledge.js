@@ -1,6 +1,6 @@
 /* cultivOS — Knowledge Base Page */
 
-const API = 'http://localhost:8000';
+const API = '';  // same-origin; was hardcoded to :8000 which broke on any other host/port (incl prod)
 
 /* i18n helper — resolves a key to the current-language string, falling back
    to the provided default if the i18n module hasn't loaded yet. */

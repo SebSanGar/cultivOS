@@ -56,7 +56,9 @@
         // Update toggle button label
         var btn = document.getElementById('agronomo-toggle');
         if (btn) {
-            btn.textContent = isAgronomo ? 'Vista productor' : 'Vista agronomo';
+            btn.textContent = (window.cultivOS_i18n && window.cultivOS_i18n.t)
+                ? window.cultivOS_i18n.t(isAgronomo ? 'toggle.farmer' : 'toggle.agronomo')
+                : (isAgronomo ? 'Farmer view' : 'Agronomist view');
             btn.setAttribute('aria-pressed', isAgronomo ? 'true' : 'false');
         }
     }
