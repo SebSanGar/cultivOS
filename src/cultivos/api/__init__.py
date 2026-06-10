@@ -3,6 +3,7 @@
 from cultivos.api import (
     action_timeline,
     cumulative_savings,
+    season_report,
     alert_config,
     alert_escalations,
     alert_history,
@@ -115,6 +116,7 @@ def is_public_router(r) -> bool:
 all_routers = [
     action_timeline.router,
     cumulative_savings.router,
+    season_report.router,
     alert_config.router,
     alert_escalations.router,
     alert_history.router,

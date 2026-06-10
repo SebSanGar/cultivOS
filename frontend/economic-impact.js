@@ -93,6 +93,7 @@ async function loadEconomicImpact() {
     updateRiskAvoided(data);
     updateTreatmentRoiLeaderboard(farmId);
     updateCumulativeChart(farmId);
+    updateDownloadReportLink(farmId);
 }
 
 function resetStats() {
@@ -316,6 +317,18 @@ function updatePerHaTable(data) {
     set('econ-total-yield', formatMXN(data.yield_improvement_mxn));
     set('econ-per-ha-total', formatPerHa(perHa));
     set('econ-grand-total', formatMXN(data.total_savings_mxn));
+}
+
+function updateDownloadReportLink(farmId) {
+    const section = document.getElementById('econ-download-section');
+    const link = document.getElementById('econ-download-report');
+    if (!section || !link) return;
+    if (!farmId) {
+        section.style.display = 'none';
+        return;
+    }
+    link.href = `/api/farms/${farmId}/season-report-pdf`;
+    section.style.display = 'block';
 }
 
 let cumulativeChart = null;
