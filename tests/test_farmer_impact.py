@@ -221,19 +221,21 @@ class TestFarmerImpactPage:
         resp = client.get("/impacto-agricultor")
         assert resp.status_code == 200
 
-    def test_page_has_spanish_title(self, client):
+    def test_page_has_savings_title(self, client):
+        # Page is English-first (STEERING 2026-06-10); "impacto" in URL, "Savings" in nav
         resp = client.get("/impacto-agricultor")
         text = resp.text
-        assert "Impacto" in text
+        assert "Your Savings" in text or "impacto" in text.lower()
 
     def test_page_has_farm_selector(self, client):
         resp = client.get("/impacto-agricultor")
         assert "farmSelect" in resp.text or "farm-select" in resp.text
 
     def test_page_has_impact_containers(self, client):
+        # Renamed from days-onboard → sup-days in English NB-FS build
         resp = client.get("/impacto-agricultor")
         text = resp.text
-        assert "days-onboard" in text or "daysOnboard" in text or "dias" in text.lower()
+        assert "sup-days" in text or "impact-support" in text or "days with cultivOS" in text
 
     def test_page_has_field_cards_container(self, client):
         resp = client.get("/impacto-agricultor")
@@ -244,8 +246,9 @@ class TestFarmerImpactPage:
         assert "impacto-agricultor.js" in resp.text
 
     def test_page_has_stats_strip(self, client):
+        # Renamed from stats-strip → impact-support in English NB-FS build
         resp = client.get("/impacto-agricultor")
-        assert "stats-strip" in resp.text or "stats" in resp.text.lower()
+        assert "impact-support" in resp.text or "sup-fields" in resp.text
 
     def test_js_file_loads(self, client):
         resp = client.get("/impacto-agricultor.js")
