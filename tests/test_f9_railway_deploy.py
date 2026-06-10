@@ -25,18 +25,16 @@ PROJECT_ROOT = Path(__file__).parent.parent
 
 def test_database_url_env_var_overrides_db_url(monkeypatch):
     """DATABASE_URL (Railway Postgres add-on convention) must be accepted as db_url."""
-    from cultivos.config import get_settings
+    from cultivos.config import Settings
 
-    get_settings.cache_clear()
     monkeypatch.setenv("DATABASE_URL", "postgresql://user:pass@localhost/cultivOS")
     monkeypatch.delenv("DB_URL", raising=False)
-    try:
-        settings = get_settings()
-        assert settings.db_url == "postgresql://user:pass@localhost/cultivOS", (
-            f"DATABASE_URL not picked up; got {settings.db_url!r}"
-        )
-    finally:
-        get_settings.cache_clear()
+    # Hermetic: ignore a local .env (created by run.sh) whose DB_URL would otherwise
+    # shadow DATABASE_URL via AliasChoices. Prod (Railway) has no .env — this mirrors it.
+    settings = Settings(_env_file=None)
+    assert settings.db_url == "postgresql://user:pass@localhost/cultivOS", (
+        f"DATABASE_URL not picked up; got {settings.db_url!r}"
+    )
 
 
 def test_db_url_env_var_backward_compat(monkeypatch):
