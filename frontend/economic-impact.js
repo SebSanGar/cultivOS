@@ -91,6 +91,7 @@ async function loadEconomicImpact() {
     updateConfidenceBadges(data);
     updatePerHaTable(data);
     updateRiskAvoided(data);
+    updateTreatmentRoiLeaderboard(farmId);
 }
 
 function resetStats() {
@@ -314,6 +315,42 @@ function updatePerHaTable(data) {
     set('econ-total-yield', formatMXN(data.yield_improvement_mxn));
     set('econ-per-ha-total', formatPerHa(perHa));
     set('econ-grand-total', formatMXN(data.total_savings_mxn));
+}
+
+async function updateTreatmentRoiLeaderboard(farmId) {
+    const section = document.getElementById('econ-treatment-roi-section');
+    const emptyEl = document.getElementById('econ-treatment-roi-empty');
+    const table = document.getElementById('econ-treatment-roi-table');
+    const tbody = document.getElementById('econ-treatment-roi-tbody');
+    if (!section || !emptyEl || !table || !tbody) return;
+
+    if (!farmId) {
+        section.style.display = 'none';
+        return;
+    }
+
+    const roi = await fetchJSON(`/api/farms/${farmId}/treatment-roi`);
+    section.style.display = 'block';
+
+    if (!roi || !roi.treatments || roi.treatments.length === 0) {
+        emptyEl.style.display = 'block';
+        table.style.display = 'none';
+        return;
+    }
+
+    emptyEl.style.display = 'none';
+    table.style.display = 'table';
+    tbody.innerHTML = '';
+
+    const top5 = roi.treatments.slice(0, 5);
+    top5.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        const delta = item.avg_health_delta !== null ? (item.avg_health_delta > 0 ? '+' : '') + item.avg_health_delta.toFixed(1) : '—';
+        const cpp = item.cost_per_health_point !== null ? '$' + item.cost_per_health_point.toFixed(0) : '—';
+        const name = esc(item.treatment_type || '').slice(0, 40);
+        tr.innerHTML = `<td>${idx + 1}</td><td>${name}</td><td>${item.count}</td><td>${delta}</td><td>${cpp}</td>`;
+        tbody.appendChild(tr);
+    });
 }
 
 function updateRiskAvoided(data) {
