@@ -141,11 +141,11 @@ def test_intel_compare_has_csv_export_button(client):
     assert 'id="compare-csv-btn"' in resp.text
 
 
-def test_intel_compare_csv_button_has_spanish_label(client):
-    """CSV export button has Spanish label."""
+def test_intel_compare_csv_button_has_english_label(client):
+    """CSV export button has English label (NB-EN: intel.html translated)."""
     resp = client.get("/intel")
     assert resp.status_code == 200
-    assert "Exportar CSV" in resp.text
+    assert "Export CSV" in resp.text
 
 
 # ── Frontend: trend display ──────────────────────────────────────────

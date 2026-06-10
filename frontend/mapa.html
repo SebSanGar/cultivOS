@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Mapa de Campos</title>
+    <title>cultivOS — Field Map</title>
     <meta name="description" content="Mapa interactivo de granjas y campos — ubicaciones, limites de parcelas, salud de cultivos con codigo de colores.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -72,17 +72,17 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
-            <li><a href="/mapa" class="nav-tab intel-tab active">Mapa</a></li>
+            <li><a href="/" class="nav-tab intel-tab">Farms</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Intelligence</a></li>
+            <li><a href="/mapa" class="nav-tab intel-tab active">Map</a></li>
             <li><a href="/regional" class="nav-tab intel-tab">Regional</a></li>
-            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerativo</a></li>
-            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/regenerativo" class="nav-tab intel-tab">Regenerative</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notifications</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Status</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -92,14 +92,14 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Mapa de Campos</h1>
-            <p class="intel-subtitle">Ubicaciones de granjas y parcelas — salud de cultivos con codigo de colores</p>
+            <h1 class="intel-title">Field Map</h1>
+            <p class="intel-subtitle">Farm and field locations — crop health color-coded</p>
         </div>
         <div class="intel-header-actions" style="display:flex;gap:0.75rem;align-items:center;">
             <select id="map-farm-filter" class="intel-select" onchange="filterByFarm()">
-                <option value="">Todas las granjas</option>
+                <option value="">All farms</option>
             </select>
-            <button id="view-toggle-btn" class="intel-btn" onclick="toggleViewMode()" style="white-space:nowrap;">Ver Riesgo</button>
+            <button id="view-toggle-btn" class="intel-btn" onclick="toggleViewMode()" style="white-space:nowrap;">View Risk</button>
         </div>
     </div>
 
@@ -107,35 +107,35 @@
     <div class="intel-stats-strip">
         <div class="intel-stat-card">
             <div class="intel-stat-value" id="map-stat-farms">--</div>
-            <div class="intel-stat-label">Granjas</div>
+            <div class="intel-stat-label">Farms</div>
         </div>
         <div class="intel-stat-card">
             <div class="intel-stat-value" id="map-stat-fields">--</div>
-            <div class="intel-stat-label">Parcelas</div>
+            <div class="intel-stat-label">Fields</div>
         </div>
         <div class="intel-stat-card">
             <div class="intel-stat-value" id="map-stat-hectares">--</div>
-            <div class="intel-stat-label">Hectareas</div>
+            <div class="intel-stat-label">Hectares</div>
         </div>
         <div class="intel-stat-card">
             <div class="intel-stat-value" id="map-stat-avg-health">--</div>
-            <div class="intel-stat-label">Salud Promedio</div>
+            <div class="intel-stat-label">Avg Health</div>
         </div>
     </div>
 
     <!-- Legend -->
     <div id="map-legend">
         <span id="legend-health" style="display:contents;">
-            <span class="legend-item"><span class="legend-dot good"></span> Saludable (&gt;70)</span>
-            <span class="legend-item"><span class="legend-dot warning"></span> Alerta (40-70)</span>
-            <span class="legend-item"><span class="legend-dot critical"></span> Critico (&lt;40)</span>
-            <span class="legend-item"><span class="legend-dot none"></span> Sin datos</span>
+            <span class="legend-item"><span class="legend-dot good"></span> Healthy (&gt;70)</span>
+            <span class="legend-item"><span class="legend-dot warning"></span> Alert (40-70)</span>
+            <span class="legend-item"><span class="legend-dot critical"></span> Critical (&lt;40)</span>
+            <span class="legend-item"><span class="legend-dot none"></span> No data</span>
         </span>
         <span id="legend-risk" style="display:none;">
-            <span class="legend-item"><span class="legend-dot critical"></span> Riesgo Alto (&gt;60)</span>
-            <span class="legend-item"><span class="legend-dot warning"></span> Riesgo Medio (30-60)</span>
-            <span class="legend-item"><span class="legend-dot good"></span> Riesgo Bajo (&lt;30)</span>
-            <span class="legend-item"><span class="legend-dot none"></span> Sin datos</span>
+            <span class="legend-item"><span class="legend-dot critical"></span> High Risk (&gt;60)</span>
+            <span class="legend-item"><span class="legend-dot warning"></span> Mid Risk (30-60)</span>
+            <span class="legend-item"><span class="legend-dot good"></span> Low Risk (&lt;30)</span>
+            <span class="legend-item"><span class="legend-dot none"></span> No data</span>
         </span>
     </div>
 
@@ -143,10 +143,10 @@
     <div id="map-container"></div>
 
     <!-- Empty state -->
-    <div id="map-empty">No hay granjas registradas con coordenadas GPS.</div>
+    <div id="map-empty">No farms registered with GPS coordinates.</div>
 
     <!-- Info panel -->
-    <div id="map-info-panel">Haz clic en una granja o parcela para ver detalles.</div>
+    <div id="map-info-panel">Click a farm or field to view details.</div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

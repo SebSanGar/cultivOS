@@ -32,10 +32,10 @@ function healthColor(score) {
 }
 
 function healthLabel(score) {
-    if (score == null) return 'Sin datos';
-    if (score > 70) return 'Saludable';
-    if (score >= 40) return 'Alerta';
-    return 'Critico';
+    if (score == null) return 'No data';
+    if (score > 70) return 'Healthy';
+    if (score >= 40) return 'Alert';
+    return 'Critical';
 }
 
 function riskColor(score) {
@@ -46,21 +46,21 @@ function riskColor(score) {
 }
 
 function riskLabel(score) {
-    if (score == null) return 'Sin datos';
-    if (score > 60) return 'Riesgo Alto';
-    if (score >= 30) return 'Riesgo Medio';
-    return 'Riesgo Bajo';
+    if (score == null) return 'No data';
+    if (score > 60) return 'High Risk';
+    if (score >= 30) return 'Mid Risk';
+    return 'Low Risk';
 }
 
 function dominantLabel(factor) {
-    const labels = {health: 'Salud', weather: 'Clima', disease: 'Enfermedad', thermal: 'Termal'};
+    const labels = {health: 'Health', weather: 'Weather', disease: 'Disease', thermal: 'Thermal'};
     return factor ? (labels[factor] || factor) : '--';
 }
 
 window.toggleViewMode = function() {
     viewMode = viewMode === 'health' ? 'risk' : 'health';
     var btn = document.getElementById('view-toggle-btn');
-    if (btn) btn.textContent = viewMode === 'health' ? 'Ver Riesgo' : 'Ver Salud';
+    if (btn) btn.textContent = viewMode === 'health' ? 'View Risk' : 'View Health';
     var lh = document.getElementById('legend-health');
     var lr = document.getElementById('legend-risk');
     if (lh) lh.style.display = viewMode === 'health' ? 'contents' : 'none';
@@ -174,7 +174,7 @@ function renderMap(farmData) {
                 '<strong>' + esc(farm.name) + '</strong><br>' +
                 esc(farm.municipality || '') + ', ' + esc(farm.state || 'Jalisco') + '<br>' +
                 (farm.total_hectares || 0) + ' ha<br>' +
-                '<a href="/?farm=' + farm.id + '">Ver granja</a>'
+                '<a href="/?farm=' + farm.id + '">View farm</a>'
             );
 
             marker.on('click', function() {
@@ -218,11 +218,11 @@ function renderMap(farmData) {
 
                     marker.bindPopup(
                         '<strong>' + esc(field.name) + '</strong><br>' +
-                        'Cultivo: ' + esc(field.crop_type || '--') + '<br>' +
+                        'Crop: ' + esc(field.crop_type || '--') + '<br>' +
                         'Area: ' + (field.hectares || 0) + ' ha<br>' +
-                        'Riesgo: ' + (rScore != null ? rScore.toFixed(0) + ' — ' + riskLabel(rScore) : 'Sin datos') + '<br>' +
+                        'Risk: ' + (rScore != null ? rScore.toFixed(0) + ' — ' + riskLabel(rScore) : 'No data') + '<br>' +
                         (riskItem && riskItem.dominant_factor ? 'Factor: ' + dominantLabel(riskItem.dominant_factor) + '<br>' : '') +
-                        '<a href="/campo?farm=' + farm.id + '&field=' + field.id + '">Ver campo</a>'
+                        '<a href="/campo?farm=' + farm.id + '&field=' + field.id + '">View field</a>'
                     );
 
                     bounds.push([rLat, rLon]);
@@ -244,10 +244,10 @@ function renderMap(farmData) {
 
                 polygon.bindPopup(
                     '<strong>' + esc(field.name) + '</strong><br>' +
-                    'Cultivo: ' + esc(field.crop_type || '--') + '<br>' +
+                    'Crop: ' + esc(field.crop_type || '--') + '<br>' +
                     'Area: ' + (field.hectares || 0) + ' ha<br>' +
-                    'Salud: ' + (score != null ? Math.round(score) + ' (' + healthLabel(score) + ')' : 'Sin datos') + '<br>' +
-                    '<a href="/campo?farm=' + farm.id + '&field=' + field.id + '">Ver campo</a>'
+                    'Health: ' + (score != null ? Math.round(score) + ' (' + healthLabel(score) + ')' : 'No data') + '<br>' +
+                    '<a href="/campo?farm=' + farm.id + '&field=' + field.id + '">View field</a>'
                 );
 
                 latlngs.forEach(function(ll) { bounds.push(ll); });
@@ -293,7 +293,7 @@ function updateInfoPanel(farm, fields, healthScores) {
         esc(farm.municipality || '') + ', ' + esc(farm.state || 'Jalisco') +
         '<table style="width:100%;margin-top:0.5rem;border-collapse:collapse;">' +
         '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);text-align:left;">' +
-        '<th>Parcela</th><th>Cultivo</th><th>Area</th><th>Salud</th></tr></thead>' +
+        '<th>Field</th><th>Crop</th><th>Area</th><th>Health</th></tr></thead>' +
         '<tbody>' + fieldRows + '</tbody></table>';
 }
 
