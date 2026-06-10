@@ -1,91 +1,142 @@
-/* Farmer Impact Summary — /impacto-agricultor */
+/* Farmer dollar-savings view — /impacto-agricultor (English-first, currency-neutral).
+   Binds to GET /api/farms/{id}/farmer-impact. Honest: ranges read as "about $X",
+   never a $0 headline, estimate badge travels with the number. */
 
 (async function () {
-    const farmSelect = document.getElementById("farmSelect");
-    const fieldCards = document.getElementById("field-cards");
-    const fieldCardsEmpty = document.getElementById("field-cards-empty");
+    "use strict";
+    var farmSelect = document.getElementById("farmSelect");
+    var fieldCards = document.getElementById("field-cards");
 
     async function fetchJSON(url) {
         try {
-            const r = await fetch(url);
+            var token = localStorage.getItem("cultivOS_token");
+            var headers = {};
+            if (token) headers["Authorization"] = "Bearer " + token;
+            var r = await fetch(url, { headers: headers });
             if (!r.ok) return null;
             return await r.json();
-        } catch { return null; }
+        } catch (e) { return null; }
     }
 
-    function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
 
-    // Load farms
-    const farms = await fetchJSON("/api/farms?page_size=100");
-    if (farms && farms.items) {
-        farms.items.forEach(f => {
-            const opt = document.createElement("option");
-            opt.value = f.id;
-            opt.textContent = f.name;
-            farmSelect.appendChild(opt);
-        });
+    // Neutral money: "$" + thousands separators, no currency code, no decimals.
+    function money(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+
+    function countUp(el, target) {
+        var start = 0, dur = 900, t0 = null;
+        function step(ts) {
+            if (!t0) t0 = ts;
+            var p = Math.min((ts - t0) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = money(Math.round(target * eased));
+            if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
-    farmSelect.addEventListener("change", async () => {
-        const fid = farmSelect.value;
-        if (!fid) { resetUI(); return; }
-        await loadImpact(fid);
+    // Load farms, auto-select the first so the page shows real data immediately.
+    var farms = await fetchJSON("/api/farms?page_size=100");
+    var items = (farms && (farms.items || farms)) || [];
+    farmSelect.innerHTML = "";
+    if (!items.length) {
+        farmSelect.innerHTML = '<option value="">No farms yet</option>';
+        showEmptyHero("Add a farm and we'll start showing what you save.");
+        return;
+    }
+    items.forEach(function (f) {
+        var opt = document.createElement("option");
+        opt.value = f.id; opt.textContent = f.name;
+        farmSelect.appendChild(opt);
     });
 
+    farmSelect.addEventListener("change", function () {
+        if (farmSelect.value) loadImpact(farmSelect.value);
+    });
+
+    await loadImpact(items[0].id);
+
     async function loadImpact(farmId) {
-        const data = await fetchJSON("/api/farms/" + farmId + "/farmer-impact");
-        if (!data) { resetUI(); return; }
+        var data = await fetchJSON("/api/farms/" + farmId + "/farmer-impact");
+        if (!data) { showEmptyHero("We couldn't load this farm just now."); return; }
 
-        document.getElementById("stat-dias").textContent = data.days_since_onboard;
-        document.getElementById("stat-campos").textContent = data.total_fields;
-        document.getElementById("stat-hectareas").textContent = data.total_hectares;
-        document.getElementById("stat-recomendaciones").textContent = data.recommendations_received;
-        document.getElementById("stat-aplicados").textContent = data.treatments_applied;
-        document.getElementById("stat-feedback").textContent = data.feedback_given;
-        document.getElementById("stat-mejora").textContent =
-            data.avg_health_improvement_pct != null
-                ? (data.avg_health_improvement_pct > 0 ? "+" : "") + data.avg_health_improvement_pct + " pts"
-                : "Sin datos";
-        document.getElementById("stat-ahorro").textContent =
-            "$" + data.estimated_savings_mxn.toLocaleString("es-MX");
+        var savings = Number(data.estimated_savings_mxn || 0);
+        var treatments = Number(data.treatments_applied || 0);
 
-        renderFieldCards(data.fields);
+        // Honesty: no $0 headline. Without enough data, show a forward-looking line.
+        if (savings <= 0 || treatments <= 0) {
+            showEmptyHero("Here you'll see how much you save as we look after your farm.");
+        } else {
+            document.getElementById("impact-hero").classList.remove("is-empty");
+            var amountEl = document.getElementById("hero-amount");
+            amountEl.classList.remove("impact-hero-amount--soft");
+            document.querySelector(".impact-hero-label").textContent = "You've saved about";
+            document.getElementById("hero-subline").textContent = "since we started looking after your farm";
+            document.getElementById("hero-badge").hidden = false;
+            countUp(amountEl, savings);
+        }
+
+        // Supporting strip
+        setText("sup-days", data.days_since_onboard != null ? data.days_since_onboard : "—");
+        setText("sup-fields", data.total_fields != null ? data.total_fields : "—");
+        setText("sup-treatments", treatments);
+        var imp = data.avg_health_improvement_pct;
+        setText("sup-health", imp != null ? (imp > 0 ? "+" : "") + imp + " pts" : "—");
+
+        renderFieldCards(data.fields || []);
+    }
+
+    function showEmptyHero(msg) {
+        document.getElementById("impact-hero").classList.add("is-empty");
+        document.querySelector(".impact-hero-label").textContent = msg;
+        var amountEl = document.getElementById("hero-amount");
+        amountEl.textContent = "";
+        amountEl.classList.add("impact-hero-amount--soft");
+        document.getElementById("hero-subline").textContent = "";
+        document.getElementById("hero-badge").hidden = true;
+        ["sup-days", "sup-fields", "sup-treatments", "sup-health"].forEach(function (id) { setText(id, "—"); });
+        renderFieldCards([]);
+    }
+
+    function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+
+    // green ≥70, yellow 40–70, red <40
+    function band(score) {
+        if (score == null) return { cls: "muted", word: "No reading yet" };
+        if (score >= 70) return { cls: "green", word: "Doing well" };
+        if (score >= 40) return { cls: "yellow", word: "Needs attention" };
+        return { cls: "red", word: "Needs help now" };
     }
 
     function renderFieldCards(fields) {
         fieldCards.innerHTML = "";
-        if (!fields || fields.length === 0) {
-            fieldCards.innerHTML = '<p style="color:var(--text-secondary);">Sin campos registrados.</p>';
+        if (!fields || !fields.length) {
+            fieldCards.innerHTML = '<p class="impact-muted">No fields yet — add one to see how it changes.</p>';
             return;
         }
-        fields.forEach(f => {
-            const deltaColor = f.health_delta > 0 ? "#22c55e" : f.health_delta < 0 ? "#ef4444" : "#a3a3a3";
-            const deltaText = f.health_delta != null
-                ? (f.health_delta > 0 ? "+" : "") + f.health_delta + " pts"
-                : "Sin datos";
-            const card = document.createElement("div");
-            card.className = "intel-card";
-            card.style.cssText = "padding:1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-color);";
+        fields.forEach(function (f) {
+            var b = band(f.latest_score);
+            var delta = f.health_delta;
+            var deltaPill = delta != null
+                ? '<span class="delta-pill ' + (delta > 0 ? "up" : delta < 0 ? "down" : "flat") + '">' + (delta > 0 ? "+" : "") + delta + '</span>'
+                : "";
+            var card = document.createElement("div");
+            card.className = "field-impact-card";
             card.innerHTML = [
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">',
-                '  <h3 style="margin:0;font-size:1.1rem;color:var(--text-primary);">' + esc(f.field_name) + '</h3>',
-                '  <span style="font-size:0.8rem;padding:0.2rem 0.6rem;border-radius:6px;background:var(--bg-secondary);color:var(--text-secondary);">' + esc(f.crop_type || "—") + '</span>',
+                '<div class="field-impact-head">',
+                '  <span class="semaforo-dot ' + b.cls + '"></span>',
+                '  <div class="field-impact-name">' + esc(f.field_name) + '</div>',
+                f.crop_type ? '  <span class="field-impact-crop">' + esc(f.crop_type) + '</span>' : '',
                 '</div>',
-                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.9rem;">',
-                '  <div><span style="color:var(--text-secondary);">Salud inicial:</span> <strong>' + (f.first_score != null ? f.first_score : "—") + '</strong></div>',
-                '  <div><span style="color:var(--text-secondary);">Salud actual:</span> <strong>' + (f.latest_score != null ? f.latest_score : "—") + '</strong></div>',
-                '  <div><span style="color:var(--text-secondary);">Cambio:</span> <strong style="color:' + deltaColor + ';">' + deltaText + '</strong></div>',
-                '  <div><span style="color:var(--text-secondary);">Tratamientos:</span> <strong>' + f.treatments_applied + '</strong></div>',
+                '<div class="field-impact-status">' + b.word + '</div>',
+                '<div class="before-after">',
+                '  <span class="ba-swatch ' + band(f.first_score).cls + '" title="before"></span>',
+                '  <span class="ba-arrow">→</span>',
+                '  <span class="ba-swatch ' + band(f.latest_score).cls + '" title="now"></span>',
+                '  ' + deltaPill,
                 '</div>',
             ].join("\n");
             fieldCards.appendChild(card);
         });
-    }
-
-    function resetUI() {
-        ["stat-dias", "stat-campos", "stat-hectareas", "stat-recomendaciones",
-         "stat-aplicados", "stat-feedback", "stat-mejora", "stat-ahorro"
-        ].forEach(id => { document.getElementById(id).textContent = "--"; });
-        fieldCards.innerHTML = '<p id="field-cards-empty" style="color:var(--text-secondary);">Selecciona una granja para ver el impacto por campo.</p>';
     }
 })();
