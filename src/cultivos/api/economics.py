@@ -15,6 +15,11 @@ _TIER_RATES = {
     "standard": _a("tier_rate_standard_mxn_ha"),
 }
 
+# T2.4 — 100%-efficiency ceilings per category (no health/treatment multipliers)
+_WATER_PER_HA = _a("water_savings_per_ha")
+_FERT_PER_HA = _a("fertilizer_savings_per_ha")
+_YIELD_PER_HA = _a("yield_baseline_per_ha")
+
 router = APIRouter(
     prefix="/api/farms/{farm_id}/economic-impact",
     tags=["economics"],
@@ -148,11 +153,18 @@ def get_economic_impact(
         water_savings_per_ha_mxn: int | None = round(result["water_savings_mxn"] / total_hectares)
         fertilizer_savings_per_ha_mxn: int | None = round(result["fertilizer_savings_mxn"] / total_hectares)
         yield_improvement_per_ha_mxn: int | None = round(result["yield_improvement_mxn"] / total_hectares)
+        # T2.4 — potential ceilings (100% efficiency, no multipliers)
+        water_potential_mxn: int | None = round(_WATER_PER_HA * total_hectares)
+        fertilizer_potential_mxn: int | None = round(_FERT_PER_HA * total_hectares)
+        yield_potential_mxn: int | None = round(_YIELD_PER_HA * total_hectares)
     else:
         savings_per_ha_mxn = None
         water_savings_per_ha_mxn = None
         fertilizer_savings_per_ha_mxn = None
         yield_improvement_per_ha_mxn = None
+        water_potential_mxn = None
+        fertilizer_potential_mxn = None
+        yield_potential_mxn = None
 
     return EconomicImpactOut(
         farm_id=farm_id,
@@ -175,5 +187,8 @@ def get_economic_impact(
         water_savings_per_ha_mxn=water_savings_per_ha_mxn,
         fertilizer_savings_per_ha_mxn=fertilizer_savings_per_ha_mxn,
         yield_improvement_per_ha_mxn=yield_improvement_per_ha_mxn,
+        water_potential_mxn=water_potential_mxn,
+        fertilizer_potential_mxn=fertilizer_potential_mxn,
+        yield_potential_mxn=yield_potential_mxn,
         nota=nota,
     )

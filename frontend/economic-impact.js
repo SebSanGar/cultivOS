@@ -139,32 +139,62 @@ function updateChart(data) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    const waterPotential = data.water_potential_mxn || 0;
+    const fertPotential = data.fertilizer_potential_mxn || 0;
+    const yieldPotential = data.yield_potential_mxn || 0;
+
+    const waterEst = data.water_savings_mxn || 0;
+    const fertEst = data.fertilizer_savings_mxn || 0;
+    const yieldEst = data.yield_improvement_mxn || 0;
+
+    const waterConservative = Math.round(waterEst * 0.6);
+    const fertConservative = Math.round(fertEst * 0.6);
+    const yieldConservative = Math.round(yieldEst * 0.6);
+
     econChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Agua', 'Fertilizante', 'Rendimiento'],
-            datasets: [{
-                label: 'Ahorro estimado (MXN/ano)',
-                data: [
-                    data.water_savings_mxn || 0,
-                    data.fertilizer_savings_mxn || 0,
-                    data.yield_improvement_mxn || 0,
-                ],
-                backgroundColor: ['#4da6ff', '#00c896', '#f0b429'],
-                borderColor: ['#4da6ff', '#00c896', '#f0b429'],
-                borderWidth: 1,
-                borderRadius: 4,
-            }]
+            labels: ['Water', 'Fertilizer', 'Yield'],
+            datasets: [
+                {
+                    label: 'Baseline (without cultivOS)',
+                    data: [waterPotential, fertPotential, yieldPotential],
+                    backgroundColor: ['rgba(180,180,180,0.25)', 'rgba(180,180,180,0.25)', 'rgba(180,180,180,0.25)'],
+                    borderColor: ['rgba(180,180,180,0.5)', 'rgba(180,180,180,0.5)', 'rgba(180,180,180,0.5)'],
+                    borderWidth: 1,
+                    borderRadius: 4,
+                },
+                {
+                    label: 'With cultivOS — estimated',
+                    data: [waterEst, fertEst, yieldEst],
+                    backgroundColor: ['#4da6ff', '#00c896', '#f0b429'],
+                    borderColor: ['#4da6ff', '#00c896', '#f0b429'],
+                    borderWidth: 1,
+                    borderRadius: 4,
+                },
+                {
+                    label: 'With cultivOS — conservative',
+                    data: [waterConservative, fertConservative, yieldConservative],
+                    backgroundColor: ['rgba(77,166,255,0.4)', 'rgba(0,200,150,0.4)', 'rgba(240,180,41,0.4)'],
+                    borderColor: ['rgba(77,166,255,0.7)', 'rgba(0,200,150,0.7)', 'rgba(240,180,41,0.7)'],
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: '#aaa', padding: 16, boxWidth: 12 }
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return '$' + (context.raw || 0).toLocaleString() + ' MXN';
+                            return context.dataset.label + ': $' + (context.raw || 0).toLocaleString();
                         }
                     }
                 }

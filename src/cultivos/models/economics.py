@@ -26,4 +26,8 @@ class EconomicImpactOut(BaseModel):
     water_savings_per_ha_mxn: Optional[int] = None
     fertilizer_savings_per_ha_mxn: Optional[int] = None
     yield_improvement_per_ha_mxn: Optional[int] = None
+    # T2.4 — three-scenario chart: 100%-efficiency ceiling per category
+    water_potential_mxn: Optional[int] = None
+    fertilizer_potential_mxn: Optional[int] = None
+    yield_potential_mxn: Optional[int] = None
     nota: str
