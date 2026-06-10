@@ -112,12 +112,66 @@ def _make_boundary(lat, lon, hectares):
     ]
 
 
+def _season_start(name: str, start_year: int) -> datetime:
+    """First calendar day of a Jalisco season (temporal: Jun 1; secas: Nov 1)."""
+    return datetime(start_year, 6, 1) if name == "temporal" else datetime(start_year, 11, 1)
+
+
+def _seed_current_season_topup(session, now: datetime) -> None:
+    """Guarantee every [DEMO] field has HealthScores in the CURRENT season.
+
+    The 13-month weekly history covers the prior season, but its grid can stop a few
+    days short of the season boundary (e.g. just before temporal starts), leaving the
+    current season empty so the seasonal-benchmark view shows null. This tops up a few
+    recent in-season scores, dated relative to `now`, so the view is populated whenever
+    the seed runs. Idempotent: skips any field that already has a current-season score.
+    """
+    from cultivos.services.intelligence.seasonal_benchmark import _season_of, _prior_season
+
+    cur_name, cur_year = _season_of(now)
+    pri_name, pri_year = _prior_season(cur_name, cur_year)
+    window_start = max(_season_start(cur_name, cur_year), now - timedelta(days=30))
+    span = max((now - window_start).days, 0)
+    offsets = sorted({0, span // 2, span}) if span else [0]
+
+    fields = (
+        session.query(Field)
+        .join(Farm)
+        .filter(Farm.name.like(f"%{DEMO_MARKER}%"))
+        .all()
+    )
+    for field in fields:
+        scores = session.query(HealthScore).filter(HealthScore.field_id == field.id).all()
+        if any(_season_of(h.scored_at) == (cur_name, cur_year) for h in scores):
+            continue  # already populated for the current season
+        # Continue the regenerative improvement arc: current season sits a few points
+        # above the prior-season average so the benchmark reads "improving", not flat.
+        prior_vals = [float(h.score) for h in scores if _season_of(h.scored_at) == (pri_name, pri_year)]
+        prior_avg = sum(prior_vals) / len(prior_vals) if prior_vals else 80.0
+        base = min(prior_avg + 2.0, 95.0)
+        for i, off in enumerate(offsets):
+            score = round(min(base + i * 1.5, 97), 1)
+            session.add(HealthScore(
+                field_id=field.id,
+                score=score,
+                ndvi_mean=round(0.55 + (score - 80) / 200, 3),
+                stress_pct=round(max(15 - (score - 80), 2), 1),
+                trend="improving",
+                sources=["ndvi", "soil"],
+                breakdown={"ndvi": round(score * 0.6, 1), "soil": round(score * 0.4, 1)},
+                scored_at=window_start + timedelta(days=off),
+            ))
+    session.commit()
+
+
 def seed_demo_data(session):
     """Seed the database with realistic Jalisco demo data. Idempotent."""
+    now = datetime.utcnow()
     if _demo_exists(session):
+        # Heal older seeds that predate the current-season top-up.
+        _seed_current_season_topup(session, now)
         return
 
-    now = datetime.utcnow()
     # 13 months ensures both Jalisco seasons (temporal Jun-Oct, secas Nov-May)
     # are always represented regardless of when the seed runs.
     six_months_ago = now - timedelta(days=396)
@@ -316,6 +370,9 @@ def seed_demo_data(session):
     _seed_farmer_feedback(session, all_treatment_ids)
 
     session.commit()
+
+    # Ensure the seasonal-benchmark view is populated for the current season.
+    _seed_current_season_topup(session, now)
 
 
 def _seed_field_history(session, farm, field, now, start_date, region="jalisco"):
