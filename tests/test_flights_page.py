@@ -14,7 +14,7 @@ class TestFlightsPage:
 
     def test_page_contains_title(self, client):
         resp = client.get("/vuelos")
-        assert "Registro de Vuelos" in resp.text
+        assert "Drone Flight Log" in resp.text
 
     def test_page_contains_stats_strip(self, client):
         resp = client.get("/vuelos")

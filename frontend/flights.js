@@ -30,16 +30,16 @@ const DRONE_LABELS = {
 };
 
 const MISSION_LABELS = {
-    health_scan: 'Escaneo de salud',
-    thermal_check: 'Revision termica',
-    spray: 'Aplicacion',
+    health_scan: 'Health scan',
+    thermal_check: 'Thermal check',
+    spray: 'Spray',
 };
 
 const STATUS_LABELS = {
-    pending: 'Pendiente',
-    processing: 'Procesando',
-    complete: 'Completo',
-    failed: 'Fallido',
+    pending: 'Pending',
+    processing: 'Processing',
+    complete: 'Complete',
+    failed: 'Failed',
 };
 
 const STATUS_COLORS = {
@@ -51,11 +51,11 @@ const STATUS_COLORS = {
 
 async function loadFlights() {
     const tbody = document.getElementById('flights-table-body');
-    tbody.innerHTML = '<tr><td colspan="10" class="flights-loading">Cargando vuelos...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="flights-loading">Loading flights...</td></tr>';
 
     const farms = await fetchJSON('/api/farms');
     if (!farms || farms.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" class="flights-empty">Sin granjas registradas. Cree una granja primero.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="flights-empty">No farms registered. Create a farm first.</td></tr>';
         updateStats([]);
         return;
     }
@@ -137,12 +137,12 @@ function renderTable(flights) {
     const tbody = document.getElementById('flights-table-body');
 
     if (flights.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" class="flights-empty">Sin vuelos registrados. Los vuelos aparecen al registrar misiones de drones.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="flights-empty">No flights recorded. Flights appear when drone missions are logged.</td></tr>';
         return;
     }
 
     tbody.innerHTML = flights.map(f => {
-        const date = f.flight_date ? new Date(f.flight_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' }) : '--';
+        const date = f.flight_date ? new Date(f.flight_date).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' }) : '--';
         const drone = DRONE_LABELS[f.drone_type] || esc(f.drone_type);
         const mission = MISSION_LABELS[f.mission_type] || esc(f.mission_type);
         const status = STATUS_LABELS[f.status] || esc(f.status);
