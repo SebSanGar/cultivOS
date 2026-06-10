@@ -181,6 +181,107 @@ nav {
     color: #fff;
 }
 
+/* FL4 — Language toggle (ES | EN) */
+.nav-lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--neutral-300, #d4d4d8);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.nav-lang-toggle span {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--neutral-600, #52525b);
+    transition: background 0.15s, color 0.15s;
+}
+.nav-lang-toggle span.active {
+    background: var(--brand-green, #2D6A2D);
+    color: #fff;
+}
+.nav-lang-toggle span:hover:not(.active) {
+    background: var(--neutral-100, #f4f4f5);
+}
+
+/* FL3 — User avatar chip + dropdown */
+.nav-user-info {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.nav-user-chip {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--brand-green, #2D6A2D);
+    color: var(--neutral-50, #fafaf9);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-fast, 150ms) var(--ease-out, ease-out);
+    flex-shrink: 0;
+}
+.nav-user-chip:hover,
+.nav-user-chip[aria-expanded="true"] {
+    background: var(--brand-green-700, #1d4d1d);
+}
+.nav-user-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.1));
+    z-index: 200;
+    overflow: hidden;
+}
+.nav-user-dropdown-name {
+    padding: 10px 14px 2px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text, #111827);
+    font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+}
+.nav-user-dropdown-role {
+    padding: 2px 14px 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted, #6b7280);
+}
+.nav-user-dropdown-divider {
+    margin: 0;
+    border: none;
+    border-top: 1px solid var(--border, #e5e7eb);
+}
+.nav-user-dropdown-logout {
+    display: block;
+    width: 100%;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--danger, #dc2626);
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--duration-fast, 150ms) var(--ease-out, ease-out);
+}
+.nav-user-dropdown-logout:hover {
+    background: var(--danger-light, #fef2f2);
+}
+
 /* H2 — Mobile hamburger nav at 390px / 600px breakpoint */
 @media (max-width: 600px) {
     nav { padding: 0 12px; }
