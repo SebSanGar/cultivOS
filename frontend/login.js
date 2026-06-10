@@ -113,7 +113,7 @@
 
                 if (!regResp.ok) {
                     var regData = await regResp.json();
-                    showError(regData.detail || 'Error al registrarse. Intenta de nuevo.');
+                    showError((regData.error && regData.error.message) || regData.detail || 'Error al registrarse. Intenta de nuevo.');
                     setLoading(false);
                     return;
                 }
@@ -129,7 +129,7 @@
 
             if (!loginResp.ok) {
                 var loginData = await loginResp.json();
-                showError(loginData.detail || 'Credenciales incorrectas. Intenta de nuevo.');
+                showError((loginData.error && loginData.error.message) || loginData.detail || 'Credenciales incorrectas. Intenta de nuevo.');
                 setLoading(false);
                 return;
             }
