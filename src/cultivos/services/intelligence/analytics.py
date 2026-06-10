@@ -1473,9 +1473,22 @@ def compute_farmer_impact(db: Session, farm_id: int) -> dict:
         avg_improvement = round(sum(health_deltas) / len(health_deltas), 1)
 
     from cultivos.services.intelligence.assumptions import get_value as _a
-    # Estimated savings: treatments applied * avg cost reduction (model assumption — see assumptions.py)
     total_hectares = sum(f.hectares or 0 for f in fields)
-    estimated_savings = treatments_applied * int(_a("per_treatment_savings_mxn"))
+
+    # Gate: only emit peso when we have trend data AND applied treatments
+    has_trend = len(health_deltas) > 0
+    health_observed = len([e for e in field_entries if e["first_score"] is not None]) > 0
+
+    if has_trend and treatments_applied > 0:
+        savings_state = "active"
+        estimated_savings = treatments_applied * int(_a("per_treatment_savings_mxn"))
+        savings_forward_line = None
+    else:
+        savings_state = "insufficient_data"
+        estimated_savings = 0
+        savings_forward_line = (
+            "Vuelve despues de 2-3 vuelos y tratamientos aplicados para ver tu estimacion de ahorro."
+        )
 
     return {
         "farm_id": farm_id,
@@ -1488,6 +1501,9 @@ def compute_farmer_impact(db: Session, farm_id: int) -> dict:
         "feedback_given": feedback_count,
         "avg_health_improvement_pct": avg_improvement,
         "estimated_savings_mxn": estimated_savings,
+        "savings_state": savings_state,
+        "savings_forward_line": savings_forward_line,
+        "health_observed": health_observed,
         "fields": field_entries,
     }
 
