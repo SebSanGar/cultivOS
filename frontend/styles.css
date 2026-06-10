@@ -83,6 +83,26 @@
     --blue: var(--color-info);
     --blue-light: var(--color-info-light);
 
+    /* ── Surface aliases (resolve dark fallbacks across 40+ pages) ── */
+    --card-bg: var(--surface);
+    --card: var(--surface);
+    --card-surface: var(--surface);
+    --input-bg: var(--surface);
+    --text-primary: var(--text);
+    --text-secondary: var(--text-muted);
+    --muted: var(--text-muted);
+    --accent-green: var(--brand-green);
+    --purple: #7c3aed;
+    --amber: var(--color-warning);
+    --bg-tertiary: var(--neutral-100);
+    --border-color: var(--border);
+    --surface-2: var(--neutral-50);
+    --green-soft: #bbf7d0;
+    --green-mid: #4ade80;
+    --gold: #d97706;
+    --silver: #9ca3af;
+    --bronze: #b45309;
+
     /* ── Border Radius ── */
     --radius-sm: 6px;
     --radius: 12px;
