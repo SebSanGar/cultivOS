@@ -4322,6 +4322,18 @@ nav {
 .impact-foot { margin-top: var(--space-6, 32px); font-size: 0.82rem; color: var(--text-muted, #9ca3af); text-align: center; }
 .impact-foot a { color: var(--brand-green-dark, #14532d); }
 
+/* Payback radial gauge (T2.2) */
+.payback-gauge-section { text-align: center; padding: var(--space-3, 12px) 0 var(--space-5, 24px); }
+.payback-gauge-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary, #71717a); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2, 8px); }
+.payback-ring { display: flex; align-items: center; justify-content: center; margin: 0 auto; width: 120px; height: 120px;
+    border-radius: 50%; border: 6px solid var(--border-color, #e4e4e7); flex-direction: column;
+    transition: border-color 0.4s ease; }
+.payback-ring .ring-value { font-size: 2.1rem; font-weight: 800; line-height: 1; color: var(--neutral-900, #18181b); }
+.payback-ring .ring-unit { font-size: 0.72rem; color: var(--text-secondary, #71717a); margin-top: 2px; letter-spacing: 0.04em; }
+.payback-ring--green { border-color: var(--color-success, #16a34a); }
+.payback-ring--amber { border-color: var(--color-warning, #d97706); }
+.payback-ring--red { border-color: var(--color-danger, #dc2626); }
+
 @media (max-width: 480px) {
     .impact-fields { grid-template-columns: 1fr; }
     .impact-support-item { flex-basis: calc(50% - 6px); }

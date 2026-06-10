@@ -87,6 +87,7 @@ async function loadEconomicImpact() {
     updateChart(data);
     updateNota(data.nota, notaEl);
     updateRoiHero(data);
+    updatePaybackGauge(data);
 }
 
 function resetStats() {
@@ -204,6 +205,31 @@ function updateRoiHero(data) {
     } else {
         hero.style.display = 'none';
         forward.style.display = 'block';
+    }
+}
+
+function updatePaybackGauge(data) {
+    const section = document.getElementById('payback-gauge-section');
+    const ring = document.getElementById('payback-ring');
+    const valueEl = document.getElementById('payback-ring-value');
+    if (!section || !ring || !valueEl) return;
+
+    const payback = data.payback_months;
+    if (payback === null || payback === undefined) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    valueEl.textContent = payback;
+
+    ring.classList.remove('payback-ring--green', 'payback-ring--amber', 'payback-ring--red');
+    if (payback < 6) {
+        ring.classList.add('payback-ring--green');
+    } else if (payback <= 12) {
+        ring.classList.add('payback-ring--amber');
+    } else if (payback > 12) {
+        ring.classList.add('payback-ring--red');
     }
 }
 
