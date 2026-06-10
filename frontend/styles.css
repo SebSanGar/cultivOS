@@ -3,26 +3,109 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
+    /* ── Typography ── */
+    --font-heading: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+    /* ── Type scale ── */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+
+    /* ── Spacing (4px base, 8px rhythm) ── */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    /* ── Colors — Brand ── */
+    --brand-green: #16a34a;
+    --brand-green-light: #dcfce7;
+    --brand-green-dark: #14532d;
+    --brand-green-50: #f0fdf4;
+    --brand-green-100: #dcfce7;
+    --brand-green-600: #16a34a;
+    --brand-green-800: #166534;
+    --brand-green-900: #14532d;
+
+    /* ── Colors — Neutrals ── */
+    --neutral-50: #fafaf9;
+    --neutral-100: #f5f5f4;
+    --neutral-200: #e7e5e4;
+    --neutral-300: #d6d3d1;
+    --neutral-400: #a8a29e;
+    --neutral-500: #78716c;
+    --neutral-600: #57534e;
+    --neutral-700: #44403c;
+    --neutral-800: #292524;
+    --neutral-900: #1c1917;
+
+    /* ── Colors — Semantic ── */
+    --color-success: #16a34a;
+    --color-success-light: #dcfce7;
+    --color-warning: #d97706;
+    --color-warning-light: #fef3c7;
+    --color-danger: #dc2626;
+    --color-danger-light: #fee2e2;
+    --color-info: #2563eb;
+    --color-info-light: #dbeafe;
+
+    /* ── Colors — Surface (legacy names preserved) ── */
     --bg: #fafaf9;
     --surface: #ffffff;
     --text: #1a1a1a;
     --text-muted: #6b7280;
-    --green: #16a34a;
-    --green-light: #dcfce7;
-    --green-dark: #14532d;
-    --yellow: #d97706;
-    --yellow-light: #fef3c7;
-    --red: #dc2626;
-    --red-light: #fee2e2;
-    --blue: #2563eb;
-    --blue-light: #dbeafe;
     --border: #e5e7eb;
     --accent: #16a34a;
+
+    /* ── Colors — Legacy aliases ── */
+    --green: var(--brand-green);
+    --green-light: var(--brand-green-light);
+    --green-dark: var(--brand-green-dark);
+    --yellow: var(--color-warning);
+    --yellow-light: var(--color-warning-light);
+    --red: var(--color-danger);
+    --red-light: var(--color-danger-light);
+    --blue: var(--color-info);
+    --blue-light: var(--color-info-light);
+
+    /* ── Border Radius ── */
+    --radius-sm: 6px;
     --radius: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* ── Shadows ── */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 8px 10px rgba(0,0,0,0.04);
+
+    /* ── Motion ── */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
