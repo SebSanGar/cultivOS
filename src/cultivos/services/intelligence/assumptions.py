@@ -113,6 +113,22 @@ REGISTRY: dict[str, AssumptionRecord] = {
         status="model_assumption",
         confidence_note="Standard tier subscription rate per hectare per year (MXN).",
     ),
+    # ----------------------------------------- Carbon accounting constants
+    "soc_to_co2e": AssumptionRecord(
+        value=3.67,
+        low=3.67,
+        high=3.67,
+        unit="tCO2e/tC",
+        source_name="IPCC Guidelines for National Greenhouse Gas Inventories (2006) — Vol 4 Agriculture",
+        source_url="https://www.ipcc-nggip.iges.or.jp/public/2006gl/vol4.html",
+        source_year=2006,
+        status="literature",
+        confidence_note=(
+            "Molecular weight ratio CO2/C = 44/12 ≈ 3.667. Used to convert soil organic carbon "
+            "(SOC) tonnes to CO2-equivalent tonnes for carbon sequestration reporting. "
+            "Universally accepted scientific constant; value does not vary by region."
+        ),
+    ),
     # ----------------------------------------- Per-treatment savings heuristic
     "per_treatment_savings_mxn": AssumptionRecord(
         value=1_500.0,
