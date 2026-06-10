@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Panel de Inteligencia</title>
-    <meta name="description" content="Panel de inteligencia agricola — analisis cruzado de granjas, anomalias, tendencias de suelo y efectividad de tratamientos.">
+    <title>cultivOS — Intelligence Dashboard</title>
+    <meta name="description" content="Agricultural intelligence dashboard — cross-farm analysis, anomalies, soil trends and treatment effectiveness.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
@@ -16,16 +16,16 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab active">Inteligencia</a></li>
-            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
-            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
-            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/" class="nav-tab intel-tab">Farms</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab active">Intelligence</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab">Flights</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab">Notifications</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab">Knowledge</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Status</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -35,13 +35,13 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Panel de Inteligencia</h1>
-            <p class="intel-subtitle">Analisis cruzado de granjas — vista admin/investigador</p>
+            <h1 class="intel-title">Intelligence Dashboard</h1>
+            <p class="intel-subtitle">Cross-farm analysis — admin/researcher view</p>
         </div>
         <div class="intel-header-actions">
-            <button class="intel-btn intel-btn-export" onclick="exportIntelCSV()">Exportar CSV</button>
+            <button class="intel-btn intel-btn-export" onclick="exportIntelCSV()">Export CSV</button>
             <div class="admin-only">
-                <button class="intel-btn" onclick="window.location.href='/'">Agregar Granja</button>
+                <button class="intel-btn" onclick="window.location.href='/'">Add Farm</button>
             </div>
         </div>
     </div>
@@ -50,19 +50,19 @@
     <div class="intel-stats-strip" id="intel-summary">
         <div class="intel-stat">
             <div class="intel-stat-value" id="intel-total-farms">--</div>
-            <div class="intel-stat-label">Granjas</div>
+            <div class="intel-stat-label">Farms</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="intel-total-fields">--</div>
-            <div class="intel-stat-label">Campos</div>
+            <div class="intel-stat-label">Fields</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="intel-avg-health">--</div>
-            <div class="intel-stat-label">Salud Promedio</div>
+            <div class="intel-stat-label">Avg Health</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="intel-worst-field">--</div>
-            <div class="intel-stat-label">Campo Critico</div>
+            <div class="intel-stat-label">Critical Field</div>
         </div>
     </div>
 
@@ -71,23 +71,23 @@
         <!-- Anomalies -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Anomalias Detectadas</h2>
+                <h2 class="intel-panel-title">Detected Anomalies</h2>
                 <span class="intel-badge" id="intel-anomaly-count">0</span>
             </div>
             <div id="intel-anomalies" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Soil Trends Chart -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Tendencias de Suelo</h2>
+                <h2 class="intel-panel-title">Soil Trends</h2>
             </div>
             <div class="intel-panel-body">
                 <canvas id="intel-soil-chart" height="250"></canvas>
                 <div id="intel-soil-fallback" class="intel-chart-fallback" style="display:none">
-                    Sin datos de tendencias de suelo
+                    No soil trend data available
                 </div>
             </div>
         </div>
@@ -95,109 +95,109 @@
         <!-- Treatment Effectiveness Report -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Efectividad de Tratamientos</h2>
+                <h2 class="intel-panel-title">Treatment Effectiveness</h2>
                 <select id="treatment-crop-filter" class="intel-filter-select" onchange="loadTreatmentReport()">
-                    <option value="">Todos los cultivos</option>
+                    <option value="">All crops</option>
                 </select>
             </div>
             <div id="intel-treatment-report" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Economic Impact -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Impacto Economico</h2>
-                <span class="intel-badge">MXN</span>
+                <h2 class="intel-panel-title">Economic Impact</h2>
+                <span class="intel-badge">$</span>
             </div>
             <div id="intel-economics" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Carbon Sequestration -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Secuestro de Carbono</h2>
+                <h2 class="intel-panel-title">Carbon Sequestration</h2>
                 <span class="intel-badge">CO2e</span>
             </div>
             <div id="intel-carbon" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Sensor Fusion Validation -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Validacion de Sensores</h2>
+                <h2 class="intel-panel-title">Sensor Validation</h2>
                 <span class="intel-badge" id="intel-fusion-confidence">--</span>
             </div>
             <div id="intel-sensor-fusion" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
-        <!-- Inteligencia Ancestral Validation -->
+        <!-- Ancestral Knowledge Validation -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Inteligencia Ancestral</h2>
-                <span class="intel-badge">Ancestral</span>
+                <h2 class="intel-panel-title">Ancestral Intelligence</h2>
+                <span class="intel-badge">TEK</span>
             </div>
             <div id="intel-tek-validation" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Farm Comparison -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Comparacion de Granjas</h2>
+                <h2 class="intel-panel-title">Farm Comparison</h2>
                 <div class="intel-header-actions-inline">
                     <select id="farm-compare-select" class="intel-filter-select" multiple onchange="loadFarmComparison()">
                     </select>
-                    <button id="compare-csv-btn" class="intel-btn intel-btn-sm" onclick="exportCompareCSV()">Exportar CSV</button>
+                    <button id="compare-csv-btn" class="intel-btn intel-btn-sm" onclick="exportCompareCSV()">Export CSV</button>
                 </div>
             </div>
             <div id="intel-farm-compare" class="intel-panel-body">
-                <div class="intel-empty">Seleccione granjas para comparar</div>
+                <div class="intel-empty">Select farms to compare</div>
             </div>
             <!-- Sortable table template with sparkline containers -->
             <template id="compare-table-template">
                 <div class="compare-table compare-table-sortable">
                     <div class="compare-header-row">
-                        <span class="compare-cell compare-cell-name" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Granja</span>
-                        <span class="compare-cell" data-sort="field_count" onclick="sortCompareTable('field_count')">Campos</span>
-                        <span class="compare-cell" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectareas</span>
-                        <span class="compare-cell" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Salud</span>
-                        <span class="compare-cell compare-sparkline-header">Tendencia</span>
-                        <span class="compare-cell" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Rendimiento (kg)</span>
-                        <span class="compare-cell" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Tratamientos</span>
+                        <span class="compare-cell compare-cell-name" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Farm</span>
+                        <span class="compare-cell" data-sort="field_count" onclick="sortCompareTable('field_count')">Fields</span>
+                        <span class="compare-cell" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectares</span>
+                        <span class="compare-cell" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Health</span>
+                        <span class="compare-cell compare-sparkline-header">Trend</span>
+                        <span class="compare-cell" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Yield (kg)</span>
+                        <span class="compare-cell" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Treatments</span>
                     </div>
                 </div>
             </template>
         </div>
 
-        <!-- Batch Health Portfolio Grid -->
+        <!-- Field Health Portfolio Grid -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Salud por Campo</h2>
+                <h2 class="intel-panel-title">Field Health</h2>
                 <span class="intel-badge" id="intel-batch-count">0</span>
             </div>
             <div id="intel-batch-health" class="intel-panel-body">
-                <div class="loading"><div class="loading-spinner"></div>Cargando...</div>
+                <div class="loading"><div class="loading-spinner"></div>Loading...</div>
             </div>
         </div>
 
         <!-- Farm Map Placeholder -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Mapa de Granjas</h2>
+                <h2 class="intel-panel-title">Farm Map</h2>
             </div>
             <div class="intel-panel-body">
                 <div id="intel-map" class="intel-map-placeholder">
                     <div class="intel-map-icon">&#x1F5FA;</div>
-                    <div class="intel-map-text">Mapa interactivo — proximamente</div>
+                    <div class="intel-map-text">Interactive map — coming soon</div>
                 </div>
             </div>
         </div>
@@ -205,7 +205,7 @@
 
     <!-- Admin actions -->
     <div class="admin-only intel-admin-bar">
-        <button class="intel-btn" onclick="location.reload()">Actualizar Datos</button>
+        <button class="intel-btn" onclick="location.reload()">Refresh Data</button>
     </div>
 </main>
 
@@ -215,10 +215,10 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    Precision agriculture for regenerative farms
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido">Tour</a>
+    <br>Transforming agriculture with AI and drone data
 </footer>
 </body>
 </html>

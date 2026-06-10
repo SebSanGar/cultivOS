@@ -43,7 +43,7 @@ async function loadSummary() {
     if (data.worst_field) {
         const el = document.getElementById('intel-worst-field');
         el.textContent = esc(data.worst_field.field_name);
-        el.title = esc(data.worst_field.farm_name) + ' — Salud: ' + Math.round(data.worst_field.score);
+        el.title = esc(data.worst_field.farm_name) + ' — Health: ' + Math.round(data.worst_field.score);
     }
 }
 
@@ -53,7 +53,7 @@ async function loadAnomalies() {
     const data = await fetchJSON(API + '/anomalies');
 
     if (!data || data.anomalies.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin anomalias detectadas</div>';
+        container.innerHTML = '<div class="intel-empty">No anomalies detected</div>';
         document.getElementById('intel-anomaly-count').textContent = '0';
         return;
     }
@@ -70,7 +70,7 @@ async function loadAnomalies() {
             </div>
             <div class="intel-anomaly-farm">${esc(a.farm_name)}</div>
             <div class="intel-anomaly-detail">
-                ${a.consecutive_declines} caidas consecutivas
+                ${a.consecutive_declines} consecutive declines
             </div>
             <div class="intel-anomaly-history">
                 ${a.score_history.map(s => `<span class="intel-spark ${healthClass(s)}">${Math.round(s)}</span>`).join(' ')}
@@ -95,7 +95,7 @@ async function loadSoilTrends() {
     if (typeof Chart === 'undefined') {
         canvas.style.display = 'none';
         fallback.style.display = 'block';
-        fallback.textContent = 'Cargando Chart.js...';
+        fallback.textContent = 'Loading Chart.js...';
         return;
     }
 
@@ -109,7 +109,7 @@ async function loadSoilTrends() {
             labels,
             datasets: [
                 {
-                    label: 'pH Promedio',
+                    label: 'Avg pH',
                     data: phData,
                     borderColor: '#16a34a',
                     backgroundColor: 'rgba(22,163,74,0.1)',
@@ -118,7 +118,7 @@ async function loadSoilTrends() {
                     yAxisID: 'y',
                 },
                 {
-                    label: 'Materia Organica %',
+                    label: 'Organic Matter %',
                     data: omData,
                     borderColor: '#2563eb',
                     backgroundColor: 'rgba(37,99,235,0.1)',
@@ -144,7 +144,7 @@ async function loadSoilTrends() {
                 },
                 y1: {
                     position: 'right',
-                    title: { display: true, text: 'Materia Organica %', color: '#2563eb' },
+                    title: { display: true, text: 'Organic Matter %', color: '#2563eb' },
                     ticks: { color: '#2563eb' },
                     grid: { drawOnChartArea: false },
                 },
@@ -162,7 +162,7 @@ async function loadTreatmentReport() {
     const data = await fetchJSON(API + '/treatment-effectiveness-report' + qs);
 
     if (!data || data.treatments.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de tratamientos</div>';
+        container.innerHTML = '<div class="intel-empty">No treatment data</div>';
         return;
     }
 
@@ -185,10 +185,10 @@ async function loadTreatmentReport() {
         <div class="treatment-report-card">
             <div class="treatment-report-header">
                 <span class="treatment-report-name">${esc(t.tratamiento)}</span>
-                <span class="treatment-report-apps">${t.total_applications} aplicaciones</span>
+                <span class="treatment-report-apps">${t.total_applications} applications</span>
             </div>
             <div class="treatment-report-score-row">
-                <span class="treatment-report-label">Puntaje</span>
+                <span class="treatment-report-label">Score</span>
                 <div class="treatment-report-score-bar">
                     <div class="score-bar-fill ${scoreCls}" style="width:${scoreWidth}%"></div>
                 </div>
@@ -196,11 +196,11 @@ async function loadTreatmentReport() {
             </div>
             <div class="treatment-report-metrics">
                 <div class="treatment-report-metric">
-                    <span class="treatment-report-metric-label">Tasa de exito</span>
+                    <span class="treatment-report-metric-label">Success rate</span>
                     <span class="treatment-report-metric-value">${successRate}</span>
                 </div>
                 <div class="treatment-report-metric">
-                    <span class="treatment-report-metric-label">Delta salud</span>
+                    <span class="treatment-report-metric-label">Health delta</span>
                     <span class="treatment-report-metric-value ${deltaCls}">${delta}</span>
                 </div>
                 <div class="treatment-report-metric">
@@ -218,38 +218,38 @@ async function loadEconomics() {
     const data = await fetchJSON(API + '/economics');
 
     if (!data || data.total_farms === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos economicos</div>';
+        container.innerHTML = '<div class="intel-empty">No economic data</div>';
         return;
     }
 
-    const fmt = (n) => '$' + Number(n).toLocaleString('es-MX') + ' MXN';
+    const fmt = (n) => '$' + Number(n).toLocaleString('en');
 
     container.innerHTML = `
         <div class="economics-summary">
             <div class="economics-total">
-                <span class="economics-total-label">Ahorro Total Estimado</span>
+                <span class="economics-total-label">Estimated Total Savings</span>
                 <span class="economics-total-value">${fmt(data.total_savings_mxn)}</span>
             </div>
             <div class="economics-meta">
-                ${data.total_farms} granjas — ${data.total_hectares} ha
+                ${data.total_farms} farms — ${data.total_hectares} ha
             </div>
             <div class="economics-breakdown">
                 <div class="economics-row">
-                    <span class="economics-row-label">Agua</span>
+                    <span class="economics-row-label">Water</span>
                     <div class="economics-row-bar">
                         <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.water_savings_mxn / data.total_savings_mxn * 100))}%"></div>
                     </div>
                     <span class="economics-row-value">${fmt(data.water_savings_mxn)}</span>
                 </div>
                 <div class="economics-row">
-                    <span class="economics-row-label">Fertilizante</span>
+                    <span class="economics-row-label">Fertilizer</span>
                     <div class="economics-row-bar">
                         <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.fertilizer_savings_mxn / data.total_savings_mxn * 100))}%"></div>
                     </div>
                     <span class="economics-row-value">${fmt(data.fertilizer_savings_mxn)}</span>
                 </div>
                 <div class="economics-row">
-                    <span class="economics-row-label">Rendimiento</span>
+                    <span class="economics-row-label">Yield</span>
                     <div class="economics-row-bar">
                         <div class="score-bar-fill good" style="width:${Math.min(100, Math.round(data.yield_improvement_mxn / data.total_savings_mxn * 100))}%"></div>
                     </div>
@@ -276,15 +276,15 @@ async function loadCarbon() {
     const data = await fetchJSON(API + '/carbon');
 
     if (!data || data.total_fields === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de carbono</div>';
+        container.innerHTML = '<div class="intel-empty">No carbon data</div>';
         return;
     }
 
     const tendenciaLabel = {
-        ganando: 'Ganando',
-        estable: 'Estable',
-        perdiendo: 'Perdiendo',
-        datos_insuficientes: 'Sin tendencia',
+        ganando: 'Gaining',
+        estable: 'Stable',
+        perdiendo: 'Losing',
+        datos_insuficientes: 'No trend',
     };
 
     const tendenciaClass = {
@@ -297,11 +297,11 @@ async function loadCarbon() {
     container.innerHTML = `
         <div class="carbon-summary">
             <div class="carbon-total">
-                <span class="carbon-total-label">Secuestro Total Estimado</span>
+                <span class="carbon-total-label">Estimated Total Sequestration</span>
                 <span class="carbon-total-value">${Number(data.total_sequestration_tonnes).toLocaleString('es-MX', {maximumFractionDigits: 1})} t CO2e</span>
             </div>
             <div class="carbon-meta">
-                ${data.total_fields} campos — ${data.total_hectares} ha — SOC promedio ${data.avg_soc_tonnes_per_ha} t/ha
+                ${data.total_fields} fields — ${data.total_hectares} ha — avg SOC ${data.avg_soc_tonnes_per_ha} t/ha
             </div>
             <div class="carbon-fields">
                 ${data.fields.map(f => {
@@ -328,7 +328,7 @@ async function loadTEKValidation() {
     const data = await fetchJSON(API + '/tek-validation');
 
     if (!data || data.methods.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de validacion ancestral</div>';
+        container.innerHTML = '<div class="intel-empty">No ancestral validation data</div>';
         return;
     }
 
@@ -340,18 +340,18 @@ async function loadTEKValidation() {
         <div class="tek-method-card">
             <div class="tek-method-header">
                 <span class="tek-method-name">${esc(m.method_name)}</span>
-                <span class="tek-method-feedback">${m.total_feedback} reportes</span>
+                <span class="tek-method-feedback">${m.total_feedback} reports</span>
             </div>
             <div class="tek-method-score-row">
-                <span class="tek-method-label">Confianza</span>
+                <span class="tek-method-label">Confidence</span>
                 <div class="tek-method-score-bar">
                     <div class="score-bar-fill ${trustCls}" style="width:${trustWidth}%"></div>
                 </div>
                 <span class="tek-method-score-val">${m.trust_score.toFixed(1)}</span>
             </div>
             <div class="tek-method-counts">
-                <span class="tek-count-positive">${m.positive_count} positivos</span>
-                <span class="tek-count-negative">${m.negative_count} negativos</span>
+                <span class="tek-count-positive">${m.positive_count} positive</span>
+                <span class="tek-count-negative">${m.negative_count} negative</span>
                 <span class="tek-method-rating">${m.average_rating.toFixed(1)}/5</span>
             </div>
         </div>`;
@@ -365,28 +365,28 @@ async function loadSensorFusion() {
     const data = await fetchJSON(API + '/sensor-fusion');
 
     if (!data || data.fields_with_data === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de fusion de sensores</div>';
+        container.innerHTML = '<div class="intel-empty">No sensor fusion data</div>';
         if (badge) badge.textContent = '--';
         return;
     }
 
     if (badge) badge.textContent = Math.round(data.avg_confidence * 100) + '%';
 
-    const sensorLabels = { ndvi: 'NDVI', thermal: 'Termico', soil: 'Suelo', weather: 'Clima' };
+    const sensorLabels = { ndvi: 'NDVI', thermal: 'Thermal', soil: 'Soil', weather: 'Weather' };
 
     const summaryHtml = `
         <div class="fusion-overview-summary">
             <div class="fusion-overview-stat">
                 <span class="fusion-overview-stat-value">${data.fields_with_data}/${data.total_fields}</span>
-                <span class="fusion-overview-stat-label">Campos con datos</span>
+                <span class="fusion-overview-stat-label">Fields with data</span>
             </div>
             <div class="fusion-overview-stat">
                 <span class="fusion-overview-stat-value">${Math.round(data.avg_confidence * 100)}%</span>
-                <span class="fusion-overview-stat-label">Confianza promedio</span>
+                <span class="fusion-overview-stat-label">Avg confidence</span>
             </div>
             <div class="fusion-overview-stat">
                 <span class="fusion-overview-stat-value ${data.total_contradictions > 0 ? 'negative' : ''}">${data.total_contradictions}</span>
-                <span class="fusion-overview-stat-label">Inconsistencias</span>
+                <span class="fusion-overview-stat-label">Contradictions</span>
             </div>
         </div>
     `;
@@ -432,12 +432,12 @@ async function loadBatchHealth() {
     // Fetch all farms to collect field IDs
     const farmsData = await fetchJSON('/api/farms');
     if (!farmsData) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        container.innerHTML = '<div class="intel-empty">No health data available</div>';
         return;
     }
     const farms = Array.isArray(farmsData) ? farmsData : (farmsData.data || farmsData.farms || []);
     if (farms.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        container.innerHTML = '<div class="intel-empty">No health data available</div>';
         return;
     }
 
@@ -451,7 +451,7 @@ async function loadBatchHealth() {
     }
 
     if (fieldIds.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        container.innerHTML = '<div class="intel-empty">No health data available</div>';
         return;
     }
 
@@ -467,12 +467,12 @@ async function loadBatchHealth() {
             body: JSON.stringify({ field_ids: fieldIds }),
         });
         if (!resp.ok) {
-            container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+            container.innerHTML = '<div class="intel-empty">No health data available</div>';
             return;
         }
         data = await resp.json();
     } catch {
-        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        container.innerHTML = '<div class="intel-empty">No health data available</div>';
         return;
     }
 
@@ -480,11 +480,11 @@ async function loadBatchHealth() {
     document.getElementById('intel-batch-count').textContent = results.length;
 
     if (results.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de salud disponibles</div>';
+        container.innerHTML = '<div class="intel-empty">No health data available</div>';
         return;
     }
 
-    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const trendLabels = { improving: 'Improving', stable: 'Stable', declining: 'Declining' };
     const trendIcons = { improving: '&#x25B2;', stable: '&#x25AC;', declining: '&#x25BC;' };
 
     container.innerHTML = '<div class="batch-health-grid">' + results.map(r => {
@@ -496,7 +496,7 @@ async function loadBatchHealth() {
         return `
         <div class="batch-health-card ${cls}">
             <div class="batch-health-score health-badge ${cls}">${scoreText}</div>
-            <div class="batch-health-field">${esc(r.field_name || 'Campo ' + r.field_id)}</div>
+            <div class="batch-health-field">${esc(r.field_name || 'Field ' + r.field_id)}</div>
             <div class="batch-health-farm">${esc(r.farm_name || '')}</div>
             ${trendText ? `<div class="batch-health-trend ${trendCls}"><span>${trendIcon}</span> ${trendText}</div>` : ''}
             ${r.sources ? `<div class="batch-health-sources">${r.sources.map(s => `<span class="batch-health-source">${esc(s)}</span>`).join('')}</div>` : ''}
@@ -549,7 +549,7 @@ function renderSparkline(history) {
 
 function renderCompareRows(farms) {
     const maxYield = Math.max(...farms.map(f => f.yield_total_kg || 0), 1);
-    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const trendLabels = { improving: 'Improving', stable: 'Stable', declining: 'Declining' };
     const trendIcons = { improving: '&#x25B2;', stable: '&#x25AC;', declining: '&#x25BC;' };
 
     return farms.map(f => {
@@ -585,16 +585,16 @@ async function loadFarmComparison() {
 
     const ids = Array.from(select.selectedOptions).map(o => o.value);
     if (ids.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Seleccione granjas para comparar</div>';
+        container.innerHTML = '<div class="intel-empty">Select farms to compare</div>';
         _compareFarms = [];
         return;
     }
 
-    container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando...</div>';
+    container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading...</div>';
     const data = await fetchJSON(API + '/compare?farm_ids=' + ids.join(','));
 
     if (!data || !data.farms || data.farms.length === 0) {
-        container.innerHTML = '<div class="intel-empty">Sin datos de comparacion</div>';
+        container.innerHTML = '<div class="intel-empty">No comparison data</div>';
         _compareFarms = [];
         return;
     }
@@ -606,13 +606,13 @@ async function loadFarmComparison() {
     container.innerHTML = `
         <div class="compare-table compare-table-sortable">
             <div class="compare-header-row">
-                <span class="compare-cell compare-cell-name compare-sortable" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Granja</span>
-                <span class="compare-cell compare-sortable" data-sort="field_count" onclick="sortCompareTable('field_count')">Campos</span>
-                <span class="compare-cell compare-sortable" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectareas</span>
-                <span class="compare-cell compare-sortable" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Salud</span>
-                <span class="compare-cell compare-sparkline-header">Tendencia</span>
-                <span class="compare-cell compare-sortable" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Rendimiento (kg)</span>
-                <span class="compare-cell compare-sortable" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Tratamientos</span>
+                <span class="compare-cell compare-cell-name compare-sortable" data-sort="farm_name" onclick="sortCompareTable('farm_name')">Farm</span>
+                <span class="compare-cell compare-sortable" data-sort="field_count" onclick="sortCompareTable('field_count')">Fields</span>
+                <span class="compare-cell compare-sortable" data-sort="total_hectares" onclick="sortCompareTable('total_hectares')">Hectares</span>
+                <span class="compare-cell compare-sortable" data-sort="avg_health" onclick="sortCompareTable('avg_health')">Health</span>
+                <span class="compare-cell compare-sparkline-header">Trend</span>
+                <span class="compare-cell compare-sortable" data-sort="yield_total_kg" onclick="sortCompareTable('yield_total_kg')">Yield (kg)</span>
+                <span class="compare-cell compare-sortable" data-sort="treatment_count" onclick="sortCompareTable('treatment_count')">Treatments</span>
             </div>
             ${renderCompareRows(_compareFarms)}
         </div>
@@ -659,11 +659,11 @@ function sortCompareTable(key) {
 
 function exportCompareCSV() {
     if (!_compareFarms || _compareFarms.length === 0) {
-        alert('No hay datos de comparacion para exportar');
+        alert('No comparison data to export');
         return;
     }
-    const headers = ['Granja', 'Campos', 'Hectareas', 'Salud', 'Tendencia', 'Rendimiento (kg)', 'Tratamientos'];
-    const trendLabels = { improving: 'Mejorando', stable: 'Estable', declining: 'Declinando' };
+    const headers = ['Farm', 'Fields', 'Hectares', 'Health', 'Trend', 'Yield (kg)', 'Treatments'];
+    const trendLabels = { improving: 'Improving', stable: 'Stable', declining: 'Declining' };
     const rows = _compareFarms.map(f => [
         f.farm_name,
         f.field_count,
@@ -678,7 +678,7 @@ function exportCompareCSV() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'cultivOS_comparacion_granjas.csv';
+    a.download = 'cultivOS_farm_comparison.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -742,7 +742,7 @@ function exportIntelCSV() {
             URL.revokeObjectURL(url);
         })
         .catch(() => {
-            alert('Error al exportar datos');
+            alert('Could not export data');
         });
 }
 
