@@ -2,7 +2,7 @@
 
 **Precision agricultural intelligence for small and medium farms — ancestral knowledge validated with sensor data.**
 
-[![Tests](https://img.shields.io/badge/tests-2539%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-3800%2B%20passing-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](#license)
@@ -34,7 +34,7 @@ Farmers don't need to be convinced of regenerative practices philosophically —
 
 ## What's Built
 
-**2539 tests · 50 API modules · 64 frontend pages · 8 demo farms across 2 countries**
+**3,800+ tests · 80+ API modules · 85+ frontend pages · 8 demo farms across 2 countries**
 
 ### Intelligence Layer ("Cerebro")
 
@@ -123,7 +123,7 @@ Farmers don't need to be convinced of regenerative practices philosophically —
 - **Processing**: NumPy (NDVI band math, thermal analysis)
 - **Weather**: OpenWeatherMap API (global, lat/lon-based)
 - **Auth**: JWT with role-based access
-- **Testing**: pytest (2539 tests, region-parameterized fixtures)
+- **Testing**: pytest (3,800+ tests, region-parameterized fixtures)
 
 ---
 
@@ -153,7 +153,7 @@ PYTHONPATH="$PWD/src" python3 scripts/seed_demo.py
 ## Test
 
 ```bash
-PYTHONPATH="$PWD/src" pytest tests/ -q               # Full suite (2539 tests, ~3 min)
+PYTHONPATH="$PWD/src" pytest tests/ -q               # Full suite (3,800+ tests, ~3 min)
 PYTHONPATH="$PWD/src" pytest tests/test_ontario.py   # Ontario expansion only
 PYTHONPATH="$PWD/src" pytest tests/ -k "recommend"   # Recommendation engine
 ```
@@ -164,11 +164,11 @@ PYTHONPATH="$PWD/src" pytest tests/ -k "recommend"   # Recommendation engine
 
 ```
 src/cultivos/
-├── app.py                   # FastAPI factory (50 routers registered)
+├── app.py                   # FastAPI factory (80+ routers registered)
 ├── config.py                # Pydantic settings from .env
 ├── auth.py                  # JWT + role-based access
 ├── middleware.py            # Error handling
-├── api/                     # 50 route modules (thin — HTTP only)
+├── api/                     # 80+ route modules (thin — HTTP only)
 ├── services/
 │   ├── crop/                # ndvi, thermal, health, disease, phenology
 │   ├── intelligence/        # recommendations, rotation, irrigation,
@@ -181,7 +181,7 @@ src/cultivos/
 ├── models/                  # 30+ Pydantic schemas
 └── db/                      # SQLAlchemy ORM + session + seeds
 
-frontend/                    # 64 HTML pages (vanilla JS, no build)
+frontend/                    # 85+ HTML pages (vanilla JS, no build)
 ├── index.html               # Farm dashboard
 ├── field.html               # Field Cerebro drill-down
 ├── intel.html               # Intelligence dashboard
@@ -191,8 +191,20 @@ frontend/                    # 64 HTML pages (vanilla JS, no build)
 ├── fotos.html               # Field photo upload
 ├── cooperativa.html         # Cooperative management
 ├── calculadora-suelo.html   # Soil amendment calculator
-└── … 55 more
+└── … and ~75 more
 ```
+
+### Web surfaces (three, by design)
+
+The repo has three distinct front-end surfaces — they are not duplicates:
+
+| Path | What it is | Served by |
+|------|-----------|-----------|
+| `frontend/` | The **product** — the vanilla-JS dashboard app (85+ pages) | FastAPI (`run.sh`, `:8000`) |
+| root `index.html` + `CNAME` | Static **marketing landing** for `cultivosagro.com` | GitHub Pages |
+| `web/` | Newer **Next.js / TypeScript landing** site (separate `package.json`) | standalone (own deploy) |
+
+Farmer-facing pages in `frontend/` use Spanish filenames (`campo`, `cooperativa`, `calculadora-suelo`); developer/admin pages use English (`intel`, `field`, `flights`). This is intentional — Spanish-first product, English-first tooling.
 
 ### Region-Aware Design
 

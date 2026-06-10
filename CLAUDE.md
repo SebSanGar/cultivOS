@@ -21,10 +21,11 @@ cultivOS is the brain of precision agriculture — an AI-powered platform that t
 ## Architecture
 
 ```
-frontend/              → Dashboard (served on :3000)
+frontend/              → Dashboard app, served by FastAPI on :8000 (vanilla JS, no build)
   index.html           → Farm dashboard, health maps, alerts
-  styles.css           → Dark/light theme, agricultural aesthetic
-  app.js               → All frontend logic, map rendering, charts
+  styles.css           → Shared stylesheet (single source of truth, all pages)
+  <page>.html + .js    → 85+ pages, each HTML paired with its own co-located JS
+  (routes for each page are FileResponse handlers in src/cultivos/app.py)
 
 src/cultivos/          → FastAPI backend (served on :8000)
   api/
@@ -128,7 +129,7 @@ cd ~/Documents/cultivOS
 ./run.sh
 
 # Or manually:
-uvicorn src.cultivos.api:create_app --factory --reload --port 8000
+PYTHONPATH="$PWD/src" uvicorn cultivos.app:create_app --factory --reload --reload-dir "$PWD/src" --port 8000
 ```
 
 ## Expansion corridors (Year 1-5)
