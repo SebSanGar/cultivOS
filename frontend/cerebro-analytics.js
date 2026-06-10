@@ -57,7 +57,7 @@ function renderDailyChart(days) {
         data: {
             labels: days.map(d => d.date),
             datasets: [{
-                label: 'Decisiones',
+                label: 'Decisions',
                 data: days.map(d => d.count),
                 backgroundColor: 'rgba(76, 175, 80, 0.6)',
                 borderColor: 'rgba(76, 175, 80, 1)',
@@ -83,11 +83,11 @@ function renderDailyChart(days) {
 function renderDecisionsByType(byType) {
     const container = document.getElementById('cerebro-decisions-content');
     const rows = [
-        { label: 'Evaluaciones de Salud', count: byType.health_assessments, icon: 'H' },
-        { label: 'Recomendaciones de Tratamiento', count: byType.treatment_recommendations, icon: 'T' },
-        { label: 'Analisis NDVI', count: byType.ndvi_analyses, icon: 'N' },
-        { label: 'Analisis Termal', count: byType.thermal_analyses, icon: 'Th' },
-        { label: 'Alertas Generadas', count: byType.alerts_generated, icon: 'A' },
+        { label: 'Health Assessments', count: byType.health_assessments, icon: 'H' },
+        { label: 'Treatment Recommendations', count: byType.treatment_recommendations, icon: 'T' },
+        { label: 'NDVI Analyses', count: byType.ndvi_analyses, icon: 'N' },
+        { label: 'Thermal Analyses', count: byType.thermal_analyses, icon: 'Th' },
+        { label: 'Alerts Generated', count: byType.alerts_generated, icon: 'A' },
     ];
     const total = rows.reduce((s, r) => s + r.count, 0) || 1;
 
@@ -118,15 +118,15 @@ function renderAccuracy(accuracy, feedbackCount) {
     let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">';
     html += '<div class="intel-stat">'
         + '<div class="intel-stat-value">' + accuracy.feedback_positive_rate.toFixed(1) + '%</div>'
-        + '<div class="intel-stat-label">Tasa de Retroalimentacion Positiva</div>'
+        + '<div class="intel-stat-label">Positive Feedback Rate</div>'
         + '</div>';
     html += '<div class="intel-stat">'
         + '<div class="intel-stat-value">' + accuracy.total_feedback + '</div>'
-        + '<div class="intel-stat-label">Total Retroalimentaciones</div>'
+        + '<div class="intel-stat-label">Total Feedback</div>'
         + '</div>';
     html += '<div class="intel-stat">'
         + '<div class="intel-stat-value">' + feedbackCount + '</div>'
-        + '<div class="intel-stat-label">Retroalimentaciones Recibidas</div>'
+        + '<div class="intel-stat-label">Feedback Received</div>'
         + '</div>';
     html += '</div>';
     container.innerHTML = html;

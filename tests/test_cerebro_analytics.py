@@ -98,7 +98,7 @@ class TestCerebroAnalyticsPageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/cerebro-analytics")
-        assert "Cerebro Analytics" in resp.text or "Cerebro IA" in resp.text
+        assert "Cerebro" in resp.text and "Analytics" in resp.text
 
     def test_page_has_stats_strip(self, client):
         resp = client.get("/cerebro-analytics")
@@ -123,10 +123,11 @@ class TestCerebroAnalyticsPageLoad:
         resp = client.get("/cerebro-analytics")
         assert "cerebro-analytics.js" in resp.text
 
-    def test_page_has_spanish_labels(self, client):
+    def test_page_has_english_labels(self, client):
+        """NB-EN: cerebro-analytics.html translated to English."""
         resp = client.get("/cerebro-analytics")
         html = resp.text
-        assert "Decisiones" in html or "decisiones" in html
+        assert "Decisions" in html or "decisions" in html
 
     def test_page_has_footer(self, client):
         resp = client.get("/cerebro-analytics")
