@@ -1,5 +1,7 @@
 """Pydantic schemas for economic impact endpoints."""
 
+from typing import List, Literal
+
 from pydantic import BaseModel
 
 
@@ -10,4 +12,9 @@ class EconomicImpactOut(BaseModel):
     fertilizer_savings_mxn: int
     yield_improvement_mxn: int
     total_savings_mxn: int
+    total_savings_low_mxn: int
+    total_savings_high_mxn: int
+    confidence: Literal["low", "medium", "high"]
+    is_estimate: bool
+    basis: List[str]
     nota: str
