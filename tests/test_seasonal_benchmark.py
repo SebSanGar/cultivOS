@@ -10,7 +10,26 @@ Running in April 2026 → current season = secas 2025-26 (start_year 2025)
 
 from datetime import datetime
 
+import pytest
+
+import cultivos.services.intelligence.seasonal_benchmark as _sb
 from cultivos.db.models import Farm, Field, HealthScore
+
+
+# ── Determinism ─────────────────────────────────────────────────────────────────
+# These tests hardcode score dates against a fixed "now" (April 2026 → secas 2025-26
+# is the current season). The service derives the current season from the wall clock,
+# so without freezing it the suite passes only during secas months (Nov–May) and fails
+# Jun–Oct. Freeze the service clock so the cases are deterministic year-round.
+
+@pytest.fixture(autouse=True)
+def _freeze_now_secas(monkeypatch):
+    class _FixedDateTime(datetime):
+        @classmethod
+        def utcnow(cls):
+            return datetime(2026, 4, 1)
+
+    monkeypatch.setattr(_sb, "datetime", _FixedDateTime)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
