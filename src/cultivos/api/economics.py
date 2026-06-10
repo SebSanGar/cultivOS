@@ -67,6 +67,19 @@ def get_economic_impact(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
 
+    # T2.10 — CAD/Ontario guard: Jalisco MXN assumptions do NOT apply to CA farms
+    farm_country = getattr(farm, "country", "MX") or "MX"
+    if farm_country.upper() == "CA":
+        return EconomicImpactOut(
+            farm_id=farm_id,
+            nota=(
+                "Ontario / CA baseline: Proximamente. "
+                "Coming soon — Canadian precision agriculture benchmarks are being developed. "
+                "MXN Jalisco assumptions do not apply to this farm."
+            ),
+            **_NO_DATA_OUT,
+        )
+
     fields = db.query(Field).filter(Field.farm_id == farm_id).all()
 
     if not fields:

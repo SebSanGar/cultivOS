@@ -94,6 +94,7 @@ async function loadEconomicImpact() {
     updateTreatmentRoiLeaderboard(farmId);
     updateCumulativeChart(farmId);
     updateDownloadReportLink(farmId);
+    updateOntarioSoonBanner(data);
 }
 
 function resetStats() {
