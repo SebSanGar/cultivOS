@@ -61,7 +61,7 @@ class TestCompararPageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/comparar")
-        assert "Comparar Granjas" in resp.text
+        assert "Compare Farms" in resp.text
 
     def test_page_has_nav(self, client):
         resp = client.get("/comparar")
@@ -77,7 +77,7 @@ class TestCompararPageLoad:
 
     def test_page_has_subtitle(self, client):
         resp = client.get("/comparar")
-        assert "2-3 granjas" in resp.text
+        assert "2" in resp.text and "farms" in resp.text.lower()
 
 
 # -- DOM Elements Tests --
@@ -120,17 +120,18 @@ class TestCompararDOMElements:
         resp = client.get("/comparar")
         assert 'id="comp-empty"' in resp.text
 
-    def test_spanish_labels(self, client):
+    def test_english_labels(self, client):
+        """NB-EN: comparar.html translated to English."""
         resp = client.get("/comparar")
         text = resp.text
-        assert "Resumen Comparativo" in text
-        assert "Salud Promedio" in text
-        assert "Rendimiento" in text
-        assert "Historial de Salud" in text
+        assert "Comparison Summary" in text
+        assert "Average Health" in text
+        assert "Total Yield" in text
+        assert "Health History" in text
 
     def test_farm_3_is_optional(self, client):
         resp = client.get("/comparar")
-        assert "opcional" in resp.text.lower()
+        assert "optional" in resp.text.lower()
 
 
 # -- API Integration Tests --

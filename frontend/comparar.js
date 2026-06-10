@@ -28,9 +28,9 @@ async function fetchJSON(path) {
 }
 
 const TREND_MAP = {
-    improving: 'Mejorando',
-    stable: 'Estable',
-    declining: 'Declinando',
+    improving: 'Improving',
+    stable: 'Stable',
+    declining: 'Declining',
 };
 
 function trendBadge(trend) {
@@ -71,18 +71,18 @@ async function runComparison() {
     }
 
     if (ids.length < 2) {
-        alert('Seleccione al menos 2 granjas para comparar.');
+        alert('Select at least 2 farms to compare.');
         return;
     }
 
     const btn = document.getElementById('comp-btn');
     btn.disabled = true;
-    btn.textContent = 'Cargando...';
+    btn.textContent = 'Loading...';
 
     const data = await fetchJSON(`/api/intel/compare?farm_ids=${ids.join(',')}`);
 
     btn.disabled = false;
-    btn.textContent = 'Comparar';
+    btn.textContent = 'Compare';
 
     if (!data || !data.farms || data.farms.length === 0) {
         document.getElementById('comp-results').style.display = 'none';
@@ -106,21 +106,21 @@ function buildTable(farms) {
     const tbody = table.querySelector('tbody');
 
     // Build header
-    thead.innerHTML = '<th style="color:#94a3b8;">Metrica</th>' +
+    thead.innerHTML = '<th style="color:#94a3b8;">Metric</th>' +
         farms.map((f, i) => `<th style="color:${COLORS[i]};">${esc(f.farm_name)}</th>`).join('');
 
     // Build rows
     const metrics = [
-        { label: 'Campos', key: f => f.field_count },
-        { label: 'Hectareas', key: f => f.total_hectares.toFixed(1) },
-        { label: 'Salud Promedio', key: f => f.avg_health != null ? f.avg_health.toFixed(1) : '--' },
-        { label: 'Tendencia', key: f => trendBadge(f.trend), html: true },
-        { label: 'Rendimiento (kg)', key: f => f.yield_total_kg.toLocaleString('es-MX', { maximumFractionDigits: 0 }) },
-        { label: 'Tratamientos', key: f => f.treatment_count },
-        { label: 'Materia Organica (%)', key: f => f.soil_om_avg != null ? f.soil_om_avg.toFixed(1) + '%' : '--' },
-        { label: 'Carbono (CO2e ton)', key: f => f.carbon_co2e_tonnes != null ? f.carbon_co2e_tonnes.toFixed(1) : '--' },
-        { label: 'Alertas', key: f => f.alert_count },
-        { label: 'Completitud Datos', key: f => f.completeness_pct != null ? f.completeness_pct.toFixed(0) + '%' : '--' },
+        { label: 'Fields', key: f => f.field_count },
+        { label: 'Hectares', key: f => f.total_hectares.toFixed(1) },
+        { label: 'Avg Health', key: f => f.avg_health != null ? f.avg_health.toFixed(1) : '--' },
+        { label: 'Trend', key: f => trendBadge(f.trend), html: true },
+        { label: 'Yield (kg)', key: f => f.yield_total_kg.toLocaleString('en', { maximumFractionDigits: 0 }) },
+        { label: 'Treatments', key: f => f.treatment_count },
+        { label: 'Organic Matter (%)', key: f => f.soil_om_avg != null ? f.soil_om_avg.toFixed(1) + '%' : '--' },
+        { label: 'Carbon (CO2e t)', key: f => f.carbon_co2e_tonnes != null ? f.carbon_co2e_tonnes.toFixed(1) : '--' },
+        { label: 'Alerts', key: f => f.alert_count },
+        { label: 'Data Completeness', key: f => f.completeness_pct != null ? f.completeness_pct.toFixed(0) + '%' : '--' },
     ];
 
     tbody.innerHTML = metrics.map(m => {
@@ -142,7 +142,7 @@ function buildHealthChart(farms) {
         data: {
             labels: farms.map(f => f.farm_name),
             datasets: [{
-                label: 'Salud Promedio',
+                label: 'Avg Health',
                 data: farms.map(f => f.avg_health || 0),
                 backgroundColor: farms.map((_, i) => COLORS[i]),
                 borderRadius: 8,
@@ -170,7 +170,7 @@ function buildYieldChart(farms) {
         data: {
             labels: farms.map(f => f.farm_name),
             datasets: [{
-                label: 'Rendimiento Total (kg)',
+                label: 'Total Yield (kg)',
                 data: farms.map(f => f.yield_total_kg),
                 backgroundColor: farms.map((_, i) => COLORS[i]),
                 borderRadius: 8,
@@ -213,8 +213,8 @@ function buildHistoryChart(farms) {
             responsive: true,
             plugins: { legend: { labels: { color: '#94a3b8' } } },
             scales: {
-                x: { title: { display: true, text: 'Medicion', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { title: { display: true, text: 'Salud', color: '#94a3b8' }, max: 100, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                x: { title: { display: true, text: 'Record', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { title: { display: true, text: 'Health', color: '#94a3b8' }, max: 100, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
             },
         },
     });
