@@ -24,6 +24,7 @@ class Farm(Base):
     state = Column(String(50), default="Jalisco")
     country = Column(String(10), default="MX")
     cooperative_id = Column(Integer, ForeignKey("cooperatives.id"), nullable=True)
+    tier = Column(String(50), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     fields = relationship("Field", back_populates="farm", cascade="all, delete-orphan")

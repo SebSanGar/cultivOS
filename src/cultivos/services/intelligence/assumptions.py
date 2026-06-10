@@ -90,6 +90,29 @@ REGISTRY: dict[str, AssumptionRecord] = {
             "Range reflects regional variation across Jalisco municipalities."
         ),
     ),
+    # ------------------------------------------------ Subscription tier rates
+    "tier_rate_basic_mxn_ha": AssumptionRecord(
+        value=3_600.0,
+        low=3_600.0,
+        high=3_600.0,
+        unit="MXN/ha/yr",
+        source_name="cultivOS pricing model (internal)",
+        source_url="https://github.com/cultivOS/cultivOS",
+        source_year=2026,
+        status="model_assumption",
+        confidence_note="Basic tier subscription rate per hectare per year (MXN).",
+    ),
+    "tier_rate_standard_mxn_ha": AssumptionRecord(
+        value=5_400.0,
+        low=5_400.0,
+        high=5_400.0,
+        unit="MXN/ha/yr",
+        source_name="cultivOS pricing model (internal)",
+        source_url="https://github.com/cultivOS/cultivOS",
+        source_year=2026,
+        status="model_assumption",
+        confidence_note="Standard tier subscription rate per hectare per year (MXN).",
+    ),
     # ----------------------------------------- Per-treatment savings heuristic
     "per_treatment_savings_mxn": AssumptionRecord(
         value=1_500.0,

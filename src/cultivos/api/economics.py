@@ -7,7 +7,13 @@ from sqlalchemy.orm import Session
 from cultivos.db.models import Farm, Field, HealthScore, TreatmentRecord
 from cultivos.db.session import get_db
 from cultivos.models.economics import EconomicImpactOut
+from cultivos.services.intelligence.assumptions import get_value as _a
 from cultivos.services.intelligence.economics import calculate_farm_savings
+
+_TIER_RATES = {
+    "basic": _a("tier_rate_basic_mxn_ha"),
+    "standard": _a("tier_rate_standard_mxn_ha"),
+}
 
 router = APIRouter(
     prefix="/api/farms/{farm_id}/economic-impact",
@@ -32,6 +38,7 @@ _NO_DATA_OUT = dict(
     confidence="low",
     is_estimate=True,
     basis=_BASIS,
+    subscription_cost_mxn=None,
 )
 
 
@@ -102,6 +109,14 @@ def get_economic_impact(
         "Estimacion basada en tus datos actuales; el valor real depende de la temporada.",
     )
 
+    # Subscription cost from tier
+    tier = getattr(farm, "tier", None)
+    if tier and tier in _TIER_RATES:
+        subscription_cost_mxn: int | None = round(total_hectares * _TIER_RATES[tier])
+    else:
+        subscription_cost_mxn = None
+        nota = nota + " Tarifa no configurada para esta granja."
+
     return EconomicImpactOut(
         farm_id=farm_id,
         hectares=total_hectares,
@@ -114,5 +129,6 @@ def get_economic_impact(
         confidence=confidence,
         is_estimate=True,
         basis=_BASIS,
+        subscription_cost_mxn=subscription_cost_mxn,
         nota=nota,
     )
