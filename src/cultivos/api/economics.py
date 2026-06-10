@@ -27,6 +27,8 @@ router = APIRouter(
     prefix="/api/farms/{farm_id}/economic-impact",
     tags=["economics"],
 )
+# T2.11 — RBAC: app.py applies require_farm_access to all {farm_id} routers.
+# Farmer role → 403 if farm_id != token.farm_id. Admin/researcher → any farm.
 
 _BASIS = [
     "water_savings_per_ha",
