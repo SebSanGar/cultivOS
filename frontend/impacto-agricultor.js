@@ -37,7 +37,7 @@
 
     // Load farms, auto-select the first so the page shows real data immediately.
     var farms = await fetchJSON("/api/farms?page_size=100");
-    var items = (farms && (farms.items || farms)) || [];
+    var items = (farms && (farms.data || farms.items)) || (Array.isArray(farms) ? farms : []);
     farmSelect.innerHTML = "";
     if (!items.length) {
         farmSelect.innerHTML = '<option value="">No farms yet</option>';
@@ -46,7 +46,7 @@
     }
     items.forEach(function (f) {
         var opt = document.createElement("option");
-        opt.value = f.id; opt.textContent = f.name;
+        opt.value = f.id; opt.textContent = (f.name || "").replace(/\s*\[DEMO\]$/i, "");
         farmSelect.appendChild(opt);
     });
 
