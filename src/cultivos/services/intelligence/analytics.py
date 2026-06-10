@@ -1472,10 +1472,10 @@ def compute_farmer_impact(db: Session, farm_id: int) -> dict:
     if health_deltas:
         avg_improvement = round(sum(health_deltas) / len(health_deltas), 1)
 
-    # Estimated savings: treatments applied * avg cost reduction (rough heuristic)
-    # Each applied treatment saves ~$1,500 MXN on average (prevention vs reactive)
+    from cultivos.services.intelligence.assumptions import get_value as _a
+    # Estimated savings: treatments applied * avg cost reduction (model assumption — see assumptions.py)
     total_hectares = sum(f.hectares or 0 for f in fields)
-    estimated_savings = treatments_applied * 1500
+    estimated_savings = treatments_applied * int(_a("per_treatment_savings_mxn"))
 
     return {
         "farm_id": farm_id,

@@ -11,16 +11,15 @@ Savings categories:
 
 from typing import TypedDict
 
+from cultivos.services.intelligence.assumptions import get_value as _a
 
-# Baseline savings per hectare per year (MXN) — derived from $414,000 / 20ha reference farm
-# Broken down by savings category based on precision ag literature for small Mexican farms
-WATER_SAVINGS_PER_HA = 8_000.0      # ~$8,000 MXN/ha/yr from irrigation optimization
-FERTILIZER_SAVINGS_PER_HA = 5_000.0  # ~$5,000 MXN/ha/yr from targeted organic treatments
-YIELD_BASELINE_PER_HA = 7_700.0     # ~$7,700 MXN/ha/yr from early intervention yield gains
-# Total: ~$20,700 MXN/ha/yr * 20ha = ~$414,000 MXN/yr (matches reference metric)
+# Baseline savings per hectare per year (MXN) — sourced from assumptions.py
+WATER_SAVINGS_PER_HA = _a("water_savings_per_ha")
+FERTILIZER_SAVINGS_PER_HA = _a("fertilizer_savings_per_ha")
+YIELD_BASELINE_PER_HA = _a("yield_baseline_per_ha")
 
 # Default irrigation efficiency for farms without sensor data
-DEFAULT_IRRIGATION_EFFICIENCY = 0.43  # CONAGUA average (1 - 0.57 waste)
+DEFAULT_IRRIGATION_EFFICIENCY = _a("default_irrigation_efficiency")
 
 
 class EconomicImpactResult(TypedDict):
