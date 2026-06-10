@@ -2,6 +2,13 @@
 
 const API = '/api';
 
+// -- i18n helper: fetch the current-language string for a key at render time --
+function t(key) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.t)
+        ? window.cultivOS_i18n.t(key)
+        : key;
+}
+
 // -- Parse URL params --
 const params = new URLSearchParams(window.location.search);
 const farmId = params.get('farm');
@@ -32,13 +39,84 @@ async function fetchJSON(path) {
     }
 }
 
+// -- Date locale matching the current UI language --
+function dateLocale() {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.getLang && window.cultivOS_i18n.getLang() === 'en')
+        ? 'en-US' : 'es-MX';
+}
+
+// -- Farmer-voice summary state + renderer (re-runs on language toggle) --
+let farmerSummaryState = null;
+
+function renderFarmerSummary() {
+    if (!farmerSummaryState) return;
+    const { healthScore, cropType, topAction } = farmerSummaryState;
+    const cropName = cropType ? cropType.toLowerCase() : t('field.yourCrop');
+
+    // Health chip
+    const chip = document.getElementById('campo-salud-chip');
+    if (chip) {
+        chip.removeAttribute('data-i18n');
+        if (healthScore == null) {
+            chip.textContent = t('field.chipNoData');
+            chip.className = 'campo-salud-chip none';
+        } else if (healthScore > 70) {
+            chip.textContent = t('field.chipHealthy');
+            chip.className = 'campo-salud-chip green';
+        } else if (healthScore >= 40) {
+            chip.textContent = t('field.chipAttention');
+            chip.className = 'campo-salud-chip yellow';
+        } else {
+            chip.textContent = t('field.chipNeedsHelp');
+            chip.className = 'campo-salud-chip red';
+        }
+    }
+
+    // Resumen sentence (interpolates crop name)
+    const resumenEl = document.getElementById('campo-resumen');
+    if (resumenEl) {
+        resumenEl.removeAttribute('data-i18n');
+        let key;
+        if (healthScore == null) key = 'field.resumenNoData';
+        else if (healthScore > 70) key = 'field.resumenGood';
+        else if (healthScore >= 40) key = 'field.resumenAttention';
+        else key = 'field.resumenThirsty';
+        resumenEl.textContent = t(key).replace('{crop}', cropName);
+    }
+
+    // Recommendation text
+    const recTexto = document.getElementById('recomendacion-texto');
+    if (recTexto) {
+        recTexto.removeAttribute('data-i18n');
+        if (topAction) {
+            // Backend-provided action text — leave as-is (data, not UI label)
+            recTexto.textContent = topAction;
+        } else if (healthScore != null && healthScore < 40) {
+            recTexto.textContent = t('field.recWater');
+        } else if (healthScore != null && healthScore < 70) {
+            recTexto.textContent = t('field.recYellowLeaves');
+        } else {
+            recTexto.textContent = t('field.recSameSchedule');
+        }
+    }
+}
+
+// Re-render the farmer summary when language toggles (applyAll runs on toggle,
+// but these strings are dynamic so they need an explicit re-render).
+document.addEventListener('click', function (e) {
+    if (e.target.closest('.nav-lang-toggle [data-lang]')) {
+        // Defer until after i18n switchLang/applyAll has run.
+        setTimeout(renderFarmerSummary, 0);
+    }
+});
+
 // -- Load all field data --
 async function loadFieldDetail() {
     if (!farmId || !fieldId) {
         const nombreEl = document.getElementById('campo-nombre');
-        if (nombreEl) nombreEl.textContent = 'Error: parametros faltantes';
+        if (nombreEl) { nombreEl.textContent = t('field.errorMissingParams'); nombreEl.setAttribute('data-i18n', 'field.errorMissingParams'); }
         const granjaEl = document.getElementById('campo-granja');
-        if (granjaEl) granjaEl.textContent = 'URL debe incluir ?farm=ID&field=ID';
+        if (granjaEl) { granjaEl.textContent = t('field.errorUrlFormat'); granjaEl.setAttribute('data-i18n', 'field.errorUrlFormat'); }
         return;
     }
 
@@ -89,9 +167,9 @@ async function loadFieldDetail() {
 
     // ---- FARMER VIEW: populate visible elements ----
     if (field) {
-        // h1 field name
+        // h1 field name (real data — drop the placeholder i18n key so toggle won't overwrite)
         const nombreEl = document.getElementById('campo-nombre');
-        if (nombreEl) nombreEl.textContent = field.name;
+        if (nombreEl) { nombreEl.removeAttribute('data-i18n'); nombreEl.textContent = field.name; }
 
         // Farm subtitle (crop + hectares)
         const granjaEl = document.getElementById('campo-granja');
@@ -111,53 +189,17 @@ async function loadFieldDetail() {
     const latestHealth = healthList && healthList.length > 0 ? healthList[healthList.length - 1] : null;
     const healthScore = latestHealth ? latestHealth.score : null;
 
-    // Farmer-voice health chip
-    const chip = document.getElementById('campo-salud-chip');
-    if (chip) {
-        if (healthScore == null) {
-            chip.textContent = 'Sin datos aun';
-            chip.className = 'campo-salud-chip none';
-        } else if (healthScore > 70) {
-            chip.textContent = 'Saludable';
-            chip.className = 'campo-salud-chip green';
-        } else if (healthScore >= 40) {
-            chip.textContent = 'Atencion';
-            chip.className = 'campo-salud-chip yellow';
-        } else {
-            chip.textContent = 'Necesita ayuda';
-            chip.className = 'campo-salud-chip red';
-        }
-    }
-
-    // Farmer-voice resumen sentence (plain Spanish, no jargon)
-    const resumenEl = document.getElementById('campo-resumen');
-    if (resumenEl) {
-        const cropName = (field && field.crop_type) ? field.crop_type.toLowerCase() : 'tu cultivo';
-        if (healthScore == null) {
-            resumenEl.textContent = 'Aun no hay datos para esta parcela.';
-        } else if (healthScore > 70) {
-            resumenEl.textContent = 'Tu ' + cropName + ' esta bien esta semana.';
-        } else if (healthScore >= 40) {
-            resumenEl.textContent = 'Tu ' + cropName + ' necesita un poco de atencion.';
-        } else {
-            resumenEl.textContent = 'Tu ' + cropName + ' tiene sed — revisa el riego hoy.';
-        }
-    }
-
-    // Farmer-voice recommendation
-    const recTexto = document.getElementById('recomendacion-texto');
-    if (recTexto) {
-        if (actionTimeline && actionTimeline.actions && actionTimeline.actions.length > 0) {
-            const top = actionTimeline.actions[0];
-            recTexto.textContent = top.description || top.action || 'Revisa la humedad del suelo hoy.';
-        } else if (healthScore != null && healthScore < 40) {
-            recTexto.textContent = 'Riega 3 horas manana en la madrugada.';
-        } else if (healthScore != null && healthScore < 70) {
-            recTexto.textContent = 'Observa si hay hojas amarillas en los bordes.';
-        } else {
-            recTexto.textContent = 'Sigue el mismo programa de riego esta semana.';
-        }
-    }
+    // Farmer-voice summary (chip + resumen + recommendation) — re-renderable on
+    // language toggle. Store state so renderFarmerSummary() can rebuild in the
+    // current language without re-fetching.
+    farmerSummaryState = {
+        healthScore: healthScore,
+        cropType: (field && field.crop_type) ? field.crop_type : null,
+        topAction: (actionTimeline && actionTimeline.actions && actionTimeline.actions.length > 0)
+            ? (actionTimeline.actions[0].description || actionTimeline.actions[0].action || null)
+            : null,
+    };
+    renderFarmerSummary();
 
     // Agronomo-only: health stat card
     const healthEl = document.getElementById('campo-health');
@@ -299,33 +341,33 @@ function renderNdviDetail(ndvi) {
     return `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">NDVI Promedio</span>
+                <span class="campo-data-label">${t('field.ndviAverage')}</span>
                 <span class="campo-data-value">${ndvi.ndvi_mean.toFixed(3)}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Min</span>
+                <span class="campo-data-label">${t('field.min')}</span>
                 <span class="campo-data-value">${ndvi.ndvi_min.toFixed(3)}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Max</span>
+                <span class="campo-data-label">${t('field.max')}</span>
                 <span class="campo-data-value">${ndvi.ndvi_max.toFixed(3)}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Desv. Estandar</span>
+                <span class="campo-data-label">${t('field.stdDev')}</span>
                 <span class="campo-data-value">${ndvi.ndvi_std != null ? ndvi.ndvi_std.toFixed(3) : '--'}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Estres</span>
+                <span class="campo-data-label">${t('field.stress')}</span>
                 <span class="campo-data-value">${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Pixeles Total</span>
+                <span class="campo-data-label">${t('field.totalPixels')}</span>
                 <span class="campo-data-value">${ndvi.pixels_total != null ? ndvi.pixels_total.toLocaleString() : '--'}</span>
             </div>
         </div>
         ${Object.keys(zones).length > 0 ? `
         <div class="campo-zones">
-            <div class="campo-data-label" style="margin-bottom:6px">Zonas de salud</div>
+            <div class="campo-data-label" style="margin-bottom:6px">${t('field.healthZones')}</div>
             ${Object.entries(zones).map(([zone, pct]) => `
                 <div class="campo-zone-bar">
                     <span class="campo-zone-label">${esc(zone)}</span>
@@ -349,7 +391,7 @@ function renderNdviChart(list) {
     const sorted = [...list].sort((a, b) => new Date(a.analyzed_at) - new Date(b.analyzed_at));
     const labels = sorted.map(r => {
         const d = new Date(r.analyzed_at);
-        return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        return d.toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short' });
     });
     const ndviData = sorted.map(r => r.ndvi_mean);
     const stressData = sorted.map(r => r.stress_pct);
@@ -360,7 +402,7 @@ function renderNdviChart(list) {
             labels: labels,
             datasets: [
                 {
-                    label: 'NDVI Promedio',
+                    label: t('field.ndviAverage'),
                     data: ndviData,
                     borderColor: '#16a34a',
                     backgroundColor: 'rgba(22, 163, 74, 0.15)',
@@ -371,7 +413,7 @@ function renderNdviChart(list) {
                     yAxisID: 'y',
                 },
                 {
-                    label: 'Estres %',
+                    label: t('field.stress') + ' %',
                     data: stressData,
                     borderColor: '#ef4444',
                     backgroundColor: 'rgba(239, 68, 68, 0.08)',
@@ -400,7 +442,7 @@ function renderNdviChart(list) {
                     max: 100,
                     position: 'right',
                     ticks: { stepSize: 20, callback: v => v + '%' },
-                    title: { display: true, text: 'Estres' },
+                    title: { display: true, text: t('field.stress') },
                     grid: { drawOnChartArea: false },
                 },
             },
@@ -414,31 +456,31 @@ function renderNdviChart(list) {
 function renderNdviHistory(list) {
     const el = document.getElementById('ndvi-content');
     if (!list || list.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos NDVI</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noNdviData')}</div>`;
         return;
     }
     // Show latest as primary view, then historical records below
     const latest = list[list.length - 1];
     const older = list.slice(0, -1).reverse(); // newest first (excluding latest)
 
-    let html = '<div class="sensor-latest-label">Ultimo analisis</div>';
+    let html = `<div class="sensor-latest-label">${t('field.latestAnalysis')}</div>`;
     html += renderNdviDetail(latest);
 
     if (older.length > 0) {
-        html += '<div class="sensor-history-label">Historial de analisis NDVI</div>';
+        html += `<div class="sensor-history-label">${t('field.ndviAnalysisHistory')}</div>`;
         html += '<div class="sensor-timeline">';
         html += older.map(ndvi => {
             const date = ndvi.analyzed_at
-                ? new Date(ndvi.analyzed_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                ? new Date(ndvi.analyzed_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
                 : '--';
             const statusCls = ndvi.ndvi_mean >= 0.6 ? 'good' : ndvi.ndvi_mean >= 0.3 ? 'warning' : 'critical';
-            const statusLabel = ndvi.ndvi_mean >= 0.6 ? 'Saludable' : ndvi.ndvi_mean >= 0.3 ? 'Moderado' : 'Estresado';
+            const statusLabel = ndvi.ndvi_mean >= 0.6 ? t('field.statusHealthy') : ndvi.ndvi_mean >= 0.3 ? t('field.statusModerate') : t('field.statusStressed');
             return `<div class="sensor-timeline-item">
                 <div class="sensor-timeline-date">${date}</div>
                 <div class="sensor-timeline-body">
                     <div class="sensor-timeline-header" onclick="this.parentElement.querySelector('.sensor-timeline-detail').classList.toggle('open')">
                         <span class="health-badge ${statusCls}">${statusLabel}</span>
-                        <span class="sensor-timeline-summary">NDVI ${ndvi.ndvi_mean.toFixed(3)} | Estres ${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
+                        <span class="sensor-timeline-summary">NDVI ${ndvi.ndvi_mean.toFixed(3)} | ${t('field.stress')} ${ndvi.stress_pct != null ? ndvi.stress_pct.toFixed(1) + '%' : '--'}</span>
                         <span class="sensor-timeline-expand">&#9660;</span>
                     </div>
                     <div class="sensor-timeline-detail">
@@ -457,65 +499,65 @@ function renderThermalDetail(thermal) {
     return `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Temp Promedio</span>
+                <span class="campo-data-label">${t('field.tempAverage')}</span>
                 <span class="campo-data-value">${thermal.temp_mean.toFixed(1)}C</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Min</span>
+                <span class="campo-data-label">${t('field.min')}</span>
                 <span class="campo-data-value">${thermal.temp_min.toFixed(1)}C</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Max</span>
+                <span class="campo-data-label">${t('field.max')}</span>
                 <span class="campo-data-value">${thermal.temp_max.toFixed(1)}C</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Desv. Estandar</span>
+                <span class="campo-data-label">${t('field.stdDev')}</span>
                 <span class="campo-data-value">${thermal.temp_std != null ? thermal.temp_std.toFixed(1) + 'C' : '--'}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Pixeles Estresados</span>
+                <span class="campo-data-label">${t('field.stressedPixels')}</span>
                 <span class="campo-data-value health-badge ${stressCls}">${thermal.stress_pct.toFixed(1)}%</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Pixeles Total</span>
+                <span class="campo-data-label">${t('field.totalPixels')}</span>
                 <span class="campo-data-value">${thermal.pixels_total != null ? thermal.pixels_total.toLocaleString() : '--'}</span>
             </div>
         </div>
-        ${thermal.irrigation_deficit ? '<div class="campo-alert-badge critical">Deficit de riego detectado</div>' : ''}`;
+        ${thermal.irrigation_deficit ? `<div class="campo-alert-badge critical">${t('field.irrigationDeficitDetected')}</div>` : ''}`;
 }
 
 function renderThermalHistory(list) {
     const el = document.getElementById('thermal-content');
     if (!list || list.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos termicos</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noThermalData')}</div>`;
         return;
     }
     const latest = list[list.length - 1];
     const older = list.slice(0, -1).reverse();
 
-    let html = '<div class="sensor-latest-label">Ultimo analisis</div>';
+    let html = `<div class="sensor-latest-label">${t('field.latestAnalysis')}</div>`;
     html += renderThermalDetail(latest);
 
     if (older.length > 0) {
-        html += '<div class="sensor-history-label">Historial de analisis termico</div>';
+        html += `<div class="sensor-history-label">${t('field.thermalAnalysisHistory')}</div>`;
         html += '<div class="sensor-timeline">';
-        html += older.map(t => {
-            const date = t.analyzed_at
-                ? new Date(t.analyzed_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+        html += older.map(tr => {
+            const date = tr.analyzed_at
+                ? new Date(tr.analyzed_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
                 : '--';
-            const stCls = t.stress_pct > 30 ? 'critical' : t.stress_pct > 10 ? 'warning' : 'good';
-            const stLabel = t.stress_pct > 30 ? 'Alto estres' : t.stress_pct > 10 ? 'Estres moderado' : 'Normal';
+            const stCls = tr.stress_pct > 30 ? 'critical' : tr.stress_pct > 10 ? 'warning' : 'good';
+            const stLabel = tr.stress_pct > 30 ? t('field.stressHigh') : tr.stress_pct > 10 ? t('field.stressModerate') : t('field.stressNormal');
             return `<div class="sensor-timeline-item">
                 <div class="sensor-timeline-date">${date}</div>
                 <div class="sensor-timeline-body">
                     <div class="sensor-timeline-header" onclick="this.parentElement.querySelector('.sensor-timeline-detail').classList.toggle('open')">
                         <span class="health-badge ${stCls}">${stLabel}</span>
-                        <span class="sensor-timeline-summary">${t.temp_mean.toFixed(1)}C prom | Estres ${t.stress_pct.toFixed(1)}%</span>
-                        ${t.irrigation_deficit ? '<span class="campo-alert-badge critical" style="font-size:0.7rem;padding:1px 6px">Deficit</span>' : ''}
+                        <span class="sensor-timeline-summary">${tr.temp_mean.toFixed(1)}C ${t('field.avgAbbr')} | ${t('field.stress')} ${tr.stress_pct.toFixed(1)}%</span>
+                        ${tr.irrigation_deficit ? `<span class="campo-alert-badge critical" style="font-size:0.7rem;padding:1px 6px">${t('field.deficit')}</span>` : ''}
                         <span class="sensor-timeline-expand">&#9660;</span>
                     </div>
                     <div class="sensor-timeline-detail">
-                        ${renderThermalDetail(t)}
+                        ${renderThermalDetail(tr)}
                     </div>
                 </div>
             </div>`;
@@ -538,49 +580,49 @@ function renderSoil(soil) {
                 <span class="campo-data-value health-badge ${phCls}">${soil.ph}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Materia Organica</span>
+                <span class="campo-data-label">${t('field.organicMatter')}</span>
                 <span class="campo-data-value health-badge ${omCls}">${soil.organic_matter_pct}%</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Nitrogeno</span>
+                <span class="campo-data-label">${t('field.nitrogen')}</span>
                 <span class="campo-data-value health-badge ${nCls}">${soil.nitrogen_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Fosforo</span>
+                <span class="campo-data-label">${t('field.phosphorus')}</span>
                 <span class="campo-data-value health-badge ${pCls}">${soil.phosphorus_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Potasio</span>
+                <span class="campo-data-label">${t('field.potassium')}</span>
                 <span class="campo-data-value health-badge ${kCls}">${soil.potassium_ppm} ppm</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Humedad</span>
+                <span class="campo-data-label">${t('field.moisture')}</span>
                 <span class="campo-data-value">${soil.moisture_pct}%</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Textura</span>
+                <span class="campo-data-label">${t('field.texture')}</span>
                 <span class="campo-data-value">${esc(soil.texture || '--')}</span>
             </div>
         </div>
-        ${soil.recommendations ? `<div class="campo-data-item" style="margin-top:0.75rem;grid-column:1/-1"><span class="campo-data-label">Recomendaciones</span><p class="campo-data-value">${esc(soil.recommendations)}</p></div>` : ''}`;
+        ${soil.recommendations ? `<div class="campo-data-item" style="margin-top:0.75rem;grid-column:1/-1"><span class="campo-data-label">${t('field.recommendations')}</span><p class="campo-data-value">${esc(soil.recommendations)}</p></div>` : ''}`;
 }
 
 function renderSoilHistory(list) {
     const el = document.getElementById('soil-history-content');
     if (!list || list.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin historial de suelo</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noSoilHistory')}</div>`;
         return;
     }
     el.innerHTML = `<div class="soil-timeline">
         ${list.map((s, i) => {
-            const date = s.sampled_at ? new Date(s.sampled_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
+            const date = s.sampled_at ? new Date(s.sampled_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
             const phCls = (s.ph >= 6.0 && s.ph <= 7.0) ? 'good' : (s.ph >= 5.5 && s.ph <= 7.5) ? 'warning' : 'critical';
             return `<div class="soil-timeline-item">
                 <div class="soil-timeline-date">${date}</div>
                 <div class="soil-timeline-body">
                     <div class="soil-timeline-header" onclick="this.parentElement.querySelector('.soil-timeline-detail').classList.toggle('open')">
                         <span class="health-badge ${phCls}">pH ${s.ph != null ? s.ph : '--'}</span>
-                        <span class="soil-timeline-om">${s.organic_matter_pct != null ? s.organic_matter_pct + '% MO' : ''}</span>
+                        <span class="soil-timeline-om">${s.organic_matter_pct != null ? s.organic_matter_pct + '% ' + t('field.omAbbr') : ''}</span>
                         <span class="soil-timeline-texture">${esc(s.texture || '')}</span>
                         <span class="soil-timeline-expand">&#9660;</span>
                     </div>
@@ -589,9 +631,9 @@ function renderSoilHistory(list) {
                             ${s.nitrogen_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">N</span><span class="campo-data-value">${s.nitrogen_ppm} ppm</span></div>` : ''}
                             ${s.phosphorus_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">P</span><span class="campo-data-value">${s.phosphorus_ppm} ppm</span></div>` : ''}
                             ${s.potassium_ppm != null ? `<div class="campo-data-item"><span class="campo-data-label">K</span><span class="campo-data-value">${s.potassium_ppm} ppm</span></div>` : ''}
-                            ${s.moisture_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Humedad</span><span class="campo-data-value">${s.moisture_pct}%</span></div>` : ''}
-                            ${s.electrical_conductivity != null ? `<div class="campo-data-item"><span class="campo-data-label">CE</span><span class="campo-data-value">${s.electrical_conductivity} dS/m</span></div>` : ''}
-                            ${s.depth_cm != null ? `<div class="campo-data-item"><span class="campo-data-label">Prof.</span><span class="campo-data-value">${s.depth_cm} cm</span></div>` : ''}
+                            ${s.moisture_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.moisture')}</span><span class="campo-data-value">${s.moisture_pct}%</span></div>` : ''}
+                            ${s.electrical_conductivity != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.ecAbbr')}</span><span class="campo-data-value">${s.electrical_conductivity} dS/m</span></div>` : ''}
+                            ${s.depth_cm != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.depthAbbr')}</span><span class="campo-data-value">${s.depth_cm} cm</span></div>` : ''}
                         </div>
                         ${s.recommendations ? `<div class="soil-timeline-rec">${esc(s.recommendations)}</div>` : ''}
                         ${s.notes ? `<div class="soil-timeline-notes">${esc(s.notes)}</div>` : ''}
@@ -611,16 +653,16 @@ function initSoilForm() {
         const btn = document.getElementById('soil-submit-btn');
         const msg = document.getElementById('soil-form-msg');
         btn.disabled = true;
-        btn.textContent = 'Guardando...';
+        btn.textContent = t('field.saving');
         msg.textContent = '';
         msg.className = 'soil-form-msg';
 
         const payload = { sampled_at: document.getElementById('soil-sampled-at').value };
         if (!payload.sampled_at) {
-            msg.textContent = 'Fecha de muestreo es requerida';
+            msg.textContent = t('field.sampleDateRequired');
             msg.classList.add('error');
             btn.disabled = false;
-            btn.textContent = 'Guardar Analisis';
+            btn.textContent = t('field.saveAnalysis');
             return;
         }
 
@@ -646,7 +688,7 @@ function initSoilForm() {
                 body: JSON.stringify(payload),
             });
             if (resp.ok) {
-                msg.textContent = 'Analisis guardado';
+                msg.textContent = t('field.analysisSaved');
                 msg.classList.add('success');
                 form.reset();
                 // Refresh soil history
@@ -656,23 +698,34 @@ function initSoilForm() {
                 if (latestSoil) renderSoil(latestSoil);
             } else {
                 const err = await resp.json().catch(() => null);
-                msg.textContent = err && err.detail ? (typeof err.detail === 'string' ? err.detail : 'Error de validacion') : 'Error al guardar';
+                msg.textContent = err && err.detail ? (typeof err.detail === 'string' ? err.detail : t('field.validationError')) : t('field.saveError');
                 msg.classList.add('error');
             }
         } catch {
-            msg.textContent = 'Error de conexion';
+            msg.textContent = t('field.connectionError');
             msg.classList.add('error');
         }
         btn.disabled = false;
-        btn.textContent = 'Guardar Analisis';
+        btn.textContent = t('field.saveAnalysis');
     });
 }
 
 initSoilForm();
 
+// Maps Spanish backend enum values to a translated display label.
+function levelLabel(value) {
+    const keyMap = {
+        critico: 'field.levelCritical', critica: 'field.levelCritical',
+        alto: 'field.levelHigh', alta: 'field.levelHigh',
+        medio: 'field.levelMedium', media: 'field.levelMedium', moderado: 'field.levelModerate',
+        bajo: 'field.levelLow', baja: 'field.levelLow',
+    };
+    const k = keyMap[(value || '').toLowerCase()];
+    return k ? t(k) : (value || '--');
+}
+
 function renderDisease(risk) {
     const riskCls = risk.risk_level === 'alto' ? 'critical' : risk.risk_level === 'medio' ? 'warning' : 'good';
-    const urgencyLabel = {'critico': 'Critico', 'alto': 'Alto', 'medio': 'Medio', 'bajo': 'Bajo'};
 
     // Risk items from the risks array
     let risksHtml = '';
@@ -684,12 +737,12 @@ function renderDisease(risk) {
                 return `<div class="disease-riesgo-item">
                     <div class="disease-riesgo-header">
                         <span class="disease-riesgo-tipo">${esc(r.tipo)}</span>
-                        <span class="health-badge ${urgCls}">${esc(urgencyLabel[r.urgencia] || r.urgencia)}</span>
-                        ${r.organico ? '<span class="disease-organic-badge">Organico</span>' : ''}
+                        <span class="health-badge ${urgCls}">${esc(levelLabel(r.urgencia))}</span>
+                        ${r.organico ? `<span class="disease-organic-badge">${t('field.organic')}</span>` : ''}
                     </div>
                     <div class="disease-riesgo-desc">${esc(r.descripcion)}</div>
                     <div class="disease-riesgo-rec">
-                        <span class="campo-data-label">Recomendacion:</span> ${esc(r.recomendacion)}
+                        <span class="campo-data-label">${t('field.recommendationLabel')}</span> ${esc(r.recomendacion)}
                     </div>
                 </div>`;
             }).join('')}
@@ -701,19 +754,19 @@ function renderDisease(risk) {
     if (risk.weather_context) {
         const wc = risk.weather_context;
         weatherHtml = `<div class="disease-weather-ctx">
-            <span class="campo-data-label">Contexto climatico:</span>
-            ${wc.temp_c.toFixed(1)} C | ${wc.humidity_pct.toFixed(0)}% humedad | ${wc.rainfall_mm.toFixed(1)} mm lluvia
+            <span class="campo-data-label">${t('field.weatherContext')}</span>
+            ${wc.temp_c.toFixed(1)} C | ${wc.humidity_pct.toFixed(0)}% ${t('field.humidityLower')} | ${wc.rainfall_mm.toFixed(1)} mm ${t('field.rainLower')}
         </div>`;
     }
 
     document.getElementById('disease-content').innerHTML = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Nivel de Riesgo</span>
-                <span class="campo-data-value health-badge ${riskCls}">${esc(risk.risk_level || '--')}</span>
+                <span class="campo-data-label">${t('field.riskLevel')}</span>
+                <span class="campo-data-value health-badge ${riskCls}">${esc(levelLabel(risk.risk_level))}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Evaluacion</span>
+                <span class="campo-data-label">${t('field.assessment')}</span>
                 <span class="campo-data-value">${esc(risk.mensaje || '--')}</span>
             </div>
         </div>
@@ -739,11 +792,11 @@ function renderIrrigation(irrigation) {
     document.getElementById('irrigation-content').innerHTML = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Urgencia</span>
-                <span class="campo-data-value health-badge ${urgCls}">${esc(irrigation.urgency || irrigation.urgencia || '--')}</span>
+                <span class="campo-data-label">${t('field.urgency')}</span>
+                <span class="campo-data-value health-badge ${urgCls}">${esc(levelLabel(irrigation.urgency || irrigation.urgencia))}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">L/ha Total Semana</span>
+                <span class="campo-data-label">${t('field.weeklyLitersPerHa')}</span>
                 <span class="campo-data-value">${irrigation.total_liters_week || irrigation.total_litros_semana || '--'}</span>
             </div>
         </div>
@@ -755,51 +808,51 @@ function renderYield(yieldData) {
     document.getElementById('yield-content').innerHTML = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Rendimiento Estimado</span>
+                <span class="campo-data-label">${t('field.estimatedYield')}</span>
                 <span class="campo-data-value">${yieldData.predicted_yield_kg_ha ? yieldData.predicted_yield_kg_ha.toLocaleString() + ' kg/ha' : '--'}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Rango</span>
+                <span class="campo-data-label">${t('field.range')}</span>
                 <span class="campo-data-value">${yieldData.low_estimate ? yieldData.low_estimate.toLocaleString() : '--'} — ${yieldData.high_estimate ? yieldData.high_estimate.toLocaleString() : '--'} kg/ha</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Cultivo</span>
+                <span class="campo-data-label">${t('field.crop')}</span>
                 <span class="campo-data-value">${esc(yieldData.crop_type || '--')}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Base SIAP</span>
+                <span class="campo-data-label">${t('field.siapBaseline')}</span>
                 <span class="campo-data-value">${yieldData.baseline_yield_kg_ha ? yieldData.baseline_yield_kg_ha.toLocaleString() + ' kg/ha' : '--'}</span>
             </div>
         </div>`;
 }
 
 function renderTreatments(treatments) {
-    document.getElementById('treatments-content').innerHTML = treatments.map(t => {
-        const isApplied = !!t.applied_at;
-        const appliedDate = isApplied ? new Date(t.applied_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    document.getElementById('treatments-content').innerHTML = treatments.map(tr => {
+        const isApplied = !!tr.applied_at;
+        const appliedDate = isApplied ? new Date(tr.applied_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) : '';
         return `
         <div class="campo-treatment-card ${isApplied ? 'treatment-applied' : ''}">
-            ${isApplied ? `<div class="treatment-applied-badge">Aplicado ${appliedDate}</div>` : ''}
-            ${t.problema ? `<div class="campo-treatment-row"><strong>Problema:</strong> ${esc(t.problema)}</div>` : ''}
-            ${t.tratamiento ? `<div class="campo-treatment-row"><strong>Tratamiento:</strong> ${esc(t.tratamiento)}</div>` : ''}
-            ${t.costo_estimado_mxn ? `<div class="campo-treatment-row"><strong>Costo:</strong> $${t.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
-            ${t.urgencia ? `<div class="campo-treatment-row"><span class="campo-alert-badge ${t.urgencia.toLowerCase() === 'inmediata' ? 'critical' : 'warning'}">${esc(t.urgencia)}</span></div>` : ''}
-            ${t.prevencion ? `<div class="campo-treatment-row"><strong>Prevencion:</strong> ${esc(t.prevencion)}</div>` : ''}
+            ${isApplied ? `<div class="treatment-applied-badge">${t('field.applied')} ${appliedDate}</div>` : ''}
+            ${tr.problema ? `<div class="campo-treatment-row"><strong>${t('field.problemLabel')}</strong> ${esc(tr.problema)}</div>` : ''}
+            ${tr.tratamiento ? `<div class="campo-treatment-row"><strong>${t('field.treatmentLabel')}</strong> ${esc(tr.tratamiento)}</div>` : ''}
+            ${tr.costo_estimado_mxn ? `<div class="campo-treatment-row"><strong>${t('field.costLabel')}</strong> $${tr.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+            ${tr.urgencia ? `<div class="campo-treatment-row"><span class="campo-alert-badge ${tr.urgencia.toLowerCase() === 'inmediata' ? 'critical' : 'warning'}">${esc(levelLabel(tr.urgencia))}</span></div>` : ''}
+            ${tr.prevencion ? `<div class="campo-treatment-row"><strong>${t('field.preventionLabel')}</strong> ${esc(tr.prevencion)}</div>` : ''}
             ${isApplied ? `
-                ${t.applied_notes ? `<div class="campo-treatment-row treatment-notes"><strong>Notas:</strong> ${esc(t.applied_notes)}</div>` : ''}
+                ${tr.applied_notes ? `<div class="campo-treatment-row treatment-notes"><strong>${t('field.notesLabel')}</strong> ${esc(tr.applied_notes)}</div>` : ''}
             ` : `
-                <div class="treatment-apply-section" id="apply-section-${t.id}">
-                    <button class="treatment-apply-btn" onclick="toggleApplyForm(${t.id})">Marcar como aplicado</button>
-                    <div class="treatment-apply-form" id="apply-form-${t.id}" style="display:none">
-                        <label>Fecha de aplicacion:
-                            <input type="date" id="apply-date-${t.id}" value="${new Date().toISOString().split('T')[0]}">
+                <div class="treatment-apply-section" id="apply-section-${tr.id}">
+                    <button class="treatment-apply-btn" onclick="toggleApplyForm(${tr.id})">${t('field.markAsApplied')}</button>
+                    <div class="treatment-apply-form" id="apply-form-${tr.id}" style="display:none">
+                        <label>${t('field.applicationDate')}
+                            <input type="date" id="apply-date-${tr.id}" value="${new Date().toISOString().split('T')[0]}">
                         </label>
-                        <label>Notas (opcional):
-                            <textarea id="apply-notes-${t.id}" rows="2" placeholder="Observaciones de campo..."></textarea>
+                        <label>${t('field.notesOptional')}
+                            <textarea id="apply-notes-${tr.id}" rows="2" placeholder="${t('field.fieldObservations')}"></textarea>
                         </label>
                         <div class="treatment-apply-actions">
-                            <button class="treatment-confirm-btn" onclick="markTreatmentApplied(${t.id})">Confirmar</button>
-                            <button class="treatment-cancel-btn" onclick="toggleApplyForm(${t.id})">Cancelar</button>
+                            <button class="treatment-confirm-btn" onclick="markTreatmentApplied(${tr.id})">${t('field.confirm')}</button>
+                            <button class="treatment-cancel-btn" onclick="toggleApplyForm(${tr.id})">${t('form.cancel')}</button>
                         </div>
                     </div>
                 </div>
@@ -819,7 +872,7 @@ async function markTreatmentApplied(treatmentId) {
     if (!dateVal) return;
 
     const btn = document.querySelector(`#apply-section-${treatmentId} .treatment-confirm-btn`);
-    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+    if (btn) { btn.disabled = true; btn.textContent = t('field.saving'); }
 
     try {
         const resp = await fetch(`${API}/farms/${farmId}/fields/${fieldId}/treatments/${treatmentId}/applied`, {
@@ -827,7 +880,7 @@ async function markTreatmentApplied(treatmentId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ applied_at: new Date(dateVal).toISOString(), notes: notes || null }),
         });
-        if (!resp.ok) throw new Error('Error al marcar tratamiento');
+        if (!resp.ok) throw new Error('Error marking treatment');
         // Refresh treatments list
         const treatments = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/treatments`);
         if (treatments) renderTreatments(treatments);
@@ -835,28 +888,28 @@ async function markTreatmentApplied(treatmentId) {
         const history = await fetchJSON(`/farms/${farmId}/fields/${fieldId}/treatments/treatment-history`);
         renderTreatmentHistory(history);
     } catch (e) {
-        if (btn) { btn.disabled = false; btn.textContent = 'Confirmar'; }
-        alert('Error al registrar la aplicacion del tratamiento');
+        if (btn) { btn.disabled = false; btn.textContent = t('field.confirm'); }
+        alert(t('field.errorRecordingTreatment'));
     }
 }
 
 function renderTreatmentHistory(history) {
     const el = document.getElementById('treatment-history-content');
     if (!history || history.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin historial de tratamientos aplicados</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noAppliedTreatmentHistory')}</div>`;
         return;
     }
     el.innerHTML = `<div class="treatment-timeline">
         ${history.map(h => {
-            const date = h.applied_at ? new Date(h.applied_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
+            const date = h.applied_at ? new Date(h.applied_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) : '--';
             const urgCls = h.urgencia === 'alta' ? 'critical' : (h.urgencia === 'media' ? 'warning' : 'good');
             return `<div class="treatment-timeline-item">
                 <div class="treatment-timeline-date">${date}</div>
                 <div class="treatment-timeline-body">
                     <div class="treatment-timeline-header">
                         <strong>${esc(h.problema)}</strong>
-                        <span class="campo-alert-badge ${urgCls}">${esc(h.urgencia)}</span>
-                        ${h.organic ? '<span class="organic-badge">Organico</span>' : ''}
+                        <span class="campo-alert-badge ${urgCls}">${esc(levelLabel(h.urgencia))}</span>
+                        ${h.organic ? `<span class="organic-badge">${t('field.organic')}</span>` : ''}
                     </div>
                     <div class="treatment-timeline-detail">${esc(h.tratamiento)}</div>
                     ${h.applied_notes ? `<div class="treatment-timeline-notes">${esc(h.applied_notes)}</div>` : ''}
@@ -869,7 +922,7 @@ function renderTreatmentHistory(history) {
 function renderRotation(rotation) {
     document.getElementById('rotation-content').innerHTML = `
         <div class="rotation-current">
-            <span class="rotation-label">Cultivo actual:</span>
+            <span class="rotation-label">${t('field.currentCrop')}</span>
             <span class="rotation-value">${esc(rotation.last_crop)}</span>
         </div>
         <div class="rotation-timeline">
@@ -893,15 +946,15 @@ function renderRotation(rotation) {
 function renderRegionalCard(data, currentFieldId) {
     const el = document.getElementById('regional-content');
     if (!data || !data.region) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos regionales disponibles</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noRegionalData')}</div>`;
         return;
     }
 
     const r = data.region;
     const climaLabels = {
-        'tropical_subtropical': 'Tropical / Subtropical',
-        'temperate_continental': 'Templado Continental',
-        'generic': 'Variable',
+        'tropical_subtropical': t('field.climateTropical'),
+        'temperate_continental': t('field.climateTemperate'),
+        'generic': t('field.climateVariable'),
     };
 
     // Filter recommendations to current field
@@ -911,11 +964,11 @@ function renderRegionalCard(data, currentFieldId) {
     if (fieldRecs.length > 0) {
         recsHtml = `
         <div class="regional-recs">
-            <div class="regional-recs-title">Recomendaciones para este campo</div>
+            <div class="regional-recs-title">${t('field.recsForThisField')}</div>
             ${fieldRecs.slice(0, 3).map(rec => `
                 <div class="regional-rec-item">
                     <div class="regional-rec-header">
-                        <span class="regional-rec-urgencia urgencia-${esc(rec.urgencia)}">${esc(rec.urgencia)}</span>
+                        <span class="regional-rec-urgencia urgencia-${esc(rec.urgencia)}">${esc(levelLabel(rec.urgencia))}</span>
                         <span class="regional-rec-problema">${esc(rec.problema)}</span>
                     </div>
                     <div class="regional-rec-treatment">${esc(rec.tratamiento)}</div>
@@ -929,19 +982,19 @@ function renderRegionalCard(data, currentFieldId) {
     el.innerHTML = `
         <div class="regional-grid">
             <div class="regional-item">
-                <span class="regional-label">Clima</span>
+                <span class="regional-label">${t('field.climate')}</span>
                 <span class="regional-value">${esc(climaLabels[r.climate_zone] || r.climate_zone)}</span>
             </div>
             <div class="regional-item">
-                <span class="regional-label">Suelo</span>
+                <span class="regional-label">${t('field.soil')}</span>
                 <span class="regional-value">${esc(r.soil_type)}</span>
             </div>
             <div class="regional-item">
-                <span class="regional-label">Temporada</span>
+                <span class="regional-label">${t('field.season')}</span>
                 <span class="regional-value">${esc(r.growing_season)}</span>
             </div>
             <div class="regional-item">
-                <span class="regional-label">Cultivos clave</span>
+                <span class="regional-label">${t('field.keyCrops')}</span>
                 <span class="regional-value">${r.key_crops.map(c => esc(c)).join(', ')}</span>
             </div>
         </div>
@@ -952,7 +1005,7 @@ function renderRegionalCard(data, currentFieldId) {
 function renderActionTimeline(timeline) {
     const el = document.getElementById('timeline-content');
     if (!timeline || !timeline.actions || timeline.actions.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin acciones programadas para esta semana</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noScheduledActions')}</div>`;
         return;
     }
 
@@ -960,9 +1013,9 @@ function renderActionTimeline(timeline) {
     const actions = [...timeline.actions].sort((a, b) => a.priority - b.priority);
 
     const priorityLabel = (p) => {
-        if (p <= 1) return 'alta';
-        if (p <= 2) return 'media';
-        return 'baja';
+        if (p <= 1) return t('field.levelHigh');
+        if (p <= 2) return t('field.levelMedium');
+        return t('field.levelLow');
     };
 
     const priorityCls = (p) => {
@@ -976,9 +1029,9 @@ function renderActionTimeline(timeline) {
         const ws = timeline.weather_summary;
         weatherHtml = `
         <div class="timeline-weather">
-            <span class="timeline-weather-item">${ws.total_rainfall_mm.toFixed(0)} mm lluvia</span>
+            <span class="timeline-weather-item">${ws.total_rainfall_mm.toFixed(0)} mm ${t('field.rainLower')}</span>
             <span class="timeline-weather-item">${ws.min_temp_c.toFixed(0)}-${ws.max_temp_c.toFixed(0)}C</span>
-            ${ws.rainy_days > 0 ? `<span class="timeline-weather-item timeline-rain">${ws.rainy_days} dias con lluvia</span>` : ''}
+            ${ws.rainy_days > 0 ? `<span class="timeline-weather-item timeline-rain">${ws.rainy_days} ${t('field.rainyDays')}</span>` : ''}
         </div>`;
     }
 
@@ -993,9 +1046,9 @@ function renderActionTimeline(timeline) {
                     </div>
                     <div class="timeline-action-desc">${esc(a.description)}</div>
                     ${a.weather_note ? `<div class="timeline-weather-note">${esc(a.weather_note)}</div>` : ''}
-                    ${a.urgencia ? `<div class="timeline-action-meta"><strong>Urgencia:</strong> ${esc(a.urgencia)}</div>` : ''}
-                    ${a.costo_estimado_mxn ? `<div class="timeline-action-meta"><strong>Costo:</strong> $${a.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
-                    ${a.stage_es ? `<div class="timeline-action-meta"><strong>Etapa:</strong> ${esc(a.stage_es)}${a.days_in_stage != null ? ' (dia ' + a.days_in_stage + ')' : ''}</div>` : ''}
+                    ${a.urgencia ? `<div class="timeline-action-meta"><strong>${t('field.urgencyLabel')}</strong> ${esc(levelLabel(a.urgencia))}</div>` : ''}
+                    ${a.costo_estimado_mxn ? `<div class="timeline-action-meta"><strong>${t('field.costLabel')}</strong> $${a.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+                    ${a.stage_es ? `<div class="timeline-action-meta"><strong>${t('field.stageLabel')}</strong> ${esc(a.stage_es)}${a.days_in_stage != null ? ' (' + t('field.dayLower') + ' ' + a.days_in_stage + ')' : ''}</div>` : ''}
                 </div>
             `).join('')}
         </div>`;
@@ -1004,7 +1057,7 @@ function renderActionTimeline(timeline) {
 function renderRegenerativeScore(data) {
     const el = document.getElementById('regenerative-content');
     if (!data) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de puntuacion regenerativa</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noRegenData')}</div>`;
         return;
     }
 
@@ -1012,13 +1065,13 @@ function renderRegenerativeScore(data) {
     const scoreCls = score >= 70 ? 'good' : score >= 40 ? 'warning' : 'critical';
     const bd = data.breakdown;
 
-    // Component labels (Spanish) and max values
+    // Component labels (translated at render time) and max values
     const components = [
-        { key: 'organic_treatments', label: 'Tratamientos organicos', max: 25 },
-        { key: 'ancestral_methods', label: 'Metodos ancestrales', max: 20 },
-        { key: 'soil_organic_trend', label: 'Tendencia materia organica', max: 25 },
-        { key: 'microbiome_health', label: 'Salud del microbioma', max: 20 },
-        { key: 'treatment_diversity', label: 'Diversidad de tratamientos', max: 10 },
+        { key: 'organic_treatments', label: t('field.regenOrganicTreatments'), max: 25 },
+        { key: 'ancestral_methods', label: t('field.regenAncestralMethods'), max: 20 },
+        { key: 'soil_organic_trend', label: t('field.regenOrganicTrend'), max: 25 },
+        { key: 'microbiome_health', label: t('field.regenMicrobiomeHealth'), max: 20 },
+        { key: 'treatment_diversity', label: t('field.regenTreatmentDiversity'), max: 10 },
     ];
 
     const barsHtml = components.map(c => {
@@ -1038,7 +1091,7 @@ function renderRegenerativeScore(data) {
 
     const recsHtml = data.recommendations && data.recommendations.length > 0
         ? `<div class="regen-recs">
-            <div class="regen-recs-title">Recomendaciones</div>
+            <div class="regen-recs-title">${t('field.recommendations')}</div>
             ${data.recommendations.map(r => `<div class="regen-rec-item">${esc(r)}</div>`).join('')}
            </div>`
         : '';
@@ -1057,7 +1110,7 @@ function renderRegenerativeScore(data) {
 function renderCarbon(data) {
     const el = document.getElementById('carbon-content');
     if (!data || !data.soc_actual) {
-        el.innerHTML = `<div class="campo-placeholder">${data && data.resumen ? esc(data.resumen) : 'Sin datos de carbono del suelo'}</div>`;
+        el.innerHTML = `<div class="campo-placeholder">${data && data.resumen ? esc(data.resumen) : t('field.noCarbonData')}</div>`;
         return;
     }
 
@@ -1066,15 +1119,18 @@ function renderCarbon(data) {
     const co2e = (soc.soc_tonnes_per_ha * 3.67).toFixed(1);
 
     const trendIcons = { ganando: '+', estable: '=', perdiendo: '-', datos_insuficientes: '?' };
-    const trendLabels = { ganando: 'Ganando carbono', estable: 'Estable', perdiendo: 'Perdiendo carbono', datos_insuficientes: 'Datos insuficientes' };
+    const trendLabels = {
+        ganando: t('field.trendGaining'), estable: t('field.trendStable'),
+        perdiendo: t('field.trendLosing'), datos_insuficientes: t('field.trendInsufficient'),
+    };
     const trendCls = tendencia === 'ganando' ? 'good' : tendencia === 'estable' ? 'warning' : tendencia === 'perdiendo' ? 'critical' : '';
 
     const classCls = soc.clasificacion === 'alto' ? 'good' : soc.clasificacion === 'adecuado' ? 'warning' : 'critical';
-    const classLabels = { bajo: 'Bajo', adecuado: 'Adecuado', alto: 'Alto' };
+    const classLabels = { bajo: t('field.classLow'), adecuado: t('field.classAdequate'), alto: t('field.classHigh') };
 
     const cambioHtml = data.cambio_soc_tonnes_per_ha !== 0
         ? `<div class="campo-data-row">
-               <span class="campo-data-label">Cambio SOC</span>
+               <span class="campo-data-label">${t('field.socChange')}</span>
                <span class="campo-data-value">${data.cambio_soc_tonnes_per_ha > 0 ? '+' : ''}${data.cambio_soc_tonnes_per_ha.toFixed(2)} t/ha</span>
            </div>`
         : '';
@@ -1094,24 +1150,24 @@ function renderCarbon(data) {
             </div>
             <div class="carbon-details">
                 <div class="campo-data-row">
-                    <span class="campo-data-label">CO2 equivalente</span>
+                    <span class="campo-data-label">${t('field.co2Equivalent')}</span>
                     <span class="campo-data-value">${co2e} t CO2e/ha</span>
                 </div>
                 <div class="campo-data-row">
-                    <span class="campo-data-label">Materia organica</span>
+                    <span class="campo-data-label">${t('field.organicMatter')}</span>
                     <span class="campo-data-value">${soc.organic_matter_pct.toFixed(1)}%</span>
                 </div>
                 <div class="campo-data-row">
-                    <span class="campo-data-label">Profundidad</span>
+                    <span class="campo-data-label">${t('field.depth')}</span>
                     <span class="campo-data-value">${soc.depth_cm} cm</span>
                 </div>
                 <div class="campo-data-row">
-                    <span class="campo-data-label">Tendencia</span>
+                    <span class="campo-data-label">${t('field.trend')}</span>
                     <span class="campo-data-value carbon-trend-${trendCls}">${trendIcons[tendencia]} ${trendLabels[tendencia]}</span>
                 </div>
                 ${cambioHtml}
                 <div class="campo-data-row">
-                    <span class="campo-data-label">Registros</span>
+                    <span class="campo-data-label">${t('field.records')}</span>
                     <span class="campo-data-value">${data.registros}</span>
                 </div>
             </div>
@@ -1131,7 +1187,7 @@ function renderHealthChart(history) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Salud',
+                label: t('field.health'),
                 data: data,
                 borderColor: '#16a34a',
                 backgroundColor: 'rgba(22, 163, 74, 0.1)',
@@ -1172,14 +1228,14 @@ function renderHealthHistory(list) {
     }
 
     const records = [...list].reverse(); // newest first
-    let html = '<div class="sensor-history-label">Detalle por evaluacion</div>';
+    let html = `<div class="sensor-history-label">${t('field.detailPerEvaluation')}</div>`;
     html += '<div class="sensor-timeline">';
     html += records.map(h => {
         const date = h.scored_at
-            ? new Date(h.scored_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+            ? new Date(h.scored_at).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
             : '--';
         const cls = healthClass(h.score);
-        const trendLabel = h.trend === 'improving' ? 'Mejorando' : h.trend === 'declining' ? 'Declinando' : 'Estable';
+        const trendLabel = h.trend === 'improving' ? t('field.trendImproving') : h.trend === 'declining' ? t('field.trendDeclining') : t('field.trendStable');
         const trendSymbol = h.trend === 'improving' ? ' &#x25B2;' : h.trend === 'declining' ? ' &#x25BC;' : ' &#x25CF;';
 
         // Breakdown components
@@ -1196,7 +1252,7 @@ function renderHealthHistory(list) {
 
         // Sources
         const srcHtml = h.sources && h.sources.length > 0
-            ? `<div style="margin-top:6px"><span class="campo-data-label">Fuentes:</span> <span class="sensor-timeline-summary">${h.sources.join(', ')}</span></div>`
+            ? `<div style="margin-top:6px"><span class="campo-data-label">${t('field.sourcesLabel')}</span> <span class="sensor-timeline-summary">${h.sources.join(', ')}</span></div>`
             : '';
 
         return `<div class="sensor-timeline-item">
@@ -1210,9 +1266,9 @@ function renderHealthHistory(list) {
                 <div class="sensor-timeline-detail">
                     <div class="campo-data-grid">
                         ${h.ndvi_mean != null ? `<div class="campo-data-item"><span class="campo-data-label">NDVI</span><span class="campo-data-value">${h.ndvi_mean.toFixed(3)}</span></div>` : ''}
-                        ${h.stress_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Estres</span><span class="campo-data-value">${h.stress_pct.toFixed(1)}%</span></div>` : ''}
-                        ${h.soil_ph != null ? `<div class="campo-data-item"><span class="campo-data-label">pH Suelo</span><span class="campo-data-value">${h.soil_ph}</span></div>` : ''}
-                        ${h.soil_organic_matter_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">Materia Org.</span><span class="campo-data-value">${h.soil_organic_matter_pct}%</span></div>` : ''}
+                        ${h.stress_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.stress')}</span><span class="campo-data-value">${h.stress_pct.toFixed(1)}%</span></div>` : ''}
+                        ${h.soil_ph != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.soilPh')}</span><span class="campo-data-value">${h.soil_ph}</span></div>` : ''}
+                        ${h.soil_organic_matter_pct != null ? `<div class="campo-data-item"><span class="campo-data-label">${t('field.organicMatterAbbr')}</span><span class="campo-data-value">${h.soil_organic_matter_pct}%</span></div>` : ''}
                     </div>
                     ${bdHtml}
                     ${srcHtml}
@@ -1228,7 +1284,7 @@ function renderHealthHistory(list) {
 function renderCerebro(intel) {
     const el = document.getElementById('cerebro-content');
     if (!intel) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de inteligencia disponibles</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noIntelligenceData')}</div>`;
         return;
     }
 
@@ -1240,7 +1296,7 @@ function renderCerebro(intel) {
 
     // NDVI badge
     const ndvi = intel.ndvi;
-    const ndviStatus = ndvi ? (ndvi.ndvi_mean >= 0.6 ? 'Saludable' : ndvi.ndvi_mean >= 0.3 ? 'Moderado' : 'Estresado') : null;
+    const ndviStatus = ndvi ? (ndvi.ndvi_mean >= 0.6 ? t('field.statusHealthy') : ndvi.ndvi_mean >= 0.3 ? t('field.statusModerate') : t('field.statusStressed')) : null;
     const ndviCls = ndvi ? (ndvi.ndvi_mean >= 0.6 ? 'good' : ndvi.ndvi_mean >= 0.3 ? 'warning' : 'critical') : '';
 
     // Soil summary
@@ -1275,11 +1331,11 @@ function renderCerebro(intel) {
     // Top risk — derive from disease risk or health trend
     let topRisk = null;
     if (dr && dr.risk_level !== 'bajo') {
-        topRisk = dr.mensaje || `Riesgo de enfermedad: ${dr.risk_level}`;
+        topRisk = dr.mensaje || `${t('field.diseaseRiskLabel')} ${levelLabel(dr.risk_level)}`;
     } else if (h && h.trend === 'declining') {
-        topRisk = 'Salud en declive — revisar condiciones del campo';
+        topRisk = t('field.healthDeclining');
     } else if (ndvi && ndvi.stress_pct > 30) {
-        topRisk = `${ndvi.stress_pct.toFixed(0)}% del campo bajo estres vegetativo`;
+        topRisk = `${ndvi.stress_pct.toFixed(0)}${t('field.fieldUnderStress')}`;
     }
 
     el.innerHTML = `
@@ -1287,33 +1343,33 @@ function renderCerebro(intel) {
             <div class="cerebro-hero">
                 <div class="cerebro-score-wrap">
                     <div class="cerebro-score health-badge ${healthCls}">${h ? Math.round(h.score) : '--'}</div>
-                    <div class="cerebro-score-label">Salud <span class="${trendCls}">${trendArrow}</span></div>
+                    <div class="cerebro-score-label">${t('field.health')} <span class="${trendCls}">${trendArrow}</span></div>
                 </div>
-                ${confPct != null ? `<div class="cerebro-confidence"><span class="health-badge ${confCls}">${confPct}%</span> <span class="cerebro-conf-label">Confianza</span></div>` : ''}
+                ${confPct != null ? `<div class="cerebro-confidence"><span class="health-badge ${confCls}">${confPct}%</span> <span class="cerebro-conf-label">${t('field.confidence')}</span></div>` : ''}
             </div>
             <div class="cerebro-badges">
                 ${ndvi ? `<div class="cerebro-badge"><span class="cerebro-badge-label">NDVI</span><span class="health-badge ${ndviCls}">${ndvi.ndvi_mean.toFixed(2)} — ${ndviStatus}</span></div>` : ''}
                 ${soil ? `<div class="cerebro-badge"><span class="cerebro-badge-label">pH</span><span class="campo-data-value">${soil.ph}</span></div>` : ''}
-                ${soil && soil.organic_matter_pct != null ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Materia Org.</span><span class="campo-data-value">${soil.organic_matter_pct}%</span></div>` : ''}
-                ${weather ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Clima</span><span class="campo-data-value">${Math.round(weather.temp_c)}C &middot; ${Math.round(weather.humidity_pct)}% hum</span></div>` : ''}
-                ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Etapa</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
-                ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Riesgo</span><span class="health-badge ${drCls}">${esc(dr.risk_level)}</span></div>` : ''}
-                ${yld ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Rendimiento</span><span class="campo-data-value">${Math.round(yld.kg_per_ha).toLocaleString()} kg/ha</span></div>` : ''}
-                ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">Tratamientos</span><span class="campo-data-value">${treatCount} activos</span></div>` : ''}
+                ${soil && soil.organic_matter_pct != null ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.organicMatterAbbr')}</span><span class="campo-data-value">${soil.organic_matter_pct}%</span></div>` : ''}
+                ${weather ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.climate')}</span><span class="campo-data-value">${Math.round(weather.temp_c)}C &middot; ${Math.round(weather.humidity_pct)}% ${t('field.humAbbr')}</span></div>` : ''}
+                ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.stage')}</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
+                ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.risk')}</span><span class="health-badge ${drCls}">${esc(levelLabel(dr.risk_level))}</span></div>` : ''}
+                ${yld ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.yield')}</span><span class="campo-data-value">${Math.round(yld.kg_per_ha).toLocaleString()} kg/ha</span></div>` : ''}
+                ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.treatments')}</span><span class="campo-data-value">${treatCount} ${t('field.activeLower')}</span></div>` : ''}
             </div>
         </div>
         <div class="cerebro-insights">
-            ${topRisk ? `<div class="cerebro-insight-item cerebro-risk"><span class="cerebro-insight-label">Riesgo Principal</span><span class="cerebro-insight-text">${esc(topRisk)}</span></div>` : ''}
-            ${nextAction ? `<div class="cerebro-insight-item cerebro-action"><span class="cerebro-insight-label">Accion Recomendada</span><span class="cerebro-insight-text">${esc(nextAction.tratamiento)} — ${esc(nextAction.problema)} <span class="health-badge ${nextAction.urgencia === 'alta' ? 'critical' : nextAction.urgencia === 'media' ? 'warning' : 'good'}">${esc(nextAction.urgencia)}</span></span></div>` : ''}
-            ${yld ? `<div class="cerebro-insight-item"><span class="cerebro-insight-label">Estimacion de Rendimiento</span><span class="cerebro-insight-text">${Math.round(yld.min_kg_per_ha).toLocaleString()} — ${Math.round(yld.max_kg_per_ha).toLocaleString()} kg/ha (${esc(yld.nota)})</span></div>` : ''}
-            ${!topRisk && !nextAction && !yld ? '<div class="campo-placeholder">Sin datos de inteligencia avanzada disponibles</div>' : ''}
+            ${topRisk ? `<div class="cerebro-insight-item cerebro-risk"><span class="cerebro-insight-label">${t('field.topRisk')}</span><span class="cerebro-insight-text">${esc(topRisk)}</span></div>` : ''}
+            ${nextAction ? `<div class="cerebro-insight-item cerebro-action"><span class="cerebro-insight-label">${t('field.recommendedAction')}</span><span class="cerebro-insight-text">${esc(nextAction.tratamiento)} — ${esc(nextAction.problema)} <span class="health-badge ${nextAction.urgencia === 'alta' ? 'critical' : nextAction.urgencia === 'media' ? 'warning' : 'good'}">${esc(levelLabel(nextAction.urgencia))}</span></span></div>` : ''}
+            ${yld ? `<div class="cerebro-insight-item"><span class="cerebro-insight-label">${t('field.yieldEstimate')}</span><span class="cerebro-insight-text">${Math.round(yld.min_kg_per_ha).toLocaleString()} — ${Math.round(yld.max_kg_per_ha).toLocaleString()} kg/ha (${esc(yld.nota)})</span></div>` : ''}
+            ${!topRisk && !nextAction && !yld ? `<div class="campo-placeholder">${t('field.noAdvancedIntel')}</div>` : ''}
         </div>`;
 }
 
 function renderFusion(fusion) {
     const el = document.getElementById('fusion-content');
     if (!fusion) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de fusion disponibles</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noFusionData')}</div>`;
         return;
     }
 
@@ -1322,7 +1378,7 @@ function renderFusion(fusion) {
     const confCls = conf >= 0.7 ? 'good' : conf >= 0.4 ? 'warning' : 'critical';
 
     // Sensor badges
-    const sensorLabels = {ndvi: 'NDVI', thermal: 'Termico', soil: 'Suelo', weather: 'Clima'};
+    const sensorLabels = {ndvi: 'NDVI', thermal: t('field.thermal'), soil: t('field.soil'), weather: t('field.climate')};
     const allSensors = ['ndvi', 'thermal', 'soil', 'weather'];
     const sensorBadgesHtml = allSensors.map(s => {
         const active = fusion.sensors_used.includes(s);
@@ -1333,7 +1389,7 @@ function renderFusion(fusion) {
     let contradictionsHtml = '';
     if (fusion.contradictions && fusion.contradictions.length > 0) {
         contradictionsHtml = `<div class="fusion-contradictions">
-            <div class="fusion-contradictions-title">Inconsistencias Detectadas</div>
+            <div class="fusion-contradictions-title">${t('field.inconsistenciesDetected')}</div>
             ${fusion.contradictions.map(c => `
                 <div class="fusion-contradiction-card">
                     <div class="fusion-contradiction-header">
@@ -1349,14 +1405,14 @@ function renderFusion(fusion) {
         <div class="fusion-panel">
             <div class="fusion-confidence-section">
                 <div class="fusion-confidence-header">
-                    <span class="fusion-confidence-label">Confianza</span>
+                    <span class="fusion-confidence-label">${t('field.confidence')}</span>
                     <span class="fusion-confidence-value health-badge ${confCls}">${confPct}%</span>
                 </div>
                 <div class="fusion-confidence-track">
                     <div class="fusion-confidence-fill ${confCls}" style="width:${confPct}%"></div>
                 </div>
                 <div class="fusion-sensors">
-                    <span class="fusion-sensors-label">${fusion.sensors_used.length}/4 sensores</span>
+                    <span class="fusion-sensors-label">${fusion.sensors_used.length}/4 ${t('field.sensors')}</span>
                     ${sensorBadgesHtml}
                 </div>
             </div>
@@ -1370,7 +1426,7 @@ function renderSeasonalComparison(data) {
     const yearSelect = document.getElementById('seasonal-year-select');
 
     if (!data) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de comparacion estacional</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noSeasonalComparisonData')}</div>`;
         yearSelect.style.display = 'none';
         return;
     }
@@ -1379,13 +1435,13 @@ function renderSeasonalComparison(data) {
     const years = data.available_years || [];
     if (years.length > 1) {
         const currentVal = yearSelect.value;
-        yearSelect.innerHTML = '<option value="">Todos los anos</option>' +
+        yearSelect.innerHTML = `<option value="">${t('field.allYears')}</option>` +
             years.map(y => `<option value="${y}"${String(y) === currentVal ? ' selected' : ''}>${y}</option>`).join('');
         yearSelect.style.display = '';
         if (!yearSelect.dataset.bound) {
             yearSelect.dataset.bound = '1';
             yearSelect.addEventListener('change', async () => {
-                el.innerHTML = '<div class="campo-placeholder">Cargando...</div>';
+                el.innerHTML = `<div class="campo-placeholder">${t('field.loadingShort')}</div>`;
                 const yearParam = yearSelect.value ? `?year=${yearSelect.value}` : '';
                 const base = `/farms/${farmId}/fields/${fieldId}`;
                 const newData = await fetchJSON(`${base}/seasonal-comparison${yearParam}`);
@@ -1401,7 +1457,7 @@ function renderSeasonalComparison(data) {
 
     // Check if both seasons have no data
     if (temporal.avg_health_score == null && secas.avg_health_score == null) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos suficientes para comparar estaciones</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.notEnoughSeasonData')}</div>`;
         return;
     }
 
@@ -1420,14 +1476,14 @@ function renderSeasonalComparison(data) {
                 <div class="seasonal-metric-label">${esc(label)}</div>
                 <div class="seasonal-bars">
                     <div class="seasonal-bar-row">
-                        <span class="seasonal-season-label">Temporal</span>
+                        <span class="seasonal-season-label">${t('field.seasonWet')}</span>
                         <div class="seasonal-bar-track">
                             <div class="seasonal-bar-fill seasonal-temporal" style="width:${tPct}%"></div>
                         </div>
                         <span class="seasonal-bar-value">${tDisplay}</span>
                     </div>
                     <div class="seasonal-bar-row">
-                        <span class="seasonal-season-label">Secas</span>
+                        <span class="seasonal-season-label">${t('field.seasonDry')}</span>
                         <div class="seasonal-bar-track">
                             <div class="seasonal-bar-fill seasonal-secas" style="width:${sPct}%"></div>
                         </div>
@@ -1438,16 +1494,15 @@ function renderSeasonalComparison(data) {
     }
 
     const maxTreatments = Math.max(temporal.treatment_count || 0, secas.treatment_count || 0, 1);
-    const yearLabel = yearSelect.value ? ` (${yearSelect.value})` : ' (Todos)';
 
     el.innerHTML = `
         <div class="seasonal-card">
-            ${metricRow('Salud Promedio', temporal.avg_health_score, secas.avg_health_score, 100, '')}
-            ${metricRow('NDVI Promedio', temporal.avg_ndvi, secas.avg_ndvi, 1, '')}
-            ${metricRow('Tratamientos', temporal.treatment_count, secas.treatment_count, maxTreatments, '')}
+            ${metricRow(t('field.avgHealthLabel'), temporal.avg_health_score, secas.avg_health_score, 100, '')}
+            ${metricRow(t('field.ndviAverage'), temporal.avg_ndvi, secas.avg_ndvi, 1, '')}
+            ${metricRow(t('field.treatments'), temporal.treatment_count, secas.treatment_count, maxTreatments, '')}
             <div class="seasonal-meta">
-                <span class="seasonal-meta-item">Temporal (Jun-Oct): ${temporal.data_points || 0} registros</span>
-                <span class="seasonal-meta-item">Secas (Nov-May): ${secas.data_points || 0} registros</span>
+                <span class="seasonal-meta-item">${t('field.seasonWetMonths')}: ${temporal.data_points || 0} ${t('field.recordsLower')}</span>
+                <span class="seasonal-meta-item">${t('field.seasonDryMonths')}: ${secas.data_points || 0} ${t('field.recordsLower')}</span>
             </div>
         </div>`;
 }
@@ -1460,7 +1515,7 @@ function renderSeasonalPerformance(data) {
     const canvas = document.getElementById('seasonal-perf-chart');
 
     if (!data || !data.seasons || data.seasons.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de rendimiento estacional</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noSeasonalPerf')}</div>`;
         canvas.style.display = 'none';
         return;
     }
@@ -1490,14 +1545,14 @@ function renderSeasonalPerformance(data) {
             labels: years.map(String),
             datasets: [
                 {
-                    label: 'Temporal (Jun-Oct)',
+                    label: t('field.seasonWetMonths'),
                     data: temporalScores,
                     backgroundColor: 'rgba(0, 200, 150, 0.7)',
                     borderColor: 'rgba(0, 200, 150, 1)',
                     borderWidth: 1,
                 },
                 {
-                    label: 'Secas (Nov-May)',
+                    label: t('field.seasonDryMonths'),
                     data: secasScores,
                     backgroundColor: 'rgba(240, 180, 41, 0.7)',
                     borderColor: 'rgba(240, 180, 41, 1)',
@@ -1532,7 +1587,7 @@ function renderSeasonalPerformance(data) {
                     max: 100,
                     ticks: { color: '#aaa' },
                     grid: { color: 'rgba(255,255,255,0.06)' },
-                    title: { display: true, text: 'Salud Promedio', color: '#aaa' },
+                    title: { display: true, text: t('field.avgHealthLabel'), color: '#aaa' },
                 },
             },
         },
@@ -1543,7 +1598,7 @@ function renderSeasonalPerformance(data) {
 function renderMissionPlan(plan) {
     const el = document.getElementById('mission-content');
     if (!plan) {
-        el.innerHTML = '<div class="campo-placeholder">Sin plan de mision disponible</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noMissionPlan')}</div>`;
         return;
     }
 
@@ -1553,10 +1608,10 @@ function renderMissionPlan(plan) {
         agras_t100: 'DJI Agras T100',
     };
     const missionLabels = {
-        health_scan: 'Escaneo de salud',
-        thermal_check: 'Revision termica',
-        spray: 'Aplicacion de tratamiento',
-        emergency_recon: 'Reconocimiento de emergencia',
+        health_scan: t('field.missionHealthScan'),
+        thermal_check: t('field.missionThermalCheck'),
+        spray: t('field.missionSpray'),
+        emergency_recon: t('field.missionEmergencyRecon'),
     };
 
     const droneName = droneLabels[plan.drone_type] || plan.drone_type;
@@ -1571,42 +1626,42 @@ function renderMissionPlan(plan) {
             </div>
             <div class="campo-data-grid">
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Duracion estimada</span>
+                    <span class="campo-data-label">${t('field.estimatedDuration')}</span>
                     <span class="campo-data-value">${plan.estimated_duration_min} min</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Baterias necesarias</span>
+                    <span class="campo-data-label">${t('field.batteriesNeeded')}</span>
                     <span class="campo-data-value">${plan.batteries_needed}</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Altitud</span>
+                    <span class="campo-data-label">${t('field.altitude')}</span>
                     <span class="campo-data-value">${plan.altitude_m} m</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Fotos estimadas</span>
+                    <span class="campo-data-label">${t('field.estimatedPhotos')}</span>
                     <span class="campo-data-value">${plan.estimated_photos}</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Distancia total</span>
+                    <span class="campo-data-label">${t('field.totalDistance')}</span>
                     <span class="campo-data-value">${(plan.total_distance_m / 1000).toFixed(1)} km</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Velocidad</span>
+                    <span class="campo-data-label">${t('field.speed')}</span>
                     <span class="campo-data-value">${plan.speed_ms} m/s</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Cobertura</span>
+                    <span class="campo-data-label">${t('field.coverage')}</span>
                     <span class="campo-data-value">${plan.area_hectares} ha</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Patron</span>
+                    <span class="campo-data-label">${t('field.pattern')}</span>
                     <span class="campo-data-value">${esc(plan.pattern)}</span>
                 </div>
             </div>
             <div class="mission-waypoints-summary">
-                <span class="campo-data-label">Waypoints: ${waypointCount}</span>
-                <span class="campo-data-label">Solapamiento: ${plan.overlap_pct}%</span>
-                <span class="campo-data-label">Espaciado: ${plan.line_spacing_m} m</span>
+                <span class="campo-data-label">${t('field.waypoints')}: ${waypointCount}</span>
+                <span class="campo-data-label">${t('field.overlap')}: ${plan.overlap_pct}%</span>
+                <span class="campo-data-label">${t('field.spacing')}: ${plan.line_spacing_m} m</span>
             </div>
         </div>`;
 }
@@ -1615,7 +1670,7 @@ function renderMissionPlan(plan) {
 function renderInterventionScores(scores) {
     const el = document.getElementById('interventions-content');
     if (!scores || scores.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin intervenciones disponibles</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noInterventionsAvailable')}</div>`;
         return;
     }
 
@@ -1634,27 +1689,27 @@ function renderInterventionScores(scores) {
                 <div class="intervention-body">
                     <div class="intervention-header">
                         <span class="intervention-problema">${esc(s.problema)}</span>
-                        <span class="health-badge ${urgencyCls(s.urgencia)}">${esc(s.urgencia)}</span>
+                        <span class="health-badge ${urgencyCls(s.urgencia)}">${esc(levelLabel(s.urgencia))}</span>
                     </div>
                     <div class="intervention-tratamiento">${esc(s.tratamiento)}</div>
                     <div class="intervention-metrics">
                         <div class="intervention-metric">
-                            <span class="intervention-metric-label">Puntaje</span>
+                            <span class="intervention-metric-label">${t('field.score')}</span>
                             <div class="intervention-score-bar">
                                 <div class="intervention-score-fill" style="width:${scorePct}%"></div>
                             </div>
                             <span class="intervention-metric-value">${s.intervention_score}</span>
                         </div>
                         <div class="intervention-metric">
-                            <span class="intervention-metric-label">Probabilidad</span>
+                            <span class="intervention-metric-label">${t('field.probability')}</span>
                             <span class="intervention-metric-value">${probPct}%</span>
                         </div>
                         <div class="intervention-metric">
-                            <span class="intervention-metric-label">Mejora esperada</span>
+                            <span class="intervention-metric-label">${t('field.expectedImprovement')}</span>
                             <span class="intervention-metric-value">+${s.expected_health_delta}</span>
                         </div>
                         <div class="intervention-metric">
-                            <span class="intervention-metric-label">Costo/ha</span>
+                            <span class="intervention-metric-label">${t('field.costPerHa')}</span>
                             <span class="intervention-metric-value">$${s.cost_per_hectare.toLocaleString()} MXN</span>
                         </div>
                     </div>
@@ -1671,40 +1726,40 @@ function renderMicrobiome(data) {
 
     const latest = data[0];
     const classMap = {
-        healthy: { label: 'Saludable', cls: 'good' },
-        moderate: { label: 'Moderado', cls: 'warning' },
-        degraded: { label: 'Degradado', cls: 'critical' },
+        healthy: { label: t('field.statusHealthy'), cls: 'good' },
+        moderate: { label: t('field.statusModerate'), cls: 'warning' },
+        degraded: { label: t('field.statusDegraded'), cls: 'critical' },
     };
     const info = classMap[latest.classification] || { label: latest.classification, cls: 'none' };
 
     el.innerHTML = `
         <div class="microbiome-header">
             <span class="health-badge ${info.cls}">${esc(info.label)}</span>
-            <span class="microbiome-date">${new Date(latest.sampled_at).toLocaleDateString('es-MX')}</span>
+            <span class="microbiome-date">${new Date(latest.sampled_at).toLocaleDateString(dateLocale())}</span>
         </div>
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Respiracion</span>
-                <span class="campo-data-value">${latest.respiration_rate.toFixed(1)} mg CO2/kg/dia</span>
+                <span class="campo-data-label">${t('field.respiration')}</span>
+                <span class="campo-data-value">${latest.respiration_rate.toFixed(1)} mg CO2/kg/${t('field.dayAbbrUnit')}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Carbono Microbiano</span>
+                <span class="campo-data-label">${t('field.microbialCarbon')}</span>
                 <span class="campo-data-value">${latest.microbial_biomass_carbon.toFixed(0)} mg C/kg</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Ratio Hongos/Bacterias</span>
+                <span class="campo-data-label">${t('field.fungiBacteriaRatio')}</span>
                 <span class="campo-data-value">${latest.fungi_bacteria_ratio.toFixed(2)}</span>
             </div>
         </div>
         ${data.length > 1 ? `
         <div class="microbiome-history">
-            <div class="campo-data-label" style="margin-bottom:6px">Historial de muestras (${data.length})</div>
+            <div class="campo-data-label" style="margin-bottom:6px">${t('field.sampleHistory')} (${data.length})</div>
             ${data.slice(0, 5).map(s => {
                 const si = classMap[s.classification] || { label: s.classification, cls: 'none' };
                 return `<div class="microbiome-sample">
                     <span class="health-badge ${si.cls}" style="font-size:0.65rem;padding:1px 6px">${esc(si.label)}</span>
                     <span class="microbiome-sample-rate">${s.respiration_rate.toFixed(1)}</span>
-                    <span class="microbiome-sample-date">${new Date(s.sampled_at).toLocaleDateString('es-MX')}</span>
+                    <span class="microbiome-sample-date">${new Date(s.sampled_at).toLocaleDateString(dateLocale())}</span>
                 </div>`;
             }).join('')}
         </div>` : ''}`;
@@ -1722,7 +1777,7 @@ function renderGrowthStage(data) {
         <div class="growth-stage-header">
             <span class="health-badge ${stageCls}">${esc(data.stage_es)}</span>
             <span class="growth-crop">${esc(data.crop_type)}</span>
-            <span class="growth-day-count">Dia ${data.days_since_planting}</span>
+            <span class="growth-day-count">${t('field.day')} ${data.days_since_planting}</span>
         </div>`;
 
     let timelineHtml = '';
@@ -1736,7 +1791,7 @@ function renderGrowthStage(data) {
             const isCurrent = s.is_current;
             const isPast = stageIdx > i;
             const cls = isCurrent ? 'current' : isPast ? 'past' : 'future';
-            return `<div class="growth-timeline-segment ${cls}" style="width:${widthPct.toFixed(1)}%" title="${esc(s.name_es)}: ${duration} dias, Riego ${s.water_multiplier}x">
+            return `<div class="growth-timeline-segment ${cls}" style="width:${widthPct.toFixed(1)}%" title="${esc(s.name_es)}: ${duration} ${t('field.daysLower')}, ${t('field.irrigation')} ${s.water_multiplier}x">
                 <span class="growth-timeline-label">${esc(s.name_es)}</span>
                 <span class="growth-timeline-days">${duration}d</span>
             </div>`;
@@ -1767,15 +1822,15 @@ function renderGrowthStage(data) {
     const summaryHtml = `
         <div class="campo-data-grid">
             <div class="campo-data-item">
-                <span class="campo-data-label">Dias en etapa</span>
+                <span class="campo-data-label">${t('field.daysInStage')}</span>
                 <span class="campo-data-value">${data.days_in_stage}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Siguiente etapa</span>
-                <span class="campo-data-value">${data.days_until_next_stage != null ? data.days_until_next_stage + ' dias' : 'Ultima etapa'}</span>
+                <span class="campo-data-label">${t('field.nextStage')}</span>
+                <span class="campo-data-value">${data.days_until_next_stage != null ? data.days_until_next_stage + ' ' + t('field.daysLower') : t('field.lastStage')}</span>
             </div>
             <div class="campo-data-item">
-                <span class="campo-data-label">Riego actual</span>
+                <span class="campo-data-label">${t('field.currentIrrigation')}</span>
                 <span class="campo-data-value">${data.water_multiplier}x</span>
             </div>
         </div>`;
@@ -1789,25 +1844,25 @@ function renderFeedback(feedbackList, treatments) {
     // Populate treatment dropdown
     const sel = document.getElementById('feedback-treatment');
     if (sel && treatments && treatments.length > 0) {
-        treatments.forEach(t => {
+        treatments.forEach(tr => {
             const opt = document.createElement('option');
-            opt.value = t.id;
-            opt.textContent = esc(t.tratamiento ? t.tratamiento.substring(0, 60) : `Tratamiento #${t.id}`);
+            opt.value = tr.id;
+            opt.textContent = esc(tr.tratamiento ? tr.tratamiento.substring(0, 60) : `${t('field.treatment')} #${tr.id}`);
             sel.appendChild(opt);
         });
     }
 
     const el = document.getElementById('feedback-content');
     if (!feedbackList || feedbackList.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin retroalimentacion</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noFeedback')}</div>`;
         return;
     }
 
     el.innerHTML = feedbackList.map(fb => {
         const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
         const workedCls = fb.worked ? 'good' : 'critical';
-        const workedLabel = fb.worked ? 'Funciono' : 'No funciono';
-        const date = fb.created_at ? new Date(fb.created_at).toLocaleDateString('es-MX') : '';
+        const workedLabel = fb.worked ? t('field.worked') : t('field.didNotWork');
+        const date = fb.created_at ? new Date(fb.created_at).toLocaleDateString(dateLocale()) : '';
         return `<div class="feedback-entry">
             <div class="feedback-entry-header">
                 <span class="feedback-stars">${stars}</span>
@@ -1815,7 +1870,7 @@ function renderFeedback(feedbackList, treatments) {
                 <span class="feedback-date">${date}</span>
             </div>
             ${fb.farmer_notes ? `<div class="feedback-notes">${esc(fb.farmer_notes)}</div>` : ''}
-            ${fb.alternative_method ? `<div class="feedback-alt">Metodo alternativo: ${esc(fb.alternative_method)}</div>` : ''}
+            ${fb.alternative_method ? `<div class="feedback-alt">${t('field.alternativeMethodLabel')} ${esc(fb.alternative_method)}</div>` : ''}
         </div>`;
     }).join('');
 }
@@ -1871,15 +1926,15 @@ function renderFlights(flights, stats) {
         statsEl.innerHTML = `
             <div class="campo-data-grid">
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Total Vuelos</span>
+                    <span class="campo-data-label">${t('field.totalFlights')}</span>
                     <span class="campo-data-value">${stats.total_flights}</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Horas de Vuelo</span>
+                    <span class="campo-data-label">${t('field.flightHours')}</span>
                     <span class="campo-data-value">${stats.total_hours.toFixed(1)} h</span>
                 </div>
                 <div class="campo-data-item">
-                    <span class="campo-data-label">Cobertura Total</span>
+                    <span class="campo-data-label">${t('field.totalCoverage')}</span>
                     <span class="campo-data-value">${stats.total_area_covered_ha.toFixed(1)} ha</span>
                 </div>
             </div>
@@ -1890,14 +1945,14 @@ function renderFlights(flights, stats) {
 
     // Render flight list
     if (!flights || flights.length === 0) {
-        contentEl.innerHTML = '<div class="campo-placeholder">Sin vuelos registrados</div>';
+        contentEl.innerHTML = `<div class="campo-placeholder">${t('field.noFlights')}</div>`;
         return;
     }
 
     const missionLabels = {
-        'health_scan': 'Escaneo de salud',
-        'thermal_check': 'Revision termica',
-        'spray': 'Aplicacion',
+        'health_scan': t('field.missionHealthScan'),
+        'thermal_check': t('field.missionThermalCheck'),
+        'spray': t('field.missionApplication'),
     };
     const droneLabels = {
         'mavic_multispectral': 'Mavic 3 Multispectral',
@@ -1905,10 +1960,10 @@ function renderFlights(flights, stats) {
         'agras_t100': 'Agras T100',
     };
     const statusLabels = {
-        'pending': 'Pendiente',
-        'processing': 'Procesando',
-        'complete': 'Completo',
-        'failed': 'Fallido',
+        'pending': t('field.statusPending'),
+        'processing': t('field.statusProcessing'),
+        'complete': t('field.statusComplete'),
+        'failed': t('field.statusFailed'),
     };
     const statusCls = {
         'complete': 'good',
@@ -1920,7 +1975,7 @@ function renderFlights(flights, stats) {
     contentEl.innerHTML = `<div class="flight-log-list">
         ${flights.map(f => {
             const date = f.flight_date
-                ? new Date(f.flight_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                ? new Date(f.flight_date).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
                 : '--';
             const sCls = statusCls[f.status] || 'none';
             return `<div class="flight-log-item">
@@ -1933,9 +1988,9 @@ function renderFlights(flights, stats) {
                     </div>
                     <div class="flight-log-details">
                         <span>${f.duration_minutes} min</span>
-                        <span>${f.altitude_m} m alt</span>
-                        <span>${f.images_count} fotos</span>
-                        <span>${f.coverage_pct}% cobertura</span>
+                        <span>${f.altitude_m} m ${t('field.altAbbr')}</span>
+                        <span>${f.images_count} ${t('field.photos')}</span>
+                        <span>${f.coverage_pct}% ${t('field.coverageLower')}</span>
                     </div>
                 </div>
             </div>`;
@@ -1947,11 +2002,11 @@ function renderFlights(flights, stats) {
 async function downloadReport() {
     if (!farmId) return;
     const btn = document.getElementById('btn-download-report');
-    btn.textContent = 'Generando...';
+    btn.textContent = t('field.generating');
     btn.disabled = true;
     try {
         const resp = await fetch(API + `/farms/${farmId}/report`, { method: 'POST' });
-        if (!resp.ok) throw new Error('Error generando reporte');
+        if (!resp.ok) throw new Error('Error generating report');
         const blob = await resp.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1962,9 +2017,9 @@ async function downloadReport() {
         a.remove();
         URL.revokeObjectURL(url);
     } catch (err) {
-        alert('No se pudo generar el reporte. Intente de nuevo.');
+        alert(t('field.reportError'));
     } finally {
-        btn.textContent = 'Descargar Reporte';
+        btn.textContent = t('field.downloadReport');
         btn.disabled = false;
     }
 }
@@ -1974,7 +2029,7 @@ function renderAnomalies(data) {
     const el = document.getElementById('anomalies-content');
     if (!data || ((!data.health_anomalies || data.health_anomalies.length === 0) &&
                   (!data.ndvi_anomalies || data.ndvi_anomalies.length === 0))) {
-        el.innerHTML = '<div class="campo-placeholder">Sin anomalias detectadas</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noAnomalies')}</div>`;
         return;
     }
 
@@ -1984,12 +2039,12 @@ function renderAnomalies(data) {
         data.health_anomalies.forEach(a => {
             all.push(`<div class="anomaly-card anomaly-health">
                 <div class="anomaly-card-header">
-                    <span class="campo-alert-badge critical">Salud</span>
-                    <span class="anomaly-type">${esc(a.type === 'health_drop' ? 'Caida de Salud' : a.type)}</span>
+                    <span class="campo-alert-badge critical">${t('field.health')}</span>
+                    <span class="anomaly-type">${esc(a.type === 'health_drop' ? t('field.healthDrop') : a.type)}</span>
                 </div>
                 <div class="anomaly-card-detail">
                     <span class="anomaly-metric">${a.previous_score} → ${a.current_score}</span>
-                    <span class="anomaly-drop">-${a.drop} pts</span>
+                    <span class="anomaly-drop">-${a.drop} ${t('field.ptsAbbr')}</span>
                 </div>
                 <div class="anomaly-card-rec">${esc(a.recommendation)}</div>
             </div>`);
@@ -2001,7 +2056,7 @@ function renderAnomalies(data) {
             all.push(`<div class="anomaly-card anomaly-ndvi">
                 <div class="anomaly-card-header">
                     <span class="campo-alert-badge warning">NDVI</span>
-                    <span class="anomaly-type">${esc(a.type === 'ndvi_drop' ? 'Caida de NDVI' : a.type)}</span>
+                    <span class="anomaly-type">${esc(a.type === 'ndvi_drop' ? t('field.ndviDrop') : a.type)}</span>
                 </div>
                 <div class="anomaly-card-detail">
                     <span class="anomaly-metric">${a.historical_avg.toFixed(2)} → ${a.current_ndvi.toFixed(2)}</span>
@@ -2018,22 +2073,22 @@ function renderAnomalies(data) {
 function renderDataCompleteness(data, currentFieldId) {
     const el = document.getElementById('completeness-content');
     if (!data || !data.fields || data.fields.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de completitud</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noCompletenessData')}</div>`;
         return;
     }
 
     const fieldData = data.fields.find(f => f.field_id === currentFieldId);
     if (!fieldData) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de completitud para este campo</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noCompletenessForField')}</div>`;
         return;
     }
 
     const sensors = [
-        { key: 'has_soil', label: 'Suelo', present: fieldData.has_soil },
+        { key: 'has_soil', label: t('field.soil'), present: fieldData.has_soil },
         { key: 'has_ndvi', label: 'NDVI', present: fieldData.has_ndvi },
-        { key: 'has_thermal', label: 'Termico', present: fieldData.has_thermal },
-        { key: 'has_treatments', label: 'Tratamientos', present: fieldData.has_treatments },
-        { key: 'has_weather', label: 'Clima', present: fieldData.has_weather },
+        { key: 'has_thermal', label: t('field.thermal'), present: fieldData.has_thermal },
+        { key: 'has_treatments', label: t('field.treatments'), present: fieldData.has_treatments },
+        { key: 'has_weather', label: t('field.climate'), present: fieldData.has_weather },
     ];
 
     const scoreCls = fieldData.score >= 80 ? 'good' : fieldData.score >= 40 ? 'warning' : 'critical';
@@ -2041,7 +2096,7 @@ function renderDataCompleteness(data, currentFieldId) {
     el.innerHTML = `
         <div class="completeness-header">
             <span class="completeness-score completeness-${scoreCls}">${fieldData.score}%</span>
-            <span class="completeness-label">datos disponibles</span>
+            <span class="completeness-label">${t('field.dataAvailable')}</span>
         </div>
         <div class="completeness-sensors">
             ${sensors.map(s => `
@@ -2066,11 +2121,14 @@ function classifyTreatmentType(tratamiento) {
     return 'organic_amendment';
 }
 
-const TREATMENT_TYPE_LABELS = {
-    organic_amendment: 'Enmienda organica',
-    foliar_spray: 'Aplicacion foliar',
-    soil_drench: 'Riego al suelo',
-};
+function treatmentTypeLabel(type) {
+    const keyMap = {
+        organic_amendment: 'field.treatmentOrganicAmendment',
+        foliar_spray: 'field.treatmentFoliarSpray',
+        soil_drench: 'field.treatmentSoilDrench',
+    };
+    return keyMap[type] ? t(keyMap[type]) : type;
+}
 
 async function loadTreatmentTiming(pendingTreatments, latestWeather) {
     const forecast = latestWeather && latestWeather.forecast_3day && latestWeather.forecast_3day.length > 0
@@ -2079,10 +2137,10 @@ async function loadTreatmentTiming(pendingTreatments, latestWeather) {
 
     // Group treatments by type
     const byType = {};
-    for (const t of pendingTreatments) {
-        const type = classifyTreatmentType(t.tratamiento);
+    for (const tr of pendingTreatments) {
+        const type = classifyTreatmentType(tr.tratamiento);
         if (!byType[type]) byType[type] = [];
-        byType[type].push(t);
+        byType[type].push(tr);
     }
 
     // Fetch timing for each unique type
@@ -2106,7 +2164,7 @@ async function loadTreatmentTiming(pendingTreatments, latestWeather) {
     // Combine type info with timing results
     const timingData = types.map((type, i) => ({
         type,
-        label: TREATMENT_TYPE_LABELS[type] || type,
+        label: treatmentTypeLabel(type),
         treatments: byType[type],
         timing: results[i],
     }));
@@ -2119,11 +2177,11 @@ function renderTreatmentTiming(timingData, forecast) {
     if (!el) return;
 
     if (!timingData || timingData.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin tratamientos pendientes</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noPendingTreatments')}</div>`;
         return;
     }
 
-    const dayLabels = ['Hoy', 'Manana', 'Pasado manana'];
+    const dayLabels = [t('field.dayToday'), t('field.dayTomorrow'), t('field.dayAfterTomorrow')];
 
     // Rain warning from forecast
     const rainyDays = forecast
@@ -2132,8 +2190,8 @@ function renderTreatmentTiming(timingData, forecast) {
 
     let rainWarningHtml = '';
     if (rainyDays.length > 0) {
-        const rainDayNames = rainyDays.map(d => dayLabels[d.idx] || `Dia ${d.idx + 1}`).join(', ');
-        rainWarningHtml = `<div class="timing-rain-warning">Lluvia esperada: ${esc(rainDayNames)}</div>`;
+        const rainDayNames = rainyDays.map(d => dayLabels[d.idx] || `${t('field.day')} ${d.idx + 1}`).join(', ');
+        rainWarningHtml = `<div class="timing-rain-warning">${t('field.rainExpected')} ${esc(rainDayNames)}</div>`;
     }
 
     // Forecast bar
@@ -2142,38 +2200,38 @@ function renderTreatmentTiming(timingData, forecast) {
         forecastHtml = `<div class="timing-forecast">${forecast.map((d, i) => {
             const hasRain = (d.rainfall_mm || 0) > 0 || (d.description || '').toLowerCase().includes('lluvia');
             return `<div class="timing-forecast-day ${hasRain ? 'timing-rain-day' : ''}">
-                <span class="timing-forecast-label">${dayLabels[i] || 'Dia ' + (i + 1)}</span>
+                <span class="timing-forecast-label">${dayLabels[i] || t('field.day') + ' ' + (i + 1)}</span>
                 <span class="timing-forecast-temp">${Math.round(d.temp_c)}C</span>
-                ${hasRain ? '<span class="timing-forecast-rain">lluvia</span>' : ''}
+                ${hasRain ? `<span class="timing-forecast-rain">${t('field.rainLower')}</span>` : ''}
             </div>`;
         }).join('')}</div>`;
     }
 
     // Timing cards per type
     const cardsHtml = timingData.map(item => {
-        const t = item.timing;
-        if (!t) {
+        const tm = item.timing;
+        if (!tm) {
             return `<div class="timing-card">
                 <div class="timing-card-type">${esc(item.label)}</div>
-                <div class="campo-placeholder">Sin pronostico disponible</div>
+                <div class="campo-placeholder">${t('field.noForecastAvailable')}</div>
                 <div class="timing-card-treatments">${item.treatments.map(tr =>
                     `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
                 ).join('')}</div>
             </div>`;
         }
 
-        const bestDayLabel = dayLabels[t.best_day] || `Dia ${t.best_day + 1}`;
-        const avoidHtml = t.avoid_days && t.avoid_days.length > 0
-            ? `<div class="timing-avoid">Evitar: ${t.avoid_days.map(d => dayLabels[d] || `Dia ${d + 1}`).join(', ')}</div>`
+        const bestDayLabel = dayLabels[tm.best_day] || `${t('field.day')} ${tm.best_day + 1}`;
+        const avoidHtml = tm.avoid_days && tm.avoid_days.length > 0
+            ? `<div class="timing-avoid">${t('field.avoid')} ${tm.avoid_days.map(d => dayLabels[d] || `${t('field.day')} ${d + 1}`).join(', ')}</div>`
             : '';
 
         return `<div class="timing-card">
             <div class="timing-card-type">${esc(item.label)}</div>
             <div class="timing-card-best">
                 <span class="timing-best-day">${esc(bestDayLabel)}</span>
-                <span class="timing-best-time">${esc(t.best_time)}</span>
+                <span class="timing-best-time">${esc(tm.best_time)}</span>
             </div>
-            <div class="timing-card-reason">${esc(t.reason)}</div>
+            <div class="timing-card-reason">${esc(tm.reason)}</div>
             ${avoidHtml}
             <div class="timing-card-treatments">${item.treatments.map(tr =>
                 `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
@@ -2189,11 +2247,11 @@ function renderWeatherCard(weatherRecords) {
     const el = document.getElementById('weather-content');
     if (!el) return;
     if (!weatherRecords || weatherRecords.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin datos de clima</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noWeather')}</div>`;
         return;
     }
     const w = weatherRecords[0];
-    const dayLabels = ['Manana', 'Pasado', 'En 3 dias'];
+    const dayLabels = [t('field.dayTomorrow'), t('field.dayAfter'), t('field.dayInThree')];
 
     // Current conditions
     const currentHtml = `
@@ -2201,9 +2259,9 @@ function renderWeatherCard(weatherRecords) {
         <div class="weather-current-temp">${Math.round(w.temp_c)}°C</div>
         <div class="weather-current-desc">${esc(w.description)}</div>
         <div class="weather-current-details">
-            <span class="weather-detail">Humedad: ${Math.round(w.humidity_pct)}%</span>
-            <span class="weather-detail">Viento: ${Math.round(w.wind_kmh)} km/h</span>
-            ${w.rainfall_mm > 0 ? `<span class="weather-detail weather-rain">Lluvia: ${w.rainfall_mm.toFixed(1)} mm</span>` : ''}
+            <span class="weather-detail">${t('weather.humidity')}: ${Math.round(w.humidity_pct)}%</span>
+            <span class="weather-detail">${t('weather.wind')}: ${Math.round(w.wind_kmh)} km/h</span>
+            ${w.rainfall_mm > 0 ? `<span class="weather-detail weather-rain">${t('field.rain')}: ${w.rainfall_mm.toFixed(1)} mm</span>` : ''}
         </div>
     </div>`;
 
@@ -2215,12 +2273,12 @@ function renderWeatherCard(weatherRecords) {
         const range = maxTemp - minTemp || 1;
 
         forecastHtml = `<div class="weather-forecast">
-            <div class="weather-forecast-title">Pronostico 3 dias</div>
+            <div class="weather-forecast-title">${t('field.forecast3day')}</div>
             <div class="weather-forecast-days">${w.forecast_3day.map((d, i) => {
                 const barPct = Math.round(((d.temp_c - minTemp) / range) * 60 + 30);
                 const hasRain = d.rainfall_mm > 0;
                 return `<div class="weather-day ${hasRain ? 'weather-day-rain' : ''}">
-                    <span class="weather-day-label">${dayLabels[i] || 'Dia ' + (i + 1)}</span>
+                    <span class="weather-day-label">${dayLabels[i] || t('field.day') + ' ' + (i + 1)}</span>
                     <div class="weather-day-bar-track">
                         <div class="weather-day-bar" style="width:${barPct}%"></div>
                     </div>
@@ -2268,15 +2326,15 @@ function renderFieldMap(field) {
 function renderSeasonalAlerts(data) {
     const el = document.getElementById('seasonal-alerts-content');
     if (!data || !data.alerts || data.alerts.length === 0) {
-        el.innerHTML = '<div class="campo-placeholder">Sin alertas estacionales</div>';
+        el.innerHTML = `<div class="campo-placeholder">${t('field.noSeasonalAlerts')}</div>`;
         return;
     }
 
     const typeLabels = {
-        preparacion: 'Preparacion',
-        siembra: 'Siembra',
-        cosecha: 'Cosecha',
-        mantenimiento: 'Mantenimiento',
+        preparacion: t('field.seasonalPrep'),
+        siembra: t('field.seasonalSowing'),
+        cosecha: t('field.seasonalHarvest'),
+        mantenimiento: t('field.seasonalMaintenance'),
     };
 
     const typeColors = {
@@ -2315,11 +2373,11 @@ function renderTreatmentEffectiveness(results) {
     if (!el || !results || results.length === 0) return;
 
     const statusLabels = {
-        effective: 'Efectivo',
-        ineffective: 'Sin efecto',
-        neutral: 'Neutral',
-        insufficient_data: 'Datos insuficientes',
-        not_applied: 'No aplicado',
+        effective: t('field.effEffective'),
+        ineffective: t('field.effIneffective'),
+        neutral: t('field.effNeutral'),
+        insufficient_data: t('field.effInsufficientData'),
+        not_applied: t('field.effNotApplied'),
     };
     const statusClasses = {
         effective: 'treatment-effectiveness-effective',
@@ -2348,18 +2406,18 @@ function renderTreatmentEffectiveness(results) {
             <div class="treatment-effectiveness-problem">${esc(r.problema)}</div>
             <div class="treatment-effectiveness-scores">
                 <div class="treatment-effectiveness-score-box">
-                    <div class="treatment-effectiveness-score-label">Antes</div>
+                    <div class="treatment-effectiveness-score-label">${t('field.before')}</div>
                     <div class="treatment-effectiveness-score-value">${r.score_before !== null ? r.score_before.toFixed(0) : '--'}</div>
                 </div>
                 <div class="treatment-effectiveness-delta ${deltaClass}">
                     ${deltaText}
                 </div>
                 <div class="treatment-effectiveness-score-box">
-                    <div class="treatment-effectiveness-score-label">Despues</div>
+                    <div class="treatment-effectiveness-score-label">${t('field.after')}</div>
                     <div class="treatment-effectiveness-score-value">${r.score_after !== null ? r.score_after.toFixed(0) : '--'}</div>
                 </div>
             </div>
-            ${r.applied_at ? `<div class="treatment-effectiveness-date">Aplicado: ${new Date(r.applied_at).toLocaleDateString('es-MX')}</div>` : ''}
+            ${r.applied_at ? `<div class="treatment-effectiveness-date">${t('field.appliedLabel')} ${new Date(r.applied_at).toLocaleDateString(dateLocale())}</div>` : ''}
         </div>`;
     });
     html += '</div>';
@@ -2373,7 +2431,9 @@ function toggleRecomendacion() {
     box.classList.toggle('visible');
     const btn = document.getElementById('cta-que-hago');
     if (btn) {
-        btn.textContent = box.classList.contains('visible') ? 'Listo' : 'Que hago?';
+        // Drop the i18n placeholder key so applyAll() won't overwrite the toggled label.
+        btn.removeAttribute('data-i18n');
+        btn.textContent = box.classList.contains('visible') ? t('field.ctaDone') : t('field.cta');
     }
 }
 

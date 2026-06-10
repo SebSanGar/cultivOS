@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>cultivOS — Mi Parcela</title>
-    <meta name="description" content="Estado y recomendaciones de tu parcela.">
+    <title data-i18n="field.pageTitle">cultivOS — My Plot</title>
+    <meta name="description" content="Status and recommendations for your plot.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
@@ -154,7 +154,7 @@
 <nav>
     <div class="nav-inner">
         <a href="/" class="nav-logo">cultiv<span>OS</span></a>
-        <button id="nav-hamburger" class="nav-hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <button id="nav-hamburger" class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
         <ul class="nav-farmer-tabs">
@@ -170,16 +170,16 @@
         </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
         </div>
     </div>
 </nav>
 
 <!-- FARMER VIEW -->
 <main class="campo-farmer">
-    <button class="campo-back" onclick="history.back()">&#8592; Volver</button>
+    <button class="campo-back" onclick="history.back()"><span data-i18n="field.back">&#8592; Back</span></button>
 
-    <h1 class="campo-nombre" id="campo-nombre">Mi Parcela</h1>
+    <h1 class="campo-nombre" id="campo-nombre" data-i18n="field.myPlot">My Plot</h1>
     <p class="campo-granja" id="campo-granja"></p>
 
     <!-- Hero image — F3 will populate real fixtures -->
@@ -187,24 +187,24 @@
         id="campo-imagen"
         class="campo-hero"
         src="/images/fixtures/healthy-orchard-ndvi.png"
-        alt="Vista de la parcela"
+        alt="Plot view"
         onerror="this.style.background='#1f2937';this.removeAttribute('src')"
     >
 
-    <span class="campo-salud-chip none" id="campo-salud-chip">Cargando...</span>
+    <span class="campo-salud-chip none" id="campo-salud-chip" data-i18n="field.loading">Loading...</span>
 
-    <!-- ONE Spanish sentence summary -->
-    <p class="campo-resumen-text" id="campo-resumen">Revisando tu parcela...</p>
+    <!-- ONE sentence summary -->
+    <p class="campo-resumen-text" id="campo-resumen" data-i18n="field.checkingPlot">Checking your plot...</p>
 
     <!-- ONE primary CTA -->
     <button id="cta-que-hago" class="cta-primary" onclick="toggleRecomendacion()" data-i18n="field.cta">
-        Que hago?
+        What do I do?
     </button>
 
     <!-- Recommendation (hidden until CTA tapped) -->
     <div id="recomendacion" class="recomendacion-box" aria-live="polite">
-        <div class="recomendacion-label">Esta semana</div>
-        <p class="recomendacion-texto" id="recomendacion-texto">Cargando recomendacion...</p>
+        <div class="recomendacion-label" data-i18n="field.thisWeek">This week</div>
+        <p class="recomendacion-texto" id="recomendacion-texto" data-i18n="field.loadingRec">Loading recommendation...</p>
     </div>
 
     <!-- =========================================================
@@ -215,17 +215,17 @@
         <!-- Agronomo header with download button -->
         <div class="campo-header">
             <div>
-                <h2 class="dash-title" id="campo-title">Detalle de Campo</h2>
+                <h2 class="dash-title" id="campo-title" data-i18n="field.fieldDetail">Field Detail</h2>
                 <p class="dash-subtitle" id="campo-subtitle"></p>
             </div>
-            <button class="campo-download-btn" id="btn-download-report" onclick="downloadReport()">Descargar Reporte</button>
+            <button class="campo-download-btn" id="btn-download-report" onclick="downloadReport()" data-i18n="field.downloadReport">Download Report</button>
         </div>
 
         <!-- Stats strip (NDVI / health score / etc.) -->
         <div class="stats-strip" id="campo-stats">
             <div class="stat-card">
                 <div class="stat-value" id="campo-health">--</div>
-                <div class="stat-label">Salud</div>
+                <div class="stat-label" data-i18n="field.health">Health</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="campo-ndvi">--</div>
@@ -233,80 +233,80 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="campo-hectares">--</div>
-                <div class="stat-label">Hectareas</div>
+                <div class="stat-label" data-i18n="form.hectares">Hectares</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="campo-crop">--</div>
-                <div class="stat-label">Cultivo</div>
+                <div class="stat-label" data-i18n="field.crop">Crop</div>
             </div>
         </div>
 
         <!-- Cerebro Intelligence Summary -->
         <div class="campo-section" id="section-cerebro">
-            <div class="campo-section-title">Resumen Cerebro</div>
+            <div class="campo-section-title" data-i18n="field.cerebroSummary">Cerebro Summary</div>
             <div id="cerebro-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando inteligencia...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingIntelligence">Loading intelligence...</div>
             </div>
         </div>
 
         <!-- Field Boundary Map -->
         <div class="campo-section" id="section-map">
-            <div class="campo-section-title">Mapa del Campo</div>
+            <div class="campo-section-title" data-i18n="field.fieldMap">Field Map</div>
             <div id="field-map" class="field-map"></div>
-            <div id="map-placeholder" class="campo-placeholder" style="display:none">Sin coordenadas de limite disponibles</div>
+            <div id="map-placeholder" class="campo-placeholder" style="display:none" data-i18n="field.noBoundaryCoords">No boundary coordinates available</div>
         </div>
 
         <!-- Anomaly Detection -->
         <div class="campo-section" id="section-anomalies">
-            <div class="campo-section-title">Anomalias Detectadas</div>
+            <div class="campo-section-title" data-i18n="field.anomaliesDetected">Anomalies Detected</div>
             <div id="anomalies-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin anomalias detectadas</div>
+                <div class="campo-placeholder" data-i18n="field.noAnomalies">No anomalies detected</div>
             </div>
         </div>
 
         <!-- Sensor Fusion Quality -->
         <div class="campo-section" id="section-fusion">
-            <div class="campo-section-title">Validacion Multi-Sensor</div>
+            <div class="campo-section-title" data-i18n="field.multiSensorValidation">Multi-Sensor Validation</div>
             <div id="fusion-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de fusion disponibles</div>
+                <div class="campo-placeholder" data-i18n="field.noFusionData">No fusion data available</div>
             </div>
         </div>
 
         <!-- Regional Context -->
         <div class="campo-section" id="section-regional">
-            <div class="campo-section-title">Contexto Regional</div>
+            <div class="campo-section-title" data-i18n="field.regionalContext">Regional Context</div>
             <div id="regional-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando contexto regional...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingRegional">Loading regional context...</div>
             </div>
         </div>
 
         <!-- Seasonal Risk Alerts -->
         <div class="campo-section" id="section-seasonal-alerts">
-            <div class="campo-section-title">Alertas Estacionales</div>
+            <div class="campo-section-title" data-i18n="field.seasonalAlerts">Seasonal Alerts</div>
             <div id="seasonal-alerts-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin alertas estacionales</div>
+                <div class="campo-placeholder" data-i18n="field.noSeasonalAlerts">No seasonal alerts</div>
             </div>
         </div>
 
         <!-- Action Timeline -->
         <div class="campo-section" id="section-timeline">
-            <div class="campo-section-title">Acciones de la Semana</div>
+            <div class="campo-section-title" data-i18n="field.weekActions">This Week's Actions</div>
             <div id="timeline-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando acciones...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingActions">Loading actions...</div>
             </div>
         </div>
 
         <!-- Data Completeness -->
         <div class="campo-section" id="section-completeness">
-            <div class="campo-section-title">Completitud de Datos</div>
+            <div class="campo-section-title" data-i18n="field.dataCompleteness">Data Completeness</div>
             <div id="completeness-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando completitud...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingCompleteness">Loading completeness...</div>
             </div>
         </div>
 
         <!-- Health history chart -->
         <div class="campo-section" id="section-health">
-            <div class="campo-section-title">Historial de Salud</div>
+            <div class="campo-section-title" data-i18n="field.healthHistory">Health History</div>
             <div class="campo-chart-container">
                 <canvas id="health-chart"></canvas>
             </div>
@@ -314,36 +314,36 @@
 
         <!-- Regenerative Score -->
         <div class="campo-section" id="section-regenerative">
-            <div class="campo-section-title">Puntuacion Regenerativa</div>
+            <div class="campo-section-title" data-i18n="field.regenerativeScore">Regenerative Score</div>
             <div id="regenerative-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando puntuacion regenerativa...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingRegen">Loading regenerative score...</div>
             </div>
         </div>
 
         <!-- Soil Carbon -->
         <div class="campo-section" id="section-carbon">
-            <div class="campo-section-title">Carbono del Suelo</div>
+            <div class="campo-section-title" data-i18n="field.soilCarbon">Soil Carbon</div>
             <div id="carbon-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando datos de carbono...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingCarbon">Loading carbon data...</div>
             </div>
         </div>
 
         <!-- Seasonal Comparison -->
         <div class="campo-section" id="section-seasonal">
             <div class="campo-section-title" style="display:flex;align-items:center;justify-content:space-between;">
-                <span>Comparacion Estacional</span>
+                <span data-i18n="field.seasonalComparison">Seasonal Comparison</span>
                 <select id="seasonal-year-select" class="campo-select" style="display:none;"></select>
             </div>
             <div id="seasonal-content" class="campo-section-body">
-                <div class="campo-placeholder">Cargando comparacion estacional...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingSeasonal">Loading seasonal comparison...</div>
             </div>
         </div>
 
         <!-- Seasonal Performance Chart -->
         <div class="campo-section" id="section-seasonal-perf">
-            <div class="campo-section-title">Rendimiento Estacional</div>
+            <div class="campo-section-title" data-i18n="field.seasonalPerformance">Seasonal Performance</div>
             <div id="seasonal-perf-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de rendimiento estacional</div>
+                <div class="campo-placeholder" data-i18n="field.noSeasonalPerf">No seasonal performance data</div>
             </div>
             <div class="campo-chart-container">
                 <canvas id="seasonal-perf-chart"></canvas>
@@ -352,36 +352,36 @@
 
         <!-- Mission Plan -->
         <div class="campo-section" id="section-mission">
-            <div class="campo-section-title">Plan de Vuelo</div>
+            <div class="campo-section-title" data-i18n="field.flightPlan">Flight Plan</div>
             <div id="mission-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin plan de mision disponible</div>
+                <div class="campo-placeholder" data-i18n="field.noMissionPlan">No mission plan available</div>
             </div>
         </div>
 
         <!-- Flight Log History -->
         <div class="campo-section" id="section-flights">
-            <div class="campo-section-title">Historial de Vuelos</div>
+            <div class="campo-section-title" data-i18n="field.flightHistory">Flight History</div>
             <div id="flights-stats" class="campo-section-body">
-                <div class="campo-placeholder">Cargando estadisticas de vuelo...</div>
+                <div class="campo-placeholder" data-i18n="field.loadingFlightStats">Loading flight statistics...</div>
             </div>
             <div id="flights-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin vuelos registrados</div>
+                <div class="campo-placeholder" data-i18n="field.noFlights">No flights logged</div>
             </div>
         </div>
 
         <!-- Growth Stage -->
         <div class="campo-section" id="section-growth">
-            <div class="campo-section-title">Etapa de Crecimiento</div>
+            <div class="campo-section-title" data-i18n="field.growthStage">Growth Stage</div>
             <div id="growth-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de fenologia</div>
+                <div class="campo-placeholder" data-i18n="field.noPhenology">No phenology data</div>
             </div>
         </div>
 
         <!-- Weather Forecast -->
         <div class="campo-section" id="section-weather">
-            <div class="campo-section-title">Pronostico del Clima</div>
+            <div class="campo-section-title" data-i18n="field.weatherForecast">Weather Forecast</div>
             <div id="weather-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin datos de clima</div>
+                <div class="campo-placeholder" data-i18n="field.noWeather">No weather data</div>
             </div>
         </div>
 
@@ -389,44 +389,44 @@
         <div class="campo-grid">
             <!-- NDVI -->
             <div class="campo-section" id="section-ndvi">
-                <div class="campo-section-title">Indice de Vegetacion — NDVI</div>
-                <div class="campo-section-subtitle">Tendencia NDVI</div>
+                <div class="campo-section-title" data-i18n="field.vegetationIndex">Vegetation Index — NDVI</div>
+                <div class="campo-section-subtitle" data-i18n="field.ndviTrend">NDVI Trend</div>
                 <div class="campo-chart-container">
                     <canvas id="ndvi-chart"></canvas>
                 </div>
                 <div id="ndvi-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin datos de vegetacion</div>
+                    <div class="campo-placeholder" data-i18n="field.noVegetationData">No vegetation data</div>
                 </div>
             </div>
 
             <!-- Thermal -->
             <div class="campo-section" id="section-thermal">
-                <div class="campo-section-title">Estres Termico</div>
+                <div class="campo-section-title" data-i18n="field.thermalStress">Thermal Stress</div>
                 <div id="thermal-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin datos termicos</div>
+                    <div class="campo-placeholder" data-i18n="field.noThermalData">No thermal data</div>
                 </div>
             </div>
 
             <!-- Suelo -->
             <div class="campo-section" id="section-soil">
-                <div class="campo-section-title">Analisis de Suelo</div>
+                <div class="campo-section-title" data-i18n="field.soilAnalysis">Soil Analysis</div>
                 <div id="soil-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin analisis de suelo</div>
+                    <div class="campo-placeholder" data-i18n="field.noSoilAnalysis">No soil analysis</div>
                 </div>
             </div>
 
             <!-- Soil History Timeline -->
             <div class="campo-section" id="section-soil-history">
-                <div class="campo-section-title">Historial de Suelo</div>
+                <div class="campo-section-title" data-i18n="field.soilHistory">Soil History</div>
                 <div id="soil-history-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin historial de suelo</div>
+                    <div class="campo-placeholder" data-i18n="field.noSoilHistory">No soil history</div>
                 </div>
             </div>
 
             <!-- Soil Data Entry Form -->
             <div class="campo-section" id="section-soil-entry">
                 <div class="campo-section-title" style="cursor:pointer" onclick="document.getElementById('soil-entry-form').style.display = document.getElementById('soil-entry-form').style.display === 'none' ? 'grid' : 'none'">
-                    Registrar Analisis de Suelo <span class="soil-timeline-expand">&#9660;</span>
+                    <span data-i18n="field.recordSoilAnalysis">Record Soil Analysis</span> <span class="soil-timeline-expand">&#9660;</span>
                 </div>
                 <form id="soil-entry-form" class="soil-entry-form" style="display:none">
                     <div class="soil-form-field">
@@ -434,55 +434,55 @@
                         <input type="number" id="soil-ph" name="ph" step="0.1" min="0" max="14" placeholder="6.5">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-organic-matter">Materia Organica (%)</label>
+                        <label for="soil-organic-matter" data-i18n="field.organicMatterPct">Organic Matter (%)</label>
                         <input type="number" id="soil-organic-matter" name="organic_matter_pct" step="0.1" min="0" max="100" placeholder="3.0">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-nitrogen">Nitrogeno (ppm)</label>
+                        <label for="soil-nitrogen" data-i18n="field.nitrogenPpm">Nitrogen (ppm)</label>
                         <input type="number" id="soil-nitrogen" name="nitrogen_ppm" step="0.1" min="0" placeholder="30">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-phosphorus">Fosforo (ppm)</label>
+                        <label for="soil-phosphorus" data-i18n="field.phosphorusPpm">Phosphorus (ppm)</label>
                         <input type="number" id="soil-phosphorus" name="phosphorus_ppm" step="0.1" min="0" placeholder="20">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-potassium">Potasio (ppm)</label>
+                        <label for="soil-potassium" data-i18n="field.potassiumPpm">Potassium (ppm)</label>
                         <input type="number" id="soil-potassium" name="potassium_ppm" step="0.1" min="0" placeholder="150">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-texture">Textura</label>
+                        <label for="soil-texture" data-i18n="field.texture">Texture</label>
                         <select id="soil-texture" name="texture">
-                            <option value="">-- Seleccionar --</option>
-                            <option value="arenoso">Arenoso</option>
-                            <option value="franco-arenoso">Franco-Arenoso</option>
-                            <option value="franco">Franco</option>
-                            <option value="franco-arcilloso">Franco-Arcilloso</option>
-                            <option value="arcilloso">Arcilloso</option>
-                            <option value="limoso">Limoso</option>
+                            <option value="" data-i18n="field.selectOption">-- Select --</option>
+                            <option value="arenoso" data-i18n="field.textureSandy">Sandy</option>
+                            <option value="franco-arenoso" data-i18n="field.textureSandyLoam">Sandy Loam</option>
+                            <option value="franco" data-i18n="field.textureLoam">Loam</option>
+                            <option value="franco-arcilloso" data-i18n="field.textureClayLoam">Clay Loam</option>
+                            <option value="arcilloso" data-i18n="field.textureClay">Clay</option>
+                            <option value="limoso" data-i18n="field.textureSilty">Silty</option>
                         </select>
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-moisture">Humedad (%)</label>
+                        <label for="soil-moisture" data-i18n="field.moisturePct">Moisture (%)</label>
                         <input type="number" id="soil-moisture" name="moisture_pct" step="0.1" min="0" max="100" placeholder="25">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-ec">Conductividad Electrica (dS/m)</label>
+                        <label for="soil-ec" data-i18n="field.electricalConductivity">Electrical Conductivity (dS/m)</label>
                         <input type="number" id="soil-ec" name="electrical_conductivity" step="0.01" min="0" placeholder="1.2">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-depth">Profundidad (cm)</label>
+                        <label for="soil-depth" data-i18n="field.depthCm">Depth (cm)</label>
                         <input type="number" id="soil-depth" name="depth_cm" step="1" min="0" placeholder="30">
                     </div>
                     <div class="soil-form-field">
-                        <label for="soil-sampled-at">Fecha de Muestreo</label>
+                        <label for="soil-sampled-at" data-i18n="field.sampleDate">Sample Date</label>
                         <input type="datetime-local" id="soil-sampled-at" name="sampled_at" required>
                     </div>
                     <div class="soil-form-field" style="grid-column: 1 / -1">
-                        <label for="soil-notes">Notas</label>
-                        <textarea id="soil-notes" name="notes" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                        <label for="soil-notes" data-i18n="field.notes">Notes</label>
+                        <textarea id="soil-notes" name="notes" rows="2" placeholder="Additional observations..." data-i18n-placeholder="field.additionalObservations"></textarea>
                     </div>
                     <div class="soil-form-actions" style="grid-column: 1 / -1">
-                        <button type="submit" id="soil-submit-btn" class="soil-submit-btn">Guardar Analisis</button>
+                        <button type="submit" id="soil-submit-btn" class="soil-submit-btn" data-i18n="field.saveAnalysis">Save Analysis</button>
                         <span id="soil-form-msg" class="soil-form-msg"></span>
                     </div>
                 </form>
@@ -490,114 +490,114 @@
 
             <!-- Disease risk -->
             <div class="campo-section" id="section-disease">
-                <div class="campo-section-title">Riesgo de Enfermedades</div>
+                <div class="campo-section-title" data-i18n="field.diseaseRisk">Disease Risk</div>
                 <div id="disease-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin evaluacion de riesgo</div>
+                    <div class="campo-placeholder" data-i18n="field.noRiskAssessment">No risk assessment</div>
                 </div>
             </div>
 
             <!-- Riego -->
             <div class="campo-section" id="section-irrigation">
-                <div class="campo-section-title">Plan de Riego</div>
+                <div class="campo-section-title" data-i18n="field.irrigationPlan">Irrigation Plan</div>
                 <div id="irrigation-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin plan de riego</div>
+                    <div class="campo-placeholder" data-i18n="field.noIrrigationPlan">No irrigation plan</div>
                 </div>
             </div>
 
             <!-- Treatment Timing -->
             <div class="campo-section" id="section-treatment-timing">
-                <div class="campo-section-title">Momento Optimo de Aplicacion</div>
+                <div class="campo-section-title" data-i18n="field.optimalTiming">Optimal Application Timing</div>
                 <div id="treatment-timing-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin datos de tratamiento o clima</div>
+                    <div class="campo-placeholder" data-i18n="field.noTreatmentOrWeather">No treatment or weather data</div>
                 </div>
             </div>
 
             <!-- Yield -->
             <div class="campo-section" id="section-yield">
-                <div class="campo-section-title">Prediccion de Rendimiento</div>
+                <div class="campo-section-title" data-i18n="field.yieldPrediction">Yield Prediction</div>
                 <div id="yield-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin prediccion</div>
+                    <div class="campo-placeholder" data-i18n="field.noPrediction">No prediction</div>
                 </div>
             </div>
 
             <!-- Intervention Scores -->
             <div class="campo-section" id="section-interventions">
-                <div class="campo-section-title">Intervenciones Prioritarias</div>
+                <div class="campo-section-title" data-i18n="field.priorityInterventions">Priority Interventions</div>
                 <div id="interventions-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin intervenciones</div>
+                    <div class="campo-placeholder" data-i18n="field.noInterventions">No interventions</div>
                 </div>
             </div>
 
             <!-- Treatments -->
             <div class="campo-section" id="section-treatments">
-                <div class="campo-section-title">Tratamientos Recomendados</div>
+                <div class="campo-section-title" data-i18n="field.recommendedTreatments">Recommended Treatments</div>
                 <div id="treatments-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin tratamientos</div>
+                    <div class="campo-placeholder" data-i18n="field.noTreatments">No treatments</div>
                 </div>
             </div>
 
             <!-- Treatment Effectiveness -->
             <div class="campo-section" id="section-treatment-effectiveness">
-                <div class="campo-section-title">Efectividad de Tratamientos</div>
+                <div class="campo-section-title" data-i18n="field.treatmentEffectiveness">Treatment Effectiveness</div>
                 <div id="treatment-effectiveness-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin datos de efectividad</div>
+                    <div class="campo-placeholder" data-i18n="field.noEffectivenessData">No effectiveness data</div>
                 </div>
             </div>
 
             <!-- Rotation -->
             <div class="campo-section" id="section-rotation">
-                <div class="campo-section-title">Plan de Rotacion</div>
+                <div class="campo-section-title" data-i18n="field.rotationPlan">Rotation Plan</div>
                 <div id="rotation-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin plan de rotacion</div>
+                    <div class="campo-placeholder" data-i18n="field.noRotationPlan">No rotation plan</div>
                 </div>
             </div>
 
             <!-- Microbiome -->
             <div class="campo-section" id="section-microbiome">
-                <div class="campo-section-title">Salud del Microbioma</div>
+                <div class="campo-section-title" data-i18n="field.microbiomeHealth">Microbiome Health</div>
                 <div id="microbiome-content" class="campo-section-body">
-                    <div class="campo-placeholder">Sin datos de microbioma</div>
+                    <div class="campo-placeholder" data-i18n="field.noMicrobiomeData">No microbiome data</div>
                 </div>
             </div>
         </div>
 
         <!-- Treatment History Timeline -->
         <div class="campo-section" id="section-treatment-history">
-            <div class="campo-section-title">Historial de Tratamientos</div>
+            <div class="campo-section-title" data-i18n="field.treatmentHistory">Treatment History</div>
             <div id="treatment-history-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin historial de tratamientos</div>
+                <div class="campo-placeholder" data-i18n="field.noTreatmentHistory">No treatment history</div>
             </div>
         </div>
 
         <!-- Farmer Feedback -->
         <div class="campo-section" id="section-feedback">
-            <div class="campo-section-title">Retroalimentacion</div>
+            <div class="campo-section-title" data-i18n="field.feedback">Feedback</div>
             <form id="feedback-form" class="feedback-form" onsubmit="submitFeedback(event)">
                 <div class="feedback-form-row">
-                    <label class="feedback-label">Tratamiento
+                    <label class="feedback-label"><span data-i18n="field.treatment">Treatment</span>
                         <select id="feedback-treatment" class="feedback-input" required>
-                            <option value="">Seleccionar...</option>
+                            <option value="" data-i18n="field.selectEllipsis">Select...</option>
                         </select>
                     </label>
-                    <label class="feedback-label">Calificacion (1-5)
+                    <label class="feedback-label"><span data-i18n="field.rating">Rating (1-5)</span>
                         <input type="number" id="feedback-rating" class="feedback-input" min="1" max="5" required>
                     </label>
                     <label class="feedback-label feedback-check">
-                        <input type="checkbox" id="feedback-worked"> Funciono
+                        <input type="checkbox" id="feedback-worked"> <span data-i18n="field.worked">Worked</span>
                     </label>
                 </div>
                 <div class="feedback-form-row">
-                    <label class="feedback-label feedback-wide">Notas
-                        <input type="text" id="feedback-notes" class="feedback-input" placeholder="Observaciones del agricultor...">
+                    <label class="feedback-label feedback-wide"><span data-i18n="field.notes">Notes</span>
+                        <input type="text" id="feedback-notes" class="feedback-input" placeholder="Farmer observations..." data-i18n-placeholder="field.farmerObservations">
                     </label>
-                    <label class="feedback-label">Metodo alternativo
-                        <input type="text" id="feedback-alt" class="feedback-input" placeholder="Metodo tradicional...">
+                    <label class="feedback-label"><span data-i18n="field.alternativeMethod">Alternative method</span>
+                        <input type="text" id="feedback-alt" class="feedback-input" placeholder="Traditional method..." data-i18n-placeholder="field.traditionalMethod">
                     </label>
                 </div>
-                <button type="submit" class="feedback-submit">Enviar Retroalimentacion</button>
+                <button type="submit" class="feedback-submit" data-i18n="field.submitFeedback">Submit Feedback</button>
             </form>
             <div id="feedback-content" class="campo-section-body">
-                <div class="campo-placeholder">Sin retroalimentacion</div>
+                <div class="campo-placeholder" data-i18n="field.noFeedback">No feedback</div>
             </div>
         </div>
 
@@ -613,10 +613,10 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    <span data-i18n="field.footerTagline">Precision agriculture for Jalisco</span>
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido" data-i18n="field.tour">Tour</a>
+    <br><span data-i18n="field.footerSub">Transforming agriculture with artificial intelligence and drone data</span>
 </footer>
 
 <!-- WhatsApp FAB — F5 -->

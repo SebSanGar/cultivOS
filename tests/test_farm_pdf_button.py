@@ -5,12 +5,12 @@ class TestFarmPdfDownloadButton:
     """PDF download button appears on farm dashboard when a farm is selected."""
 
     def test_download_button_exists_in_dashboard_html(self, client):
-        """Farm dashboard contains a 'Descargar Reporte PDF' button."""
+        """Farm dashboard contains a 'Download PDF Report' button."""
         resp = client.get("/")
         assert resp.status_code == 200
         html = resp.text
         assert 'id="btn-farm-pdf"' in html
-        assert "Descargar Reporte PDF" in html
+        assert "Download PDF Report" in html
 
     def test_download_button_in_field_panel(self, client):
         """PDF button is inside the field-panel-actions area (next to CSV export)."""

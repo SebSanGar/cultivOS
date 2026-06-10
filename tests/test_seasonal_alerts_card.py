@@ -27,7 +27,7 @@ def test_seasonal_alerts_section_in_html(client):
     assert resp.status_code == 200
     text = resp.text
     assert 'id="section-seasonal-alerts"' in text
-    assert 'Alertas Estacionales' in text
+    assert 'Seasonal Alerts' in text
 
 
 def test_seasonal_alerts_placeholder(client):
@@ -35,7 +35,7 @@ def test_seasonal_alerts_placeholder(client):
     resp = client.get("/campo")
     text = resp.text
     assert 'id="seasonal-alerts-content"' in text
-    assert 'Sin alertas estacionales' in text
+    assert 'No seasonal alerts' in text
 
 
 # ── API response tests ──

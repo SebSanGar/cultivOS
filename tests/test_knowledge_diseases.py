@@ -21,10 +21,10 @@ class TestKnowledgeDiseaseHTML:
         assert 'id="disease-cards"' in html
 
     def test_disease_section_spanish_title(self, client):
-        """Disease section has Spanish title."""
+        """Disease section has English title."""
         resp = client.get("/conocimiento")
         html = resp.text
-        assert "Enfermedades" in html
+        assert "Diseases" in html
 
     def test_identify_form_exists(self, client):
         """Knowledge page has a symptom identification form."""

@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_treatment_history_section_in_html(client):
-    """Field detail HTML has the Historial de Tratamientos section."""
+    """Field detail HTML has the Treatment History section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-treatment-history"' in html
-    assert "Historial de Tratamientos" in html
+    assert "Treatment History" in html
 
 
 def test_treatment_history_content_container(client):
@@ -25,7 +25,7 @@ def test_treatment_history_placeholder(client):
     """Field detail HTML shows placeholder when no treatment history."""
     resp = client.get("/campo")
     assert resp.status_code == 200
-    assert "Sin historial de tratamientos" in resp.text
+    assert "No treatment history" in resp.text
 
 
 # ── JS logic ──
@@ -84,7 +84,7 @@ def test_field_js_handles_empty_treatment_history(client):
     assert resp.status_code == 200
     js = resp.text
     # Should check for empty/null and show placeholder
-    assert "Sin historial" in js or "sin historial" in js
+    assert "field.noAppliedTreatmentHistory" in js or "field.noTreatmentHistory" in js
 
 
 # ── API ──

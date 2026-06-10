@@ -59,8 +59,8 @@ def test_field_detail_page_loads(client):
     assert resp.status_code == 200
     html = resp.text
     assert "cultivOS" in html
-    # F2: farmer-first rewrite — page title changed, detail label in agronomo section
-    assert "Mi Parcela" in html or "Detalle de Campo" in html
+    # F2: farmer-first rewrite + English-first migration — page title / agronomo detail label
+    assert "My Plot" in html or "Field Detail" in html
 
 
 def test_field_sections_present(client):
@@ -122,10 +122,10 @@ def test_field_detail_apis_respond(client, farm_with_full_data):
     assert resp.status_code == 200
 
 
-def test_field_detail_spanish_labels(client):
-    """Field detail HTML uses Spanish labels."""
+def test_field_detail_labels(client):
+    """Field detail HTML uses English labels (English-first migration)."""
     resp = client.get("/campo")
     html = resp.text
-    assert "Salud" in html
-    assert "Suelo" in html
-    assert "Riego" in html
+    assert "Health" in html
+    assert "Soil" in html
+    assert "Irrigation" in html

@@ -71,7 +71,7 @@ def test_seasonal_performance_section_in_html(client):
     assert resp.status_code == 200
     text = resp.text
     assert 'id="section-seasonal-perf"' in text
-    assert 'Rendimiento Estacional' in text
+    assert 'Seasonal Performance' in text
 
 
 def test_seasonal_performance_has_canvas(client):

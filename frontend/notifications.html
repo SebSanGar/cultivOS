@@ -15,30 +15,30 @@
 <nav class="intel-nav">
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
-        <button id="nav-hamburger" class="nav-hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <button id="nav-hamburger" class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
         <!-- NAV: farmer 4-item nav — F6 -->
         <ul class="nav-farmer-tabs">
-            <li><a href="/" data-i18n="nav.farms">Mis Parcelas</a></li>
-            <li><a href="/notificaciones" class="active" data-i18n="nav.alerts">Alertas</a></li>
-            <li><a href="/conocimiento" data-i18n="nav.knowledge">Conocimiento</a></li>
+            <li><a href="/" data-i18n="nav.farms">My Plots</a></li>
+            <li><a href="/notificaciones" class="active" data-i18n="nav.alerts">Alerts</a></li>
+            <li><a href="/conocimiento" data-i18n="nav.knowledge">Knowledge</a></li>
             <li><a href="/whatsapp-demo" data-i18n="nav.whatsapp">WhatsApp</a></li>
         </ul>
         <!-- NAV: agronomist extras — hidden by default, revealed by F8 toggle -->
         <ul class="nav-agronomo-extras" hidden>
-            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intel">Inteligencia</a></li>
-            <li><a href="/vuelos" class="nav-tab intel-tab" data-i18n="nav.flights">Vuelos</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Estado</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intel">Intelligence</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab" data-i18n="nav.flights">Flights</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Status</a></li>
         </ul>
-        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Vista agronomo</button>
+        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Agronomist view</button>
         <div class="nav-lang-toggle" role="group" aria-label="Language">
             <span data-lang="es" class="active">ES</span>
             <span data-lang="en">EN</span>
         </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -48,11 +48,11 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title" data-i18n="notif.historyTitle">Historial de Notificaciones</h1>
-            <p class="intel-subtitle" data-i18n="notif.historySubtitle">Alertas y recomendaciones de todas las granjas</p>
+            <h1 class="intel-title" data-i18n="notif.historyTitle">Notification History</h1>
+            <p class="intel-subtitle" data-i18n="notif.historySubtitle">Alerts and recommendations from all farms</p>
         </div>
         <div class="intel-header-actions">
-            <button class="intel-btn" onclick="loadNotifications()">Actualizar</button>
+            <button class="intel-btn" onclick="loadNotifications()" data-i18n="notif.refresh">Refresh</button>
         </div>
     </div>
 
@@ -60,49 +60,49 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="notif-total">--</div>
-            <div class="intel-stat-label">Total</div>
+            <div class="intel-stat-label" data-i18n="notif.statTotal">Total</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="notif-pending">--</div>
-            <div class="intel-stat-label">Pendientes</div>
+            <div class="intel-stat-label" data-i18n="notif.statPending">Pending</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="notif-critical">--</div>
-            <div class="intel-stat-label">Criticas</div>
+            <div class="intel-stat-label" data-i18n="notif.statCritical">Critical</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="notif-acknowledged">--</div>
-            <div class="intel-stat-label">Reconocidas</div>
+            <div class="intel-stat-label" data-i18n="notif.statAcknowledged">Acknowledged</div>
         </div>
     </div>
 
     <!-- Filters -->
     <div class="notif-filters">
         <select id="notif-filter-severity" class="notif-filter-select" onchange="applyFilters()">
-            <option value="">Todas las severidades</option>
-            <option value="critical">Critica</option>
-            <option value="warning">Advertencia</option>
-            <option value="info">Informativa</option>
+            <option value="" data-i18n="notif.filterAllSeverities">All severities</option>
+            <option value="critical" data-i18n="notif.severityCritical">Critical</option>
+            <option value="warning" data-i18n="notif.severityWarning">Warning</option>
+            <option value="info" data-i18n="notif.severityInfo">Informational</option>
         </select>
         <select id="notif-filter-type" class="notif-filter-select" onchange="applyFilters()">
-            <option value="">Todos los tipos</option>
-            <option value="health">Salud</option>
-            <option value="irrigation">Riego</option>
-            <option value="pest">Plagas</option>
-            <option value="recommendation">Recomendacion</option>
-            <option value="anomaly_health_drop">Anomalia Salud</option>
-            <option value="anomaly_ndvi_drop">Anomalia NDVI</option>
+            <option value="" data-i18n="notif.filterAllTypes">All types</option>
+            <option value="health" data-i18n="notif.typeHealth">Health</option>
+            <option value="irrigation" data-i18n="notif.typeIrrigation">Irrigation</option>
+            <option value="pest" data-i18n="notif.typePest">Pests</option>
+            <option value="recommendation" data-i18n="notif.typeRecommendation">Recommendation</option>
+            <option value="anomaly_health_drop" data-i18n="notif.typeAnomalyHealth">Health Anomaly</option>
+            <option value="anomaly_ndvi_drop" data-i18n="notif.typeAnomalyNdvi">NDVI Anomaly</option>
         </select>
         <select id="notif-filter-status" class="notif-filter-select" onchange="applyFilters()">
-            <option value="">Todas</option>
-            <option value="pending">Pendientes</option>
-            <option value="acknowledged">Reconocidas</option>
+            <option value="" data-i18n="notif.filterAllStatus">All</option>
+            <option value="pending" data-i18n="notif.statPending">Pending</option>
+            <option value="acknowledged" data-i18n="notif.statAcknowledged">Acknowledged</option>
         </select>
     </div>
 
     <!-- Notification list -->
     <div id="notif-list" class="notif-list">
-        <div class="loading"><div class="loading-spinner"></div>Cargando notificaciones...</div>
+        <div class="loading"><div class="loading-spinner"></div><span data-i18n="notif.loading">Loading notifications...</span></div>
     </div>
 </main>
 
@@ -113,10 +113,10 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    <span data-i18n="notif.footerTagline">Precision agriculture for Jalisco</span>
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido" data-i18n="notif.footerTour">Tour</a>
+    <br><span data-i18n="notif.footerMission">Transforming agriculture with artificial intelligence and drone data</span>
 </footer>
 
 <!-- WhatsApp FAB — F5 -->

@@ -60,7 +60,7 @@ def test_cerebro_section_present_in_html(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-cerebro"' in html
-    assert "Resumen Cerebro" in html
+    assert "Cerebro Summary" in html
 
 
 def test_cerebro_subsections_present(client):
@@ -196,7 +196,8 @@ def test_cerebro_renders_sensor_confidence(client):
     resp = client.get("/field.js")
     js = resp.text
     assert "fusion" in js or "confidence" in js
-    assert "Confianza" in js
+    # Confidence label is now rendered via the i18n key (English-first migration).
+    assert "field.confidence" in js
 
 
 def test_cerebro_renders_top_risk(client):

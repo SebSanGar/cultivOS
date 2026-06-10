@@ -29,7 +29,7 @@ class TestLoginHtmlRoleOptions:
 
     def test_exactly_two_role_options(self):
         html = (FRONTEND / "login.html").read_text()
-        options = re.findall(r'<option\s+value="(\w+)">', html)
+        options = re.findall(r'<option\s+value="(\w+)"[^>]*>', html)
         role_values = [v for v in options if v in ("farmer", "researcher", "admin")]
         assert sorted(role_values) == ["farmer", "researcher"], (
             f"Expected exactly farmer + researcher, got {role_values}"

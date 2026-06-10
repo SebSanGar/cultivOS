@@ -85,7 +85,7 @@ def test_completeness_section_has_title(client):
     """Field detail HTML has the section title."""
     resp = client.get("/campo")
     html = resp.text
-    assert "Completitud de Datos" in html
+    assert "Data Completeness" in html
 
 
 # -- Frontend JS --

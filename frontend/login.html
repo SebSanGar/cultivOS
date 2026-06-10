@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Iniciar Sesion</title>
+    <title data-i18n="login.pageTitle">cultivOS — Sign In</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
@@ -12,48 +12,48 @@
     <div class="login-container">
         <div class="login-logo">
             <h1>cultiv<span>OS</span></h1>
-            <p data-i18n="login.subtitle">Inteligencia agricola de precision</p>
+            <p data-i18n="login.subtitle">Precision agricultural intelligence</p>
             <div class="nav-lang-toggle" role="group" aria-label="Language">
                 <span data-lang="es" class="active">ES</span>
                 <span data-lang="en">EN</span>
             </div>
         </div>
         <div class="login-card">
-            <h2 id="login-title" data-i18n="login.title">Iniciar Sesion</h2>
+            <h2 id="login-title" data-i18n="login.title">Sign In</h2>
             <form id="login-form" autocomplete="on">
                 <div class="login-field">
-                    <label for="login-username" data-i18n="login.username">Usuario</label>
-                    <input type="text" id="login-username" name="username" required autocomplete="username" placeholder="Tu nombre de usuario">
+                    <label for="login-username" data-i18n="login.username">Username</label>
+                    <input type="text" id="login-username" name="username" required autocomplete="username" data-i18n-placeholder="login.usernamePlaceholder" placeholder="Your username">
                 </div>
                 <div class="login-field">
-                    <label for="login-password" data-i18n="login.password">Contrasena</label>
-                    <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="Tu contrasena">
+                    <label for="login-password" data-i18n="login.password">Password</label>
+                    <input type="password" id="login-password" name="password" required autocomplete="current-password" data-i18n-placeholder="login.passwordPlaceholder" placeholder="Your password">
                 </div>
                 <div class="register-fields" id="register-fields">
                     <div class="login-field">
-                        <label for="register-confirm-password">Confirmar Contrasena</label>
-                        <input type="password" id="register-confirm-password" name="confirm_password" autocomplete="new-password" placeholder="Repite tu contrasena">
+                        <label for="register-confirm-password" data-i18n="login.confirmPassword">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" name="confirm_password" autocomplete="new-password" data-i18n-placeholder="login.confirmPasswordPlaceholder" placeholder="Repeat your password">
                     </div>
                     <div class="login-field">
-                        <label for="register-role">Rol</label>
+                        <label for="register-role" data-i18n="login.role">Role</label>
                         <select id="register-role" name="role">
-                            <option value="farmer">Agricultor</option>
-                            <option value="researcher">Investigador</option>
+                            <option value="farmer" data-i18n="role.farmer">Farmer</option>
+                            <option value="researcher" data-i18n="role.researcher">Researcher</option>
                         </select>
                     </div>
                     <div class="login-field">
-                        <label for="register-farm">Granja</label>
+                        <label for="register-farm" data-i18n="login.farm">Farm</label>
                         <select id="register-farm" name="farm_id">
-                            <option value="">Sin granja</option>
+                            <option value="" data-i18n="login.noFarm">No farm</option>
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="login-submit" id="login-submit" data-i18n="login.submit">Entrar</button>
+                <button type="submit" class="login-submit" id="login-submit" data-i18n="login.submit">Sign In</button>
                 <div class="login-error" id="login-error"></div>
             </form>
             <div class="login-toggle">
-                <span id="toggle-text">No tienes cuenta?</span>
-                <a id="toggle-register">Registrarse</a>
+                <span id="toggle-text" data-i18n="login.noAccount">Don't have an account?</span>
+                <a id="toggle-register" data-i18n="login.register">Register</a>
             </div>
         </div>
     </div>

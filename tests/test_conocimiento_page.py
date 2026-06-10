@@ -122,11 +122,11 @@ class TestConocimientoPageLoads:
         resp = client.get("/conocimiento")
         assert "intel-nav" in resp.text
 
-    def test_page_has_spanish_labels(self, client):
+    def test_page_has_english_labels(self, client):
         resp = client.get("/conocimiento")
         html = resp.text
-        assert "Buscar" in html
-        assert "categorias" in html.lower() or "categor" in html.lower()
+        assert "Search" in html
+        assert "categories" in html.lower() or "category" in html.lower()
 
     def test_page_loads_js(self, client):
         resp = client.get("/conocimiento")

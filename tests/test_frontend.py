@@ -94,14 +94,14 @@ def test_dashboard_shows_field_list(client, farm_with_data):
     assert "aguacate" in crop_types
 
 
-def test_dashboard_spanish_labels(client):
-    """Dashboard HTML contains Spanish labels."""
+def test_dashboard_english_labels(client):
+    """Dashboard HTML contains English labels (English-first farmer UI)."""
     resp = client.get("/")
     html = resp.text
-    # Check for key Spanish labels that should be in the dashboard
-    assert "Granjas" in html or "granjas" in html
-    assert "Campos" in html or "campos" in html
-    assert "Salud" in html or "salud" in html
+    # Check for key English labels that should be in the dashboard
+    assert "Farms" in html or "farms" in html
+    assert "Fields" in html or "fields" in html
+    assert "Health" in html or "health" in html
 
 
 # ── Sparkline tests ──

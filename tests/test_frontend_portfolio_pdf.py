@@ -7,7 +7,7 @@ def test_portfolio_pdf_button_present_in_dashboard(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="btn-portfolio-pdf"' in html
-    assert "Descargar Reporte de Portafolio" in html
+    assert "Download Portfolio Report" in html
 
 
 def test_portfolio_pdf_button_has_onclick(client):

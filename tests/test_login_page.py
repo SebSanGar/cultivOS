@@ -11,7 +11,7 @@ def test_login_page_renders(client):
     assert resp.status_code == 200
     html = resp.text
     assert "cultivOS" in html
-    assert "Iniciar Sesion" in html
+    assert "Sign In" in html
 
 
 def test_login_page_has_username_field(client):

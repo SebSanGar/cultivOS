@@ -151,11 +151,11 @@ class TestDiseaseFieldHTML:
         assert 'id="section-disease"' in html
         assert 'id="disease-content"' in html
 
-    def test_disease_section_spanish_title(self, client):
-        """Disease section has Spanish title."""
+    def test_disease_section_title(self, client):
+        """Disease section has the disease risk title (English-first)."""
         resp = client.get("/campo")
         html = resp.text
-        assert "Riesgo de Enfermedades" in html
+        assert "Disease Risk" in html
 
     def test_field_js_has_disease_rendering(self, client):
         """field.js includes disease rendering function."""

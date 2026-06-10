@@ -6,6 +6,12 @@
     const API = window.location.origin;
     let isRegisterMode = false;
 
+    function t(key) {
+        return (window.cultivOS_i18n && window.cultivOS_i18n.t)
+            ? window.cultivOS_i18n.t(key)
+            : key;
+    }
+
     const form = document.getElementById('login-form');
     const title = document.getElementById('login-title');
     const submitBtn = document.getElementById('login-submit');
@@ -51,8 +57,8 @@
     function setLoading(loading) {
         submitBtn.disabled = loading;
         submitBtn.textContent = loading
-            ? (isRegisterMode ? 'Registrando...' : 'Entrando...')
-            : (isRegisterMode ? 'Registrarse' : 'Entrar');
+            ? (isRegisterMode ? t('login.registering') : t('login.signingIn'))
+            : (isRegisterMode ? t('login.register') : t('login.submit'));
     }
 
     toggleLink.addEventListener('click', function (e) {
@@ -60,17 +66,20 @@
         isRegisterMode = !isRegisterMode;
         hideError();
         if (isRegisterMode) {
-            title.textContent = 'Crear Cuenta';
-            submitBtn.textContent = 'Registrarse';
-            toggleText.textContent = 'Ya tienes cuenta?';
-            toggleLink.textContent = 'Iniciar Sesion';
+            title.setAttribute('data-i18n', 'login.registerSubmit');
+            submitBtn.setAttribute('data-i18n', 'login.register');
+            toggleText.setAttribute('data-i18n', 'login.hasAccount');
+            toggleLink.setAttribute('data-i18n', 'login.signIn');
             registerFields.classList.add('visible');
         } else {
-            title.textContent = 'Iniciar Sesion';
-            submitBtn.textContent = 'Entrar';
-            toggleText.textContent = 'No tienes cuenta?';
-            toggleLink.textContent = 'Registrarse';
+            title.setAttribute('data-i18n', 'login.title');
+            submitBtn.setAttribute('data-i18n', 'login.submit');
+            toggleText.setAttribute('data-i18n', 'login.noAccount');
+            toggleLink.setAttribute('data-i18n', 'login.register');
             registerFields.classList.remove('visible');
+        }
+        if (window.cultivOS_i18n && window.cultivOS_i18n.applyAll) {
+            window.cultivOS_i18n.applyAll();
         }
     });
 
@@ -82,7 +91,7 @@
         var password = passwordInput.value.trim();
 
         if (!username || !password) {
-            showError('Por favor, completa todos los campos.');
+            showError(t('login.errAllFields'));
             return;
         }
 
@@ -92,12 +101,12 @@
             if (isRegisterMode) {
                 var confirmPassword = confirmPasswordInput.value.trim();
                 if (password !== confirmPassword) {
-                    showError('Las contrasenas no coinciden.');
+                    showError(t('login.errPasswordMismatch'));
                     setLoading(false);
                     return;
                 }
                 if (password.length < 6) {
-                    showError('La contrasena debe tener al menos 6 caracteres.');
+                    showError(t('login.errPasswordShort'));
                     setLoading(false);
                     return;
                 }
@@ -113,7 +122,7 @@
 
                 if (!regResp.ok) {
                     var regData = await regResp.json();
-                    showError((regData.error && regData.error.message) || regData.detail || 'Error al registrarse. Intenta de nuevo.');
+                    showError((regData.error && regData.error.message) || regData.detail || t('login.errRegister'));
                     setLoading(false);
                     return;
                 }
@@ -129,7 +138,7 @@
 
             if (!loginResp.ok) {
                 var loginData = await loginResp.json();
-                showError((loginData.error && loginData.error.message) || loginData.detail || 'Credenciales incorrectas. Intenta de nuevo.');
+                showError((loginData.error && loginData.error.message) || loginData.detail || t('login.errBadCredentials'));
                 setLoading(false);
                 return;
             }
@@ -140,7 +149,7 @@
 
             window.location.href = '/';
         } catch (err) {
-            showError('No se pudo conectar al servidor. Intenta de nuevo.');
+            showError(t('login.errConnection'));
             setLoading(false);
         }
     });

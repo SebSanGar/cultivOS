@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Panel de Granjas</title>
-    <meta name="description" content="Panel de agricultura de precision — salud de cultivos, NDVI, suelo y recomendaciones para granjas de Jalisco.">
+    <title data-i18n="page.title">cultivOS — Farm Dashboard</title>
+    <meta name="description" content="Precision agriculture dashboard — crop health, NDVI, soil and recommendations for Jalisco farms.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -16,32 +16,32 @@
 <nav>
     <div class="nav-inner">
         <a href="/" class="nav-logo">cultiv<span>OS</span></a>
-        <button id="nav-hamburger" class="nav-hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <button id="nav-hamburger" class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
         <!-- NAV: farmer 4-item nav — F6 -->
         <ul class="nav-farmer-tabs">
-            <li><a href="/" class="active" data-i18n="nav.farms">Mis Parcelas</a></li>
-            <li><a href="/notificaciones" data-i18n="nav.alerts">Alertas</a></li>
-            <li><a href="/conocimiento" data-i18n="nav.knowledge">Conocimiento</a></li>
+            <li><a href="/" class="active" data-i18n="nav.farms">My Plots</a></li>
+            <li><a href="/notificaciones" data-i18n="nav.alerts">Alerts</a></li>
+            <li><a href="/conocimiento" data-i18n="nav.knowledge">Knowledge</a></li>
             <li><a href="/whatsapp-demo" data-i18n="nav.whatsapp">WhatsApp</a></li>
         </ul>
         <!-- NAV: agronomist extras — hidden by default, revealed by F8 toggle -->
         <ul class="nav-agronomo-extras" hidden>
-            <li><a href="/intel" class="nav-tab" data-i18n="nav.intel">Inteligencia</a></li>
-            <li><a href="/mapa" class="nav-tab" data-i18n="nav.map">Mapa</a></li>
-            <li><a href="/vuelos" class="nav-tab" data-i18n="nav.flights">Vuelos</a></li>
-            <li><a href="/plataforma" class="nav-tab" data-i18n="nav.platform">Plataforma</a></li>
-            <li><a href="/estado" class="nav-tab" data-i18n="nav.status">Estado</a></li>
+            <li><a href="/intel" class="nav-tab" data-i18n="nav.intel">Intelligence</a></li>
+            <li><a href="/mapa" class="nav-tab" data-i18n="nav.map">Map</a></li>
+            <li><a href="/vuelos" class="nav-tab" data-i18n="nav.flights">Flights</a></li>
+            <li><a href="/plataforma" class="nav-tab" data-i18n="nav.platform">Platform</a></li>
+            <li><a href="/estado" class="nav-tab" data-i18n="nav.status">Status</a></li>
         </ul>
-        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Vista agronomo</button>
+        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Agronomist view</button>
         <div class="nav-lang-toggle" role="group" aria-label="Language">
             <span data-lang="es" class="active">ES</span>
             <span data-lang="en">EN</span>
         </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -51,8 +51,8 @@
     <!-- Header -->
     <div class="dash-header">
         <div>
-            <h1 class="dash-title" data-i18n="dash.title">Granjas</h1>
-            <p class="dash-subtitle" data-i18n="dash.subtitle">Vista general de todas las granjas y su salud</p>
+            <h1 class="dash-title" data-i18n="dash.title">Farms</h1>
+            <p class="dash-subtitle" data-i18n="dash.subtitle">Overview of all farms and their health</p>
         </div>
     </div>
 
@@ -60,19 +60,19 @@
     <div class="stats-strip">
         <div class="stat-card">
             <div class="stat-value" id="stat-farms">--</div>
-            <div class="stat-label" data-i18n="stat.farms">Granjas</div>
+            <div class="stat-label" data-i18n="stat.farms">Farms</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-fields">--</div>
-            <div class="stat-label" data-i18n="stat.fields">Campos</div>
+            <div class="stat-label" data-i18n="stat.fields">Fields</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-avg-health">--</div>
-            <div class="stat-label" data-i18n="stat.avgHealth">Salud Promedio</div>
+            <div class="stat-label" data-i18n="stat.avgHealth">Avg Health</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-hectares">--</div>
-            <div class="stat-label" data-i18n="stat.hectares">Hectareas Total</div>
+            <div class="stat-label" data-i18n="stat.hectares">Total Hectares</div>
         </div>
     </div>
 
@@ -80,7 +80,7 @@
     <div id="weather-widget" class="weather-widget" style="display:none">
         <div class="weather-current">
             <div class="weather-header">
-                <div class="weather-title" data-i18n="weather.title">Clima</div>
+                <div class="weather-title" data-i18n="weather.title">Weather</div>
                 <div class="weather-farm-name" id="weather-farm-name"></div>
             </div>
             <div class="weather-now">
@@ -88,11 +88,11 @@
                 <div class="weather-desc" id="weather-desc">--</div>
                 <div class="weather-details">
                     <div class="weather-detail">
-                        <span class="weather-detail-label" data-i18n="weather.humidity">Humedad</span>
+                        <span class="weather-detail-label" data-i18n="weather.humidity">Humidity</span>
                         <span class="weather-detail-value" id="weather-humidity">--%</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="weather-detail-label" data-i18n="weather.wind">Viento</span>
+                        <span class="weather-detail-label" data-i18n="weather.wind">Wind</span>
                         <span class="weather-detail-value" id="weather-wind">-- km/h</span>
                     </div>
                 </div>
@@ -103,64 +103,64 @@
 
     <!-- Farm creation -->
     <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap">
-        <button class="field-panel-back" id="btn-seed-demo" onclick="seedDemoData()" data-i18n="dash.seedDemo">Cargar datos de ejemplo</button>
-        <a class="export-csv-btn" href="/recorrido" style="text-decoration:none;display:inline-flex;align-items:center" data-i18n="dash.guidedTour">Asistente guiado</a>
-        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()" data-i18n="dash.portfolioReport">Descargar Reporte de Portafolio</button>
-        <button class="export-csv-btn" onclick="toggleFarmForm()" data-i18n="dash.newFarm">+ Nueva Granja</button>
+        <button class="field-panel-back" id="btn-seed-demo" onclick="seedDemoData()" data-i18n="dash.seedDemo">Load demo data</button>
+        <a class="export-csv-btn" href="/recorrido" style="text-decoration:none;display:inline-flex;align-items:center" data-i18n="dash.guidedTour">Guided tour</a>
+        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()" data-i18n="dash.portfolioReport">Download Portfolio Report</button>
+        <button class="export-csv-btn" onclick="toggleFarmForm()" data-i18n="dash.newFarm">+ New Farm</button>
     </div>
     <form id="farm-create-form" class="soil-entry-form" style="display:none" onsubmit="createFarm(event)">
         <div class="form-field">
-            <label for="farm-name" data-i18n="form.name">Nombre *</label>
-            <input type="text" id="farm-name" required minlength="1" maxlength="100" placeholder="Ej: Rancho El Sol">
+            <label for="farm-name" data-i18n="form.name">Name *</label>
+            <input type="text" id="farm-name" required minlength="1" maxlength="100" placeholder="e.g. Rancho El Sol" data-i18n-placeholder="form.namePlaceholder">
         </div>
         <div class="form-field">
-            <label for="farm-owner" data-i18n="form.owner">Propietario</label>
-            <input type="text" id="farm-owner" placeholder="Ej: Juan Garcia">
+            <label for="farm-owner" data-i18n="form.owner">Owner</label>
+            <input type="text" id="farm-owner" placeholder="e.g. Juan Garcia" data-i18n-placeholder="form.ownerPlaceholder">
         </div>
         <div class="form-field">
-            <label for="farm-hectares" data-i18n="form.hectares">Hectareas</label>
+            <label for="farm-hectares" data-i18n="form.hectares">Hectares</label>
             <input type="number" id="farm-hectares" min="0" step="0.1" value="0" placeholder="0">
         </div>
         <div class="form-field">
-            <label for="farm-municipality" data-i18n="form.municipality">Municipio</label>
-            <input type="text" id="farm-municipality" placeholder="Ej: Tequila">
+            <label for="farm-municipality" data-i18n="form.municipality">Municipality</label>
+            <input type="text" id="farm-municipality" placeholder="e.g. Tequila" data-i18n-placeholder="form.municipalityPlaceholder">
         </div>
         <div class="form-field">
-            <label for="farm-state" data-i18n="form.state">Estado</label>
+            <label for="farm-state" data-i18n="form.state">State</label>
             <input type="text" id="farm-state" value="Jalisco" placeholder="Jalisco">
         </div>
         <div class="form-field" style="grid-column:1/-1;display:flex;gap:0.5rem;justify-content:flex-end">
-            <button type="button" class="field-panel-back" onclick="toggleFarmForm()" data-i18n="form.cancel">Cancelar</button>
-            <button type="submit" class="export-csv-btn" id="btn-create-farm" data-i18n="form.createFarm">Crear Granja</button>
+            <button type="button" class="field-panel-back" onclick="toggleFarmForm()" data-i18n="form.cancel">Cancel</button>
+            <button type="submit" class="export-csv-btn" id="btn-create-farm" data-i18n="form.createFarm">Create Farm</button>
         </div>
         <div id="farm-create-error" style="grid-column:1/-1;color:#ff6b6b;display:none"></div>
     </form>
 
     <!-- Farm cards grid -->
     <div id="farm-grid" class="farm-grid">
-        <div class="loading"><div class="loading-spinner"></div><span data-i18n="dash.loading">Cargando granjas...</span></div>
+        <div class="loading"><div class="loading-spinner"></div><span data-i18n="dash.loading">Loading farms...</span></div>
     </div>
 
     <!-- Notification panel (shown when a farm is selected) -->
     <div id="notification-panel" class="notification-panel" style="display:none">
         <div class="notification-header">
-            <h3 class="notification-title" data-i18n="notif.title">Notificaciones</h3>
+            <h3 class="notification-title" data-i18n="notif.title">Notifications</h3>
             <button id="alert-config-btn" class="alert-config-btn" onclick="toggleAlertConfig()" title="Configurar umbrales de alerta">&#9881;</button>
         </div>
         <div id="alert-config-form" class="alert-config-form" style="display:none">
             <div class="alert-config-row">
-                <label for="cfg-health-floor" data-i18n="notif.healthFloor">Salud minima (0-100)</label>
+                <label for="cfg-health-floor" data-i18n="notif.healthFloor">Min health (0-100)</label>
                 <input type="number" id="cfg-health-floor" min="0" max="100" step="1" value="40">
             </div>
             <div class="alert-config-row">
-                <label for="cfg-ndvi-min" data-i18n="notif.ndviMin">NDVI minimo (0-1)</label>
+                <label for="cfg-ndvi-min" data-i18n="notif.ndviMin">Min NDVI (0-1)</label>
                 <input type="number" id="cfg-ndvi-min" min="0" max="1" step="0.05" value="0.3">
             </div>
             <div class="alert-config-row">
-                <label for="cfg-temp-max" data-i18n="notif.tempMax">Temperatura maxima (C)</label>
+                <label for="cfg-temp-max" data-i18n="notif.tempMax">Max temperature (C)</label>
                 <input type="number" id="cfg-temp-max" min="-50" max="70" step="1" value="45">
             </div>
-            <button id="alert-config-save" class="alert-config-save" onclick="saveAlertConfig()" data-i18n="notif.save">Guardar</button>
+            <button id="alert-config-save" class="alert-config-save" onclick="saveAlertConfig()" data-i18n="notif.save">Save</button>
         </div>
         <div id="notification-list" class="notification-list"></div>
     </div>
@@ -168,19 +168,19 @@
     <!-- Alert history timeline (shown when a farm is selected) -->
     <div id="alert-history" class="alert-history" style="display:none">
         <div class="alert-history-header">
-            <h3 class="alert-history-title" data-i18n="alert.historyTitle">Historial de Alertas</h3>
+            <h3 class="alert-history-title" data-i18n="alert.historyTitle">Alert History</h3>
             <span class="alert-history-count" id="alert-history-count"></span>
         </div>
         <div class="alert-history-list" id="alert-history-list">
-            <div class="loading"><div class="loading-spinner"></div>Cargando alertas...</div>
+            <div class="loading"><div class="loading-spinner"></div><span data-i18n="alert.loading">Loading alerts...</span></div>
         </div>
     </div>
 
     <!-- Alert check results (shown when a farm is selected) -->
     <div id="alert-check-panel" class="alert-check-panel" style="display:none">
         <div class="alert-check-header">
-            <h3 class="alert-check-title">Verificacion de Alertas</h3>
-            <button class="alert-check-btn" id="btn-check-alerts" onclick="checkAlerts()">Verificar Alertas</button>
+            <h3 class="alert-check-title" data-i18n="dash.alertCheckTitle">Alert Check</h3>
+            <button class="alert-check-btn" id="btn-check-alerts" onclick="checkAlerts()" data-i18n="dash.checkAlerts">Check Alerts</button>
         </div>
         <div id="alert-check-results" class="alert-check-results"></div>
     </div>
@@ -188,40 +188,40 @@
     <!-- Seasonal Inteligencia Ancestral calendar (shown when a farm is selected) -->
     <div id="seasonal-calendar" class="seasonal-calendar" style="display:none">
         <div class="seasonal-header">
-            <h3 class="seasonal-title">Calendario de Inteligencia Ancestral</h3>
+            <h3 class="seasonal-title" data-i18n="dash.seasonalTitle">Ancestral Intelligence Calendar</h3>
             <span class="seasonal-season-badge" id="seasonal-season-badge"></span>
         </div>
         <div class="seasonal-groups" id="seasonal-groups">
-            <div class="loading"><div class="loading-spinner"></div>Cargando calendario...</div>
+            <div class="loading"><div class="loading-spinner"></div><span data-i18n="dash.loadingCalendar">Loading calendar...</span></div>
         </div>
     </div>
 
     <!-- Dashboard summary panel (shown when a farm is selected) -->
     <div id="dashboard-summary" class="dashboard-summary" style="display:none">
         <div class="dashboard-summary-header">
-            <h3 class="dashboard-summary-title">Resumen de Granja</h3>
+            <h3 class="dashboard-summary-title" data-i18n="dash.farmSummary">Farm Summary</h3>
             <span class="dashboard-summary-farm-name" id="summary-farm-name"></span>
         </div>
         <div class="dashboard-summary-stats">
             <div class="summary-stat">
                 <div class="summary-stat-value" id="summary-fields">--</div>
-                <div class="summary-stat-label">Campos</div>
+                <div class="summary-stat-label" data-i18n="stat.fields">Fields</div>
             </div>
             <div class="summary-stat">
                 <div class="summary-stat-value" id="summary-hectares">--</div>
-                <div class="summary-stat-label">Hectareas</div>
+                <div class="summary-stat-label" data-i18n="form.hectares">Hectares</div>
             </div>
             <div class="summary-stat">
                 <div class="summary-stat-value" id="summary-health">--</div>
-                <div class="summary-stat-label">Salud Promedio</div>
+                <div class="summary-stat-label" data-i18n="stat.avgHealth">Avg Health</div>
             </div>
             <div class="summary-stat">
                 <div class="summary-stat-value" id="summary-crops">--</div>
-                <div class="summary-stat-label">Cultivos</div>
+                <div class="summary-stat-label" data-i18n="dash.crops">Crops</div>
             </div>
             <div class="summary-stat">
                 <div class="summary-stat-value" id="summary-treatments">--</div>
-                <div class="summary-stat-label">Tratamientos</div>
+                <div class="summary-stat-label" data-i18n="dash.treatments">Treatments</div>
             </div>
         </div>
         <div class="dashboard-summary-risk" id="summary-top-risk" style="display:none"></div>
@@ -231,39 +231,39 @@
     <!-- Heatmap panel (shown when a farm is selected) -->
     <div id="heatmap-container" class="heatmap-container" style="display:none">
         <div class="heatmap-header">
-            <h3 class="heatmap-title">Mapa de Salud</h3>
+            <h3 class="heatmap-title" data-i18n="dash.healthMap">Health Map</h3>
         </div>
         <div id="heatmap-canvas" class="heatmap-canvas"></div>
         <div class="heatmap-legend">
             <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-good"></span> &gt;75</span>
             <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-warning"></span> 50-75</span>
             <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-critical"></span> &lt;50</span>
-            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-none"></span> Sin datos</span>
+            <span class="heatmap-legend-item"><span class="heatmap-dot heatmap-none"></span> <span data-i18n="dash.noData">No data</span></span>
         </div>
     </div>
 
     <!-- Economic Impact card (shown when a farm is selected) -->
     <div id="economic-impact-panel" class="economic-impact-panel" style="display:none">
         <div class="econ-header">
-            <h3 class="econ-title">Impacto Economico Anual</h3>
+            <h3 class="econ-title" data-i18n="dash.econTitle">Annual Economic Impact</h3>
             <span class="econ-farm-name" id="econ-farm-name"></span>
         </div>
         <div class="econ-stats">
             <div class="econ-stat">
                 <div class="econ-stat-value" id="econ-water">$0</div>
-                <div class="econ-stat-label">Ahorro en Agua (MXN)</div>
+                <div class="econ-stat-label" data-i18n="dash.econWater">Water Savings (MXN)</div>
             </div>
             <div class="econ-stat">
                 <div class="econ-stat-value" id="econ-fertilizer">$0</div>
-                <div class="econ-stat-label">Ahorro en Fertilizante (MXN)</div>
+                <div class="econ-stat-label" data-i18n="dash.econFertilizer">Fertilizer Savings (MXN)</div>
             </div>
             <div class="econ-stat">
                 <div class="econ-stat-value" id="econ-yield">$0</div>
-                <div class="econ-stat-label">Mejora en Rendimiento (MXN)</div>
+                <div class="econ-stat-label" data-i18n="dash.econYield">Yield Improvement (MXN)</div>
             </div>
         </div>
         <div class="econ-total">
-            <div class="econ-total-label">Ahorro Total Anual</div>
+            <div class="econ-total-label" data-i18n="dash.econTotal">Total Annual Savings</div>
             <div class="econ-total-value" id="econ-total">$0 MXN</div>
         </div>
         <div class="econ-nota" id="econ-nota"></div>
@@ -272,12 +272,12 @@
     <!-- Carbon sequestration summary (shown when a farm is selected) -->
     <div id="carbon-summary-panel" class="economic-impact-panel" style="display:none">
         <div class="econ-header">
-            <h3 class="econ-title">Secuestro de Carbono</h3>
+            <h3 class="econ-title" data-i18n="dash.carbonTitle">Carbon Sequestration</h3>
         </div>
         <div class="econ-stats">
             <div class="econ-stat">
                 <div class="econ-stat-value" id="carbon-co2e">0</div>
-                <div class="econ-stat-label">CO2e Total (toneladas)</div>
+                <div class="econ-stat-label" data-i18n="dash.carbonTotal">Total CO2e (tonnes)</div>
             </div>
             <div class="econ-stat">
                 <div class="econ-stat-value" id="carbon-rate">0</div>
@@ -285,7 +285,7 @@
             </div>
             <div class="econ-stat">
                 <div class="econ-stat-value" id="carbon-avg-soc">0</div>
-                <div class="econ-stat-label">SOC Promedio (t/ha)</div>
+                <div class="econ-stat-label" data-i18n="dash.carbonAvgSoc">Avg SOC (t/ha)</div>
             </div>
         </div>
         <div id="carbon-fields-list" class="carbon-fields-list"></div>
@@ -294,7 +294,7 @@
     <!-- Multi-field comparison table (shown when a farm is selected) -->
     <div id="field-comparison-panel" class="field-comparison-panel" style="display:none">
         <div class="comparison-header">
-            <h3 class="comparison-title">Comparacion de Campos</h3>
+            <h3 class="comparison-title" data-i18n="dash.fieldComparison">Field Comparison</h3>
         </div>
         <div id="field-comparison-content" class="comparison-body"></div>
     </div>
@@ -302,32 +302,32 @@
     <!-- Field detail panel (hidden by default) -->
     <div id="field-panel" class="field-panel" style="display:none">
         <div class="field-panel-header">
-            <h2 id="field-panel-title" class="field-panel-title">Campos</h2>
+            <h2 id="field-panel-title" class="field-panel-title" data-i18n="dash.fields">Fields</h2>
             <div class="field-panel-actions">
-                <button class="export-csv-btn" id="btn-farm-pdf" onclick="downloadFarmPDF()">Descargar Reporte PDF</button>
-                <button class="export-csv-btn" id="btn-export-csv" onclick="exportFarmCSV()">Exportar Datos</button>
-                <button class="field-panel-back" onclick="closeFarmDetail()">Volver</button>
+                <button class="export-csv-btn" id="btn-farm-pdf" onclick="downloadFarmPDF()" data-i18n="dash.downloadPdf">Download PDF Report</button>
+                <button class="export-csv-btn" id="btn-export-csv" onclick="exportFarmCSV()" data-i18n="dash.exportData">Export Data</button>
+                <button class="field-panel-back" onclick="closeFarmDetail()" data-i18n="dash.back">Back</button>
             </div>
         </div>
         <div style="margin:0.75rem 0">
-            <button class="export-csv-btn" onclick="toggleFieldForm()">+ Nuevo Campo</button>
+            <button class="export-csv-btn" onclick="toggleFieldForm()" data-i18n="dash.newField">+ New Field</button>
         </div>
         <form id="field-create-form" class="soil-entry-form" style="display:none" onsubmit="createField(event)">
             <div class="form-field">
-                <label for="field-name">Nombre *</label>
-                <input type="text" id="field-name" required minlength="1" maxlength="100" placeholder="Ej: Campo Norte">
+                <label for="field-name" data-i18n="form.name">Name *</label>
+                <input type="text" id="field-name" required minlength="1" maxlength="100" placeholder="e.g. North Field" data-i18n-placeholder="form.fieldNamePlaceholder">
             </div>
             <div class="form-field">
-                <label for="field-crop-type">Tipo de cultivo</label>
-                <input type="text" id="field-crop-type" placeholder="Ej: maiz, agave, aguacate">
+                <label for="field-crop-type" data-i18n="dash.cropType">Crop type</label>
+                <input type="text" id="field-crop-type" placeholder="e.g. corn, agave, avocado" data-i18n-placeholder="form.cropTypePlaceholder">
             </div>
             <div class="form-field">
-                <label for="field-hectares">Hectareas</label>
+                <label for="field-hectares" data-i18n="form.hectares">Hectares</label>
                 <input type="number" id="field-hectares" min="0" step="0.1" value="0" placeholder="0">
             </div>
             <div class="form-field" style="grid-column:1/-1;display:flex;gap:0.5rem;justify-content:flex-end">
-                <button type="button" class="field-panel-back" onclick="toggleFieldForm()">Cancelar</button>
-                <button type="submit" class="export-csv-btn" id="btn-create-field">Crear Campo</button>
+                <button type="button" class="field-panel-back" onclick="toggleFieldForm()" data-i18n="form.cancel">Cancel</button>
+                <button type="submit" class="export-csv-btn" id="btn-create-field" data-i18n="dash.createField">Create Field</button>
             </div>
             <div id="field-create-error" style="grid-column:1/-1;color:#ff6b6b;display:none"></div>
         </form>
@@ -337,8 +337,8 @@
     <!-- Fertilizer knowledge base panel (hidden by default) -->
     <div id="fert-panel" class="field-panel" style="display:none">
         <div class="field-panel-header">
-            <h2 class="field-panel-title">Base de Conocimiento — Fertilizantes Organicos</h2>
-            <button class="field-panel-back" onclick="closeFertilizers()">Volver</button>
+            <h2 class="field-panel-title" data-i18n="dash.fertKnowledgeTitle">Knowledge Base — Organic Fertilizers</h2>
+            <button class="field-panel-back" onclick="closeFertilizers()" data-i18n="dash.back">Back</button>
         </div>
         <div id="fert-list" class="field-list"></div>
     </div>
@@ -352,10 +352,10 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    <span data-i18n="footer.tagline">Precision agriculture for Jalisco</span>
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido" data-i18n="footer.tour">Tour</a>
+    <br><span data-i18n="footer.mission">Transforming agriculture with artificial intelligence and drone data</span>
 </footer>
 
 <!-- WhatsApp FAB — F5 -->

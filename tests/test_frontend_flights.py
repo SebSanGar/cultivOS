@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_flights_section_in_field_html(client):
-    """Field detail HTML has the Historial de Vuelos section."""
+    """Field detail HTML has the Flight History section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-flights"' in html
-    assert "Historial de Vuelos" in html
+    assert "Flight History" in html
 
 
 def test_flights_container_in_html(client):
@@ -79,10 +79,11 @@ def test_field_js_shows_stats_totals(client):
 
 
 def test_field_js_handles_no_flights(client):
-    """field.js handles empty flight list gracefully."""
+    """field.js handles empty flight list gracefully via the i18n empty-state key."""
     resp = client.get("/field.js")
     assert resp.status_code == 200
-    assert "Sin vuelos registrados" in resp.text
+    # Empty state resolves through t('field.noFlights') (English: "No flights logged")
+    assert "field.noFlights" in resp.text
 
 
 # ── API integration ──

@@ -37,14 +37,14 @@ def test_dashboard_css_has_alert_config_styles(client):
     assert "alert-config" in css
 
 
-def test_alert_config_form_has_labels_in_spanish(client):
-    """Alert config form labels are in Spanish for farmer-facing UI."""
+def test_alert_config_form_has_labels_in_english(client):
+    """Alert config form labels are in English (English-first farmer UI)."""
     resp = client.get("/")
     assert resp.status_code == 200
     html = resp.text
-    assert "Salud" in html
+    assert "health" in html.lower()
     assert "NDVI" in html
-    assert "Temperatura" in html
+    assert "temperature" in html.lower()
 
 
 def test_alert_config_form_has_save_button(client):

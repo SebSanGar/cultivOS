@@ -14,21 +14,21 @@ class TestRegistrationFormElements:
         resp = client.get("/login")
         assert 'id="register-farm"' in resp.text
 
-    def test_confirm_password_label_in_spanish(self, client):
-        """Confirm password label is in Spanish."""
+    def test_confirm_password_label_in_english(self, client):
+        """Confirm password label renders in English (English-first)."""
         resp = client.get("/login")
-        assert "Confirmar" in resp.text
+        assert "Confirm Password" in resp.text
 
-    def test_farm_label_in_spanish(self, client):
-        """Farm dropdown label is in Spanish."""
+    def test_farm_label_in_english(self, client):
+        """Farm dropdown label renders in English (English-first)."""
         resp = client.get("/login")
         html = resp.text
-        assert "Granja" in html or "Finca" in html
+        assert "Farm" in html
 
     def test_farm_has_none_option(self, client):
         """Farm dropdown has a 'none' / no-farm option."""
         resp = client.get("/login")
-        assert "Sin granja" in resp.text or "Ninguna" in resp.text
+        assert "No farm" in resp.text
 
 
 class TestRegistrationJS:

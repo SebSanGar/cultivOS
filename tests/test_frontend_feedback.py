@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_feedback_section_in_field_html(client):
-    """Field detail HTML has the Retroalimentacion section."""
+    """Field detail HTML has the Feedback section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-feedback"' in html
-    assert "Retroalimentacion" in html
+    assert "Feedback" in html
 
 
 def test_feedback_container_in_html(client):

@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_map_section_in_field_html(client):
-    """Field detail HTML has the Mapa del Campo section."""
+    """Field detail HTML has the Field Map section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-map"' in html
-    assert "Mapa del Campo" in html
+    assert "Field Map" in html
 
 
 def test_map_container_in_html(client):

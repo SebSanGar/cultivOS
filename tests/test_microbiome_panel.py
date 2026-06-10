@@ -13,11 +13,11 @@ class TestMicrobiomePanelHTML:
         html = resp.text
         assert 'id="section-microbiome"' in html
 
-    def test_microbiome_section_title_spanish(self, client):
-        """Microbiome section has Spanish title."""
+    def test_microbiome_section_title(self, client):
+        """Microbiome section has its (English-first) title."""
         resp = client.get("/campo")
         html = resp.text
-        assert "Salud del Microbioma" in html
+        assert "Microbiome Health" in html
 
     def test_microbiome_content_container(self, client):
         """Microbiome section has a content container for JS rendering."""

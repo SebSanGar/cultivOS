@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_soil_section_in_field_html(client):
-    """Field detail HTML has the Analisis de Suelo section."""
+    """Field detail HTML has the Soil Analysis section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-soil"' in html
-    assert "Analisis de Suelo" in html
+    assert "Soil Analysis" in html
 
 
 def test_soil_content_container(client):
@@ -25,7 +25,7 @@ def test_soil_placeholder_when_no_data(client):
     """Field detail HTML shows placeholder when no soil data."""
     resp = client.get("/campo")
     assert resp.status_code == 200
-    assert "Sin analisis de suelo" in resp.text
+    assert "No soil analysis" in resp.text
 
 
 # ── JS logic ──
@@ -97,4 +97,4 @@ def test_field_js_shows_recommendations(client):
     assert resp.status_code == 200
     js = resp.text
     assert "soil.recommendations" in js
-    assert "Recomendaciones" in js
+    assert "field.recommendations" in js

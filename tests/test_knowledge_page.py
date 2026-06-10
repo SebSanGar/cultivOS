@@ -11,7 +11,7 @@ def test_knowledge_page_loads(client):
     """Knowledge page loads at /conocimiento."""
     resp = client.get("/conocimiento")
     assert resp.status_code == 200
-    assert "Conocimiento" in resp.text
+    assert "Knowledge" in resp.text
 
 
 def test_knowledge_page_has_search_input(client):
@@ -26,7 +26,7 @@ def test_knowledge_page_has_ancestral_section(client):
     resp = client.get("/conocimiento")
     html = resp.text
     assert 'id="ancestral-cards"' in html
-    assert "Metodos Ancestrales" in html or "Ancestrales" in html
+    assert "Ancestral Methods" in html or "Ancestral" in html
 
 
 def test_knowledge_page_has_crops_section(client):
@@ -34,7 +34,7 @@ def test_knowledge_page_has_crops_section(client):
     resp = client.get("/conocimiento")
     html = resp.text
     assert 'id="crop-cards"' in html
-    assert "Cultivos" in html
+    assert "Crops" in html
 
 
 def test_knowledge_page_has_fertilizer_section(client):
@@ -42,7 +42,7 @@ def test_knowledge_page_has_fertilizer_section(client):
     resp = client.get("/conocimiento")
     html = resp.text
     assert 'id="fertilizer-cards"' in html
-    assert "Fertilizantes" in html
+    assert "Fertilizers" in html
 
 
 def test_knowledge_page_has_nav(client):

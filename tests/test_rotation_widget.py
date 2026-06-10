@@ -81,7 +81,7 @@ def test_rotation_section_in_field_html(client):
 def test_rotation_section_has_title(client):
     """Field detail HTML has the section title."""
     resp = client.get("/campo")
-    assert "Plan de Rotacion" in resp.text
+    assert "Rotation Plan" in resp.text
 
 
 # -- Frontend JS: property name fix and enhanced rendering --

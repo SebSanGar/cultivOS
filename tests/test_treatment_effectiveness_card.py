@@ -70,7 +70,7 @@ def test_effectiveness_section_in_html(client):
     assert resp.status_code == 200
     text = resp.text
     assert 'id="section-treatment-effectiveness"' in text
-    assert "Efectividad de Tratamientos" in text
+    assert "Treatment Effectiveness" in text
 
 
 def test_effectiveness_placeholder(client):
@@ -78,7 +78,7 @@ def test_effectiveness_placeholder(client):
     resp = client.get("/campo")
     text = resp.text
     assert 'id="treatment-effectiveness-content"' in text
-    assert "Sin datos de efectividad" in text
+    assert "No effectiveness data" in text
 
 
 # ── API response tests ──
@@ -172,11 +172,12 @@ def test_effectiveness_card_shows_delta_label(client):
 
 
 def test_effectiveness_card_shows_status_badge(client):
-    """field.js renders status badge with Spanish labels."""
+    """field.js renders status badge via i18n keys (English-first)."""
     resp = client.get("/field.js")
     text = resp.text
-    assert "Efectivo" in text or "efectivo" in text
-    assert "Sin efecto" in text or "sin efecto" in text
+    # JS resolves status labels through t('field.effEffective') / t('field.effIneffective')
+    assert "field.effEffective" in text
+    assert "field.effIneffective" in text
 
 
 # ── CSS tests ──

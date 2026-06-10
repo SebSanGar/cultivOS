@@ -20,10 +20,10 @@ def test_ndvi_chart_container_exists(client):
 
 
 def test_ndvi_chart_label_present(client):
-    """NDVI chart section has Spanish chart label."""
+    """NDVI chart section has the NDVI trend chart label (English-first)."""
     resp = client.get("/campo")
     html = resp.text
-    assert "Tendencia NDVI" in html or "Historial NDVI" in html
+    assert "NDVI Trend" in html or "NDVI History" in html
 
 
 def test_ndvi_api_returns_data_for_chart(client, admin_headers):

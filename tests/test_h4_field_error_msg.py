@@ -12,10 +12,11 @@ FIELD_JS = Path(__file__).parent.parent / "frontend" / "field.js"
 
 
 def test_error_message_correct_params():
-    """Error message must say ?farm=ID&field=ID (matches actual JS params)."""
+    """Error message must reference field.errorUrlFormat (i18n value: ?farm=ID&field=ID)."""
     content = FIELD_JS.read_text()
-    assert "?farm=ID&field=ID" in content, (
-        "field.js error message must use ?farm=ID&field=ID — matches params.get('farm') / params.get('field')"
+    assert "field.errorUrlFormat" in content, (
+        "field.js error message must use t('field.errorUrlFormat') — i18n value is "
+        "'URL must include ?farm=ID&field=ID', matching params.get('farm') / params.get('field')"
     )
 
 

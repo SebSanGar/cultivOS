@@ -10,12 +10,12 @@ TDD — these tests must fail first, then pass after implementation.
 # ── HTML structure ──
 
 def test_soil_history_section_in_field_html(client):
-    """Field detail HTML has the Historial de Suelo section."""
+    """Field detail HTML has the Soil History section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-soil-history"' in html
-    assert "Historial de Suelo" in html
+    assert "Soil History" in html
 
 
 def test_soil_history_content_container(client):
@@ -29,7 +29,7 @@ def test_soil_history_placeholder_when_no_data(client):
     """Field detail HTML shows placeholder when no soil history."""
     resp = client.get("/campo")
     assert resp.status_code == 200
-    assert "Sin historial de suelo" in resp.text
+    assert "No soil history" in resp.text
 
 
 # ── JS logic ──
@@ -86,7 +86,7 @@ def test_soil_history_handles_empty_list(client):
     resp = client.get("/field.js")
     assert resp.status_code == 200
     js = resp.text
-    assert "Sin historial de suelo" in js
+    assert "field.noSoilHistory" in js
 
 
 # ── CSS ──

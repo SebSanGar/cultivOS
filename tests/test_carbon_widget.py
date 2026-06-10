@@ -118,7 +118,7 @@ def test_carbon_section_has_title(client):
     """Field detail HTML has the section title."""
     resp = client.get("/campo")
     html = resp.text
-    assert "Carbono del Suelo" in html
+    assert "Soil Carbon" in html
 
 
 # -- Frontend JS --

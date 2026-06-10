@@ -78,13 +78,10 @@ def test_i18n_has_data_i18n_selector(i18n_text):
     )
 
 
-def test_i18n_default_language_is_es(i18n_text):
-    """Default language must be Spanish (es)."""
-    has_default_es = (
-        "'es'" in i18n_text or '"es"' in i18n_text
-    )
-    assert has_default_es, (
-        "i18n.js must default to 'es' when no localStorage value is set."
+def test_i18n_default_language_is_en(i18n_text):
+    """Default language must be English (en) — founder steering 2026-06-10, Canada-first."""
+    assert "DEFAULT_LANG = 'en'" in i18n_text, (
+        "i18n.js must default to 'en' when no localStorage value is set."
     )
 
 

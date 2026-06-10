@@ -7,12 +7,12 @@ class TestPdfDownloadButton:
     """PDF download button appears on field detail page and backend generates PDF."""
 
     def test_download_button_exists_in_html(self, client):
-        """Field detail page contains a 'Descargar Reporte' download button."""
+        """Field detail page contains a 'Download Report' download button."""
         resp = client.get("/campo")
         assert resp.status_code == 200
         html = resp.text
         assert 'id="btn-download-report"' in html
-        assert "Descargar Reporte" in html
+        assert "Download Report" in html
 
     def test_download_button_in_header(self, client):
         """Download button is inside the campo-header section."""

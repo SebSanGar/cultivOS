@@ -7,7 +7,7 @@ def test_dashboard_summary_html_present(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="dashboard-summary"' in html
-    assert "Resumen de Granja" in html
+    assert "Farm Summary" in html
 
 
 def test_dashboard_api_returns_aggregate_data(client, db):
@@ -198,4 +198,4 @@ def test_dashboard_html_has_treatment_and_risk_elements(client):
     html = resp.text
     assert 'id="summary-treatments"' in html
     assert 'id="summary-top-risk"' in html
-    assert "Tratamientos" in html
+    assert "Treatments" in html

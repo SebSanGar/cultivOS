@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_mission_section_in_field_html(client):
-    """Field detail HTML has the Plan de Vuelo section."""
+    """Field detail HTML has the Flight Plan section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-mission"' in html
-    assert "Plan de Vuelo" in html
+    assert "Flight Plan" in html
 
 
 def test_mission_container_in_html(client):

@@ -2,6 +2,47 @@
 
 const API = '/api';
 
+// ── i18n helper ──
+// Fetch the right-language string for a key at render time. Falls back to the
+// key itself if i18n hasn't loaded yet.
+function t(key) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.t)
+        ? window.cultivOS_i18n.t(key)
+        : key;
+}
+
+// Localize a health-trend code ('declining' | 'improving' | 'stable') to text.
+function trendText(trend) {
+    if (trend === 'declining') return t('dash.trendDeclining');
+    if (trend === 'improving') return t('dash.trendImproving');
+    return t('dash.trendStable');
+}
+
+// Re-render dynamic (JS-injected) content when the language toggles. i18n.js's
+// applyAll() only re-localizes static [data-i18n] nodes; injected innerHTML is
+// rendered once with t(), so we re-run the active renderers after each toggle.
+(function hookLanguageRerender() {
+    if (!window.cultivOS_i18n || !window.cultivOS_i18n.applyAll) return;
+    const originalApplyAll = window.cultivOS_i18n.applyAll;
+    window.cultivOS_i18n.applyAll = function () {
+        originalApplyAll.apply(this, arguments);
+        try {
+            renderFarms();
+            if (selectedFarmId != null) {
+                renderFields(selectedFarmId);
+                if (comparisonData.length > 0) renderFieldComparison(selectedFarmId);
+                loadWeather(selectedFarmId);
+                loadNotifications(selectedFarmId);
+                loadSeasonalCalendar(selectedFarmId);
+                loadAlertHistory(selectedFarmId);
+                loadDashboardSummary(selectedFarmId);
+            }
+        } catch (e) {
+            // Renderers may not be ready on first applyAll() during init; ignore.
+        }
+    };
+})();
+
 // ── State ──
 let farms = [];
 let selectedFarmId = null;
@@ -67,7 +108,7 @@ async function fetchJSON(path) {
 
 // ── Data loading ──
 async function loadFarms() {
-    farmGrid.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>';
+    farmGrid.innerHTML = '<div class="loading"><div class="loading-spinner"></div>' + esc(t('dash.loading')) + '</div>';
     const farmsResp = await fetchJSON('/farms');
     farms = (farmsResp && farmsResp.data) ? farmsResp.data : (farmsResp || []);
     updateStats();
@@ -144,8 +185,8 @@ function renderFarms() {
         farmGrid.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">&#x1f33e;</div>
-                <div class="empty-state-title">Bienvenido a cultivOS</div>
-                <div class="empty-state-text">Toca <strong>Cargar datos de ejemplo</strong> para ver cultivOS en accion con una granja de Jalisco. O usa el <a href="/recorrido">asistente guiado</a> para crear la tuya en 3 pasos.</div>
+                <div class="empty-state-title">${esc(t('dash.welcomeTitle'))}</div>
+                <div class="empty-state-text">${t('dash.welcomeText')}</div>
             </div>`;
         return;
     }
@@ -170,12 +211,12 @@ function renderFarms() {
                     <div class="farm-location">${esc(farm.municipality || '')}${farm.municipality && farm.state ? ', ' : ''}${esc(farm.state || '')}</div>
                 </div>
                 <div class="health-badge ${cls}">
-                    Salud: ${healthLabel(avgScore)}
+                    ${esc(t('dash.health'))}: ${healthLabel(avgScore)}
                 </div>
             </div>
             <div class="farm-meta">
                 <div class="farm-meta-item">${farm.total_hectares} ha</div>
-                <div class="farm-meta-item">${fields.length} campos</div>
+                <div class="farm-meta-item">${fields.length} ${esc(t('dash.fieldsLower'))}</div>
                 ${crops ? `<div class="farm-meta-item">${esc(crops)}</div>` : ''}
             </div>
             ${farm.owner_name ? `<div class="farm-owner">${esc(farm.owner_name)}</div>` : ''}
@@ -233,13 +274,13 @@ function renderFields(farmId) {
     const farm = farms.find(f => f.id === farmId);
     const fields = fieldsByFarm[farmId] || [];
 
-    fieldPanelTitle.textContent = `Campos — ${farm ? displayName(farm.name) : ''}`;
+    fieldPanelTitle.textContent = `${t('dash.fields')} — ${farm ? displayName(farm.name) : ''}`;
 
     if (fields.length === 0) {
         fieldList.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state-title">Sin campos</div>
-                <div class="empty-state-text">Agrega campos a esta granja via la API.</div>
+                <div class="empty-state-title">${esc(t('dash.noFields'))}</div>
+                <div class="empty-state-text">${esc(t('dash.noFieldsText'))}</div>
             </div>`;
         return;
     }
@@ -266,14 +307,14 @@ function renderFields(farmId) {
             const omSpark = buildSoilSparkline(omSeries, traj && traj.organic_matter_trend);
             soilHtml = `
             <div class="field-section">
-                <div class="field-section-title">Analisis de Suelo</div>
+                <div class="field-section-title">${esc(t('dash.soilAnalysis'))}</div>
                 <div class="soil-grid">
                     <div class="soil-item">
                         <span class="soil-label">pH</span>
                         <span class="soil-value health-badge ${phCls}">${soil.ph} ${phSpark}</span>
                     </div>
                     <div class="soil-item">
-                        <span class="soil-label">Materia Organica</span>
+                        <span class="soil-label">${esc(t('dash.organicMatter'))}</span>
                         <span class="soil-value">${soil.organic_matter_pct}% ${omSpark}</span>
                     </div>
                     <div class="soil-item">
@@ -289,11 +330,11 @@ function renderFields(farmId) {
                         <span class="soil-value">${soil.potassium_ppm} ppm</span>
                     </div>
                     <div class="soil-item">
-                        <span class="soil-label">Humedad</span>
+                        <span class="soil-label">${esc(t('weather.humidity'))}</span>
                         <span class="soil-value">${soil.moisture_pct}%</span>
                     </div>
                     <div class="soil-item">
-                        <span class="soil-label">Textura</span>
+                        <span class="soil-label">${esc(t('dash.texture'))}</span>
                         <span class="soil-value">${esc(soil.texture || '--')}</span>
                     </div>
                 </div>
@@ -305,13 +346,13 @@ function renderFields(farmId) {
         if (treatment) {
             treatmentHtml = `
             <div class="field-section">
-                <div class="field-section-title">Recomendacion de Tratamiento</div>
+                <div class="field-section-title">${esc(t('dash.treatmentRec'))}</div>
                 <div class="treatment-card">
-                    ${treatment.problema ? `<div class="treatment-row"><strong>Problema:</strong> ${esc(treatment.problema)}</div>` : ''}
-                    ${treatment.tratamiento ? `<div class="treatment-row"><strong>Tratamiento:</strong> ${esc(treatment.tratamiento)}</div>` : ''}
-                    ${treatment.costo_estimado_mxn ? `<div class="treatment-row"><strong>Costo:</strong> $${treatment.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
+                    ${treatment.problema ? `<div class="treatment-row"><strong>${esc(t('dash.problem'))}:</strong> ${esc(treatment.problema)}</div>` : ''}
+                    ${treatment.tratamiento ? `<div class="treatment-row"><strong>${esc(t('dash.treatment'))}:</strong> ${esc(treatment.tratamiento)}</div>` : ''}
+                    ${treatment.costo_estimado_mxn ? `<div class="treatment-row"><strong>${esc(t('dash.cost'))}:</strong> $${treatment.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
                     ${treatment.urgencia ? `<div class="treatment-row urgency-${treatment.urgencia.toLowerCase()}">${esc(treatment.urgencia)}</div>` : ''}
-                    ${treatment.prevencion ? `<div class="treatment-row"><strong>Prevencion:</strong> ${esc(treatment.prevencion)}</div>` : ''}
+                    ${treatment.prevencion ? `<div class="treatment-row"><strong>${esc(t('dash.prevention'))}:</strong> ${esc(treatment.prevencion)}</div>` : ''}
                 </div>
             </div>`;
         }
@@ -321,7 +362,7 @@ function renderFields(farmId) {
         if (rotation && rotation.seasons) {
             rotationHtml = `
             <div class="field-section">
-                <div class="field-section-title">Plan de Rotacion</div>
+                <div class="field-section-title">${esc(t('dash.rotationPlan'))}</div>
                 <div class="rotation-timeline">
                     ${rotation.seasons.map((s, i) => `
                         <div class="rotation-season">
@@ -344,7 +385,7 @@ function renderFields(farmId) {
             </div>
             <div class="field-stats">
                 <div>
-                    <div class="field-stat-label">Salud</div>
+                    <div class="field-stat-label">${esc(t('dash.health'))}</div>
                     <div class="field-stat-value">
                         <span class="health-badge ${cls}">${healthLabel(score)}</span>
                         ${sparkHtml}
@@ -355,7 +396,7 @@ function renderFields(farmId) {
                     <div class="field-stat-value">${ndviVal}</div>
                 </div>
                 <div>
-                    <div class="field-stat-label">Hectareas</div>
+                    <div class="field-stat-label">${esc(t('form.hectares'))}</div>
                     <div class="field-stat-value">${f.hectares}</div>
                 </div>
             </div>
@@ -388,7 +429,7 @@ function renderHeatmap(fields, farmId) {
     // Filter fields with valid centroids
     const mapped = fields.filter(f => f.centroid_lat != null && f.centroid_lon != null);
     if (mapped.length === 0) {
-        canvas.innerHTML = '<div class="heatmap-empty">Sin coordenadas de campo disponibles</div>';
+        canvas.innerHTML = '<div class="heatmap-empty">' + esc(t('dash.noFieldCoords')) + '</div>';
         return;
     }
 
@@ -435,11 +476,11 @@ async function showFertilizers() {
     document.getElementById('notification-panel').style.display = 'none';
     fertPanel.style.display = 'block';
 
-    fertList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando...</div>';
+    fertList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>' + esc(t('dash.loadingGeneric')) + '</div>';
     const ferts = await fetchJSON('/knowledge/fertilizers') || [];
 
     if (ferts.length === 0) {
-        fertList.innerHTML = '<div class="empty-state"><div class="empty-state-title">Sin datos</div></div>';
+        fertList.innerHTML = '<div class="empty-state"><div class="empty-state-title">' + esc(t('dash.noData')) + '</div></div>';
         return;
     }
 
@@ -448,9 +489,9 @@ async function showFertilizers() {
             <div class="fert-name">${esc(f.name)}</div>
             <div class="fert-desc">${esc(f.description_es || f.description || '')}</div>
             <div class="fert-meta">
-                ${f.application_method ? `<div><strong>Aplicacion:</strong> ${esc(f.application_method)}</div>` : ''}
-                ${f.cost_per_ha_mxn ? `<div><strong>Costo:</strong> $${f.cost_per_ha_mxn.toLocaleString()} MXN/ha</div>` : ''}
-                ${f.suitable_crops ? `<div><strong>Cultivos:</strong> ${esc(Array.isArray(f.suitable_crops) ? f.suitable_crops.join(', ') : f.suitable_crops)}</div>` : ''}
+                ${f.application_method ? `<div><strong>${esc(t('dash.application'))}:</strong> ${esc(f.application_method)}</div>` : ''}
+                ${f.cost_per_ha_mxn ? `<div><strong>${esc(t('dash.cost'))}:</strong> $${f.cost_per_ha_mxn.toLocaleString()} MXN/ha</div>` : ''}
+                ${f.suitable_crops ? `<div><strong>${esc(t('dash.crops'))}:</strong> ${esc(Array.isArray(f.suitable_crops) ? f.suitable_crops.join(', ') : f.suitable_crops)}</div>` : ''}
             </div>
         </div>
     `).join('');
@@ -482,13 +523,13 @@ async function loadWeather(farmId) {
 
     const forecastEl = document.getElementById('weather-forecast');
     if (w.forecast_3day && w.forecast_3day.length > 0) {
-        const dayLabels = ['Manana', 'Pasado', 'En 3 dias'];
+        const dayLabels = [t('weather.tomorrow'), t('weather.dayAfter'), t('weather.inThreeDays')];
         forecastEl.innerHTML = w.forecast_3day.map((day, i) => `
             <div class="forecast-day">
-                <div class="forecast-day-label">${dayLabels[i] || 'Dia ' + (i + 1)}</div>
+                <div class="forecast-day-label">${esc(dayLabels[i] || t('weather.day') + ' ' + (i + 1))}</div>
                 <div class="forecast-day-temp">${Math.round(day.temp_c)}\u00B0C</div>
                 <div class="forecast-day-desc">${esc(day.description)}</div>
-                <div class="forecast-day-details">${Math.round(day.humidity_pct)}% hum &middot; ${day.wind_kmh.toFixed(0)} km/h</div>
+                <div class="forecast-day-details">${Math.round(day.humidity_pct)}% ${esc(t('weather.humShort'))} &middot; ${day.wind_kmh.toFixed(0)} km/h</div>
             </div>
         `).join('');
     } else {
@@ -511,9 +552,10 @@ async function loadNotifications(farmId) {
 
 function renderNotifications(items, farmId) {
     const list = document.getElementById('notification-list');
+    const locale = window.cultivOS_i18n && window.cultivOS_i18n.getLang() === 'en' ? 'en-US' : 'es-MX';
     list.innerHTML = items.map(n => {
         const date = new Date(n.created_at);
-        const dateStr = date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        const dateStr = date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
         const acked = n.acknowledged ? ' acknowledged' : '';
         return `
         <div class="notification-item${acked}" data-id="${n.id}">
@@ -522,7 +564,7 @@ function renderNotifications(items, farmId) {
                 <div class="notification-message">${esc(n.message)}</div>
                 <div class="notification-meta">${esc(n.alert_type)} &middot; ${dateStr}</div>
             </div>
-            ${!n.acknowledged ? `<button class="notification-ack-btn" onclick="acknowledgeNotification(${farmId}, ${n.id}, event)">Confirmar</button>` : ''}
+            ${!n.acknowledged ? `<button class="notification-ack-btn" onclick="acknowledgeNotification(${farmId}, ${n.id}, event)">${esc(t('dash.acknowledge'))}</button>` : ''}
         </div>`;
     }).join('');
 }
@@ -556,7 +598,7 @@ async function saveAlertConfig() {
     if (!selectedFarmId) return;
     const btn = document.getElementById('alert-config-save');
     btn.disabled = true;
-    btn.textContent = 'Guardando...';
+    btn.textContent = t('dash.saving');
     const body = {
         health_score_floor: parseFloat(document.getElementById('cfg-health-floor').value),
         ndvi_minimum: parseFloat(document.getElementById('cfg-ndvi-min').value),
@@ -568,16 +610,16 @@ async function saveAlertConfig() {
         body: JSON.stringify(body),
     });
     btn.disabled = false;
-    btn.textContent = 'Guardar';
+    btn.textContent = t('notif.save');
     document.getElementById('alert-config-form').style.display = 'none';
 }
 
 // ── Alert history timeline ──
 const ALERT_TYPE_MAP = {
-    low_health: { label: 'Salud Baja', cls: 'alert-type-health' },
-    irrigation: { label: 'Riego', cls: 'alert-type-irrigation' },
-    anomaly_health_drop: { label: 'Anomalia Salud', cls: 'alert-type-anomaly' },
-    anomaly_ndvi_drop: { label: 'Anomalia NDVI', cls: 'alert-type-anomaly' },
+    low_health: { key: 'dash.alertLowHealth', cls: 'alert-type-health' },
+    irrigation: { key: 'dash.alertIrrigation', cls: 'alert-type-irrigation' },
+    anomaly_health_drop: { key: 'dash.alertAnomalyHealth', cls: 'alert-type-anomaly' },
+    anomaly_ndvi_drop: { key: 'dash.alertAnomalyNdvi', cls: 'alert-type-anomaly' },
 };
 
 async function loadAlertHistory(farmId) {
@@ -588,25 +630,28 @@ async function loadAlertHistory(farmId) {
     if (alerts.length === 0) {
         panel.style.display = '';
         countEl.textContent = '';
-        list.innerHTML = '<div class="alert-history-empty">Sin alertas registradas</div>';
+        list.innerHTML = '<div class="alert-history-empty">' + esc(t('dash.noAlertsLogged')) + '</div>';
         return;
     }
     panel.style.display = '';
     countEl.textContent = alerts.length;
+    const locale = window.cultivOS_i18n && window.cultivOS_i18n.getLang() === 'en' ? 'en-US' : 'es-MX';
     list.innerHTML = alerts.map(a => {
         const dt = new Date(a.sent_at);
-        const dateStr = dt.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
-        const timeStr = dt.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-        const typeInfo = ALERT_TYPE_MAP[a.alert_type] || { label: a.alert_type, cls: 'alert-type-default' };
+        const dateStr = dt.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = dt.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+        const typeInfo = ALERT_TYPE_MAP[a.alert_type];
+        const typeLabel = typeInfo ? t(typeInfo.key) : a.alert_type;
+        const typeCls = typeInfo ? typeInfo.cls : 'alert-type-default';
         const statusCls = a.status === 'sent' ? 'alert-status-sent' : 'alert-status-pending';
-        const statusLabel = a.status === 'sent' ? 'Enviado' : 'Pendiente';
+        const statusLabel = a.status === 'sent' ? t('dash.sent') : t('dash.pending');
         return `
         <div class="alert-history-item">
-            <div class="alert-history-dot ${typeInfo.cls}"></div>
+            <div class="alert-history-dot ${typeCls}"></div>
             <div class="alert-history-content">
                 <div class="alert-history-top">
-                    <span class="alert-history-type-badge ${typeInfo.cls}">${esc(typeInfo.label)}</span>
-                    <span class="alert-history-status ${statusCls}">${statusLabel}</span>
+                    <span class="alert-history-type-badge ${typeCls}">${esc(typeLabel)}</span>
+                    <span class="alert-history-status ${statusCls}">${esc(statusLabel)}</span>
                 </div>
                 <div class="alert-history-message">${esc(a.message)}</div>
                 <div class="alert-history-date">${dateStr} &middot; ${timeStr}</div>
@@ -617,9 +662,9 @@ async function loadAlertHistory(farmId) {
 
 // ── Alert check trigger ──
 const ALERT_CHECK_TYPES = {
-    health: { label: 'Salud', icon: '\u2764', endpoint: 'check' },
-    irrigation: { label: 'Riego', icon: '\u{1F4A7}', endpoint: 'check-irrigation' },
-    anomalies: { label: 'Anomalias', icon: '\u26A0', endpoint: 'check-anomalies' },
+    health: { labelKey: 'dash.health', icon: '\u2764', endpoint: 'check' },
+    irrigation: { labelKey: 'dash.alertIrrigation', icon: '\u{1F4A7}', endpoint: 'check-irrigation' },
+    anomalies: { labelKey: 'dash.anomalies', icon: '\u26A0', endpoint: 'check-anomalies' },
 };
 
 async function checkAlerts() {
@@ -627,8 +672,8 @@ async function checkAlerts() {
     const btn = document.getElementById('btn-check-alerts');
     const results = document.getElementById('alert-check-results');
     btn.disabled = true;
-    btn.textContent = 'Verificando...';
-    results.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Ejecutando verificaciones...</div>';
+    btn.textContent = t('dash.checking');
+    results.innerHTML = '<div class="loading"><div class="loading-spinner"></div>' + esc(t('dash.runningChecks')) + '</div>';
 
     const responses = await Promise.all(
         Object.entries(ALERT_CHECK_TYPES).map(async ([key, cfg]) => {
@@ -645,12 +690,13 @@ async function checkAlerts() {
     let totalAlerts = 0;
     let totalFields = 0;
     const cards = responses.map(({ key, cfg, data, error }) => {
+        const label = t(cfg.labelKey);
         if (error) {
             return `<div class="alert-check-card info">
                 <div class="alert-check-icon">${cfg.icon}</div>
                 <div class="alert-check-body">
-                    <div class="alert-check-card-title">${esc(cfg.label)}</div>
-                    <div class="alert-check-card-msg">No se pudo verificar</div>
+                    <div class="alert-check-card-title">${esc(label)}</div>
+                    <div class="alert-check-card-msg">${esc(t('dash.couldNotCheck'))}</div>
                 </div>
             </div>`;
         }
@@ -662,8 +708,8 @@ async function checkAlerts() {
             return `<div class="alert-check-card ok">
                 <div class="alert-check-icon">${cfg.icon}</div>
                 <div class="alert-check-body">
-                    <div class="alert-check-card-title">${esc(cfg.label)} — Sin problemas</div>
-                    <div class="alert-check-card-msg">${data.fields_checked} campo(s) revisado(s), todo en orden</div>
+                    <div class="alert-check-card-title">${esc(label)} — ${esc(t('dash.noProblems'))}</div>
+                    <div class="alert-check-card-msg">${data.fields_checked} ${esc(t('dash.fieldsCheckedOk'))}</div>
                 </div>
             </div>`;
         }
@@ -673,21 +719,21 @@ async function checkAlerts() {
         return `<div class="alert-check-card ${severity}">
             <div class="alert-check-icon">${cfg.icon}</div>
             <div class="alert-check-body">
-                <div class="alert-check-card-title">${esc(cfg.label)} — ${alerts.length} alerta(s)</div>
+                <div class="alert-check-card-title">${esc(label)} — ${alerts.length} ${esc(t('dash.alertsCount'))}</div>
                 <div class="alert-check-card-msg">${msgs}</div>
             </div>
         </div>`;
     });
 
     const summaryText = totalAlerts === 0
-        ? `${totalFields} campo(s) verificado(s) — sin alertas activas`
-        : `${totalAlerts} alerta(s) encontrada(s) en ${totalFields} campo(s)`;
+        ? `${totalFields} ${t('dash.fieldsCheckedNoAlerts')}`
+        : `${totalAlerts} ${t('dash.alertsFoundIn')} ${totalFields} ${t('dash.fieldsWord')}`;
 
     results.innerHTML = cards.join('') +
-        `<div class="alert-check-summary">${summaryText}</div>`;
+        `<div class="alert-check-summary">${esc(summaryText)}</div>`;
 
     btn.disabled = false;
-    btn.textContent = 'Verificar Alertas';
+    btn.textContent = t('dash.checkAlerts');
 
     // Refresh alert history to show newly created alerts
     loadAlertHistory(selectedFarmId);
@@ -695,10 +741,10 @@ async function checkAlerts() {
 
 // ── Seasonal TEK calendar ──
 const ALERT_TYPE_LABELS = {
-    preparacion: 'Preparacion',
-    siembra: 'Siembra',
-    cosecha: 'Cosecha',
-    mantenimiento: 'Mantenimiento',
+    preparacion: 'dash.seasonPreparation',
+    siembra: 'dash.seasonPlanting',
+    cosecha: 'dash.seasonHarvest',
+    mantenimiento: 'dash.seasonMaintenance',
 };
 
 async function loadSeasonalCalendar(farmId) {
@@ -708,7 +754,7 @@ async function loadSeasonalCalendar(farmId) {
 
     const data = await fetchJSON(`/farms/${farmId}/seasonal-alerts`);
     if (!data || !data.alerts || data.alerts.length === 0) {
-        groups.innerHTML = '<div class="seasonal-empty">Sin alertas estacionales activas para este periodo.</div>';
+        groups.innerHTML = '<div class="seasonal-empty">' + esc(t('dash.noSeasonalAlerts')) + '</div>';
         badge.textContent = '';
         badge.className = 'seasonal-season-badge';
         container.style.display = '';
@@ -716,7 +762,7 @@ async function loadSeasonalCalendar(farmId) {
     }
 
     // Season badge
-    badge.textContent = data.season === 'temporal' ? 'Temporal (lluvias)' : 'Secas';
+    badge.textContent = data.season === 'temporal' ? t('dash.seasonRainy') : t('dash.seasonDry');
     badge.className = 'seasonal-season-badge ' + data.season;
 
     // Group alerts by type
@@ -733,7 +779,7 @@ async function loadSeasonalCalendar(farmId) {
         const items = grouped[type];
         if (!items || items.length === 0) continue;
         html += `<div class="seasonal-group">
-            <div class="seasonal-group-label">${esc(ALERT_TYPE_LABELS[type] || type)}</div>`;
+            <div class="seasonal-group-label">${esc(ALERT_TYPE_LABELS[type] ? t(ALERT_TYPE_LABELS[type]) : type)}</div>`;
         for (const a of items) {
             html += `<div class="seasonal-card">
                 <div class="seasonal-type-dot ${a.alert_type}"></div>
@@ -751,10 +797,10 @@ async function loadSeasonalCalendar(farmId) {
 
     // Legend
     html += `<div class="seasonal-legend">
-        <span class="seasonal-legend-item"><span class="seasonal-type-dot preparacion"></span> Preparacion</span>
-        <span class="seasonal-legend-item"><span class="seasonal-type-dot siembra"></span> Siembra</span>
-        <span class="seasonal-legend-item"><span class="seasonal-type-dot cosecha"></span> Cosecha</span>
-        <span class="seasonal-legend-item"><span class="seasonal-type-dot mantenimiento"></span> Mantenimiento</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot preparacion"></span> ${esc(t('dash.seasonPreparation'))}</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot siembra"></span> ${esc(t('dash.seasonPlanting'))}</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot cosecha"></span> ${esc(t('dash.seasonHarvest'))}</span>
+        <span class="seasonal-legend-item"><span class="seasonal-type-dot mantenimiento"></span> ${esc(t('dash.seasonMaintenance'))}</span>
     </div>`;
 
     groups.innerHTML = html;
@@ -896,12 +942,12 @@ function renderFieldComparison(farmId) {
         <table class="comparison-table">
             <thead>
                 <tr>
-                    <th onclick="sortComparison('name')" class="comparison-sortable">Campo${arrow('name')}</th>
-                    <th onclick="sortComparison('health')" class="comparison-sortable">Salud${arrow('health')}</th>
+                    <th onclick="sortComparison('name')" class="comparison-sortable">${esc(t('dash.field'))}${arrow('name')}</th>
+                    <th onclick="sortComparison('health')" class="comparison-sortable">${esc(t('dash.health'))}${arrow('health')}</th>
                     <th onclick="sortComparison('ndvi')" class="comparison-sortable">NDVI${arrow('ndvi')}</th>
                     <th onclick="sortComparison('soil')" class="comparison-sortable">pH${arrow('soil')}</th>
-                    <th onclick="sortComparison('treatments')" class="comparison-sortable">Tratamientos${arrow('treatments')}</th>
-                    <th onclick="sortComparison('completeness')" class="comparison-sortable">Datos${arrow('completeness')}</th>
+                    <th onclick="sortComparison('treatments')" class="comparison-sortable">${esc(t('dash.treatments'))}${arrow('treatments')}</th>
+                    <th onclick="sortComparison('completeness')" class="comparison-sortable">${esc(t('dash.data'))}${arrow('completeness')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -966,12 +1012,12 @@ async function loadDashboardSummary(farmId) {
     // Top risk field
     const riskEl = document.getElementById('summary-top-risk');
     if (data.top_risk) {
-        const trendLabel = data.top_risk.trend === 'declining' ? 'En declive' : data.top_risk.trend === 'improving' ? 'Mejorando' : 'Estable';
-        riskEl.innerHTML = `<div class="summary-risk-title">Mayor riesgo</div>
+        const trendLabel = trendText(data.top_risk.trend);
+        riskEl.innerHTML = `<div class="summary-risk-title">${esc(t('dash.topRisk'))}</div>
             <div class="summary-risk-item">
                 <span class="summary-risk-name">${esc(data.top_risk.field_name)}</span>
                 <span class="summary-alert-score health-badge critical">${Math.round(data.top_risk.score)}</span>
-                <span class="summary-alert-trend">${trendLabel}</span>
+                <span class="summary-alert-trend">${esc(trendLabel)}</span>
             </div>`;
         riskEl.style.display = '';
     } else {
@@ -982,12 +1028,12 @@ async function loadDashboardSummary(farmId) {
     const alertsEl = document.getElementById('summary-alerts');
     const urgentFields = data.fields.filter(f => f.latest_health_score && f.latest_health_score.score < 50);
     if (urgentFields.length > 0) {
-        alertsEl.innerHTML = '<div class="summary-alerts-title">Campos que necesitan atencion</div>' +
+        alertsEl.innerHTML = '<div class="summary-alerts-title">' + esc(t('dash.fieldsNeedAttention')) + '</div>' +
             urgentFields.map(f => `
                 <div class="summary-alert-item">
                     <span class="summary-alert-name">${esc(f.name)}</span>
                     <span class="summary-alert-score health-badge critical">${Math.round(f.latest_health_score.score)}</span>
-                    <span class="summary-alert-trend">${f.latest_health_score.trend === 'declining' ? 'En declive' : f.latest_health_score.trend === 'improving' ? 'Mejorando' : 'Estable'}</span>
+                    <span class="summary-alert-trend">${esc(trendText(f.latest_health_score.trend))}</span>
                 </div>
             `).join('');
     } else {
@@ -998,7 +1044,7 @@ async function loadDashboardSummary(farmId) {
 async function selectFarm(farmId) {
     selectedFarmId = farmId;
     fieldPanel.style.display = 'block';
-    fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Cargando campos...</div>';
+    fieldList.innerHTML = '<div class="loading"><div class="loading-spinner"></div>' + esc(t('dash.loadingFields')) + '</div>';
     document.getElementById('alert-check-panel').style.display = '';
     await Promise.all([loadFieldsForFarm(farmId), loadWeather(farmId), loadHeatmap(farmId), loadNotifications(farmId), loadAlertConfig(farmId), loadSeasonalCalendar(farmId), loadAlertHistory(farmId), loadDashboardSummary(farmId), loadEconomicImpact(farmId), loadCarbonSummary(farmId), loadFieldComparison(farmId)]);
     renderFields(farmId);
@@ -1036,7 +1082,7 @@ async function exportFarmCSV() {
     if (!selectedFarmId) return;
     const btn = document.getElementById('btn-export-csv');
     btn.disabled = true;
-    btn.textContent = 'Exportando...';
+    btn.textContent = t('dash.exporting');
     try {
         const resp = await fetch(`/api/farms/${selectedFarmId}/export?format=csv`);
         if (!resp.ok) throw new Error(`Error ${resp.status}`);
@@ -1053,10 +1099,10 @@ async function exportFarmCSV() {
         URL.revokeObjectURL(url);
     } catch (e) {
         console.error('Export failed:', e);
-        alert('No se pudo exportar los datos. Intenta de nuevo.');
+        alert(t('dash.exportError'));
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Exportar Datos';
+        btn.textContent = t('dash.exportData');
     }
 }
 
@@ -1065,7 +1111,7 @@ async function downloadFarmPDF() {
     if (!selectedFarmId) return;
     const btn = document.getElementById('btn-farm-pdf');
     btn.disabled = true;
-    btn.textContent = 'Generando...';
+    btn.textContent = t('dash.generating');
     try {
         const resp = await fetch(`/api/farms/${selectedFarmId}/report`, { method: 'POST' });
         if (!resp.ok) throw new Error(`Error ${resp.status}`);
@@ -1080,10 +1126,10 @@ async function downloadFarmPDF() {
         URL.revokeObjectURL(url);
     } catch (e) {
         console.error('PDF download failed:', e);
-        alert('No se pudo generar el reporte. Intente de nuevo.');
+        alert(t('dash.reportError'));
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Descargar Reporte PDF';
+        btn.textContent = t('dash.downloadPdf');
     }
 }
 
@@ -1091,7 +1137,7 @@ async function downloadFarmPDF() {
 async function downloadPortfolioPDF() {
     const btn = document.getElementById('btn-portfolio-pdf');
     btn.disabled = true;
-    btn.textContent = 'Generando...';
+    btn.textContent = t('dash.generating');
     try {
         const resp = await fetch('/api/reports/portfolio', { method: 'POST' });
         if (!resp.ok) throw new Error(`Error ${resp.status}`);
@@ -1106,10 +1152,10 @@ async function downloadPortfolioPDF() {
         URL.revokeObjectURL(url);
     } catch (e) {
         console.error('Portfolio PDF download failed:', e);
-        alert('No se pudo generar el reporte de portafolio. Intente de nuevo.');
+        alert(t('dash.portfolioReportError'));
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Descargar Reporte de Portafolio';
+        btn.textContent = t('dash.portfolioReport');
     }
 }
 
@@ -1124,25 +1170,25 @@ function getAuthHeaders() {
 async function seedDemoData() {
     const btn = document.getElementById('btn-seed-demo');
     btn.disabled = true;
-    btn.textContent = 'Cargando...';
+    btn.textContent = t('dash.loadingGeneric');
     try {
         const resp = await fetch(API + '/demo/seed', { method: 'POST' });
         const data = await resp.json();
         if (resp.status === 201) {
-            btn.textContent = 'Datos cargados';
+            btn.textContent = t('dash.dataLoaded');
             await loadFarms();
             await Promise.all(farms.map(f => loadFieldsForFarm(f.id)));
             updateStats();
             renderFarms();
         } else {
-            btn.textContent = 'Ya existen datos demo';
+            btn.textContent = t('dash.demoExists');
         }
     } catch {
-        btn.textContent = 'Error al cargar';
+        btn.textContent = t('dash.loadError');
     }
     setTimeout(() => {
         btn.disabled = false;
-        btn.textContent = 'Cargar datos de ejemplo';
+        btn.textContent = t('dash.seedDemo');
     }, 3000);
 }
 
@@ -1164,7 +1210,7 @@ async function createFarm(event) {
     const errEl = document.getElementById('farm-create-error');
     errEl.style.display = 'none';
     btn.disabled = true;
-    btn.textContent = 'Creando...';
+    btn.textContent = t('dash.creating');
 
     const body = {
         name: document.getElementById('farm-name').value.trim(),
@@ -1181,7 +1227,7 @@ async function createFarm(event) {
             body: JSON.stringify(body),
         });
         if (!resp.ok) {
-            const err = await resp.json().catch(() => ({ detail: 'Error desconocido' }));
+            const err = await resp.json().catch(() => ({ detail: t('dash.unknownError') }));
             throw new Error(err.detail || JSON.stringify(err));
         }
         document.getElementById('farm-create-form').reset();
@@ -1196,7 +1242,7 @@ async function createFarm(event) {
         errEl.style.display = 'block';
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Crear Granja';
+        btn.textContent = t('form.createFarm');
     }
 }
 
@@ -1207,7 +1253,7 @@ async function createField(event) {
     const errEl = document.getElementById('field-create-error');
     errEl.style.display = 'none';
     btn.disabled = true;
-    btn.textContent = 'Creando...';
+    btn.textContent = t('dash.creating');
 
     const body = {
         name: document.getElementById('field-name').value.trim(),
@@ -1222,7 +1268,7 @@ async function createField(event) {
             body: JSON.stringify(body),
         });
         if (!resp.ok) {
-            const err = await resp.json().catch(() => ({ detail: 'Error desconocido' }));
+            const err = await resp.json().catch(() => ({ detail: t('dash.unknownError') }));
             throw new Error(err.detail || JSON.stringify(err));
         }
         document.getElementById('field-create-form').reset();
@@ -1234,7 +1280,7 @@ async function createField(event) {
         errEl.style.display = 'block';
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Crear Campo';
+        btn.textContent = t('dash.createField');
     }
 }
 

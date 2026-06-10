@@ -6,12 +6,12 @@ import pytest
 # ── HTML structure ──
 
 def test_intervention_section_in_field_html(client):
-    """Field detail HTML has the Intervenciones Prioritarias section."""
+    """Field detail HTML has the Priority Interventions section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-interventions"' in html
-    assert "Intervenciones Prioritarias" in html
+    assert "Priority Interventions" in html
 
 
 def test_intervention_container_in_html(client):
@@ -57,7 +57,7 @@ def test_field_js_handles_empty_interventions(client):
     """field.js has a placeholder for when no interventions exist."""
     resp = client.get("/field.js")
     assert resp.status_code == 200
-    assert "Sin intervenciones" in resp.text
+    assert "field.noInterventionsAvailable" in resp.text
 
 
 # ── CSS ──

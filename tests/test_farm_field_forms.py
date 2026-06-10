@@ -1,8 +1,8 @@
 """Tests for farm and field creation forms on dashboard.
 
 Verifies:
-1. "Nueva Granja" button and form HTML render in index.html
-2. "Nuevo Campo" button renders in field panel
+1. "New Farm" button and form HTML render in index.html
+2. "New Field" button renders in field panel
 3. createFarm() JS function exists in app.js
 4. createField() JS function exists in app.js
 5. POST /api/farms creates a farm (API sanity — already tested in test_farms.py, light check here)
@@ -15,10 +15,10 @@ import re
 class TestFarmCreationFormHTML:
     """Farm creation form renders in index.html."""
 
-    def test_nueva_granja_button_exists(self):
+    def test_new_farm_button_exists(self):
         with open("frontend/index.html") as f:
             html = f.read()
-        assert "Nueva Granja" in html, "Missing 'Nueva Granja' button in index.html"
+        assert "New Farm" in html, "Missing 'New Farm' button in index.html"
 
     def test_farm_creation_form_exists(self):
         with open("frontend/index.html") as f:
@@ -44,10 +44,10 @@ class TestFarmCreationFormHTML:
 class TestFieldCreationFormHTML:
     """Field creation form renders in field panel."""
 
-    def test_nuevo_campo_button_exists(self):
+    def test_new_field_button_exists(self):
         with open("frontend/index.html") as f:
             html = f.read()
-        assert "Nuevo Campo" in html, "Missing 'Nuevo Campo' button in index.html"
+        assert "New Field" in html, "Missing 'New Field' button in index.html"
 
     def test_field_creation_form_exists(self):
         with open("frontend/index.html") as f:

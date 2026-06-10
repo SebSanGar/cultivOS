@@ -47,12 +47,12 @@ def farm_with_seasonal_data(client, db, admin_headers):
 # ── HTML structure ──
 
 def test_seasonal_section_in_field_html(client):
-    """Field detail HTML has the Comparacion Estacional section."""
+    """Field detail HTML has the Seasonal Comparison section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-seasonal"' in html
-    assert "Comparacion Estacional" in html
+    assert "Seasonal Comparison" in html
 
 
 def test_seasonal_chart_container_in_html(client):

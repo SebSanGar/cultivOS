@@ -54,7 +54,7 @@ def test_regenerative_section_present_in_html(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-regenerative"' in html
-    assert "Puntuacion Regenerativa" in html
+    assert "Regenerative Score" in html
 
 
 def test_regenerative_content_container(client):

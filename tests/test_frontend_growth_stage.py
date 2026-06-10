@@ -8,12 +8,12 @@ import pytest
 # ── HTML structure ──
 
 def test_growth_section_in_field_html(client):
-    """Field detail HTML has the Etapa de Crecimiento section."""
+    """Field detail HTML has the Growth Stage section."""
     resp = client.get("/campo")
     assert resp.status_code == 200
     html = resp.text
     assert 'id="section-growth"' in html
-    assert "Etapa de Crecimiento" in html
+    assert "Growth Stage" in html
 
 
 def test_growth_container_in_html(client):

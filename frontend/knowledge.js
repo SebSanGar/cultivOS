@@ -2,6 +2,22 @@
 
 const API = 'http://localhost:8000';
 
+/* i18n helper — resolves a key to the current-language string, falling back
+   to the provided default if the i18n module hasn't loaded yet. */
+function t(key, fallback) {
+    if (window.cultivOS_i18n && typeof window.cultivOS_i18n.t === 'function') {
+        return window.cultivOS_i18n.t(key);
+    }
+    return fallback;
+}
+
+/* Re-localize any data-i18n nodes injected after the i18n module's initial pass. */
+function relocalize() {
+    if (window.cultivOS_i18n && typeof window.cultivOS_i18n.applyAll === 'function') {
+        window.cultivOS_i18n.applyAll();
+    }
+}
+
 async function fetchJSON(url) {
     const resp = await fetch(url);
     if (!resp.ok) return [];
@@ -13,9 +29,13 @@ async function fetchJSON(url) {
 function renderAncestral(methods) {
     const container = document.getElementById('ancestral-cards');
     if (!methods || methods.length === 0) {
-        container.innerHTML = '<p class="knowledge-empty">No se encontraron metodos ancestrales.</p>';
+        container.innerHTML = `<p class="knowledge-empty">${t('know.emptyAncestral', 'No ancestral methods found.')}</p>`;
         return;
     }
+    const lblRegion = t('know.lblRegion', 'Region:');
+    const lblCrops = t('know.lblCrops', 'Crops:');
+    const lblBenefits = t('know.lblBenefits', 'Benefits:');
+    const lblScience = t('know.lblScience', 'Scientific basis:');
     container.innerHTML = methods.map(m => `
         <div class="knowledge-card" data-search="${(m.name + ' ' + m.description_es + ' ' + m.region + ' ' + m.practice_type + ' ' + (m.crops || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
@@ -24,11 +44,11 @@ function renderAncestral(methods) {
             </div>
             <p class="knowledge-card-desc">${m.description_es}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>Region:</strong> ${m.region}</span>
-                <span class="knowledge-meta-item"><strong>Cultivos:</strong> ${(m.crops || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${m.region}</span>
+                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(m.crops || []).join(', ')}</span>
             </div>
-            <p class="knowledge-card-benefits"><strong>Beneficios:</strong> ${m.benefits_es}</p>
-            ${m.scientific_basis ? `<p class="knowledge-card-science"><strong>Base cientifica:</strong> ${m.scientific_basis}</p>` : ''}
+            <p class="knowledge-card-benefits"><strong>${lblBenefits}</strong> ${m.benefits_es}</p>
+            ${m.scientific_basis ? `<p class="knowledge-card-science"><strong>${lblScience}</strong> ${m.scientific_basis}</p>` : ''}
         </div>
     `).join('');
 }
@@ -36,9 +56,16 @@ function renderAncestral(methods) {
 function renderCrops(crops) {
     const container = document.getElementById('crop-cards');
     if (!crops || crops.length === 0) {
-        container.innerHTML = '<p class="knowledge-empty">No se encontraron cultivos.</p>';
+        container.innerHTML = `<p class="knowledge-empty">${t('know.emptyCrops', 'No crops found.')}</p>`;
         return;
     }
+    const lblSeason = t('know.lblSeason', 'Season:');
+    const lblWater = t('know.lblWater', 'Water:');
+    const lblHarvest = t('know.lblHarvest', 'Harvest:');
+    const lblDays = t('know.unitDays', 'days');
+    const lblRegions = t('know.lblRegions', 'Regions:');
+    const lblCompanions = t('know.lblCompanions', 'Companions:');
+    const lblOptimalTemp = t('know.lblOptimalTemp', 'Optimal temp:');
     container.innerHTML = crops.map(c => `
         <div class="knowledge-card" data-search="${(c.name + ' ' + c.family + ' ' + c.description_es + ' ' + (c.regions || []).join(' ') + ' ' + (c.companions || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
@@ -47,15 +74,15 @@ function renderCrops(crops) {
             </div>
             <p class="knowledge-card-desc">${c.description_es}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>Temporada:</strong> ${c.growing_season}</span>
-                <span class="knowledge-meta-item"><strong>Agua:</strong> ${c.water_needs}</span>
-                ${c.days_to_harvest ? `<span class="knowledge-meta-item"><strong>Cosecha:</strong> ${c.days_to_harvest} dias</span>` : ''}
+                <span class="knowledge-meta-item"><strong>${lblSeason}</strong> ${c.growing_season}</span>
+                <span class="knowledge-meta-item"><strong>${lblWater}</strong> ${c.water_needs}</span>
+                ${c.days_to_harvest ? `<span class="knowledge-meta-item"><strong>${lblHarvest}</strong> ${c.days_to_harvest} ${lblDays}</span>` : ''}
             </div>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>Regiones:</strong> ${(c.regions || []).join(', ')}</span>
-                <span class="knowledge-meta-item"><strong>Companeros:</strong> ${(c.companions || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblRegions}</strong> ${(c.regions || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblCompanions}</strong> ${(c.companions || []).join(', ')}</span>
             </div>
-            ${c.optimal_temp_min != null ? `<p class="knowledge-card-temp"><strong>Temp optima:</strong> ${c.optimal_temp_min} - ${c.optimal_temp_max} C</p>` : ''}
+            ${c.optimal_temp_min != null ? `<p class="knowledge-card-temp"><strong>${lblOptimalTemp}</strong> ${c.optimal_temp_min} - ${c.optimal_temp_max} C</p>` : ''}
         </div>
     `).join('');
 }
@@ -63,9 +90,12 @@ function renderCrops(crops) {
 function renderFertilizers(fertilizers) {
     const container = document.getElementById('fertilizer-cards');
     if (!fertilizers || fertilizers.length === 0) {
-        container.innerHTML = '<p class="knowledge-empty">No se encontraron fertilizantes.</p>';
+        container.innerHTML = `<p class="knowledge-empty">${t('know.emptyFertilizers', 'No fertilizers found.')}</p>`;
         return;
     }
+    const lblApplication = t('know.lblApplication', 'Application:');
+    const lblNutrients = t('know.lblNutrients', 'Nutrients:');
+    const lblCrops = t('know.lblCrops', 'Crops:');
     container.innerHTML = fertilizers.map(f => `
         <div class="knowledge-card" data-search="${(f.name + ' ' + f.description_es + ' ' + f.nutrient_profile + ' ' + (f.suitable_crops || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
@@ -74,39 +104,50 @@ function renderFertilizers(fertilizers) {
             </div>
             <p class="knowledge-card-desc">${f.description_es}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>Aplicacion:</strong> ${f.application_method}</span>
-                <span class="knowledge-meta-item"><strong>Nutrientes:</strong> ${f.nutrient_profile}</span>
+                <span class="knowledge-meta-item"><strong>${lblApplication}</strong> ${f.application_method}</span>
+                <span class="knowledge-meta-item"><strong>${lblNutrients}</strong> ${f.nutrient_profile}</span>
             </div>
-            <p class="knowledge-card-crops"><strong>Cultivos:</strong> ${(f.suitable_crops || []).join(', ')}</p>
+            <p class="knowledge-card-crops"><strong>${lblCrops}</strong> ${(f.suitable_crops || []).join(', ')}</p>
         </div>
     `).join('');
+}
+
+function severityLabel(severity) {
+    if (severity === 'alta') return t('know.severityHigh', 'High');
+    if (severity === 'media') return t('know.severityMed', 'Medium');
+    if (severity === 'baja') return t('know.severityLow', 'Low');
+    return severity;
 }
 
 function renderDiseases(diseases) {
     const container = document.getElementById('disease-cards');
     if (!container) return;
     if (!diseases || diseases.length === 0) {
-        container.innerHTML = '<p class="knowledge-empty">No se encontraron enfermedades.</p>';
+        container.innerHTML = `<p class="knowledge-empty">${t('know.emptyDiseases', 'No diseases found.')}</p>`;
         return;
     }
+    const lblCrops = t('know.lblCrops', 'Crops:');
+    const lblRegion = t('know.lblRegion', 'Region:');
+    const lblSymptoms = t('know.lblSymptoms', 'Symptoms:');
+    const lblTreatments = t('know.lblTreatments', 'Treatments:');
     container.innerHTML = diseases.map(d => {
         const severityClass = d.severity === 'alta' ? 'severity-high' : d.severity === 'media' ? 'severity-med' : 'severity-low';
         return `
         <div class="knowledge-card" data-search="${(d.name + ' ' + d.description_es + ' ' + (d.affected_crops || []).join(' ') + ' ' + (d.symptoms || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
                 <h3 class="knowledge-card-title">${d.name}</h3>
-                <span class="knowledge-badge ${severityClass}">${d.severity}</span>
+                <span class="knowledge-badge ${severityClass}">${severityLabel(d.severity)}</span>
             </div>
             <p class="knowledge-card-desc">${d.description_es}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>Cultivos:</strong> ${(d.affected_crops || []).join(', ')}</span>
-                <span class="knowledge-meta-item"><strong>Region:</strong> ${d.region}</span>
+                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(d.affected_crops || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${d.region}</span>
             </div>
-            <p class="knowledge-card-symptoms"><strong>Sintomas:</strong> ${(d.symptoms || []).join(', ')}</p>
+            <p class="knowledge-card-symptoms"><strong>${lblSymptoms}</strong> ${(d.symptoms || []).join(', ')}</p>
             <div class="knowledge-card-treatments">
-                <strong>Tratamientos:</strong>
-                ${(d.treatments || []).map(t =>
-                    `<span class="treatment-tag${t.organic ? ' organic' : ''}">${t.name}</span>`
+                <strong>${lblTreatments}</strong>
+                ${(d.treatments || []).map(tr =>
+                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${tr.name}</span>`
                 ).join(' ')}
             </div>
         </div>`;
@@ -117,10 +158,12 @@ function renderIdentifyResults(matches) {
     const container = document.getElementById('identify-results');
     if (!container) return;
     if (!matches || matches.length === 0) {
-        container.innerHTML = '<p class="knowledge-empty">No se encontraron coincidencias.</p>';
+        container.innerHTML = `<p class="knowledge-empty">${t('know.emptyMatches', 'No matches found.')}</p>`;
         return;
     }
-    container.innerHTML = '<h3 class="identify-results-title">Resultados</h3>' +
+    const resultsTitle = t('know.resultsTitle', 'Results');
+    const lblMatchedSymptoms = t('know.lblMatchedSymptoms', 'Matched symptoms:');
+    container.innerHTML = `<h3 class="identify-results-title">${resultsTitle}</h3>` +
         matches.filter(m => m.confidence > 0).map(m => `
         <div class="identify-match">
             <div class="identify-match-header">
@@ -128,10 +171,10 @@ function renderIdentifyResults(matches) {
                 <span class="confidence-bar" style="width:${Math.round(m.confidence * 100)}%">${Math.round(m.confidence * 100)}%</span>
             </div>
             <p>${m.description_es}</p>
-            <p><strong>Sintomas coincidentes:</strong> ${(m.symptoms_matched || []).join(', ')}</p>
+            <p><strong>${lblMatchedSymptoms}</strong> ${(m.symptoms_matched || []).join(', ')}</p>
             <div class="knowledge-card-treatments">
-                ${(m.treatments || []).map(t =>
-                    `<span class="treatment-tag${t.organic ? ' organic' : ''}">${t.name}</span>`
+                ${(m.treatments || []).map(tr =>
+                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${tr.name}</span>`
                 ).join(' ')}
             </div>
         </div>
@@ -152,7 +195,7 @@ async function handleIdentify(e) {
         body: JSON.stringify(body),
     });
     if (!resp.ok) {
-        document.getElementById('identify-results').innerHTML = '<p class="knowledge-empty">Error al identificar.</p>';
+        document.getElementById('identify-results').innerHTML = `<p class="knowledge-empty">${t('know.identifyError', 'Error identifying.')}</p>`;
         return;
     }
     const matches = await resp.json();
@@ -195,6 +238,25 @@ function filterAll() {
 
 /* ── Init ── */
 
+/* Cached datasets so injected cards can be re-rendered on language toggle. */
+let knowledgeData = { ancestral: [], crops: [], fertilizers: [], diseases: [] };
+
+function renderAll() {
+    renderAncestral(knowledgeData.ancestral);
+    renderCrops(knowledgeData.crops);
+    renderFertilizers(knowledgeData.fertilizers);
+    renderDiseases(knowledgeData.diseases);
+    updateStats(
+        knowledgeData.ancestral,
+        knowledgeData.crops,
+        knowledgeData.fertilizers,
+        knowledgeData.diseases
+    );
+    // Re-apply filters and localize any static data-i18n nodes added by render.
+    filterAll();
+    relocalize();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
@@ -211,6 +273,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         identifyForm.addEventListener('submit', handleIdentify);
     }
 
+    // Re-render injected cards (whose labels are resolved at render time via t())
+    // whenever the user toggles language. The i18n module switches language on
+    // click, so we re-render right after to pick up the new strings.
+    document.querySelectorAll('.nav-lang-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            // Defer so i18n's own click handler runs (and sets the new lang) first.
+            setTimeout(renderAll, 0);
+        });
+    });
+
     const [ancestral, crops, fertilizers, diseases] = await Promise.all([
         fetchJSON(`${API}/api/knowledge/ancestral`),
         fetchJSON(`${API}/api/knowledge/crops`),
@@ -218,9 +290,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         fetchJSON(`${API}/api/knowledge/diseases`),
     ]);
 
-    renderAncestral(ancestral);
-    renderCrops(crops);
-    renderFertilizers(fertilizers);
-    renderDiseases(diseases);
-    updateStats(ancestral, crops, fertilizers, diseases);
+    knowledgeData = { ancestral, crops, fertilizers, diseases };
+    renderAll();
 });

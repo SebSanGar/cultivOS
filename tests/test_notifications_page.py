@@ -14,7 +14,7 @@ class TestNotificationsPage:
 
     def test_page_contains_title(self, client):
         resp = client.get("/notificaciones")
-        assert "Historial de Notificaciones" in resp.text
+        assert "Notification History" in resp.text
 
     def test_page_contains_filter_controls(self, client):
         resp = client.get("/notificaciones")
@@ -72,7 +72,7 @@ class TestNotificationsPage:
     def test_page_has_acknowledge_button_markup(self, client):
         resp = client.get("/notifications.js")
         js = resp.text
-        assert "Reconocer" in js
+        assert "Acknowledge" in js
 
 
 class TestNotificationsAPI:
