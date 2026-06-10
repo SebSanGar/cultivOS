@@ -92,6 +92,7 @@ async function loadEconomicImpact() {
     updatePerHaTable(data);
     updateRiskAvoided(data);
     updateTreatmentRoiLeaderboard(farmId);
+    updateCumulativeChart(farmId);
 }
 
 function resetStats() {
@@ -315,6 +316,105 @@ function updatePerHaTable(data) {
     set('econ-total-yield', formatMXN(data.yield_improvement_mxn));
     set('econ-per-ha-total', formatPerHa(perHa));
     set('econ-grand-total', formatMXN(data.total_savings_mxn));
+}
+
+let cumulativeChart = null;
+
+async function updateCumulativeChart(farmId) {
+    const section = document.getElementById('econ-cumulative-section');
+    const canvas = document.getElementById('econ-cumulative-chart');
+    const beLabel = document.getElementById('econ-breakeven-label');
+    if (!section || !canvas) return;
+
+    if (!farmId) {
+        section.style.display = 'none';
+        return;
+    }
+
+    const data = await fetchJSON(`/api/farms/${farmId}/cumulative-savings`);
+    if (!data || !data.data_points || data.data_points.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+
+    if (cumulativeChart) {
+        cumulativeChart.destroy();
+        cumulativeChart = null;
+    }
+
+    const labels = data.data_points.map(p => 'Month ' + p.month);
+    const values = data.data_points.map(p => p.cumulative_savings_mxn);
+    const subCost = data.subscription_cost_mxn;
+    const beMonth = data.breakeven_month;
+
+    if (beLabel) {
+        if (beMonth) {
+            beLabel.textContent = 'Breakeven reached at month ' + beMonth + ' — subscription pays for itself after that.';
+        } else if (subCost) {
+            beLabel.textContent = 'Breakeven not yet reached — more data needed.';
+        } else {
+            beLabel.textContent = '';
+        }
+    }
+
+    const datasets = [
+        {
+            label: 'Cumulative savings',
+            data: values,
+            borderColor: '#2d6a2d',
+            backgroundColor: 'rgba(45,106,45,0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+        },
+    ];
+
+    if (subCost) {
+        datasets.push({
+            label: 'Subscription cost',
+            data: Array(labels.length).fill(subCost),
+            borderColor: 'rgba(240,180,41,0.8)',
+            borderWidth: 1,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false,
+        });
+    }
+
+    cumulativeChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'bottom', labels: { color: '#aaa', padding: 16 } },
+                annotation: beMonth ? {
+                    annotations: {
+                        breakeven: {
+                            type: 'line',
+                            xMin: beMonth - 1,
+                            xMax: beMonth - 1,
+                            borderColor: 'rgba(0,200,150,0.8)',
+                            borderWidth: 2,
+                            label: { content: 'Breakeven', enabled: true, position: 'top' },
+                        }
+                    }
+                } : {},
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#aaa', callback: v => '$' + v.toLocaleString() },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                },
+                x: { ticks: { color: '#aaa' }, grid: { display: false } },
+            },
+        },
+    });
 }
 
 async function updateTreatmentRoiLeaderboard(farmId) {
