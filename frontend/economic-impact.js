@@ -88,6 +88,7 @@ async function loadEconomicImpact() {
     updateNota(data.nota, notaEl);
     updateRoiHero(data);
     updatePaybackGauge(data);
+    updateConfidenceBadges(data);
 }
 
 function resetStats() {
@@ -206,6 +207,24 @@ function updateRoiHero(data) {
         hero.style.display = 'none';
         forward.style.display = 'block';
     }
+}
+
+function updateConfidenceBadges(data) {
+    const label = data.confidence_label || "Estimado";
+    const modifierMap = {
+        "Estimado": "",
+        "Medido": "estimate-badge--measured",
+        "Confirmado": "estimate-badge--confirmed",
+    };
+    const modifier = modifierMap[label] || "";
+    const badgeIds = ["econ-confidence-badge-total", "econ-confidence-badge-hero"];
+    badgeIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = label;
+        el.classList.remove("estimate-badge--measured", "estimate-badge--confirmed");
+        if (modifier) el.classList.add(modifier);
+    });
 }
 
 function updatePaybackGauge(data) {

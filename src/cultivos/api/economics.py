@@ -27,6 +27,12 @@ _BASIS = [
     "default_irrigation_efficiency",
 ]
 
+_CONFIDENCE_LABELS = {
+    "low": "Estimado",
+    "medium": "Medido",
+    "high": "Confirmado",
+}
+
 _NO_DATA_OUT = dict(
     hectares=0,
     water_savings_mxn=0,
@@ -36,6 +42,7 @@ _NO_DATA_OUT = dict(
     total_savings_low_mxn=0,
     total_savings_high_mxn=0,
     confidence="low",
+    confidence_label="Estimado",
     is_estimate=True,
     basis=_BASIS,
     subscription_cost_mxn=None,
@@ -83,6 +90,13 @@ def get_economic_impact(
         .scalar()
     ) or 0
 
+    # Total health score rows across all fields (for confidence tier, not avg_health)
+    total_score_count = (
+        db.query(func.count(HealthScore.id))
+        .filter(HealthScore.field_id.in_(field_ids))
+        .scalar()
+    ) or 0
+
     result = calculate_farm_savings(
         health_score=avg_health,
         hectares=total_hectares,
@@ -94,13 +108,14 @@ def get_economic_impact(
     low = round(total * 0.6)
     high = total  # current estimate is the 1.0× upper bound
 
-    # Confidence based on data availability
-    if len(health_scores) >= 3 and treatment_count >= 3:
+    # Confidence based on total data volume across all fields
+    if total_score_count >= 6 and treatment_count >= 6:
+        confidence = "high"
+    elif total_score_count >= 3 and treatment_count >= 3:
         confidence = "medium"
-    elif len(health_scores) >= 1:
-        confidence = "low"
     else:
         confidence = "low"
+    confidence_label = _CONFIDENCE_LABELS[confidence]
 
     nota = result["nota"]
     # Drop causal language; replace with honest qualifier
@@ -138,6 +153,7 @@ def get_economic_impact(
         total_savings_low_mxn=low,
         total_savings_high_mxn=high,
         confidence=confidence,
+        confidence_label=confidence_label,
         is_estimate=True,
         basis=_BASIS,
         subscription_cost_mxn=subscription_cost_mxn,

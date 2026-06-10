@@ -15,6 +15,7 @@ class EconomicImpactOut(BaseModel):
     total_savings_low_mxn: int
     total_savings_high_mxn: int
     confidence: Literal["low", "medium", "high"]
+    confidence_label: Literal["Estimado", "Medido", "Confirmado"]
     is_estimate: bool
     basis: List[str]
     subscription_cost_mxn: Optional[int] = None

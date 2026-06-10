@@ -4378,6 +4378,8 @@ nav {
     border: 1px solid var(--border-color); vertical-align: middle; }
 .estimate-badge--measured { background: var(--green-soft);
     color: var(--brand-green-dark); border-color: var(--brand-green-200); }
+.estimate-badge--confirmed { background: var(--brand-green-200);
+    color: var(--brand-green-900); border-color: var(--brand-green-400); font-weight: 700; }
 
 /* Range display: "$358,000 – $414,000" */
 .estimate-range { font-weight: 700; color: var(--neutral-900); }
