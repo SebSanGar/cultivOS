@@ -61,6 +61,8 @@
     --color-danger-light: #fee2e2;
     --color-info: #2563eb;
     --color-info-light: #dbeafe;
+    --color-warning-dark: #92400e;
+    --color-danger-dark: #991b1b;
 
     /* ── Colors — Surface (legacy names preserved) ── */
     --bg: #fafaf9;
@@ -102,6 +104,9 @@
     --duration-fast: 150ms;
     --duration-normal: 250ms;
     --duration-slow: 400ms;
+
+    /* ── Focus ── */
+    --focus-ring: 0 0 0 2px rgba(22, 163, 74, 0.2);
 }
 
 body {
@@ -111,6 +116,40 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
 }
+
+/* ── BUTTON HIERARCHY ── */
+.btn-primary {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    background: var(--brand-green); color: var(--neutral-50);
+    border: none; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+    cursor: pointer; transition: background var(--duration-fast) var(--ease-out);
+}
+.btn-primary:hover { background: var(--brand-green-800); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+    cursor: pointer; transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+.btn-secondary:hover { border-color: var(--brand-green); color: var(--brand-green); }
+.btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: transparent; color: var(--text-muted);
+    border: none; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
+    cursor: pointer; transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+}
+.btn-ghost:hover { color: var(--brand-green); background: var(--brand-green-50); }
+.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── NAV ── */
 nav {
@@ -422,7 +461,7 @@ nav {
     animation: cultivFadeUp 0.4s ease forwards;
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.stat-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,163,74,0.08); }
+.stat-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .stat-card:nth-child(1) { animation-delay: 0.05s; }
 .stat-card:nth-child(2) { animation-delay: 0.1s; }
 .stat-card:nth-child(3) { animation-delay: 0.15s; }
@@ -448,7 +487,7 @@ nav {
 }
 .farm-card:hover {
     border-color: var(--green);
-    box-shadow: 0 2px 12px rgba(22,163,74,0.1);
+    box-shadow: var(--shadow-md);
 }
 .farm-card-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -471,14 +510,14 @@ nav {
 /* ── HEALTH BADGE ── */
 .health-badge {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px; border-radius: 20px;
+    padding: 4px 12px; border-radius: var(--radius-full);
     font-size: 0.85rem; font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 .health-badge.good { background: var(--green-light); color: var(--green-dark); }
-.health-badge.warning { background: var(--yellow-light); color: #92400e; }
-.health-badge.critical { background: var(--red-light); color: #991b1b; }
-.health-badge.none { background: #f3f4f6; color: var(--text-muted); }
+.health-badge.warning { background: var(--yellow-light); color: var(--color-warning-dark); }
+.health-badge.critical { background: var(--red-light); color: var(--color-danger-dark); }
+.health-badge.none { background: var(--neutral-100); color: var(--text-muted); }
 
 /* ── FIELD LIST (drill-down) ── */
 .field-panel {
@@ -507,7 +546,7 @@ nav {
 }
 .export-csv-btn {
     padding: 6px 14px; border: 1px solid var(--border);
-    border-radius: 8px; background: var(--surface); cursor: pointer;
+    border-radius: var(--radius-sm); background: var(--surface); cursor: pointer;
     font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
     transition: all 0.2s; white-space: nowrap;
 }
@@ -524,11 +563,11 @@ nav {
 }
 .field-card {
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px;
+    border-radius: var(--radius); padding: 16px;
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
 }
-.field-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22,163,74,0.08); }
+.field-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .field-card-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 8px;
@@ -1052,7 +1091,7 @@ nav {
 .soil-form-field textarea:focus {
     outline: none;
     border-color: var(--green);
-    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+    box-shadow: var(--focus-ring);
 }
 .soil-form-actions {
     display: flex;
@@ -1063,9 +1102,9 @@ nav {
 .soil-submit-btn {
     padding: 8px 20px;
     background: var(--green);
-    color: #fff;
+    color: var(--neutral-50);
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -3454,8 +3493,8 @@ nav {
     font-family: 'Inter', monospace;
 }
 .summary-stat-value.health-good { color: var(--accent); }
-.summary-stat-value.health-warning { color: #f59e0b; }
-.summary-stat-value.health-critical { color: #ef4444; }
+.summary-stat-value.health-warning { color: var(--color-warning); }
+.summary-stat-value.health-critical { color: var(--color-danger); }
 .summary-stat-label {
     font-size: 0.75rem;
     color: var(--text-muted);
