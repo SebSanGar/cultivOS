@@ -96,7 +96,7 @@ def test_intel_html_has_batch_health_section(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="intel-batch-health"' in html
-    assert "Salud por Campo" in html
+    assert "Field Health" in html
 
 
 def test_intel_js_has_batch_health_loader(client):
@@ -120,7 +120,7 @@ def test_intel_js_handles_empty_batch(client):
     """intel.js shows empty state when no fields exist."""
     resp = client.get("/intel.js")
     js = resp.text
-    assert "Sin datos de salud" in js
+    assert "No health data" in js
 
 
 def test_batch_health_grid_css_exists(client):
