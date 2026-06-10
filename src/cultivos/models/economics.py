@@ -22,4 +22,8 @@ class EconomicImpactOut(BaseModel):
     net_savings_mxn: Optional[int] = None
     roi_multiple: Optional[float] = None
     payback_months: Optional[int] = None
+    savings_per_ha_mxn: Optional[int] = None
+    water_savings_per_ha_mxn: Optional[int] = None
+    fertilizer_savings_per_ha_mxn: Optional[int] = None
+    yield_improvement_per_ha_mxn: Optional[int] = None
     nota: str

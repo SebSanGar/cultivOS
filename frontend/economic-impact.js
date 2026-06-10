@@ -89,6 +89,7 @@ async function loadEconomicImpact() {
     updateRoiHero(data);
     updatePaybackGauge(data);
     updateConfidenceBadges(data);
+    updatePerHaTable(data);
 }
 
 function resetStats() {
@@ -250,6 +251,38 @@ function updatePaybackGauge(data) {
     } else if (payback > 12) {
         ring.classList.add('payback-ring--red');
     }
+}
+
+function formatPerHa(value) {
+    if (value === null || value === undefined) return '—';
+    return '$' + value.toLocaleString() + '/ha';
+}
+
+function updatePerHaTable(data) {
+    const section = document.getElementById('econ-per-ha-table');
+    if (!section) return;
+
+    const perHa = data.savings_per_ha_mxn;
+    if (perHa === null || perHa === undefined) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+
+    const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
+    set('econ-per-ha-water', formatPerHa(data.water_savings_per_ha_mxn));
+    set('econ-total-water', formatMXN(data.water_savings_mxn));
+    set('econ-per-ha-fertilizer', formatPerHa(data.fertilizer_savings_per_ha_mxn));
+    set('econ-total-fertilizer', formatMXN(data.fertilizer_savings_mxn));
+    set('econ-per-ha-yield', formatPerHa(data.yield_improvement_per_ha_mxn));
+    set('econ-total-yield', formatMXN(data.yield_improvement_mxn));
+    set('econ-per-ha-total', formatPerHa(perHa));
+    set('econ-grand-total', formatMXN(data.total_savings_mxn));
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
