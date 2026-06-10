@@ -156,23 +156,5 @@ async function acknowledgeNotif(farmId, notifId, btn) {
     }
 }
 
-// Auth check
-(function checkAuth() {
-    const token = localStorage.getItem('cultivOS_token');
-    const user = localStorage.getItem('cultivOS_user');
-    if (user) {
-        document.getElementById('nav-username').textContent = user;
-    }
-    const logoutLink = document.getElementById('nav-logout');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('cultivOS_token');
-            localStorage.removeItem('cultivOS_user');
-            window.location.href = '/login';
-        });
-    }
-})();
-
 // Load on page ready
 loadNotifications();
