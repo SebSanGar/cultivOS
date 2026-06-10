@@ -86,6 +86,7 @@ async function loadEconomicImpact() {
     updateCards(data);
     updateChart(data);
     updateNota(data.nota, notaEl);
+    updateRoiHero(data);
 }
 
 function resetStats() {
@@ -183,6 +184,27 @@ function updateChart(data) {
             }
         }
     });
+}
+
+function updateRoiHero(data) {
+    const hero = document.getElementById('econ-roi-hero');
+    const forward = document.getElementById('econ-roi-forward');
+    if (!hero || !forward) return;
+
+    if (data.roi_multiple !== null && data.roi_multiple !== undefined) {
+        hero.style.display = 'block';
+        forward.style.display = 'none';
+        const net = data.net_savings_mxn || 0;
+        document.getElementById('econ-roi-net').textContent = 'about $' + net.toLocaleString();
+        document.getElementById('econ-roi-multiple').textContent = data.roi_multiple + 'x';
+        const payback = data.payback_months;
+        document.getElementById('econ-roi-payback').textContent = payback ? '~' + payback + ' mo' : '—';
+        const cost = data.subscription_cost_mxn;
+        document.getElementById('econ-roi-cost').textContent = cost ? '$' + cost.toLocaleString() + '/yr' : '—';
+    } else {
+        hero.style.display = 'none';
+        forward.style.display = 'block';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initPage);

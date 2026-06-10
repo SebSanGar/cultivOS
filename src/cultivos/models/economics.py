@@ -18,4 +18,7 @@ class EconomicImpactOut(BaseModel):
     is_estimate: bool
     basis: List[str]
     subscription_cost_mxn: Optional[int] = None
+    net_savings_mxn: Optional[int] = None
+    roi_multiple: Optional[float] = None
+    payback_months: Optional[int] = None
     nota: str

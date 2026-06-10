@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — Impacto Economico</title>
-    <meta name="description" content="Reporte de impacto economico por granja — ahorro en agua, fertilizante y rendimiento en MXN.">
+    <title>cultivOS — Economic Impact</title>
+    <meta name="description" content="Economic impact report per farm — estimated savings on water, fertilizer, and yield.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
@@ -47,6 +47,35 @@
             </select>
             <button class="intel-btn" onclick="loadEconomicImpact()">Actualizar</button>
         </div>
+    </div>
+
+    <!-- Net ROI Hero -->
+    <div id="econ-roi-hero" class="impact-hero" style="display:none">
+        <div class="impact-hero-inner">
+            <div class="impact-hero-main">
+                <div id="econ-roi-net" class="impact-hero-value"></div>
+                <div class="impact-hero-label">Estimated net savings per year
+                    <span class="estimate-badge">Estimate</span>
+                </div>
+            </div>
+            <div class="impact-hero-meta">
+                <div class="impact-meta-item">
+                    <span class="impact-meta-label">Return</span>
+                    <span id="econ-roi-multiple" class="impact-meta-value">—</span>
+                </div>
+                <div class="impact-meta-item">
+                    <span class="impact-meta-label">Payback</span>
+                    <span id="econ-roi-payback" class="impact-meta-value">—</span>
+                </div>
+                <div class="impact-meta-item">
+                    <span class="impact-meta-label">Subscription</span>
+                    <span id="econ-roi-cost" class="impact-meta-value">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="econ-roi-forward" class="econ-nota" style="display:none">
+        Add 2–3 drone flights to see your impact estimate here.
     </div>
 
     <!-- Stats strip -->

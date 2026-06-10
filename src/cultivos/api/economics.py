@@ -117,6 +117,17 @@ def get_economic_impact(
         subscription_cost_mxn = None
         nota = nota + " Tarifa no configurada para esta granja."
 
+    # Net ROI — only when we have real data AND a subscription cost
+    has_real_data = len(health_scores) >= 1 and treatment_count >= 1
+    if subscription_cost_mxn is not None and has_real_data and subscription_cost_mxn > 0:
+        net_savings_mxn: int | None = total - subscription_cost_mxn
+        roi_multiple: float | None = round(total / subscription_cost_mxn, 1)
+        payback_months: int | None = round(12 / roi_multiple) if roi_multiple > 0 else None
+    else:
+        net_savings_mxn = None
+        roi_multiple = None
+        payback_months = None
+
     return EconomicImpactOut(
         farm_id=farm_id,
         hectares=total_hectares,
@@ -130,5 +141,8 @@ def get_economic_impact(
         is_estimate=True,
         basis=_BASIS,
         subscription_cost_mxn=subscription_cost_mxn,
+        net_savings_mxn=net_savings_mxn,
+        roi_multiple=roi_multiple,
+        payback_months=payback_months,
         nota=nota,
     )
