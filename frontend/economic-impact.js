@@ -77,7 +77,7 @@ async function loadEconomicImpact() {
     if (!data) {
         resetStats();
         notaEl.style.display = 'block';
-        notaEl.textContent = 'No se pudo obtener el impacto economico. Intente de nuevo.';
+        notaEl.textContent = 'Could not load economic impact data. Please try again.';
         destroyChart();
         return;
     }

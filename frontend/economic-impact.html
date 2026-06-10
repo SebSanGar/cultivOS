@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,18 +17,18 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
-            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recomendaciones</a></li>
-            <li><a href="/impacto-economico" class="nav-tab intel-tab active">Impacto Economico</a></li>
-            <li><a href="/vuelos" class="nav-tab intel-tab">Vuelos</a></li>
-            <li><a href="/notificaciones" class="nav-tab intel-tab">Notificaciones</a></li>
-            <li><a href="/conocimiento" class="nav-tab intel-tab">Conocimiento</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/" class="nav-tab intel-tab" data-i18n="nav.farms">Farms</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intel">Intelligence</a></li>
+            <li><a href="/recomendaciones" class="nav-tab intel-tab">Recommendations</a></li>
+            <li><a href="/impacto-economico" class="nav-tab intel-tab active">Economic Impact</a></li>
+            <li><a href="/vuelos" class="nav-tab intel-tab" data-i18n="nav.flights">Flights</a></li>
+            <li><a href="/notificaciones" class="nav-tab intel-tab" data-i18n="nav.alerts">Notifications</a></li>
+            <li><a href="/conocimiento" class="nav-tab intel-tab" data-i18n="nav.knowledge">Knowledge</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Status</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -38,14 +38,14 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Impacto Economico</h1>
-            <p class="intel-subtitle">Ahorro estimado por granja — agua, fertilizante y rendimiento en MXN</p>
+            <h1 class="intel-title">Economic Impact</h1>
+            <p class="intel-subtitle">Estimated savings per farm — water, fertilizer and yield</p>
         </div>
         <div class="intel-header-actions">
             <select id="econ-farm-select" class="intel-select" onchange="loadEconomicImpact()">
-                <option value="">Seleccione una granja...</option>
+                <option value="">Select a farm...</option>
             </select>
-            <button class="intel-btn" onclick="loadEconomicImpact()">Actualizar</button>
+            <button class="intel-btn" onclick="loadEconomicImpact()">Refresh</button>
         </div>
     </div>
 
@@ -98,25 +98,25 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-total-savings">--</div>
-            <div class="intel-stat-label">Ahorro total MXN/ano
-                <span id="econ-confidence-badge-total" class="estimate-badge">Estimado</span>
+            <div class="intel-stat-label">Total savings / year
+                <span id="econ-confidence-badge-total" class="estimate-badge">Estimated</span>
             </div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-hectares">--</div>
-            <div class="intel-stat-label">Hectareas</div>
+            <div class="intel-stat-label">Hectares</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-water">--</div>
-            <div class="intel-stat-label">Ahorro en agua</div>
+            <div class="intel-stat-label">Water savings</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-fertilizer">--</div>
-            <div class="intel-stat-label">Fertilizante</div>
+            <div class="intel-stat-label">Fertilizer</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-yield">--</div>
-            <div class="intel-stat-label">Rendimiento</div>
+            <div class="intel-stat-label">Yield</div>
         </div>
     </div>
 
@@ -135,21 +135,21 @@
     <div id="econ-cards" class="econ-cards-grid">
         <div class="econ-card">
             <div class="econ-card-icon" style="color:#4da6ff">&#9672;</div>
-            <h3 class="econ-card-title">Ahorro en agua</h3>
-            <p class="econ-card-desc">Reduccion de desperdicio por riego de precision. CONAGUA reporta 57% de agua desperdiciada por ineficiencia.</p>
-            <div class="econ-card-value" id="econ-card-water">$0 MXN</div>
+            <h3 class="econ-card-title">Water savings</h3>
+            <p class="econ-card-desc">Reduced waste from precision irrigation. Studies report 57% of irrigation water is lost to inefficiency (CONAGUA).</p>
+            <div class="econ-card-value" id="econ-card-water">$0</div>
         </div>
         <div class="econ-card">
             <div class="econ-card-icon" style="color:#00c896">&#9672;</div>
-            <h3 class="econ-card-title">Fertilizante organico</h3>
-            <p class="econ-card-desc">Aplicacion dirigida de tratamientos organicos vs. aplicacion general. Mas datos = mejor focalizado.</p>
-            <div class="econ-card-value" id="econ-card-fertilizer">$0 MXN</div>
+            <h3 class="econ-card-title">Organic fertilizer</h3>
+            <p class="econ-card-desc">Targeted organic treatments vs. blanket application. More data = more precise targeting.</p>
+            <div class="econ-card-value" id="econ-card-fertilizer">$0</div>
         </div>
         <div class="econ-card">
             <div class="econ-card-icon" style="color:#f0b429">&#9672;</div>
-            <h3 class="econ-card-title">Rendimiento</h3>
-            <p class="econ-card-desc">Mejora de rendimiento por intervencion temprana basada en datos de salud del cultivo.</p>
-            <div class="econ-card-value" id="econ-card-yield">$0 MXN</div>
+            <h3 class="econ-card-title">Yield improvement</h3>
+            <p class="econ-card-desc">Yield gains from early intervention based on crop health data.</p>
+            <div class="econ-card-value" id="econ-card-yield">$0</div>
         </div>
     </div>
 
@@ -245,7 +245,7 @@
 
     <!-- Reference -->
     <div class="econ-reference">
-        <p>Referencia: $414,000 MXN/ano para una granja tipica de 20 hectareas en Jalisco. Basado en datos de CONAGUA, precios de mercado local, y literatura de agricultura de precision.</p>
+        <p>Reference: Typical 20-hectare farm in Jalisco, Mexico. Based on CONAGUA data, local market prices, and precision agriculture literature.</p>
     </div>
 </main>
 
@@ -253,10 +253,10 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    Precision agriculture platform
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido">Tour</a>
+    <br>Transforming agriculture with AI and drone data
 </footer>
 </body>
 </html>
