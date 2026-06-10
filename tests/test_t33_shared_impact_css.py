@@ -34,7 +34,7 @@ def test_required_class_exists(css, cls):
 def test_no_hardcoded_hex_in_t33_block(css):
     """All new T3.3 classes must use CSS vars — no hardcoded hex colors."""
     # Extract the T3.3 block (after the marker comment)
-    marker = "/* T3.3 SHARED IMPACT CLASSES */"
+    marker = "/* T3.3 SHARED IMPACT CLASSES — single source for farmer + owner impact pages */"
     assert marker in css, "T3.3 block marker missing"
     block_start = css.index(marker)
     t33_block = css[block_start:]

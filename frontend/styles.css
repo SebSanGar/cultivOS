@@ -4326,3 +4326,55 @@ nav {
     .impact-fields { grid-template-columns: 1fr; }
     .impact-support-item { flex-basis: calc(50% - 6px); }
 }
+
+/* T3.3 SHARED IMPACT CLASSES — single source for farmer + owner impact pages */
+
+/* Equivalence row: "Like 12 bags of fertilizer" chips */
+.impact-equiv-row { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; margin: var(--space-3) 0; }
+.impact-equiv-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+    background: var(--green-soft); border: 1px solid var(--brand-green-200);
+    border-radius: var(--radius-full); font-size: 0.88rem; font-weight: 600;
+    color: var(--brand-green-dark); min-height: 44px; }
+
+/* Before/after field health swatch (T1.5) */
+.before-after-field { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) 0; }
+.before-after-field .baf-label { font-size: 0.78rem; color: var(--text-secondary); }
+.before-after-field .baf-swatch { width: 32px; height: 32px; border-radius: var(--radius-sm); flex-shrink: 0; }
+.before-after-field .baf-arrow { color: var(--text-secondary); font-weight: 700; }
+
+/* Owner net-ROI hero (T2.1) */
+.owner-hero { text-align: center; background: var(--card-bg);
+    border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-4); margin-bottom: var(--space-5);
+    font-size: var(--text-base); }
+.owner-hero-label { font-size: 1rem; color: var(--text-secondary); font-weight: 500; }
+.owner-hero-amount { font-size: var(--text-4xl); font-weight: 800; line-height: 1.1;
+    color: var(--brand-green-dark); margin: var(--space-2) 0; }
+.owner-hero-multiple { font-size: 1.1rem; color: var(--text-secondary); }
+
+/* Cost compare bar (T2.3 / T2.4) */
+.cost-compare-bar { height: 20px; border-radius: var(--radius-full);
+    background: var(--neutral-100); overflow: hidden; margin: var(--space-2) 0; position: relative; }
+.cost-compare-bar-fill { height: 100%; border-radius: var(--radius-full);
+    background: var(--brand-green-dark); transition: width 0.6s var(--ease-out); }
+.cost-compare-bar-fill--cost { background: var(--color-danger); }
+
+/* Estimate / confidence badges */
+.estimate-badge { display: inline-block; padding: 3px 10px;
+    border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 600;
+    background: var(--neutral-100); color: var(--text-secondary);
+    border: 1px solid var(--border-color); vertical-align: middle; }
+.estimate-badge--measured { background: var(--green-soft);
+    color: var(--brand-green-dark); border-color: var(--brand-green-200); }
+
+/* Range display: "$358,000 – $414,000" */
+.estimate-range { font-weight: 700; color: var(--neutral-900); }
+.estimate-range .range-sep { font-weight: 400; color: var(--text-secondary); margin: 0 4px; }
+
+/* Source citation link */
+.source-cite { font-size: 0.75rem; color: var(--text-muted); }
+.source-cite a { color: var(--brand-green-dark); text-decoration: underline; }
+
+/* Card confidence modifiers */
+.card--estimated { border-left: 3px solid var(--color-warning); }
+.card--measured { border-left: 3px solid var(--color-success); }
