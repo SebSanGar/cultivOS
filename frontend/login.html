@@ -12,17 +12,17 @@
     <div class="login-container">
         <div class="login-logo">
             <h1>cultiv<span>OS</span></h1>
-            <p>Inteligencia agricola de precision</p>
+            <p data-i18n="login.subtitle">Inteligencia agricola de precision</p>
         </div>
         <div class="login-card">
-            <h2 id="login-title">Iniciar Sesion</h2>
+            <h2 id="login-title" data-i18n="login.title">Iniciar Sesion</h2>
             <form id="login-form" autocomplete="on">
                 <div class="login-field">
-                    <label for="login-username">Usuario</label>
+                    <label for="login-username" data-i18n="login.username">Usuario</label>
                     <input type="text" id="login-username" name="username" required autocomplete="username" placeholder="Tu nombre de usuario">
                 </div>
                 <div class="login-field">
-                    <label for="login-password">Contrasena</label>
+                    <label for="login-password" data-i18n="login.password">Contrasena</label>
                     <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="Tu contrasena">
                 </div>
                 <div class="register-fields" id="register-fields">
@@ -44,7 +44,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="login-submit" id="login-submit">Entrar</button>
+                <button type="submit" class="login-submit" id="login-submit" data-i18n="login.submit">Entrar</button>
                 <div class="login-error" id="login-error"></div>
             </form>
             <div class="login-toggle">
@@ -53,6 +53,7 @@
             </div>
         </div>
     </div>
+    <script src="/i18n.js"></script>
     <script src="/login.js"></script>
 </body>
 </html>

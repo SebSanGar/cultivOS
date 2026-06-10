@@ -21,20 +21,24 @@
         </button>
         <!-- NAV: farmer 4-item nav — F6 -->
         <ul class="nav-farmer-tabs">
-            <li><a href="/" class="active">Mis Parcelas</a></li>
-            <li><a href="/notificaciones">Alertas</a></li>
-            <li><a href="/conocimiento">Conocimiento</a></li>
-            <li><a href="/whatsapp-demo">WhatsApp</a></li>
+            <li><a href="/" class="active" data-i18n="nav.farms">Mis Parcelas</a></li>
+            <li><a href="/notificaciones" data-i18n="nav.alerts">Alertas</a></li>
+            <li><a href="/conocimiento" data-i18n="nav.knowledge">Conocimiento</a></li>
+            <li><a href="/whatsapp-demo" data-i18n="nav.whatsapp">WhatsApp</a></li>
         </ul>
         <!-- NAV: agronomist extras — hidden by default, revealed by F8 toggle -->
         <ul class="nav-agronomo-extras" hidden>
-            <li><a href="/intel" class="nav-tab">Inteligencia</a></li>
-            <li><a href="/mapa" class="nav-tab">Mapa</a></li>
-            <li><a href="/vuelos" class="nav-tab">Vuelos</a></li>
-            <li><a href="/plataforma" class="nav-tab">Plataforma</a></li>
-            <li><a href="/estado" class="nav-tab">Estado</a></li>
+            <li><a href="/intel" class="nav-tab" data-i18n="nav.intel">Inteligencia</a></li>
+            <li><a href="/mapa" class="nav-tab" data-i18n="nav.map">Mapa</a></li>
+            <li><a href="/vuelos" class="nav-tab" data-i18n="nav.flights">Vuelos</a></li>
+            <li><a href="/plataforma" class="nav-tab" data-i18n="nav.platform">Plataforma</a></li>
+            <li><a href="/estado" class="nav-tab" data-i18n="nav.status">Estado</a></li>
         </ul>
-        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false">Vista agronomo</button>
+        <button id="agronomo-toggle" class="agronomo-toggle-btn" aria-pressed="false" data-i18n="toggle.agronomo">Vista agronomo</button>
+        <div class="nav-lang-toggle" role="group" aria-label="Language">
+            <span data-lang="es" class="active">ES</span>
+            <span data-lang="en">EN</span>
+        </div>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
             <a href="#" id="nav-logout" class="nav-logout">Salir</a>
@@ -47,8 +51,8 @@
     <!-- Header -->
     <div class="dash-header">
         <div>
-            <h1 class="dash-title">Granjas</h1>
-            <p class="dash-subtitle">Vista general de todas las granjas y su salud</p>
+            <h1 class="dash-title" data-i18n="dash.title">Granjas</h1>
+            <p class="dash-subtitle" data-i18n="dash.subtitle">Vista general de todas las granjas y su salud</p>
         </div>
     </div>
 
@@ -56,19 +60,19 @@
     <div class="stats-strip">
         <div class="stat-card">
             <div class="stat-value" id="stat-farms">--</div>
-            <div class="stat-label">Granjas</div>
+            <div class="stat-label" data-i18n="stat.farms">Granjas</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-fields">--</div>
-            <div class="stat-label">Campos</div>
+            <div class="stat-label" data-i18n="stat.fields">Campos</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-avg-health">--</div>
-            <div class="stat-label">Salud Promedio</div>
+            <div class="stat-label" data-i18n="stat.avgHealth">Salud Promedio</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" id="stat-hectares">--</div>
-            <div class="stat-label">Hectareas Total</div>
+            <div class="stat-label" data-i18n="stat.hectares">Hectareas Total</div>
         </div>
     </div>
 
@@ -76,7 +80,7 @@
     <div id="weather-widget" class="weather-widget" style="display:none">
         <div class="weather-current">
             <div class="weather-header">
-                <div class="weather-title">Clima</div>
+                <div class="weather-title" data-i18n="weather.title">Clima</div>
                 <div class="weather-farm-name" id="weather-farm-name"></div>
             </div>
             <div class="weather-now">
@@ -84,11 +88,11 @@
                 <div class="weather-desc" id="weather-desc">--</div>
                 <div class="weather-details">
                     <div class="weather-detail">
-                        <span class="weather-detail-label">Humedad</span>
+                        <span class="weather-detail-label" data-i18n="weather.humidity">Humedad</span>
                         <span class="weather-detail-value" id="weather-humidity">--%</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="weather-detail-label">Viento</span>
+                        <span class="weather-detail-label" data-i18n="weather.wind">Viento</span>
                         <span class="weather-detail-value" id="weather-wind">-- km/h</span>
                     </div>
                 </div>
@@ -99,64 +103,64 @@
 
     <!-- Farm creation -->
     <div style="display:flex;justify-content:flex-end;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap">
-        <button class="field-panel-back" id="btn-seed-demo" onclick="seedDemoData()">Cargar datos de ejemplo</button>
-        <a class="export-csv-btn" href="/recorrido" style="text-decoration:none;display:inline-flex;align-items:center">Asistente guiado</a>
-        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()">Descargar Reporte de Portafolio</button>
-        <button class="export-csv-btn" onclick="toggleFarmForm()">+ Nueva Granja</button>
+        <button class="field-panel-back" id="btn-seed-demo" onclick="seedDemoData()" data-i18n="dash.seedDemo">Cargar datos de ejemplo</button>
+        <a class="export-csv-btn" href="/recorrido" style="text-decoration:none;display:inline-flex;align-items:center" data-i18n="dash.guidedTour">Asistente guiado</a>
+        <button class="export-csv-btn" id="btn-portfolio-pdf" onclick="downloadPortfolioPDF()" data-i18n="dash.portfolioReport">Descargar Reporte de Portafolio</button>
+        <button class="export-csv-btn" onclick="toggleFarmForm()" data-i18n="dash.newFarm">+ Nueva Granja</button>
     </div>
     <form id="farm-create-form" class="soil-entry-form" style="display:none" onsubmit="createFarm(event)">
         <div class="form-field">
-            <label for="farm-name">Nombre *</label>
+            <label for="farm-name" data-i18n="form.name">Nombre *</label>
             <input type="text" id="farm-name" required minlength="1" maxlength="100" placeholder="Ej: Rancho El Sol">
         </div>
         <div class="form-field">
-            <label for="farm-owner">Propietario</label>
+            <label for="farm-owner" data-i18n="form.owner">Propietario</label>
             <input type="text" id="farm-owner" placeholder="Ej: Juan Garcia">
         </div>
         <div class="form-field">
-            <label for="farm-hectares">Hectareas</label>
+            <label for="farm-hectares" data-i18n="form.hectares">Hectareas</label>
             <input type="number" id="farm-hectares" min="0" step="0.1" value="0" placeholder="0">
         </div>
         <div class="form-field">
-            <label for="farm-municipality">Municipio</label>
+            <label for="farm-municipality" data-i18n="form.municipality">Municipio</label>
             <input type="text" id="farm-municipality" placeholder="Ej: Tequila">
         </div>
         <div class="form-field">
-            <label for="farm-state">Estado</label>
+            <label for="farm-state" data-i18n="form.state">Estado</label>
             <input type="text" id="farm-state" value="Jalisco" placeholder="Jalisco">
         </div>
         <div class="form-field" style="grid-column:1/-1;display:flex;gap:0.5rem;justify-content:flex-end">
-            <button type="button" class="field-panel-back" onclick="toggleFarmForm()">Cancelar</button>
-            <button type="submit" class="export-csv-btn" id="btn-create-farm">Crear Granja</button>
+            <button type="button" class="field-panel-back" onclick="toggleFarmForm()" data-i18n="form.cancel">Cancelar</button>
+            <button type="submit" class="export-csv-btn" id="btn-create-farm" data-i18n="form.createFarm">Crear Granja</button>
         </div>
         <div id="farm-create-error" style="grid-column:1/-1;color:#ff6b6b;display:none"></div>
     </form>
 
     <!-- Farm cards grid -->
     <div id="farm-grid" class="farm-grid">
-        <div class="loading"><div class="loading-spinner"></div>Cargando granjas...</div>
+        <div class="loading"><div class="loading-spinner"></div><span data-i18n="dash.loading">Cargando granjas...</span></div>
     </div>
 
     <!-- Notification panel (shown when a farm is selected) -->
     <div id="notification-panel" class="notification-panel" style="display:none">
         <div class="notification-header">
-            <h3 class="notification-title">Notificaciones</h3>
+            <h3 class="notification-title" data-i18n="notif.title">Notificaciones</h3>
             <button id="alert-config-btn" class="alert-config-btn" onclick="toggleAlertConfig()" title="Configurar umbrales de alerta">&#9881;</button>
         </div>
         <div id="alert-config-form" class="alert-config-form" style="display:none">
             <div class="alert-config-row">
-                <label for="cfg-health-floor">Salud minima (0-100)</label>
+                <label for="cfg-health-floor" data-i18n="notif.healthFloor">Salud minima (0-100)</label>
                 <input type="number" id="cfg-health-floor" min="0" max="100" step="1" value="40">
             </div>
             <div class="alert-config-row">
-                <label for="cfg-ndvi-min">NDVI minimo (0-1)</label>
+                <label for="cfg-ndvi-min" data-i18n="notif.ndviMin">NDVI minimo (0-1)</label>
                 <input type="number" id="cfg-ndvi-min" min="0" max="1" step="0.05" value="0.3">
             </div>
             <div class="alert-config-row">
-                <label for="cfg-temp-max">Temperatura maxima (C)</label>
+                <label for="cfg-temp-max" data-i18n="notif.tempMax">Temperatura maxima (C)</label>
                 <input type="number" id="cfg-temp-max" min="-50" max="70" step="1" value="45">
             </div>
-            <button id="alert-config-save" class="alert-config-save" onclick="saveAlertConfig()">Guardar</button>
+            <button id="alert-config-save" class="alert-config-save" onclick="saveAlertConfig()" data-i18n="notif.save">Guardar</button>
         </div>
         <div id="notification-list" class="notification-list"></div>
     </div>
@@ -164,7 +168,7 @@
     <!-- Alert history timeline (shown when a farm is selected) -->
     <div id="alert-history" class="alert-history" style="display:none">
         <div class="alert-history-header">
-            <h3 class="alert-history-title">Historial de Alertas</h3>
+            <h3 class="alert-history-title" data-i18n="alert.historyTitle">Historial de Alertas</h3>
             <span class="alert-history-count" id="alert-history-count"></span>
         </div>
         <div class="alert-history-list" id="alert-history-list">
@@ -340,6 +344,7 @@
     </div>
 </main>
 
+<script src="/i18n.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/toggle.js"></script>
 <script src="/app.js"></script>
