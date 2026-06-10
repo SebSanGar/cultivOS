@@ -129,6 +129,23 @@ REGISTRY: dict[str, AssumptionRecord] = {
             "Universally accepted scientific constant; value does not vary by region."
         ),
     ),
+    # ----------------------------------------- Risk avoided per treatment
+    "risk_per_treatment_mxn": AssumptionRecord(
+        value=3_000.0,
+        low=1_500.0,
+        high=5_000.0,
+        unit="MXN/treatment",
+        source_name="SARE Louisiana — Precision N management (cotton/corn equal yield at 50% less N)",
+        source_url="https://www.sare.org/publications/managing-cover-crops-profitably/",
+        source_year=2021,
+        status="model_assumption",
+        confidence_note=(
+            "Early-intervention crop loss prevention estimate per timely treatment. "
+            "SARE studies show precision application prevents 15-25% yield loss risk. "
+            "At $21,330/ha maize (Unisem 2025), preventing 15% loss on 1 ha ≈ $3,200. "
+            "Low = 0.5×, high = 1.7×. Do not present as a measured result."
+        ),
+    ),
     # ----------------------------------------- Per-treatment savings heuristic
     "per_treatment_savings_mxn": AssumptionRecord(
         value=1_500.0,

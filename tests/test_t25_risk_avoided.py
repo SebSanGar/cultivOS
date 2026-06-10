@@ -56,7 +56,7 @@ def client(db_session):
 
 def _seed_farm_with_treatments(db_session, n_treatments: int):
     """Seed one farm + one field + n health scores + n_treatments."""
-    farm = Farm(name="Test Farm T25", municipality="Guadalajara", hectares=20.0, tier="basic")
+    farm = Farm(name="Test Farm T25", municipality="Guadalajara", total_hectares=20.0, tier="basic")
     db_session.add(farm)
     db_session.flush()
 
@@ -65,15 +65,19 @@ def _seed_farm_with_treatments(db_session, n_treatments: int):
     db_session.flush()
 
     # Always add a health score so has_real_data = True
-    hs = HealthScore(field_id=field.id, score=75.0, source="drone")
+    hs = HealthScore(field_id=field.id, score=75.0)
     db_session.add(hs)
 
     for i in range(n_treatments):
         tr = TreatmentRecord(
             field_id=field.id,
-            treatment_type="compost",
-            status="completed",
-            notes=f"treatment {i}",
+            health_score_used=75.0,
+            problema="plagas",
+            causa_probable="humedad alta",
+            tratamiento="compost organico",
+            costo_estimado_mxn=500,
+            urgencia="media",
+            prevencion="monitoreo semanal",
         )
         db_session.add(tr)
 
@@ -133,16 +137,25 @@ def test_risk_avoided_scales_with_treatment_count(client, db_session):
     farm_id_few = _seed_farm_with_treatments(db_session, n_treatments=2)
     resp_few = client.get(f"/api/farms/{farm_id_few}/economic-impact")
 
-    farm = Farm(name="Farm Many T25", municipality="Guadalajara", hectares=20.0, tier="basic")
+    farm = Farm(name="Farm Many T25", municipality="Guadalajara", total_hectares=20.0, tier="basic")
     db_session.add(farm)
     db_session.flush()
     field = Field(farm_id=farm.id, name="F", hectares=20.0, crop_type="maize")
     db_session.add(field)
     db_session.flush()
-    hs = HealthScore(field_id=field.id, score=75.0, source="drone")
+    hs = HealthScore(field_id=field.id, score=75.0)
     db_session.add(hs)
     for i in range(8):
-        db_session.add(TreatmentRecord(field_id=field.id, treatment_type="compost", status="completed"))
+        db_session.add(TreatmentRecord(
+            field_id=field.id,
+            health_score_used=75.0,
+            problema="plagas",
+            causa_probable="humedad alta",
+            tratamiento="compost organico",
+            costo_estimado_mxn=500,
+            urgencia="media",
+            prevencion="monitoreo semanal",
+        ))
     db_session.commit()
 
     resp_many = client.get(f"/api/farms/{farm.id}/economic-impact")

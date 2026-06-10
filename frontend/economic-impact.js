@@ -90,6 +90,7 @@ async function loadEconomicImpact() {
     updatePaybackGauge(data);
     updateConfidenceBadges(data);
     updatePerHaTable(data);
+    updateRiskAvoided(data);
 }
 
 function resetStats() {
@@ -313,6 +314,21 @@ function updatePerHaTable(data) {
     set('econ-total-yield', formatMXN(data.yield_improvement_mxn));
     set('econ-per-ha-total', formatPerHa(perHa));
     set('econ-grand-total', formatMXN(data.total_savings_mxn));
+}
+
+function updateRiskAvoided(data) {
+    const section = document.getElementById('econ-risk-avoided-section');
+    const valueEl = document.getElementById('econ-risk-avoided-value');
+    if (!section || !valueEl) return;
+
+    const risk = data.risk_avoided_mxn;
+    if (risk === null || risk === undefined) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    valueEl.textContent = 'about $' + risk.toLocaleString();
 }
 
 document.addEventListener('DOMContentLoaded', initPage);

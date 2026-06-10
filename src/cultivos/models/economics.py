@@ -30,4 +30,7 @@ class EconomicImpactOut(BaseModel):
     water_potential_mxn: Optional[int] = None
     fertilizer_potential_mxn: Optional[int] = None
     yield_potential_mxn: Optional[int] = None
+    # T2.5 — risk avoided: potential loss prevented by timely treatment.
+    # NOT included in total_savings_mxn (honesty rule 8 — never double-count).
+    risk_avoided_mxn: Optional[int] = None
     nota: str

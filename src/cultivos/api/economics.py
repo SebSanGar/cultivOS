@@ -20,6 +20,9 @@ _WATER_PER_HA = _a("water_savings_per_ha")
 _FERT_PER_HA = _a("fertilizer_savings_per_ha")
 _YIELD_PER_HA = _a("yield_baseline_per_ha")
 
+# T2.5 — risk avoided per treatment (early intervention loss prevention)
+_RISK_PER_TREATMENT = _a("risk_per_treatment_mxn")
+
 router = APIRouter(
     prefix="/api/farms/{farm_id}/economic-impact",
     tags=["economics"],
@@ -166,6 +169,11 @@ def get_economic_impact(
         fertilizer_potential_mxn = None
         yield_potential_mxn = None
 
+    # T2.5 — risk avoided: only when treatments applied. NEVER summed into total_savings.
+    risk_avoided_mxn: int | None = (
+        round(treatment_count * _RISK_PER_TREATMENT) if treatment_count > 0 else None
+    )
+
     return EconomicImpactOut(
         farm_id=farm_id,
         hectares=total_hectares,
@@ -190,5 +198,6 @@ def get_economic_impact(
         water_potential_mxn=water_potential_mxn,
         fertilizer_potential_mxn=fertilizer_potential_mxn,
         yield_potential_mxn=yield_potential_mxn,
+        risk_avoided_mxn=risk_avoided_mxn,
         nota=nota,
     )
