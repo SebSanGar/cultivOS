@@ -602,7 +602,8 @@
             'notif.historySubtitle': 'Alertas y recomendaciones de todas las granjas',
             'notif.refresh': 'Actualizar',
             'field.cta': 'Que hago?',
-            'knowledge.title': 'Base de Conocimiento'
+            'knowledge.title': 'Base de Conocimiento',
+            'nav.economic_impact': 'Impacto Economico'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -1227,7 +1228,8 @@
             'intelligence.sectionYield': 'Yield Prediction',
             'intelligence.sectionTreatments': 'Recent Treatments',
             'intelligence.sectionCarbon': 'Organic Carbon',
-            'intelligence.sectionFusion': 'Sensor Fusion'
+            'intelligence.sectionFusion': 'Sensor Fusion',
+            'nav.economic_impact': 'Economic Impact'
         }
     };
 
