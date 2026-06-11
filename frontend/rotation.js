@@ -44,8 +44,8 @@
 
     /* Load farms on init */
     function loadFarms() {
-        fetchJSON("/api/farms").then(function (farms) {
-            if (!farms) return;
+        fetchJSON("/api/farms?page_size=100").then(function (resp) {
+            var farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
             farms.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;

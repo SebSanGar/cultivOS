@@ -21,10 +21,11 @@
     yearSelect.value = currentYear;
 
     // Load farms
-    fetch("/api/farms")
+    fetch("/api/farms?page_size=100")
         .then(r => r.json())
-        .then(farms => {
-            (farms || []).forEach(f => {
+        .then(resp => {
+            const farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
+            farms.forEach(f => {
                 const opt = document.createElement("option");
                 opt.value = f.id;
                 opt.textContent = f.name || "Finca " + f.id;

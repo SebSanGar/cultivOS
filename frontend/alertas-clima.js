@@ -40,8 +40,9 @@
     }
 
     // Load farms
-    const farms = await fetchJSON("/api/farms");
-    if (!farms || !farms.length) {
+    const farmsResp = await fetchJSON("/api/farms?page_size=100");
+    const farms = (farmsResp && (farmsResp.data || farmsResp.items)) || (Array.isArray(farmsResp) ? farmsResp : []);
+    if (!farms.length) {
         farmSel.innerHTML = '<option value="">Sin fincas</option>';
         return;
     }

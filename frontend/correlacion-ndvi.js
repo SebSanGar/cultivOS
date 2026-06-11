@@ -4,9 +4,10 @@
   async function loadFarms() {
     var sel = document.getElementById("cn-farm-select");
     try {
-      var res = await fetch("/api/farms");
+      var res = await fetch("/api/farms?page_size=100");
       if (!res.ok) return;
-      farms = await res.json();
+      var resp = await res.json();
+      farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
       farms.forEach(function (f) {
         var opt = document.createElement("option");
         opt.value = f.id;

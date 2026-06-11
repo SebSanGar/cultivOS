@@ -46,8 +46,8 @@
     }
 
     async function loadFarms() {
-        const farms = await fetchJSON("/api/farms/");
-        if (!farms) return;
+        const resp = await fetchJSON("/api/farms?page_size=100");
+        const farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
         farms.forEach(function (f) {
             const opt = document.createElement("option");
             opt.value = f.id;

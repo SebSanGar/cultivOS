@@ -53,8 +53,9 @@
         });
     }
 
-    const farms = await fetchJSON("/api/farms");
-    if (farms) {
+    const farmsResp = await fetchJSON("/api/farms?page_size=100");
+    const farms = (farmsResp && (farmsResp.data || farmsResp.items)) || (Array.isArray(farmsResp) ? farmsResp : []);
+    if (farms.length) {
         farms.forEach(function (f) {
             const opt = document.createElement("option");
             opt.value = f.id;

@@ -27,9 +27,10 @@ function formatMXN(value) {
 let econChart = null;
 
 async function initPage() {
-    const farms = await fetchJSON('/api/farms');
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
     const select = document.getElementById('econ-farm-select');
-    if (farms && farms.length > 0) {
+    if (farms.length > 0) {
         farms.forEach(f => {
             const opt = document.createElement('option');
             opt.value = f.id;

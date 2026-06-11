@@ -88,8 +88,8 @@
     }
 
     async function loadFarms() {
-        const data = await fetchJSON("/api/farms");
-        const rows = Array.isArray(data) ? data : (data && data.farms) || [];
+        const data = await fetchJSON("/api/farms?page_size=100");
+        const rows = (data && (data.data || data.items)) || (Array.isArray(data) ? data : []);
         farmSel.innerHTML = '<option value="">Seleccione una finca...</option>';
         rows.forEach(function (f) {
             const opt = document.createElement("option");

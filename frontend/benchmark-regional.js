@@ -8,9 +8,10 @@
 
     // Load farms
     try {
-        const res = await fetch("/api/farms");
+        const res = await fetch("/api/farms?page_size=100");
         if (res.ok) {
-            const farms = await res.json();
+            const resp = await res.json();
+            const farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
             farms.forEach(function (f) {
                 const o = document.createElement("option");
                 o.value = f.id;

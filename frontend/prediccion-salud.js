@@ -66,15 +66,14 @@
         }
     }
 
-    var farms = await fetchJSON("/api/farms");
-    if (farms) {
-        farms.forEach(function (f) {
-            var opt = document.createElement("option");
-            opt.value = f.id;
-            opt.textContent = f.name;
-            farmSelect.appendChild(opt);
-        });
-    }
+    var resp = await fetchJSON("/api/farms?page_size=100");
+    var farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
+    farms.forEach(function (f) {
+        var opt = document.createElement("option");
+        opt.value = f.id;
+        opt.textContent = f.name;
+        farmSelect.appendChild(opt);
+    });
 
     farmSelect.addEventListener("change", async function () {
         fieldSelect.innerHTML = '<option value="">Seleccione un campo...</option>';
