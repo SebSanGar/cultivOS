@@ -102,7 +102,7 @@ class TestIntelligencePageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/inteligencia")
-        assert "Inteligencia de Campo" in resp.text
+        assert "Field Intelligence" in resp.text
 
     def test_page_has_farm_selector(self, client):
         resp = client.get("/inteligencia")
@@ -114,7 +114,7 @@ class TestIntelligencePageLoad:
 
     def test_page_has_load_button(self, client):
         resp = client.get("/inteligencia")
-        assert "Consultar" in resp.text
+        assert "Load Intelligence" in resp.text
 
     def test_page_has_empty_state(self, client):
         resp = client.get("/inteligencia")
@@ -124,11 +124,11 @@ class TestIntelligencePageLoad:
         resp = client.get("/inteligencia")
         assert 'id="intel-page-content"' in resp.text
 
-    def test_page_has_spanish_labels(self, client):
+    def test_page_has_english_labels(self, client):
         resp = client.get("/inteligencia")
         html = resp.text
-        assert "Seleccione una granja" in html
-        assert "Seleccione un campo" in html
+        assert "Select a farm" in html
+        assert "Select a field" in html
 
     def test_page_has_js_script(self, client):
         resp = client.get("/inteligencia")

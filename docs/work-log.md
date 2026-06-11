@@ -47,3 +47,22 @@
 
 **Verification**: `PYTHONPATH=src pytest tests/ -q` (result captured in this commit's test run).
 
+
+## 2026-06-10 — EN i18n: treatment-text bilingual fields (SOURCE: treatment-text)
+
+Added English siblings to treatment/recommendation strings across 5 assigned models per founder decision D2 (HYBRID: fixed-template → real EN now; generated/DB text → *_en plumbed None + needs_lazy_translate).
+
+Files touched:
+- models/disease.py: RiskItemOut (tipo_en, descripcion_en, recomendacion_en), DiseaseRiskOut (mensaje_en, nota_en), DiseaseOut/TreatmentInfo/DiseaseMatch (description_en, lazy)
+- models/irrigation.py: IrrigationDayOut.nota_en, IrrigationScheduleOut.recomendacion_en (fixed templates, real EN)
+- models/action_timeline.py: TimelineAction (description_en, weather_note_en, stage_en, problema_en)
+- models/intel.py: tratamiento_en on TreatmentEffectivenessEntry/ReportEntry/ByCropRow/CostEffectivenessItem (lazy)
+- models/health.py: TreatmentLink (tratamiento_en, problema_en, lazy)
+- services/crop/disease.py: bilingual templates for all RiskItem + mensaje (_risk_mensaje helper)
+- services/intelligence/irrigation.py: bilingual nota + recomendacion templates
+- services/intelligence/action_timeline.py: bilingual _weather_note_for_treatment; growth_stage now pulls real stage_en/nutrient_focus_en from phenology
+- api/disease.py, api/irrigation.py: plumb *_en through Out constructors
+
+weather_note + irrigation + disease-risk templates are genuine EN (fixed templates). DB free-text (disease descriptions, treatment names, problema, seasonal-alert messages) plumbed as None → needs_lazy_translate=true.
+
+Tests: 96 in-scope pass (disease, irrigation, action_timeline, health_trajectory). 5 test_intel_*frontend failures are PRE-EXISTING stale-Spanish-string asserts from the EN pivot (confirmed via git stash); not caused by this work. App builds, 326 routes.

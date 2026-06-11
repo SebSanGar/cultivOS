@@ -51,25 +51,25 @@
     }
 
     function resetSections() {
-        healthBody.innerHTML = '<span style="color:#888;">Sin datos de salud</span>';
-        ndviBody.innerHTML = '<span style="color:#888;">Sin datos NDVI</span>';
-        thermalBody.innerHTML = '<span style="color:#888;">Sin datos termicos</span>';
-        soilBody.innerHTML = '<span style="color:#888;">Sin datos de suelo</span>';
-        microbiomeBody.innerHTML = '<span style="color:#888;">Sin datos de microbioma</span>';
-        weatherBody.innerHTML = '<span style="color:#888;">Sin datos de clima</span>';
-        growthBody.innerHTML = '<span style="color:#888;">Sin datos de crecimiento</span>';
-        diseaseBody.innerHTML = '<span style="color:#888;">Sin datos de enfermedades</span>';
-        yieldBody.innerHTML = '<span style="color:#888;">Sin prediccion de rendimiento</span>';
-        treatmentsBody.innerHTML = '<span style="color:#888;">Sin tratamientos registrados</span>';
-        carbonBody.innerHTML = '<span style="color:#888;">Sin datos de carbono</span>';
-        fusionBody.innerHTML = '<span style="color:#888;">Sin datos de fusion</span>';
+        healthBody.innerHTML = '<span style="color:#888;">No health data</span>';
+        ndviBody.innerHTML = '<span style="color:#888;">No NDVI data</span>';
+        thermalBody.innerHTML = '<span style="color:#888;">No thermal data</span>';
+        soilBody.innerHTML = '<span style="color:#888;">No soil data</span>';
+        microbiomeBody.innerHTML = '<span style="color:#888;">No microbiome data</span>';
+        weatherBody.innerHTML = '<span style="color:#888;">No weather data</span>';
+        growthBody.innerHTML = '<span style="color:#888;">No growth data</span>';
+        diseaseBody.innerHTML = '<span style="color:#888;">No disease data</span>';
+        yieldBody.innerHTML = '<span style="color:#888;">No yield prediction</span>';
+        treatmentsBody.innerHTML = '<span style="color:#888;">No treatments recorded</span>';
+        carbonBody.innerHTML = '<span style="color:#888;">No carbon data</span>';
+        fusionBody.innerHTML = '<span style="color:#888;">No fusion data</span>';
         fieldInfoEl.innerHTML = "";
     }
 
     var trendLabels = {
-        improving: "Mejorando",
-        stable: "Estable",
-        declining: "Declinando"
+        improving: "Improving",
+        stable: "Stable",
+        declining: "Declining"
     };
 
     var trendColors = {
@@ -86,10 +86,10 @@
     };
 
     var riskLabels = {
-        alto: "Alto",
-        medio: "Medio",
-        bajo: "Bajo",
-        sin_riesgo: "Sin Riesgo"
+        alto: "High",
+        medio: "Medium",
+        bajo: "Low",
+        sin_riesgo: "No Risk"
     };
 
     function dataRow(label, value, unit) {
@@ -284,7 +284,7 @@
 
     /* Load fields for selected farm */
     window.loadFieldsForIntelligence = function () {
-        fieldSel.innerHTML = '<option value="">Seleccione un campo...</option>';
+        fieldSel.innerHTML = '<option value="">Select a field...</option>';
         contentEl.style.display = "none";
         emptyEl.style.display = "";
         resetStats();
