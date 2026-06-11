@@ -42,12 +42,13 @@ function trendBadge(trend) {
 
 // ── Load farms ──
 async function loadFarms() {
-    const data = await fetchJSON('/api/farms?page_size=100');
-    if (!data || !data.farms) return;
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
+    if (!farms.length) return;
 
     ['comp-farm-1', 'comp-farm-2', 'comp-farm-3'].forEach(id => {
         const sel = document.getElementById(id);
-        data.farms.forEach(f => {
+        farms.forEach(f => {
             const opt = document.createElement('option');
             opt.value = f.id;
             opt.textContent = f.name;
@@ -56,9 +57,9 @@ async function loadFarms() {
     });
 
     // Pre-select first two if available
-    if (data.farms.length >= 2) {
-        document.getElementById('comp-farm-1').value = data.farms[0].id;
-        document.getElementById('comp-farm-2').value = data.farms[1].id;
+    if (farms.length >= 2) {
+        document.getElementById('comp-farm-1').value = String(farms[0].id);
+        document.getElementById('comp-farm-2').value = String(farms[1].id);
     }
 }
 
@@ -79,12 +80,13 @@ async function runComparison() {
     btn.disabled = true;
     btn.textContent = 'Loading...';
 
-    const data = await fetchJSON(`/api/intel/compare?farm_ids=${ids.join(',')}`);
+    const comparison = await fetchJSON(`/api/intel/compare?farm_ids=${ids.join(',')}`);
 
     btn.disabled = false;
     btn.textContent = 'Compare';
 
-    if (!data || !data.farms || data.farms.length === 0) {
+    const compFarms = (comparison && comparison.farms) || [];
+    if (compFarms.length === 0) {
         document.getElementById('comp-results').style.display = 'none';
         document.getElementById('comp-empty').style.display = 'block';
         return;
@@ -93,10 +95,10 @@ async function runComparison() {
     document.getElementById('comp-results').style.display = 'block';
     document.getElementById('comp-empty').style.display = 'none';
 
-    buildTable(data.farms);
-    buildHealthChart(data.farms);
-    buildYieldChart(data.farms);
-    buildHistoryChart(data.farms);
+    buildTable(compFarms);
+    buildHealthChart(compFarms);
+    buildYieldChart(compFarms);
+    buildHistoryChart(compFarms);
 }
 
 // ── Comparison table ──

@@ -43,16 +43,17 @@ function setupSliders() {
 async function initPage() {
     setupSliders();
 
-    const farms = await fetchJSON('/api/farms');
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
     const select = document.getElementById('alert-farm-select');
-    if (farms && farms.length > 0) {
+    if (farms.length > 0) {
         farms.forEach(f => {
             const opt = document.createElement('option');
             opt.value = f.id;
             opt.textContent = f.name;
             select.appendChild(opt);
         });
-        select.value = farms[0].id;
+        select.value = String(farms[0].id);
         loadAlertConfig();
     }
     setupNav();

@@ -17,8 +17,9 @@
     var typeColors = { preparacion: "#3b82f6", siembra: "#22c55e", cosecha: "#f59e0b", mantenimiento: "#8b5cf6", riego: "#06b6d4", fertilizacion: "#ec4899" };
 
     function loadFarms() {
-        fetchJSON(API + "/api/farms").then(function (farms) {
-            if (!farms) return;
+        fetchJSON(API + "/api/farms?page_size=100").then(function (resp) {
+            var farms = (resp && (resp.data || resp.items)) || [];
+            if (!farms.length) return;
             farms.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;

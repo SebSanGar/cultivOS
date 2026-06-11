@@ -26,19 +26,18 @@ async function fetchJSON(path) {
 
 // ── Load farms dropdown ──
 async function loadFarms() {
-    const data = await fetchJSON('/api/farms?page_size=100');
-    if (!data || !data.farms) return;
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
+    if (!farms.length) return;
     const sel = document.getElementById('clima-farm-select');
-    data.farms.forEach(f => {
+    farms.forEach(f => {
         const opt = document.createElement('option');
         opt.value = f.id;
         opt.textContent = f.name;
         sel.appendChild(opt);
     });
-    if (data.farms.length > 0) {
-        sel.value = data.farms[0].id;
-        loadWeather();
-    }
+    sel.value = String(farms[0].id);
+    loadWeather();
 }
 
 // ── Load weather data ──

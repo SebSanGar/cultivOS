@@ -12,9 +12,10 @@
     }
 
     async function loadFarms() {
-        const data = await fetchJSON('/api/farms');
+        const resp = await fetchJSON('/api/farms?page_size=100');
+        const data = (resp && (resp.data || resp.items)) || [];
         const select = document.getElementById('reportes-farm-select');
-        if (!data || data.length === 0) {
+        if (!data.length) {
             select.innerHTML = '<option value="">Sin granjas disponibles</option>';
             document.getElementById('reportes-empty').style.display = '';
             return;

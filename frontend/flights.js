@@ -53,8 +53,9 @@ async function loadFlights() {
     const tbody = document.getElementById('flights-table-body');
     tbody.innerHTML = '<tr><td colspan="10" class="flights-loading">Loading flights...</td></tr>';
 
-    const farms = await fetchJSON('/api/farms');
-    if (!farms || farms.length === 0) {
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
+    if (!farms.length) {
         tbody.innerHTML = '<tr><td colspan="10" class="flights-empty">No farms registered. Create a farm first.</td></tr>';
         updateStats([]);
         return;

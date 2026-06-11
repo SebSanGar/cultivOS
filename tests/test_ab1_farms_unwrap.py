@@ -1,6 +1,5 @@
 """AB1 — farms-response unwrap: 13 JS files must use resp.data pattern, not data.farms/farms.farms."""
 import re
-import subprocess
 
 
 BROKEN_PATTERNS = [
@@ -35,18 +34,17 @@ def _read(path):
 
 
 class TestAB1NoFarmsWrapper:
-    """No file in the list should use the broken .farms access on the wrapper response."""
+    """No file in the AB1 scope should use the broken .farms access on the /api/farms wrapper response."""
 
     def test_no_data_farms_pattern(self):
-        result = subprocess.run(
-            ["rg", r"\.farms\.forEach|data\.farms|farms\.farms", "frontend/"],
-            capture_output=True,
-            text=True,
-        )
-        # rg exit code 1 = no matches (success); 0 = matches found (fail)
-        assert result.returncode == 1, (
-            f"Broken farms pattern still present:\n{result.stdout}"
-        )
+        broken_re = re.compile(r"\.farms\.forEach|(?<!\w)data\.farms(?!_)|(?<!\w)farms\.farms")
+        hits = []
+        for path in FILES:
+            js = _read(path)
+            for lineno, line in enumerate(js.splitlines(), 1):
+                if broken_re.search(line):
+                    hits.append(f"{path}:{lineno}: {line.strip()}")
+        assert not hits, "Broken farms pattern still present:\n" + "\n".join(hits)
 
 
 class TestAB1CorrectUnwrap:

@@ -28,9 +28,10 @@ const URGENCIA_COLORS = {
 };
 
 async function initPage() {
-    const farms = await fetchJSON('/api/farms');
+    const resp = await fetchJSON('/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
     const select = document.getElementById('recs-farm-select');
-    if (farms && farms.length > 0) {
+    if (farms.length > 0) {
         farms.forEach(f => {
             const opt = document.createElement('option');
             opt.value = f.id;

@@ -10,8 +10,9 @@
     }
 
     async function init() {
-        const farms = await fetchJSON('/api/farms');
-        if (!farms || farms.length === 0) {
+        const resp = await fetchJSON('/api/farms?page_size=100');
+        const farms = (resp && (resp.data || resp.items)) || [];
+        if (!farms.length) {
             var empty = document.getElementById('exportar-empty');
             if (empty) empty.style.display = 'block';
             return;

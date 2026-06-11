@@ -56,9 +56,9 @@
 
     // Load farms on startup
     async function loadFarms() {
-        var data = await fetchJSON('/api/farms');
+        var data = await fetchJSON('/api/farms?page_size=100');
         if (!data) return;
-        var farms = Array.isArray(data) ? data : (data.farms || []);
+        var farms = (data.data || data.items) || [];
         farms.forEach(function (f) {
             var opt = document.createElement('option');
             opt.value = f.id;

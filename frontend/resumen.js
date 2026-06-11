@@ -79,10 +79,11 @@ async function loadAll() {
     }
 
     // Farm table + health distribution
-    if (farms && farms.farms && economics && economics.farms) {
-        portfolioData = buildPortfolioTable(farms.farms, economics.farms);
+    const farmList = (farms && (farms.data || farms.items)) || [];
+    if (farmList.length > 0 && economics) {
+        portfolioData = buildPortfolioTable(farmList, economics.farms);
         buildHealthDist(portfolioData);
-        document.getElementById('resumen-farm-count').textContent = farms.farms.length;
+        document.getElementById('resumen-farm-count').textContent = farmList.length;
     }
 }
 
@@ -173,12 +174,13 @@ function buildHealthDist(rows) {
 }
 
 async function updateHealthDist() {
-    const farms = await fetchJSON('/api/farms?page_size=100');
-    if (!farms || !farms.farms) return;
+    const farmsResp = await fetchJSON('/api/farms?page_size=100');
+    const farmItems = (farmsResp && (farmsResp.data || farmsResp.items)) || [];
+    if (!farmItems.length) return;
 
     let good = 0, moderate = 0, critical = 0, noData = 0;
 
-    const promises = farms.farms.map(async f => {
+    const promises = farmItems.map(async f => {
         const dash = await fetchJSON(`/api/farms/${f.id}/dashboard`);
         if (!dash || dash.overall_health == null) {
             noData++;
