@@ -62,7 +62,7 @@
             content += "</div>";
             if (msg.transcript) {
                 content += '<div style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;">';
-                content += "Transcripcion: " + esc(msg.transcript);
+                content += "Transcript: " + esc(msg.transcript);
                 content += "</div>";
             }
         } else {
@@ -96,25 +96,25 @@
         const thermal = intel.thermal || {};
         const weather = intel.weather || {};
         const lines = [];
-        lines.push("Reporte de Salud — " + (intel.field_name || "campo"));
-        if (health.score != null) lines.push("- Puntuacion: " + fmt(health.score, 0) + "/100");
-        if (ndvi.ndvi_mean != null) lines.push("- NDVI promedio: " + fmt(ndvi.ndvi_mean, 2));
-        if (thermal.temp_mean != null) lines.push("- Temperatura foliar: " + fmt(thermal.temp_mean, 1) + "C");
-        if (thermal.stress_pct != null) lines.push("- Estres termico: " + fmt(thermal.stress_pct, 0) + "%");
-        if (weather.humidity_pct != null) lines.push("- Humedad ambiente: " + fmt(weather.humidity_pct, 0) + "%");
-        if (health.trend) lines.push("- Tendencia: " + health.trend);
-        if (lines.length === 1) lines.push("- Sin sensores registrados aun para esta parcela.");
+        lines.push("Health Report — " + (intel.field_name || "field"));
+        if (health.score != null) lines.push("- Score: " + fmt(health.score, 0) + "/100");
+        if (ndvi.ndvi_mean != null) lines.push("- Average NDVI: " + fmt(ndvi.ndvi_mean, 2));
+        if (thermal.temp_mean != null) lines.push("- Leaf temperature: " + fmt(thermal.temp_mean, 1) + "C");
+        if (thermal.stress_pct != null) lines.push("- Heat stress: " + fmt(thermal.stress_pct, 0) + "%");
+        if (weather.humidity_pct != null) lines.push("- Ambient humidity: " + fmt(weather.humidity_pct, 0) + "%");
+        if (health.trend) lines.push("- Trend: " + health.trend);
+        if (lines.length === 1) lines.push("- No sensors registered yet for this field.");
         return lines.join("\n");
     }
 
     function treatmentsReport(intel) {
         const treatments = Array.isArray(intel.treatments) ? intel.treatments.slice(0, 3) : [];
         if (!treatments.length) {
-            return "Aun no tengo recomendaciones registradas para esta parcela. Registra una lectura de suelo o NDVI y las genero al instante.";
+            return "I don't have any recommendations on file for this field yet. Add a soil or NDVI reading and I'll generate them right away.";
         }
-        const lines = ["Recomendaciones organicas (100% regenerativo):"];
+        const lines = ["Organic recommendations (100% regenerative):"];
         treatments.forEach((tx, i) => {
-            const name = tx.name || tx.recommendation || ("Tratamiento " + (i + 1));
+            const name = tx.name || tx.recommendation || ("Treatment " + (i + 1));
             const why = tx.rationale || tx.reason || "";
             lines.push((i + 1) + ". " + name + (why ? " — " + why : ""));
         });
@@ -125,12 +125,12 @@
         return [
             {
                 type: "voice", sender: "farmer", voiceDuration: "0:11",
-                transcript: "Queria ver un reporte de mi parcela pero todavia no conecto nada al sistema.",
+                transcript: "I wanted to see a report for my field but I haven't connected anything to the system yet.",
                 time: t(-4),
             },
             {
                 type: "text", sender: "ai",
-                text: "Hola. " + reason + "\n\nPara activar el demo en vivo:\n1. Registra al menos una finca (POST /api/farms)\n2. Anade un campo con cultivo y hectareas\n3. Sube una lectura NDVI o analisis de suelo\n\nEl asistente respondera con datos reales en cuanto exista una parcela.",
+                text: "Hi. " + reason + "\n\nTo turn on the live demo:\n1. Register at least one farm (POST /api/farms)\n2. Add a field with a crop and hectares\n3. Upload an NDVI reading or soil analysis\n\nThe assistant will reply with real data as soon as a field exists.",
                 time: t(-3),
             },
         ];
@@ -140,50 +140,50 @@
         const farms = await fetchJSON("/api/farms");
         const farmList = (farms && (farms.data || farms)) || [];
         const farm = Array.isArray(farmList) ? farmList[0] : null;
-        if (!farm) return emptyStateScript("Aun no hay fincas registradas en la plataforma.");
+        if (!farm) return emptyStateScript("There are no farms registered on the platform yet.");
 
         const fields = await fetchJSON("/api/farms/" + farm.id + "/fields");
         const fieldList = (fields && (fields.data || fields)) || [];
         const field = Array.isArray(fieldList) ? fieldList[0] : null;
-        if (!field) return emptyStateScript("La finca '" + (farm.name || "#" + farm.id) + "' no tiene campos registrados.");
+        if (!field) return emptyStateScript("The farm '" + (farm.name || "#" + farm.id) + "' has no registered fields.");
 
         const intel = await fetchJSON("/api/farms/" + farm.id + "/fields/" + field.id + "/intelligence");
-        if (!intel) return emptyStateScript("No pude leer los datos de inteligencia del campo.");
+        if (!intel) return emptyStateScript("I couldn't read the field's intelligence data.");
 
         liveContext = { farm, field, intel };
 
-        const farmerName = farm.owner_name || "productor";
-        const fieldName = field.name || "la parcela";
+        const farmerName = farm.owner_name || "grower";
+        const fieldName = field.name || "the field";
 
         return [
             {
                 type: "voice", sender: "farmer", voiceDuration: "0:23",
-                transcript: "Necesito un reporte rapido del " + fieldName + ". Como la ve hoy?",
+                transcript: "I need a quick report on " + fieldName + ". How's it looking today?",
                 time: t(-5),
             },
             {
                 type: "text", sender: "ai",
-                text: "Buenos dias, " + farmerName + ". Recibi su nota.\n\n" + healthReport(intel),
+                text: "Good morning, " + farmerName + ". Got your note.\n\n" + healthReport(intel),
                 time: t(-4),
             },
             {
                 type: "text", sender: "farmer",
-                text: "Y que le puedo echar? No quiero usar quimicos.",
+                text: "And what can I put on it? I don't want to use chemicals.",
                 time: t(-3),
             },
             {
                 type: "text", sender: "ai",
-                text: "Entendido. Solo tratamientos organicos.\n\n" + treatmentsReport(intel),
+                text: "Understood. Organic treatments only.\n\n" + treatmentsReport(intel),
                 time: t(-2),
             },
             {
                 type: "voice", sender: "farmer", voiceDuration: "0:08",
-                transcript: "Perfecto, manana aplico lo primero.",
+                transcript: "Perfect, I'll apply the first one tomorrow.",
                 time: t(-1),
             },
             {
                 type: "text", sender: "ai",
-                text: "Registrado. Programare un vuelo de seguimiento con el dron para validar el efecto en 5 dias. El reporte llega automatico a este chat.",
+                text: "Done. I'll schedule a follow-up drone flight to check the effect in 5 days. The report will come straight to this chat.",
                 time: t(0),
             },
         ];
@@ -194,7 +194,7 @@
         if (currentIndex >= conversation.length) {
             demoRunning = false;
             const statusEl = document.getElementById("demo-status");
-            if (statusEl) statusEl.textContent = "Conversacion completada. Presiona para repetir.";
+            if (statusEl) statusEl.textContent = "Conversation complete. Press to replay.";
             return;
         }
         const msg = conversation[currentIndex++];
@@ -221,15 +221,15 @@
         container.appendChild(typing);
 
         const statusEl = document.getElementById("demo-status");
-        if (statusEl) statusEl.textContent = "Conectando con cultivOS...";
+        if (statusEl) statusEl.textContent = "Connecting to cultivOS...";
 
         conversation = await buildConversation();
         currentIndex = 0;
 
         if (statusEl) {
             statusEl.textContent = liveContext
-                ? "Conversacion en curso — datos en vivo de " + (liveContext.field.name || "la parcela")
-                : "Conversacion en curso (modo demo, sin datos vivos)";
+                ? "Conversation in progress — live data from " + (liveContext.field.name || "the field")
+                : "Conversation in progress (demo mode, no live data)";
         }
         playNextMessage();
     }

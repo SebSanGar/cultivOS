@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cultivOS — WhatsApp Demo</title>
-    <meta name="description" content="Simulador de WhatsApp — interaccion agricultor e IA cultivOS en espanol, notas de voz, reportes de salud y tratamientos organicos.">
+    <title>cultivOS — Chat</title>
+    <meta name="description" content="Chat simulator — farmer and cultivOS AI interaction, voice notes, health reports and organic treatments.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
@@ -204,15 +204,15 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
+            <li><a href="/" class="nav-tab intel-tab">My Crops</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab">Intelligence</a></li>
             <li><a href="/whatsapp-demo" class="nav-tab intel-tab active">Chat</a></li>
-            <li><a href="/resumen" class="nav-tab intel-tab">Resumen</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/resumen" class="nav-tab intel-tab">Summary</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab">Status</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Salir</a>
+            <a href="#" id="nav-logout" class="nav-logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -222,8 +222,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Simulador WhatsApp</h1>
-            <p class="intel-subtitle">Interaccion entre agricultor e inteligencia artificial cultivOS — notas de voz, reportes de salud y tratamientos organicos</p>
+            <h1 class="intel-title">Chat Assistant</h1>
+            <p class="intel-subtitle">Conversation between a farmer and the cultivOS AI — voice notes, health reports and organic treatments</p>
         </div>
     </div>
 
@@ -233,8 +233,8 @@
         <div class="chat-header">
             <div class="chat-avatar">cO</div>
             <div>
-                <div class="chat-contact-name">cultivOS Asistente</div>
-                <div class="chat-contact-status">En linea</div>
+                <div class="chat-contact-name">cultivOS Assistant</div>
+                <div class="chat-contact-status">Online</div>
             </div>
         </div>
 
@@ -250,25 +250,25 @@
 
         <!-- Input Bar -->
         <div class="chat-input">
-            <input id="message-input" class="message-input" type="text" placeholder="Escribe un mensaje..." readonly>
-            <button id="send-btn" class="send-btn" onclick="runDemo()" title="Iniciar demo">&#9654;</button>
+            <input id="message-input" class="message-input" type="text" placeholder="Type a message..." readonly>
+            <button id="send-btn" class="send-btn" onclick="runDemo()" title="Start demo">&#9654;</button>
         </div>
     </div>
 
     <!-- Demo Controls -->
     <div class="demo-controls">
-        <button onclick="runDemo()">Iniciar Conversacion</button>
-        <div id="demo-status" class="demo-status">Presiona para ver la interaccion completa</div>
+        <button onclick="runDemo()">Start Conversation</button>
+        <div id="demo-status" class="demo-status">Press to see the full interaction</div>
     </div>
 
     <!-- Explanation -->
     <div class="demo-explanation">
-        <h3>Flujo de la conversacion</h3>
+        <h3>Conversation flow</h3>
         <ol>
-            <li><strong>Agricultor envia nota de voz</strong> — reporta observacion del campo</li>
-            <li><strong>IA procesa y responde</strong> — genera reporte de salud del cultivo</li>
-            <li><strong>Agricultor pregunta por tratamiento</strong> — solicita recomendacion</li>
-            <li><strong>IA recomienda solucion organica</strong> — tratamiento basado en conocimiento ancestral y datos de sensores</li>
+            <li><strong>Farmer sends a voice note</strong> — reports a field observation</li>
+            <li><strong>The AI processes and replies</strong> — generates a crop health report</li>
+            <li><strong>Farmer asks about treatment</strong> — requests a recommendation</li>
+            <li><strong>The AI recommends an organic solution</strong> — treatment based on traditional knowledge and sensor data</li>
         </ol>
     </div>
 </main>
@@ -276,7 +276,7 @@
 <!-- FOOTER -->
 <footer class="cultivos-footer">
     <div class="footer-inner">
-        <span>cultivOS &copy; 2026 — Agricultura regenerativa con inteligencia artificial</span>
+        <span>cultivOS &copy; 2026 — Regenerative agriculture powered by artificial intelligence</span>
     </div>
 </footer>
 
