@@ -65,15 +65,21 @@ function setupNav() {
 async function loadEconomicImpact() {
     const farmId = document.getElementById('econ-farm-select').value;
     const notaEl = document.getElementById('econ-nota');
+    const skeleton = document.getElementById('econ-hero-skeleton');
 
     if (!farmId) {
         resetStats();
         notaEl.style.display = 'none';
         destroyChart();
+        if (skeleton) skeleton.style.display = 'none';
         return;
     }
 
+    if (skeleton) skeleton.style.display = 'block';
+
     const data = await fetchJSON(`/api/farms/${farmId}/economic-impact`);
+
+    if (skeleton) skeleton.style.display = 'none';
 
     if (!data) {
         resetStats();

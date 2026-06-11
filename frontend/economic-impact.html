@@ -56,6 +56,9 @@
         Economic estimates shown here are based on Jalisco (MX) data and do not apply to this farm.
     </div>
 
+    <!-- Skeleton loader — shown while hero data loads, hidden afterwards -->
+    <div id="econ-hero-skeleton" class="skeleton econ-skeleton" aria-hidden="true"></div>
+
     <!-- Net ROI Hero -->
     <div id="econ-roi-hero" class="impact-hero" style="display:none">
         <div class="impact-hero-inner">
@@ -95,7 +98,7 @@
     </div>
 
     <!-- Stats strip -->
-    <div class="intel-stats-strip">
+    <div class="intel-stats-strip" aria-live="polite" aria-atomic="false">
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-total-savings">--</div>
             <div class="intel-stat-label">Total savings / year

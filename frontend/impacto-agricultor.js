@@ -68,6 +68,8 @@
             showEmptyHero("Here you'll see how much you save as we look after your farm.");
         } else {
             document.getElementById("impact-hero").classList.remove("is-empty");
+            var emptyStateEl = document.getElementById("impact-empty-state");
+            if (emptyStateEl) emptyStateEl.hidden = true;
             var amountEl = document.getElementById("hero-amount");
             amountEl.classList.remove("impact-hero-amount--soft");
             document.querySelector(".impact-hero-label").textContent = "You've saved about";
@@ -96,6 +98,8 @@
         document.getElementById("hero-badge").hidden = true;
         ["sup-days", "sup-fields", "sup-treatments", "sup-health"].forEach(function (id) { setText(id, "—"); });
         renderFieldCards([]);
+        var emptyState = document.getElementById("impact-empty-state");
+        if (emptyState) { emptyState.hidden = false; emptyState.querySelector(".impact-empty-state__msg").textContent = msg || "Pick a farm and we'll show what you've saved."; }
     }
 
     function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }

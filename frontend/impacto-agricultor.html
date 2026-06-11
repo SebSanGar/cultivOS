@@ -47,8 +47,14 @@
         <div class="impact-badge" id="hero-badge" hidden>Estimate · based on the care applied so far</div>
     </section>
 
+    <!-- Distinct empty-state — shown when no farm data yet (hidden by default) -->
+    <div id="impact-empty-state" class="impact-empty-state" hidden>
+        <span class="impact-empty-state__icon">&#127807;</span>
+        <p class="impact-empty-state__msg">Pick a farm and we'll show what you've saved.</p>
+    </div>
+
     <!-- Supporting strip -->
-    <div class="impact-support" id="impact-support">
+    <div class="impact-support" id="impact-support" aria-live="polite" aria-atomic="false">
         <div class="impact-support-item"><span class="impact-support-value" id="sup-days">—</span><span class="impact-support-label">days with cultivOS</span></div>
         <div class="impact-support-item"><span class="impact-support-value" id="sup-fields">—</span><span class="impact-support-label">fields watched</span></div>
         <div class="impact-support-item"><span class="impact-support-value" id="sup-treatments">—</span><span class="impact-support-label">actions taken in time</span></div>
