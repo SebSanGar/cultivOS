@@ -31,7 +31,7 @@ FORBIDDEN_JARGON = [
     "microbioma",
 ]
 
-FARMER_NAV_LABELS = ["Mis Parcelas", "Alertas", "Conocimiento", "WhatsApp"]
+FARMER_NAV_LABELS = ["Mis Parcelas", "Alertas", "Conocimiento", "Chat"]
 
 
 @pytest.fixture(scope="module")

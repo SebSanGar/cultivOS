@@ -29,7 +29,7 @@ EXPECTED_FARMER_LINKS = [
     ("/", "Mis Parcelas"),
     ("/notificaciones", "Alertas"),
     ("/conocimiento", "Conocimiento"),
-    ("/whatsapp-demo", "WhatsApp"),
+    ("/whatsapp-demo", "Chat"),
 ]
 
 ANALYTICAL_HREFS = ["/intel", "/vuelos", "/estado", "/mapa", "/plataforma"]
