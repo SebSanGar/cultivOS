@@ -48,9 +48,10 @@
                     seg.className = 'cal-bar-segment cal-stage-' + stage.name;
                     var pct = ((stage.end_day - stage.start_day) / maxDays) * 100;
                     seg.style.width = pct + '%';
-                    seg.title = stage.name_es + ' (dia ' + stage.start_day + '-' + stage.end_day + ')';
+                    var stageName = window.cultivOS_i18n ? window.cultivOS_i18n.localized(stage, 'name') : (stage.name_es || stage.name || '');
+                    seg.title = stageName + ' (dia ' + stage.start_day + '-' + stage.end_day + ')';
                     if (pct > 8) {
-                        seg.textContent = stage.name_es;
+                        seg.textContent = stageName;
                     }
                     track.appendChild(seg);
                 });
@@ -76,9 +77,9 @@
 
     // ---- Farm/field selectors ----
     function loadFarmsForCalendario() {
-        fetchJSON('/api/farms').then(function (data) {
+        fetchJSON('/api/farms?page_size=100').then(function (data) {
             if (!data) return;
-            var farms = Array.isArray(data) ? data : (data.farms || []);
+            var farms = (data.data || data.items) || (Array.isArray(data) ? data : []);
             var sel = document.getElementById('cal-farm-select');
             farms.forEach(function (f) {
                 var opt = document.createElement('option');
@@ -125,19 +126,21 @@
                 return;
             }
             document.getElementById('cal-field-detail').style.display = 'block';
-            document.getElementById('cal-field-stage').textContent = data.stage_es;
+            var stageVal = window.cultivOS_i18n ? window.cultivOS_i18n.localized(data, 'stage') : (data.stage_es || data.stage || '');
+            var nutrientVal = window.cultivOS_i18n ? window.cultivOS_i18n.localized(data, 'nutrient_focus') : (data.nutrient_focus || '');
+            document.getElementById('cal-field-stage').textContent = stageVal;
 
             var info = document.getElementById('cal-field-info');
             info.innerHTML =
                 '<p><strong>Cultivo:</strong> ' + data.crop_type + '</p>' +
-                '<p><strong>Etapa actual:</strong> <span class="cal-field-stage cal-stage-' + data.stage + '">' + data.stage_es + '</span></p>' +
+                '<p><strong>Etapa actual:</strong> <span class="cal-field-stage cal-stage-' + data.stage + '">' + stageVal + '</span></p>' +
                 '<p><strong>Dias desde siembra:</strong> ' + data.days_since_planting + '</p>' +
                 '<p><strong>Dias en etapa:</strong> ' + data.days_in_stage + '</p>' +
                 (data.days_until_next_stage !== null
                     ? '<p><strong>Dias para siguiente etapa:</strong> ' + data.days_until_next_stage + '</p>'
                     : '') +
                 '<p><strong>Multiplicador de riego:</strong> x' + data.water_multiplier + '</p>' +
-                '<p><strong>Enfoque nutricional:</strong> ' + data.nutrient_focus + '</p>';
+                '<p><strong>Enfoque nutricional:</strong> ' + nutrientVal + '</p>';
         });
     };
 })();

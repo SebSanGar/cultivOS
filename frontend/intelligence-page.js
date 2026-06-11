@@ -183,14 +183,16 @@
 
     function renderGrowth(g) {
         if (!g) return;
-        var html = dataRow("Etapa", g.stage_es, "");
+        var stageVal = window.cultivOS_i18n ? window.cultivOS_i18n.localized(g, 'stage') : (g.stage_es || g.stage || '');
+        var nutrientVal = window.cultivOS_i18n ? window.cultivOS_i18n.localized(g, 'nutrient_focus') : (g.nutrient_focus || '');
+        var html = dataRow("Etapa", stageVal, "");
         html += dataRow("Dias desde siembra", g.days_since_planting, "dias");
         html += dataRow("Dias en etapa", g.days_in_stage, "dias");
         if (g.days_until_next_stage != null) {
             html += dataRow("Dias para siguiente etapa", g.days_until_next_stage, "dias");
         }
         html += dataRow("Multiplicador de Agua", g.water_multiplier.toFixed(2), "x");
-        html += dataRow("Enfoque Nutricional", g.nutrient_focus, "");
+        html += dataRow("Enfoque Nutricional", nutrientVal, "");
         growthBody.innerHTML = html;
     }
 
@@ -201,7 +203,7 @@
         var html = '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #222;">' +
             '<span style="color:#aaa;">Nivel de Riesgo</span>' +
             badge(rl, rc) + '</div>';
-        html += dataRow("Mensaje", d.mensaje, "");
+        html += dataRow("Mensaje", window.cultivOS_i18n ? window.cultivOS_i18n.localized(d, 'mensaje') : (d.mensaje_es || d.mensaje || ''), "");
         if (d.risks && d.risks.length > 0) {
             html += '<div style="margin-top:0.5rem;color:#aaa;font-size:0.8rem;">Riesgos detectados: ' + d.risks.length + '</div>';
         }
@@ -215,7 +217,7 @@
         var html = dataRow("Rendimiento Estimado", y.kg_per_ha.toFixed(0), "kg/ha");
         html += dataRow("Rango", y.min_kg_per_ha.toFixed(0) + " - " + y.max_kg_per_ha.toFixed(0), "kg/ha");
         html += dataRow("Total Estimado", y.total_kg.toFixed(0), "kg");
-        html += dataRow("Nota", y.nota, "");
+        html += dataRow("Nota", window.cultivOS_i18n ? window.cultivOS_i18n.localized(y, 'nota') : (y.nota_es || y.nota || ''), "");
         yieldBody.innerHTML = html;
     }
 
@@ -226,12 +228,14 @@
         var html = "";
         for (var i = 0; i < ts.length; i++) {
             var t = ts[i];
+            var tProblema = window.cultivOS_i18n ? window.cultivOS_i18n.localized(t, 'problema') : (t.problema_es || t.problema || '');
+            var tTratamiento = window.cultivOS_i18n ? window.cultivOS_i18n.localized(t, 'tratamiento') : (t.tratamiento_es || t.tratamiento || '');
             html += '<div style="padding:0.5rem 0;border-bottom:1px solid #222;">' +
                 '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                '<span style="color:#fff;font-weight:600;">' + esc(t.problema) + '</span>' +
+                '<span style="color:#fff;font-weight:600;">' + esc(tProblema) + '</span>' +
                 badge(urgLabels[t.urgencia] || t.urgencia, urgColors[t.urgencia] || "#888") +
                 '</div>' +
-                '<div style="color:#aaa;font-size:0.8rem;margin-top:0.2rem;">' + esc(t.tratamiento) + '</div>' +
+                '<div style="color:#aaa;font-size:0.8rem;margin-top:0.2rem;">' + esc(tTratamiento) + '</div>' +
                 '<div style="color:#666;font-size:0.75rem;">' + (t.organic ? "Organico" : "Convencional") + ' — $' + t.costo_estimado_mxn + ' MXN</div>' +
                 '</div>';
         }
@@ -266,8 +270,9 @@
 
     /* --- Load farms on init --- */
     function loadFarms() {
-        fetchJSON("/api/farms").then(function (farms) {
-            if (!farms) return;
+        fetchJSON("/api/farms?page_size=100").then(function (resp) {
+            var farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
+            if (!farms.length) return;
             farms.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;

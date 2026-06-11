@@ -22,6 +22,10 @@
         return d.innerHTML;
     }
 
+    function loc(obj, base) {
+        return window.cultivOS_i18n ? window.cultivOS_i18n.localized(obj, base) : (obj[base + '_es'] || obj[base] || '');
+    }
+
     var severityColors = {
         alta: "#ef4444",
         media: "#eab308",
@@ -44,8 +48,9 @@
 
     /* Load farms on init */
     function loadFarms() {
-        fetchJSON("/api/farms").then(function (farms) {
-            if (!farms) return;
+        fetchJSON("/api/farms?page_size=100").then(function (resp) {
+            var farms = (resp && (resp.data || resp.items)) || [];
+            if (!farms.length) return;
             farms.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;
@@ -132,7 +137,7 @@
 
         /* Message */
         document.getElementById("disease-mensaje").textContent =
-            data.mensaje || "Sin evaluacion disponible.";
+            loc(data, 'mensaje') || "Sin evaluacion disponible.";
 
         /* Risk cards */
         cardsEl.innerHTML = "";
@@ -144,12 +149,12 @@
                 card.style.borderLeft = "3px solid " + color;
                 card.innerHTML =
                     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">' +
-                        '<span style="color:#eee;font-weight:600;font-size:0.95rem;">' + esc(risk.tipo) + '</span>' +
+                        '<span style="color:#eee;font-weight:600;font-size:0.95rem;">' + esc(loc(risk, 'tipo')) + '</span>' +
                         '<span class="disease-severity-badge" style="background:' + color + '22;color:' + color + ';padding:0.15rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">' +
                             esc(severityLabels[risk.urgencia] || risk.urgencia) + '</span>' +
                     '</div>' +
-                    '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;">' + esc(risk.descripcion) + '</p>' +
-                    '<div style="color:#4da6ff;font-size:0.8rem;">' + esc(risk.recomendacion) + '</div>';
+                    '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;">' + esc(loc(risk, 'descripcion')) + '</p>' +
+                    '<div style="color:#4da6ff;font-size:0.8rem;">' + esc(loc(risk, 'recomendacion')) + '</div>';
                 cardsEl.appendChild(card);
             });
         } else {
@@ -191,7 +196,7 @@
                             '<span class="disease-confidence-badge" style="background:' + confColor + '22;color:' + confColor + ';padding:0.15rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">' +
                                 confPct + '% confianza</span>' +
                         '</div>' +
-                        '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;">' + esc(m.description_es) + '</p>' +
+                        '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;">' + esc(loc(m, 'description')) + '</p>' +
                         '<div style="margin-bottom:0.3rem;">' +
                             '<span style="color:#888;font-size:0.8rem;">Severidad: </span>' +
                             '<span style="color:' + sevColor + ';font-size:0.8rem;font-weight:600;">' + esc(severityLabels[m.severity] || m.severity) + '</span>' +
@@ -205,7 +210,7 @@
                                 '<span style="color:#4da6ff;font-size:0.8rem;font-weight:600;">Tratamientos:</span>' +
                                 m.treatments.map(function (t) {
                                     return '<div style="color:#aaa;font-size:0.8rem;margin-top:0.25rem;">&bull; ' +
-                                        esc(t.name) + ' — ' + esc(t.description_es) +
+                                        esc(t.name) + ' — ' + esc(loc(t, 'description')) +
                                         (t.organic ? ' <span style="color:#22c55e;font-size:0.7rem;">(organico)</span>' : '') +
                                     '</div>';
                                 }).join("") +

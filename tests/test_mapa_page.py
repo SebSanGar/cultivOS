@@ -68,7 +68,7 @@ class TestMapaPageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/mapa")
-        assert "Mapa de Campos" in resp.text
+        assert "Field Map" in resp.text
 
     def test_page_has_map_container(self, client):
         resp = client.get("/mapa")
@@ -114,8 +114,8 @@ class TestMapaDOMElements:
     def test_health_color_legend(self, client):
         resp = client.get("/mapa")
         text = resp.text.lower()
-        assert "bueno" in text or "saludable" in text
-        assert "alerta" in text or "moderado" in text
+        assert "healthy" in text or "good" in text
+        assert "alert" in text or "warning" in text
 
     def test_empty_state_message(self, client):
         resp = client.get("/mapa")

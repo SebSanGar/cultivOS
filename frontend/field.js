@@ -736,13 +736,13 @@ function renderDisease(risk) {
                     : r.urgencia === 'medio' ? 'warning' : 'good';
                 return `<div class="disease-riesgo-item">
                     <div class="disease-riesgo-header">
-                        <span class="disease-riesgo-tipo">${esc(r.tipo)}</span>
+                        <span class="disease-riesgo-tipo">${esc(window.cultivOS_i18n.localized(r, 'tipo'))}</span>
                         <span class="health-badge ${urgCls}">${esc(levelLabel(r.urgencia))}</span>
                         ${r.organico ? `<span class="disease-organic-badge">${t('field.organic')}</span>` : ''}
                     </div>
-                    <div class="disease-riesgo-desc">${esc(r.descripcion)}</div>
+                    <div class="disease-riesgo-desc">${esc(window.cultivOS_i18n.localized(r, 'descripcion'))}</div>
                     <div class="disease-riesgo-rec">
-                        <span class="campo-data-label">${t('field.recommendationLabel')}</span> ${esc(r.recomendacion)}
+                        <span class="campo-data-label">${t('field.recommendationLabel')}</span> ${esc(window.cultivOS_i18n.localized(r, 'recomendacion'))}
                     </div>
                 </div>`;
             }).join('')}
@@ -767,12 +767,12 @@ function renderDisease(risk) {
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">${t('field.assessment')}</span>
-                <span class="campo-data-value">${esc(risk.mensaje || '--')}</span>
+                <span class="campo-data-value">${esc(window.cultivOS_i18n.localized(risk, 'mensaje') || '--')}</span>
             </div>
         </div>
         ${risksHtml}
         ${weatherHtml}
-        ${risk.nota ? `<div class="disease-nota">${esc(risk.nota)}</div>` : ''}`;
+        ${risk.nota ? `<div class="disease-nota">${esc(window.cultivOS_i18n.localized(risk, 'nota'))}</div>` : ''}`;
 }
 
 function renderIrrigation(irrigation) {
@@ -800,7 +800,7 @@ function renderIrrigation(irrigation) {
                 <span class="campo-data-value">${irrigation.total_liters_week || irrigation.total_litros_semana || '--'}</span>
             </div>
         </div>
-        ${irrigation.recommendation || irrigation.recomendacion ? `<div class="campo-risk-desc">${esc(irrigation.recommendation || irrigation.recomendacion)}</div>` : ''}
+        ${irrigation.recommendation || irrigation.recomendacion ? `<div class="campo-risk-desc">${esc(window.cultivOS_i18n.localized(irrigation, 'recommendation') || irrigation.recomendacion)}</div>` : ''}
         ${scheduleHtml}`;
 }
 
@@ -833,8 +833,8 @@ function renderTreatments(treatments) {
         return `
         <div class="campo-treatment-card ${isApplied ? 'treatment-applied' : ''}">
             ${isApplied ? `<div class="treatment-applied-badge">${t('field.applied')} ${appliedDate}</div>` : ''}
-            ${tr.problema ? `<div class="campo-treatment-row"><strong>${t('field.problemLabel')}</strong> ${esc(tr.problema)}</div>` : ''}
-            ${tr.tratamiento ? `<div class="campo-treatment-row"><strong>${t('field.treatmentLabel')}</strong> ${esc(tr.tratamiento)}</div>` : ''}
+            ${tr.problema ? `<div class="campo-treatment-row"><strong>${t('field.problemLabel')}</strong> ${esc(window.cultivOS_i18n.localized(tr, 'problema'))}</div>` : ''}
+            ${tr.tratamiento ? `<div class="campo-treatment-row"><strong>${t('field.treatmentLabel')}</strong> ${esc(window.cultivOS_i18n.localized(tr, 'tratamiento'))}</div>` : ''}
             ${tr.costo_estimado_mxn ? `<div class="campo-treatment-row"><strong>${t('field.costLabel')}</strong> $${tr.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
             ${tr.urgencia ? `<div class="campo-treatment-row"><span class="campo-alert-badge ${tr.urgencia.toLowerCase() === 'inmediata' ? 'critical' : 'warning'}">${esc(levelLabel(tr.urgencia))}</span></div>` : ''}
             ${tr.prevencion ? `<div class="campo-treatment-row"><strong>${t('field.preventionLabel')}</strong> ${esc(tr.prevencion)}</div>` : ''}
@@ -907,11 +907,11 @@ function renderTreatmentHistory(history) {
                 <div class="treatment-timeline-date">${date}</div>
                 <div class="treatment-timeline-body">
                     <div class="treatment-timeline-header">
-                        <strong>${esc(h.problema)}</strong>
+                        <strong>${esc(window.cultivOS_i18n.localized(h, 'problema'))}</strong>
                         <span class="campo-alert-badge ${urgCls}">${esc(levelLabel(h.urgencia))}</span>
                         ${h.organic ? `<span class="organic-badge">${t('field.organic')}</span>` : ''}
                     </div>
-                    <div class="treatment-timeline-detail">${esc(h.tratamiento)}</div>
+                    <div class="treatment-timeline-detail">${esc(window.cultivOS_i18n.localized(h, 'tratamiento'))}</div>
                     ${h.applied_notes ? `<div class="treatment-timeline-notes">${esc(h.applied_notes)}</div>` : ''}
                 </div>
             </div>`;
@@ -969,9 +969,9 @@ function renderRegionalCard(data, currentFieldId) {
                 <div class="regional-rec-item">
                     <div class="regional-rec-header">
                         <span class="regional-rec-urgencia urgencia-${esc(rec.urgencia)}">${esc(levelLabel(rec.urgencia))}</span>
-                        <span class="regional-rec-problema">${esc(rec.problema)}</span>
+                        <span class="regional-rec-problema">${esc(window.cultivOS_i18n.localized(rec, 'problema'))}</span>
                     </div>
-                    <div class="regional-rec-treatment">${esc(rec.tratamiento)}</div>
+                    <div class="regional-rec-treatment">${esc(window.cultivOS_i18n.localized(rec, 'tratamiento'))}</div>
                     ${rec.contexto_regional ? `<div class="regional-rec-context">${esc(rec.contexto_regional)}</div>` : ''}
                     ${rec.costo_estimado_mxn ? `<div class="regional-rec-cost">$${rec.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
                 </div>
@@ -1044,11 +1044,11 @@ function renderActionTimeline(timeline) {
                         <span class="timeline-priority-badge ${priorityCls(a.priority)}">${priorityLabel(a.priority)}</span>
                         <span class="timeline-action-type">${esc(a.action_type)}</span>
                     </div>
-                    <div class="timeline-action-desc">${esc(a.description)}</div>
-                    ${a.weather_note ? `<div class="timeline-weather-note">${esc(a.weather_note)}</div>` : ''}
+                    <div class="timeline-action-desc">${esc(window.cultivOS_i18n.localized(a, 'description'))}</div>
+                    ${a.weather_note ? `<div class="timeline-weather-note">${esc(window.cultivOS_i18n.localized(a, 'weather_note'))}</div>` : ''}
                     ${a.urgencia ? `<div class="timeline-action-meta"><strong>${t('field.urgencyLabel')}</strong> ${esc(levelLabel(a.urgencia))}</div>` : ''}
                     ${a.costo_estimado_mxn ? `<div class="timeline-action-meta"><strong>${t('field.costLabel')}</strong> $${a.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
-                    ${a.stage_es ? `<div class="timeline-action-meta"><strong>${t('field.stageLabel')}</strong> ${esc(a.stage_es)}${a.days_in_stage != null ? ' (' + t('field.dayLower') + ' ' + a.days_in_stage + ')' : ''}</div>` : ''}
+                    ${a.stage_es ? `<div class="timeline-action-meta"><strong>${t('field.stageLabel')}</strong> ${esc(window.cultivOS_i18n.localized(a, 'stage'))}${a.days_in_stage != null ? ' (' + t('field.dayLower') + ' ' + a.days_in_stage + ')' : ''}</div>` : ''}
                 </div>
             `).join('')}
         </div>`;
@@ -1331,7 +1331,7 @@ function renderCerebro(intel) {
     // Top risk — derive from disease risk or health trend
     let topRisk = null;
     if (dr && dr.risk_level !== 'bajo') {
-        topRisk = dr.mensaje || `${t('field.diseaseRiskLabel')} ${levelLabel(dr.risk_level)}`;
+        topRisk = window.cultivOS_i18n.localized(dr, 'mensaje') || `${t('field.diseaseRiskLabel')} ${levelLabel(dr.risk_level)}`;
     } else if (h && h.trend === 'declining') {
         topRisk = t('field.healthDeclining');
     } else if (ndvi && ndvi.stress_pct > 30) {
@@ -1352,7 +1352,7 @@ function renderCerebro(intel) {
                 ${soil ? `<div class="cerebro-badge"><span class="cerebro-badge-label">pH</span><span class="campo-data-value">${soil.ph}</span></div>` : ''}
                 ${soil && soil.organic_matter_pct != null ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.organicMatterAbbr')}</span><span class="campo-data-value">${soil.organic_matter_pct}%</span></div>` : ''}
                 ${weather ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.climate')}</span><span class="campo-data-value">${Math.round(weather.temp_c)}C &middot; ${Math.round(weather.humidity_pct)}% ${t('field.humAbbr')}</span></div>` : ''}
-                ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.stage')}</span><span class="campo-data-value">${esc(gs.stage_es)}</span></div>` : ''}
+                ${gs ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.stage')}</span><span class="campo-data-value">${esc(window.cultivOS_i18n.localized(gs, 'stage'))}</span></div>` : ''}
                 ${dr ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.risk')}</span><span class="health-badge ${drCls}">${esc(levelLabel(dr.risk_level))}</span></div>` : ''}
                 ${yld ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.yield')}</span><span class="campo-data-value">${Math.round(yld.kg_per_ha).toLocaleString()} kg/ha</span></div>` : ''}
                 ${treatCount > 0 ? `<div class="cerebro-badge"><span class="cerebro-badge-label">${t('field.treatments')}</span><span class="campo-data-value">${treatCount} ${t('field.activeLower')}</span></div>` : ''}
@@ -1360,8 +1360,8 @@ function renderCerebro(intel) {
         </div>
         <div class="cerebro-insights">
             ${topRisk ? `<div class="cerebro-insight-item cerebro-risk"><span class="cerebro-insight-label">${t('field.topRisk')}</span><span class="cerebro-insight-text">${esc(topRisk)}</span></div>` : ''}
-            ${nextAction ? `<div class="cerebro-insight-item cerebro-action"><span class="cerebro-insight-label">${t('field.recommendedAction')}</span><span class="cerebro-insight-text">${esc(nextAction.tratamiento)} — ${esc(nextAction.problema)} <span class="health-badge ${nextAction.urgencia === 'alta' ? 'critical' : nextAction.urgencia === 'media' ? 'warning' : 'good'}">${esc(levelLabel(nextAction.urgencia))}</span></span></div>` : ''}
-            ${yld ? `<div class="cerebro-insight-item"><span class="cerebro-insight-label">${t('field.yieldEstimate')}</span><span class="cerebro-insight-text">${Math.round(yld.min_kg_per_ha).toLocaleString()} — ${Math.round(yld.max_kg_per_ha).toLocaleString()} kg/ha (${esc(yld.nota)})</span></div>` : ''}
+            ${nextAction ? `<div class="cerebro-insight-item cerebro-action"><span class="cerebro-insight-label">${t('field.recommendedAction')}</span><span class="cerebro-insight-text">${esc(window.cultivOS_i18n.localized(nextAction, 'tratamiento'))} — ${esc(window.cultivOS_i18n.localized(nextAction, 'problema'))} <span class="health-badge ${nextAction.urgencia === 'alta' ? 'critical' : nextAction.urgencia === 'media' ? 'warning' : 'good'}">${esc(levelLabel(nextAction.urgencia))}</span></span></div>` : ''}
+            ${yld ? `<div class="cerebro-insight-item"><span class="cerebro-insight-label">${t('field.yieldEstimate')}</span><span class="cerebro-insight-text">${Math.round(yld.min_kg_per_ha).toLocaleString()} — ${Math.round(yld.max_kg_per_ha).toLocaleString()} kg/ha (${esc(window.cultivOS_i18n.localized(yld, 'nota'))})</span></div>` : ''}
             ${!topRisk && !nextAction && !yld ? `<div class="campo-placeholder">${t('field.noAdvancedIntel')}</div>` : ''}
         </div>`;
 }
@@ -1688,10 +1688,10 @@ function renderInterventionScores(scores) {
                 <div class="intervention-rank">#${i + 1}</div>
                 <div class="intervention-body">
                     <div class="intervention-header">
-                        <span class="intervention-problema">${esc(s.problema)}</span>
+                        <span class="intervention-problema">${esc(window.cultivOS_i18n.localized(s, 'problema'))}</span>
                         <span class="health-badge ${urgencyCls(s.urgencia)}">${esc(levelLabel(s.urgencia))}</span>
                     </div>
-                    <div class="intervention-tratamiento">${esc(s.tratamiento)}</div>
+                    <div class="intervention-tratamiento">${esc(window.cultivOS_i18n.localized(s, 'tratamiento'))}</div>
                     <div class="intervention-metrics">
                         <div class="intervention-metric">
                             <span class="intervention-metric-label">${t('field.score')}</span>
@@ -1775,7 +1775,7 @@ function renderGrowthStage(data) {
 
     const headerHtml = `
         <div class="growth-stage-header">
-            <span class="health-badge ${stageCls}">${esc(data.stage_es)}</span>
+            <span class="health-badge ${stageCls}">${esc(window.cultivOS_i18n.localized(data, 'stage'))}</span>
             <span class="growth-crop">${esc(data.crop_type)}</span>
             <span class="growth-day-count">${t('field.day')} ${data.days_since_planting}</span>
         </div>`;
@@ -1791,8 +1791,9 @@ function renderGrowthStage(data) {
             const isCurrent = s.is_current;
             const isPast = stageIdx > i;
             const cls = isCurrent ? 'current' : isPast ? 'past' : 'future';
-            return `<div class="growth-timeline-segment ${cls}" style="width:${widthPct.toFixed(1)}%" title="${esc(s.name_es)}: ${duration} ${t('field.daysLower')}, ${t('field.irrigation')} ${s.water_multiplier}x">
-                <span class="growth-timeline-label">${esc(s.name_es)}</span>
+            const stageName = esc(window.cultivOS_i18n.localized(s, 'name'));
+            return `<div class="growth-timeline-segment ${cls}" style="width:${widthPct.toFixed(1)}%" title="${stageName}: ${duration} ${t('field.daysLower')}, ${t('field.irrigation')} ${s.water_multiplier}x">
+                <span class="growth-timeline-label">${stageName}</span>
                 <span class="growth-timeline-days">${duration}d</span>
             </div>`;
         }).join('');
@@ -1811,9 +1812,9 @@ function renderGrowthStage(data) {
                 const cls = s.is_current ? 'current' : '';
                 const waterCls = s.water_multiplier >= 1.2 ? 'high' : s.water_multiplier <= 0.6 ? 'low' : 'mid';
                 return `<div class="growth-timeline-detail ${cls}">
-                    <span class="growth-timeline-detail-name">${esc(s.name_es)}</span>
+                    <span class="growth-timeline-detail-name">${esc(window.cultivOS_i18n.localized(s, 'name'))}</span>
                     <span class="growth-timeline-detail-water ${waterCls}">${s.water_multiplier}x</span>
-                    <span class="growth-timeline-detail-nutrient">${esc(s.nutrient_focus)}</span>
+                    <span class="growth-timeline-detail-nutrient">${esc(window.cultivOS_i18n.localized(s, 'nutrient_focus'))}</span>
                 </div>`;
             }).join('')}
         </div>`;
@@ -1847,7 +1848,7 @@ function renderFeedback(feedbackList, treatments) {
         treatments.forEach(tr => {
             const opt = document.createElement('option');
             opt.value = tr.id;
-            opt.textContent = esc(tr.tratamiento ? tr.tratamiento.substring(0, 60) : `${t('field.treatment')} #${tr.id}`);
+            opt.textContent = esc(tr.tratamiento ? window.cultivOS_i18n.localized(tr, 'tratamiento').substring(0, 60) : `${t('field.treatment')} #${tr.id}`);
             sel.appendChild(opt);
         });
     }
@@ -2215,7 +2216,7 @@ function renderTreatmentTiming(timingData, forecast) {
                 <div class="timing-card-type">${esc(item.label)}</div>
                 <div class="campo-placeholder">${t('field.noForecastAvailable')}</div>
                 <div class="timing-card-treatments">${item.treatments.map(tr =>
-                    `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
+                    `<span class="timing-treatment-name">${esc(window.cultivOS_i18n.localized(tr, 'tratamiento'))}</span>`
                 ).join('')}</div>
             </div>`;
         }
@@ -2234,7 +2235,7 @@ function renderTreatmentTiming(timingData, forecast) {
             <div class="timing-card-reason">${esc(tm.reason)}</div>
             ${avoidHtml}
             <div class="timing-card-treatments">${item.treatments.map(tr =>
-                `<span class="timing-treatment-name">${esc(tr.tratamiento)}</span>`
+                `<span class="timing-treatment-name">${esc(window.cultivOS_i18n.localized(tr, 'tratamiento'))}</span>`
             ).join('')}</div>
         </div>`;
     }).join('');
@@ -2400,10 +2401,10 @@ function renderTreatmentEffectiveness(results) {
         html += `
         <div class="treatment-effectiveness-card">
             <div class="treatment-effectiveness-header">
-                <span class="treatment-effectiveness-name">${esc(r.tratamiento)}</span>
+                <span class="treatment-effectiveness-name">${esc(window.cultivOS_i18n.localized(r, 'tratamiento'))}</span>
                 <span class="treatment-effectiveness-badge ${cls}">${esc(label)}</span>
             </div>
-            <div class="treatment-effectiveness-problem">${esc(r.problema)}</div>
+            <div class="treatment-effectiveness-problem">${esc(window.cultivOS_i18n.localized(r, 'problema'))}</div>
             <div class="treatment-effectiveness-scores">
                 <div class="treatment-effectiveness-score-box">
                     <div class="treatment-effectiveness-score-label">${t('field.before')}</div>

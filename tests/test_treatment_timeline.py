@@ -67,7 +67,9 @@ def test_field_js_shows_treatment_problema(client):
     resp = client.get("/field.js")
     assert resp.status_code == 200
     js = resp.text
-    assert "t.problema" in js or "entry.problema" in js or "h.problema" in js
+    # field.js now renders treatment text via the i18n helper, e.g.
+    # window.cultivOS_i18n.localized(h, 'problema'), rather than raw h.problema.
+    assert "localized(h, 'problema')" in js or 'localized(h, "problema")' in js or "'problema'" in js
 
 
 def test_field_js_shows_treatment_urgencia(client):

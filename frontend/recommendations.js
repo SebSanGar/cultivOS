@@ -124,7 +124,7 @@ function renderRegion(region, el) {
             <div class="recs-region-item"><span class="recs-region-label">Region</span> <span class="recs-region-value">${esc(region.region_name)}</span></div>
             <div class="recs-region-item"><span class="recs-region-label">Clima</span> <span class="recs-region-value">${esc(region.climate_zone)}</span></div>
             <div class="recs-region-item"><span class="recs-region-label">Suelo</span> <span class="recs-region-value">${esc(region.soil_type)}</span></div>
-            <div class="recs-region-item"><span class="recs-region-label">Temporada</span> <span class="recs-region-value">${esc(region.growing_season)}</span></div>
+            <div class="recs-region-item"><span class="recs-region-label">Temporada</span> <span class="recs-region-value">${esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(region, 'growing_season') : (region.growing_season_es || region.growing_season || ''))}</span></div>
             <div class="recs-region-item"><span class="recs-region-label">Cultivos clave</span> <span class="recs-region-value">${esc(region.key_crops.join(', '))}</span></div>
             ${region.seasonal_notes ? `<div class="recs-region-item recs-region-notes"><span class="recs-region-label">Notas</span> <span class="recs-region-value">${esc(region.seasonal_notes)}</span></div>` : ''}
         </div>
@@ -145,7 +145,7 @@ function renderCards(recs, container) {
                     ${rec.crop_type ? `<span class="recs-crop-type">${esc(rec.crop_type)}</span>` : ''}
                 </div>
                 <div class="recs-card-badges">
-                    <span class="recs-badge recs-badge-urgencia" style="background:${urgColor}">${esc(rec.urgencia)}</span>
+                    <span class="recs-badge recs-badge-urgencia" style="background:${urgColor}">${esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(rec, 'urgencia') : (rec.urgencia_es || rec.urgencia || ''))}</span>
                     ${organicBadge}
                     ${ancestralBadge}
                 </div>
@@ -153,7 +153,7 @@ function renderCards(recs, container) {
             <div class="recs-card-body">
                 <div class="recs-card-row">
                     <span class="recs-card-label">Problema</span>
-                    <span class="recs-card-value">${esc(rec.problema)}</span>
+                    <span class="recs-card-value">${esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(rec, 'problema') : (rec.problema_es || rec.problema || ''))}</span>
                 </div>
                 <div class="recs-card-row">
                     <span class="recs-card-label">Causa probable</span>
@@ -161,7 +161,7 @@ function renderCards(recs, container) {
                 </div>
                 <div class="recs-card-row recs-card-treatment">
                     <span class="recs-card-label">Tratamiento</span>
-                    <span class="recs-card-value">${esc(rec.tratamiento)}</span>
+                    <span class="recs-card-value">${esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(rec, 'tratamiento') : (rec.tratamiento_es || rec.tratamiento || ''))}</span>
                 </div>
                 <div class="recs-card-row">
                     <span class="recs-card-label">Prevencion</span>

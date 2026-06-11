@@ -10,6 +10,7 @@
         return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     }
     function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function loc(o, base) { return window.cultivOS_i18n ? window.cultivOS_i18n.localized(o, base) : (o[base + '_es'] || o[base] || ''); }
 
     function deltaColor(delta) {
         if (delta >= 10) return "#22c55e";
@@ -26,7 +27,7 @@
         var farmsData = results[1];
 
         allTreatments = (effData && effData.treatments) ? effData.treatments : [];
-        allFarms = Array.isArray(farmsData) ? farmsData : [];
+        allFarms = (farmsData && (farmsData.data || farmsData.items)) || (Array.isArray(farmsData) ? farmsData : []);
 
         populateFilters();
         renderAll(allTreatments);
@@ -104,7 +105,7 @@
         // Stats
         var totalApps = treatments.reduce(function (s, t) { return s + (t.total_applications || 0); }, 0);
         var avgDelta = Math.round(treatments.reduce(function (s, t) { return s + (t.avg_health_delta || 0); }, 0) / treatments.length);
-        var best = treatments[0].tratamiento || "--";
+        var best = loc(treatments[0], 'tratamiento') || "--";
         updateStats(treatments.length, totalApps, avgDelta, best);
 
         // Chart
@@ -130,7 +131,7 @@
 
         if (barChart) barChart.destroy();
 
-        var labels = treatments.map(function (t) { return t.tratamiento || ""; });
+        var labels = treatments.map(function (t) { return loc(t, 'tratamiento') || ""; });
         var deltas = treatments.map(function (t) { return t.avg_health_delta || 0; });
         var colors = deltas.map(function (d) { return deltaColor(d); });
 
@@ -179,7 +180,7 @@
 
             return '<div class="intel-card">' +
                 '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-                '<div class="intel-card-title">' + esc(t.tratamiento || "") + '</div>' +
+                '<div class="intel-card-title">' + esc(loc(t, 'tratamiento') || "") + '</div>' +
                 '<div style="font-size:1.4rem;font-weight:800;color:' + dColor + ';">' + deltaStr + '</div>' +
                 '</div>' +
                 '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' +

@@ -157,7 +157,7 @@ class TestCarbonFrontend:
         assert resp.status_code == 200
         html = resp.text
         assert "intel-carbon" in html
-        assert "Secuestro de Carbono" in html
+        assert "Carbon Sequestration" in html
 
     def test_intel_js_has_load_carbon(self, client, admin_headers):
         """intel.js contains the loadCarbon function."""

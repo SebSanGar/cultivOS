@@ -203,7 +203,7 @@ def test_intel_html_has_fusion_panel(client):
     assert resp.status_code == 200
     html = resp.text
     assert 'id="intel-sensor-fusion"' in html
-    assert "Validacion de Sensores" in html
+    assert "Sensor Validation" in html
 
 
 def test_intel_js_has_fusion_loader(client):

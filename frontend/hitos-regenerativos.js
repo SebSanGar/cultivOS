@@ -12,9 +12,11 @@
   async function loadFarms() {
     const sel = document.getElementById("hitos-farm-select");
     try {
-      const res = await fetch("/api/farms");
+      const res = await fetch("/api/farms?page_size=100");
       if (!res.ok) return;
-      const farms = await res.json();
+      const resp = await res.json();
+      const farms = (resp && (resp.data || resp.items)) || [];
+      if (!farms.length) return;
       farms.forEach(function (f) {
         const opt = document.createElement("option");
         opt.value = f.id;
@@ -51,7 +53,8 @@
 
       progressLabel.textContent = "Progreso: " + achieved + " / " + total + " hitos";
       progressBar.style.width = (total > 0 ? (achieved / total) * 100 : 0) + "%";
-      nextHint.textContent = data.next_milestone_es ? "Siguiente: " + data.next_milestone_es : "Todos los hitos alcanzados";
+      var nextMilestone = window.cultivOS_i18n ? window.cultivOS_i18n.localized(data, 'next_milestone') : (data.next_milestone_es || data.next_milestone || '');
+      nextHint.textContent = nextMilestone ? "Siguiente: " + nextMilestone : "Todos los hitos alcanzados";
 
       grid.innerHTML = "";
       (data.milestones || []).forEach(function (m) {
@@ -64,7 +67,7 @@
         }
         card.innerHTML =
           '<div class="hitos-card-icon">' + icon + "</div>" +
-          '<div class="hitos-card-name">' + (m.description_es || m.name) + "</div>" +
+          '<div class="hitos-card-name">' + ((window.cultivOS_i18n ? window.cultivOS_i18n.localized(m, 'description') : (m.description_es || m.description)) || m.name) + "</div>" +
           '<span class="hitos-badge ' + (m.achieved ? "achieved" : "locked") + '">' + (m.achieved ? "Alcanzado" : "Pendiente") + "</span>" +
           dateStr;
         grid.appendChild(card);

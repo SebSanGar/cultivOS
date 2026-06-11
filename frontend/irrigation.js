@@ -21,6 +21,8 @@
         return d.innerHTML;
     }
 
+    function loc(o, base) { return window.cultivOS_i18n ? window.cultivOS_i18n.localized(o, base) : (o[base + '_es'] || o[base] || ''); }
+
     var urgencyColors = {
         alta: "#ef4444",
         media: "#eab308",
@@ -35,8 +37,9 @@
 
     /* Load farms on init */
     function loadFarms() {
-        fetchJSON("/api/farms").then(function (farms) {
-            if (!farms) return;
+        fetchJSON("/api/farms?page_size=100").then(function (resp) {
+            var farms = (resp && (resp.data || resp.items)) || (Array.isArray(resp) ? resp : []);
+            if (!farms.length) return;
             farms.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;
@@ -120,7 +123,7 @@
 
         /* Recommendation */
         document.getElementById("irrigation-recommendation").textContent =
-            data.recomendacion || "Sin recomendacion disponible.";
+            loc(data, 'recomendacion') || "Sin recomendacion disponible.";
 
         /* Schedule table */
         scheduleBody.innerHTML = "";
@@ -132,7 +135,7 @@
                     '<td style="padding:0.4rem 0.5rem;color:#ccc;font-size:0.85rem;">Dia ' + entry.day + '</td>' +
                     '<td style="padding:0.4rem 0.5rem;color:#eee;font-size:0.85rem;font-family:monospace;font-weight:600;">' +
                         Math.round(entry.liters_per_ha).toLocaleString() + '</td>' +
-                    '<td style="padding:0.4rem 0.5rem;color:#888;font-size:0.85rem;">' + esc(entry.nota) + '</td>';
+                    '<td style="padding:0.4rem 0.5rem;color:#888;font-size:0.85rem;">' + esc(loc(entry, 'nota')) + '</td>';
                 scheduleBody.appendChild(tr);
             });
         }

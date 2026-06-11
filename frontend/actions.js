@@ -168,11 +168,11 @@
                 html += '<span class="intel-badge badge-source">' + esc(actionTypeLabel(a.action_type)) + '</span>';
                 html += '</div>';
                 html += '<p style="font-size:0.85rem; opacity:0.7; margin-bottom:0.3rem;">' + esc(sourceLabel(a.source)) + '</p>';
-                html += '<p style="margin-bottom:0.5rem;">' + esc(a.description) + '</p>';
+                html += '<p style="margin-bottom:0.5rem;">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(a, 'description') : (a.description_es || a.description || '')) + '</p>';
 
                 // Source-specific details
                 if (a.source === "growth_stage" && a.stage_es) {
-                    html += '<p style="font-size:0.85rem;">Etapa: <strong>' + esc(a.stage_es) + '</strong>';
+                    html += '<p style="font-size:0.85rem;">Etapa: <strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(a, 'stage') : (a.stage_es || a.stage || '')) + '</strong>';
                     if (a.days_in_stage !== null) html += ' (' + a.days_in_stage + ' dias)';
                     if (a.days_until_next_stage !== null) html += ' | Siguiente etapa en ' + a.days_until_next_stage + ' dias';
                     html += '</p>';
@@ -188,13 +188,13 @@
                 }
 
                 if (a.source === "treatment") {
-                    if (a.problema) html += '<p style="font-size:0.85rem;">Problema: ' + esc(a.problema) + '</p>';
-                    if (a.urgencia) html += '<p style="font-size:0.85rem;">Urgencia: <strong>' + esc(a.urgencia) + '</strong></p>';
+                    if (a.problema) html += '<p style="font-size:0.85rem;">Problema: ' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(a, 'problema') : (a.problema_es || a.problema || '')) + '</p>';
+                    if (a.urgencia) html += '<p style="font-size:0.85rem;">Urgencia: <strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(a, 'urgencia') : (a.urgencia_es || a.urgencia || '')) + '</strong></p>';
                     if (a.costo_estimado_mxn) html += '<p style="font-size:0.85rem;">Costo estimado: $' + Number(a.costo_estimado_mxn).toLocaleString("es-MX") + ' MXN</p>';
                 }
 
                 if (a.weather_note) {
-                    html += '<p style="font-size:0.85rem; color:#f0b429; margin-top:0.4rem;">' + esc(a.weather_note) + '</p>';
+                    html += '<p style="font-size:0.85rem; color:#f0b429; margin-top:0.4rem;">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(a, 'weather_note') : (a.weather_note_es || a.weather_note || '')) + '</p>';
                 }
 
                 html += '</div>';

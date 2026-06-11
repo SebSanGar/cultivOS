@@ -116,11 +116,11 @@ class TestIntelEconomicsFrontend:
         assert 'id="intel-economics"' in resp.text
 
     def test_economics_card_shows_title(self, client):
-        """Economics card has the correct Spanish title."""
+        """Economics card has the correct title."""
         resp = client.get("/intel")
-        assert "Impacto Econ" in resp.text
+        assert "Economic Impact" in resp.text
 
     def test_economics_card_shows_currency(self, client):
-        """Economics card labels reference MXN currency."""
+        """Economics card uses a currency-neutral symbol badge."""
         resp = client.get("/intel")
-        assert "MXN" in resp.text
+        assert '<span class="intel-badge">$</span>' in resp.text

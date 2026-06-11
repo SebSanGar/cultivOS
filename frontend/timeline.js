@@ -152,8 +152,14 @@
                 type: 'treatment',
                 date: t.applied_at || t.created_at,
                 problema: t.problema,
+                problema_en: t.problema_en,
+                problema_es: t.problema_es,
                 tratamiento: t.tratamiento,
+                tratamiento_en: t.tratamiento_en,
+                tratamiento_es: t.tratamiento_es,
                 urgencia: t.urgencia,
+                urgencia_en: t.urgencia_en,
+                urgencia_es: t.urgencia_es,
                 organic: t.organic,
                 applied_notes: t.applied_notes,
                 health_score_used: t.health_score_used
@@ -216,10 +222,10 @@
             '<div class="tl-event-marker tl-marker-treatment"></div>' +
             '<div class="tl-event-content">' +
                 '<div class="tl-event-date">' + formatDate(ev.date) + '</div>' +
-                '<div class="tl-event-title">Tratamiento: <strong>' + esc(ev.tratamiento) + '</strong></div>' +
-                '<div class="tl-event-detail">Problema: ' + esc(ev.problema) + '</div>' +
+                '<div class="tl-event-title">Tratamiento: <strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'tratamiento') : (ev.tratamiento_es || ev.tratamiento || '')) + '</strong></div>' +
+                '<div class="tl-event-detail">Problema: ' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'problema') : (ev.problema_es || ev.problema || '')) + '</div>' +
                 '<div class="tl-event-badges">' +
-                    '<span class="tl-badge ' + urgClass + '">' + esc(ev.urgencia) + '</span>' +
+                    '<span class="tl-badge ' + urgClass + '">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'urgencia') : (ev.urgencia_es || ev.urgencia || '')) + '</span>' +
                     organicBadge +
                 '</div>' +
                 '<div class="tl-event-detail">Salud al momento: ' + (ev.health_score_used != null ? ev.health_score_used.toFixed(1) : '--') + '</div>' +

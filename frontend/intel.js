@@ -10,6 +10,8 @@ function esc(str) {
     return d.innerHTML;
 }
 
+function loc(o, base) { return window.cultivOS_i18n ? window.cultivOS_i18n.localized(o, base) : (o[base + '_es'] || o[base] || ''); }
+
 function healthClass(score) {
     if (score == null) return 'none';
     if (score > 70) return 'good';
@@ -184,7 +186,7 @@ async function loadTreatmentReport() {
         return `
         <div class="treatment-report-card">
             <div class="treatment-report-header">
-                <span class="treatment-report-name">${esc(t.tratamiento)}</span>
+                <span class="treatment-report-name">${esc(loc(t, 'tratamiento'))}</span>
                 <span class="treatment-report-apps">${t.total_applications} applications</span>
             </div>
             <div class="treatment-report-score-row">

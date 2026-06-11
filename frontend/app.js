@@ -11,6 +11,13 @@ function t(key) {
         : key;
 }
 
+// Pick the current-language variant of a backend DATA field (base_en / base_es / base).
+function loc(obj, base) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.localized)
+        ? window.cultivOS_i18n.localized(obj, base)
+        : (obj[base + '_es'] || obj[base] || '');
+}
+
 // Localize a health-trend code ('declining' | 'improving' | 'stable') to text.
 function trendText(trend) {
     if (trend === 'declining') return t('dash.trendDeclining');
@@ -348,10 +355,10 @@ function renderFields(farmId) {
             <div class="field-section">
                 <div class="field-section-title">${esc(t('dash.treatmentRec'))}</div>
                 <div class="treatment-card">
-                    ${treatment.problema ? `<div class="treatment-row"><strong>${esc(t('dash.problem'))}:</strong> ${esc(treatment.problema)}</div>` : ''}
-                    ${treatment.tratamiento ? `<div class="treatment-row"><strong>${esc(t('dash.treatment'))}:</strong> ${esc(treatment.tratamiento)}</div>` : ''}
+                    ${treatment.problema ? `<div class="treatment-row"><strong>${esc(t('dash.problem'))}:</strong> ${esc(loc(treatment, 'problema'))}</div>` : ''}
+                    ${treatment.tratamiento ? `<div class="treatment-row"><strong>${esc(t('dash.treatment'))}:</strong> ${esc(loc(treatment, 'tratamiento'))}</div>` : ''}
                     ${treatment.costo_estimado_mxn ? `<div class="treatment-row"><strong>${esc(t('dash.cost'))}:</strong> $${treatment.costo_estimado_mxn.toLocaleString()} MXN/ha</div>` : ''}
-                    ${treatment.urgencia ? `<div class="treatment-row urgency-${treatment.urgencia.toLowerCase()}">${esc(treatment.urgencia)}</div>` : ''}
+                    ${treatment.urgencia ? `<div class="treatment-row urgency-${treatment.urgencia.toLowerCase()}">${esc(loc(treatment, 'urgencia'))}</div>` : ''}
                     ${treatment.prevencion ? `<div class="treatment-row"><strong>${esc(t('dash.prevention'))}:</strong> ${esc(treatment.prevencion)}</div>` : ''}
                 </div>
             </div>`;
@@ -487,9 +494,9 @@ async function showFertilizers() {
     fertList.innerHTML = ferts.map(f => `
         <div class="fert-card">
             <div class="fert-name">${esc(f.name)}</div>
-            <div class="fert-desc">${esc(f.description_es || f.description || '')}</div>
+            <div class="fert-desc">${esc(loc(f, 'description'))}</div>
             <div class="fert-meta">
-                ${f.application_method ? `<div><strong>${esc(t('dash.application'))}:</strong> ${esc(f.application_method)}</div>` : ''}
+                ${f.application_method ? `<div><strong>${esc(t('dash.application'))}:</strong> ${esc(loc(f, 'application_method'))}</div>` : ''}
                 ${f.cost_per_ha_mxn ? `<div><strong>${esc(t('dash.cost'))}:</strong> $${f.cost_per_ha_mxn.toLocaleString()} MXN/ha</div>` : ''}
                 ${f.suitable_crops ? `<div><strong>${esc(t('dash.crops'))}:</strong> ${esc(Array.isArray(f.suitable_crops) ? f.suitable_crops.join(', ') : f.suitable_crops)}</div>` : ''}
             </div>
@@ -828,7 +835,7 @@ async function loadEconomicImpact(farmId) {
     document.getElementById('econ-fertilizer').textContent = formatMXN(data.fertilizer_savings_mxn);
     document.getElementById('econ-yield').textContent = formatMXN(data.yield_improvement_mxn);
     document.getElementById('econ-total').textContent = formatMXN(data.total_savings_mxn) + ' MXN';
-    document.getElementById('econ-nota').textContent = data.nota || '';
+    document.getElementById('econ-nota').textContent = loc(data, 'nota') || '';
 }
 
 // ── Carbon sequestration summary ──

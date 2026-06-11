@@ -17,10 +17,10 @@ def researcher_headers(client):
 
 
 def test_intel_page_loads(client):
-    """GET /intel returns 200 with 'Panel de Inteligencia'."""
+    """GET /intel returns 200 with 'Intelligence Dashboard'."""
     resp = client.get("/intel")
     assert resp.status_code == 200
-    assert "Panel de Inteligencia" in resp.text
+    assert "Intelligence Dashboard" in resp.text
 
 
 def test_intel_shows_farm_map_placeholder(client):

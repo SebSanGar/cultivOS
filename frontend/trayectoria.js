@@ -10,8 +10,9 @@ function fetchJSON(url) {
 /* ── Farm / Field selectors ─────────────────────────────────── */
 
 (async function initFarms() {
-    const farms = await fetchJSON(API + '/api/farms');
-    if (!farms) return;
+    const resp = await fetchJSON(API + '/api/farms?page_size=100');
+    const farms = (resp && (resp.data || resp.items)) || [];
+    if (!farms.length) return;
     const sel = document.getElementById('traj-farm-select');
     farms.forEach(f => {
         const o = document.createElement('option');
@@ -225,8 +226,8 @@ function renderTreatments(data) {
         return '<div class="intel-card" style="margin-bottom:1rem;padding:1rem;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">' +
             '<div>' +
-            '<strong>' + esc(t.tratamiento) + '</strong>' +
-            '<div style="color:var(--text-muted);font-size:0.85rem;">' + esc(t.problema) + ' — ' + dateStr + '</div>' +
+            '<strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(t, 'tratamiento') : (t.tratamiento_es || t.tratamiento || '')) + '</strong>' +
+            '<div style="color:var(--text-muted);font-size:0.85rem;">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(t, 'problema') : (t.problema_es || t.problema || '')) + ' — ' + dateStr + '</div>' +
             '</div>' +
             '<div style="display:flex;gap:1.5rem;align-items:center;">' +
             '<div><span style="color:var(--text-muted)">Antes:</span> ' + t.health_before.toFixed(1) + '</div>' +

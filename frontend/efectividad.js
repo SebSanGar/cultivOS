@@ -11,6 +11,7 @@
         return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     }
     function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function loc(o, base) { return window.cultivOS_i18n ? window.cultivOS_i18n.localized(o, base) : (o[base + '_es'] || o[base] || ''); }
 
     window.loadEffectiveness = function () {
         fetchJSON(API + "/api/intel/treatment-effectiveness-report").then(function (data) {
@@ -46,7 +47,7 @@
 
                 return '<div class="intel-card">' +
                     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-                    '<div class="intel-card-title">' + esc(t.treatment || t.name || t.tratamiento || "Tratamiento") + '</div>' +
+                    '<div class="intel-card-title">' + esc(t.treatment || t.name || loc(t, 'tratamiento') || "Tratamiento") + '</div>' +
                     '<div style="font-size:1.2rem;font-weight:800;color:' + deltaColor + ';">' + deltaStr + '</div>' +
                     '</div>' +
                     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">' +

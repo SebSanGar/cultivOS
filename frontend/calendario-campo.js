@@ -41,8 +41,9 @@
         expandEl.innerHTML = "";
     }
 
-    const farms = await fetchJSON("/api/farms");
-    if (!farms || !farms.length) {
+    const farmsResp = await fetchJSON("/api/farms?page_size=100");
+    const farms = (farmsResp && (farmsResp.data || farmsResp.items)) || (Array.isArray(farmsResp) ? farmsResp : []);
+    if (!farms.length) {
         farmSel.innerHTML = '<option value="">Sin datos</option>';
         return;
     }
@@ -84,8 +85,9 @@
         gridEl.innerHTML = data.months.map(m => {
             const cls = heatClass(m.total_events);
             const busiestCls = (data.busiest_month === m.month && m.total_events > 0) ? " busiest" : "";
+            const monthName = window.cultivOS_i18n ? window.cultivOS_i18n.localized(m, 'month_name') : (m.month_name_es || m.month_name || '');
             return `<div class="month-cell ${cls}${busiestCls}" data-month="${m.month}">
-                <div class="name">${esc(m.month_name_es)}</div>
+                <div class="name">${esc(monthName)}</div>
                 <div class="count">${m.total_events}</div>
             </div>`;
         }).join("");
@@ -97,8 +99,9 @@
                 const monthNum = parseInt(cell.dataset.month, 10);
                 const m = data.months.find(x => x.month === monthNum);
                 if (!m) return;
+                const monthName = window.cultivOS_i18n ? window.cultivOS_i18n.localized(m, 'month_name') : (m.month_name_es || m.month_name || '');
                 expandEl.innerHTML = `<div class="expand-panel">
-                    <h3>${esc(m.month_name_es)} — Desglose</h3>
+                    <h3>${esc(monthName)} — Desglose</h3>
                     <div class="breakdown-row"><span>Salud (HealthScore)</span><span>${m.health_scores}</span></div>
                     <div class="breakdown-row"><span>Tratamientos</span><span>${m.treatments}</span></div>
                     <div class="breakdown-row"><span>Observaciones</span><span>${m.observations}</span></div>

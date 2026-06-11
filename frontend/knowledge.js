@@ -11,6 +11,13 @@ function t(key, fallback) {
     return fallback;
 }
 
+/* Pick the current-language variant of a backend DATA field (base_en / base_es / base). */
+function loc(obj, base) {
+    return (window.cultivOS_i18n && typeof window.cultivOS_i18n.localized === 'function')
+        ? window.cultivOS_i18n.localized(obj, base)
+        : (obj[base + '_es'] || obj[base] || '');
+}
+
 /* Re-localize any data-i18n nodes injected after the i18n module's initial pass. */
 function relocalize() {
     if (window.cultivOS_i18n && typeof window.cultivOS_i18n.applyAll === 'function') {
@@ -42,13 +49,13 @@ function renderAncestral(methods) {
                 <h3 class="knowledge-card-title">${m.name}</h3>
                 <span class="knowledge-badge knowledge-badge-type">${m.practice_type}</span>
             </div>
-            <p class="knowledge-card-desc">${m.description_es}</p>
+            <p class="knowledge-card-desc">${loc(m, 'description')}</p>
             <div class="knowledge-card-meta">
                 <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${m.region}</span>
                 <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(m.crops || []).join(', ')}</span>
             </div>
-            <p class="knowledge-card-benefits"><strong>${lblBenefits}</strong> ${m.benefits_es}</p>
-            ${m.scientific_basis ? `<p class="knowledge-card-science"><strong>${lblScience}</strong> ${m.scientific_basis}</p>` : ''}
+            <p class="knowledge-card-benefits"><strong>${lblBenefits}</strong> ${loc(m, 'benefits')}</p>
+            ${m.scientific_basis ? `<p class="knowledge-card-science"><strong>${lblScience}</strong> ${loc(m, 'scientific_basis')}</p>` : ''}
         </div>
     `).join('');
 }
@@ -72,9 +79,9 @@ function renderCrops(crops) {
                 <h3 class="knowledge-card-title">${c.name}</h3>
                 <span class="knowledge-badge knowledge-badge-family">${c.family}</span>
             </div>
-            <p class="knowledge-card-desc">${c.description_es}</p>
+            <p class="knowledge-card-desc">${loc(c, 'description')}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>${lblSeason}</strong> ${c.growing_season}</span>
+                <span class="knowledge-meta-item"><strong>${lblSeason}</strong> ${loc(c, 'growing_season')}</span>
                 <span class="knowledge-meta-item"><strong>${lblWater}</strong> ${c.water_needs}</span>
                 ${c.days_to_harvest ? `<span class="knowledge-meta-item"><strong>${lblHarvest}</strong> ${c.days_to_harvest} ${lblDays}</span>` : ''}
             </div>
@@ -102,10 +109,10 @@ function renderFertilizers(fertilizers) {
                 <h3 class="knowledge-card-title">${f.name}</h3>
                 <span class="knowledge-badge knowledge-badge-cost">$${f.cost_per_ha_mxn.toLocaleString()} MXN/ha</span>
             </div>
-            <p class="knowledge-card-desc">${f.description_es}</p>
+            <p class="knowledge-card-desc">${loc(f, 'description')}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>${lblApplication}</strong> ${f.application_method}</span>
-                <span class="knowledge-meta-item"><strong>${lblNutrients}</strong> ${f.nutrient_profile}</span>
+                <span class="knowledge-meta-item"><strong>${lblApplication}</strong> ${loc(f, 'application_method')}</span>
+                <span class="knowledge-meta-item"><strong>${lblNutrients}</strong> ${loc(f, 'nutrient_profile')}</span>
             </div>
             <p class="knowledge-card-crops"><strong>${lblCrops}</strong> ${(f.suitable_crops || []).join(', ')}</p>
         </div>
@@ -138,7 +145,7 @@ function renderDiseases(diseases) {
                 <h3 class="knowledge-card-title">${d.name}</h3>
                 <span class="knowledge-badge ${severityClass}">${severityLabel(d.severity)}</span>
             </div>
-            <p class="knowledge-card-desc">${d.description_es}</p>
+            <p class="knowledge-card-desc">${loc(d, 'description')}</p>
             <div class="knowledge-card-meta">
                 <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(d.affected_crops || []).join(', ')}</span>
                 <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${d.region}</span>
@@ -170,7 +177,7 @@ function renderIdentifyResults(matches) {
                 <strong>${m.name}</strong>
                 <span class="confidence-bar" style="width:${Math.round(m.confidence * 100)}%">${Math.round(m.confidence * 100)}%</span>
             </div>
-            <p>${m.description_es}</p>
+            <p>${loc(m, 'description')}</p>
             <p><strong>${lblMatchedSymptoms}</strong> ${(m.symptoms_matched || []).join(', ')}</p>
             <div class="knowledge-card-treatments">
                 ${(m.treatments || []).map(tr =>

@@ -48,7 +48,7 @@ class TestEconomicImpactPageLoad:
 
     def test_page_has_title(self, client):
         resp = client.get("/impacto-economico")
-        assert "Impacto Econ" in resp.text
+        assert "Economic Impact" in resp.text
 
     def test_page_has_farm_selector(self, client):
         resp = client.get("/impacto-economico")
@@ -70,9 +70,10 @@ class TestEconomicImpactPageLoad:
         resp = client.get("/impacto-economico")
         assert 'id="econ-cards"' in resp.text
 
-    def test_page_shows_mxn_currency(self, client):
+    def test_page_shows_neutral_currency(self, client):
         resp = client.get("/impacto-economico")
-        assert "MXN" in resp.text
+        # Page is now currency-neutral: farmer-facing copy shows "$" not "MXN".
+        assert "$0" in resp.text
 
     def test_page_has_nota_container(self, client):
         resp = client.get("/impacto-economico")
@@ -84,15 +85,15 @@ class TestEconomicImpactPageContent:
 
     def test_page_has_water_label(self, client):
         resp = client.get("/impacto-economico")
-        assert "Ahorro en agua" in resp.text or "Agua" in resp.text
+        assert "Water savings" in resp.text or "Water" in resp.text
 
     def test_page_has_fertilizer_label(self, client):
         resp = client.get("/impacto-economico")
-        assert "Fertilizante" in resp.text
+        assert "Fertilizer" in resp.text
 
     def test_page_has_yield_label(self, client):
         resp = client.get("/impacto-economico")
-        assert "Rendimiento" in resp.text
+        assert "Yield" in resp.text
 
     def test_page_has_nav_link(self, client):
         resp = client.get("/impacto-economico")

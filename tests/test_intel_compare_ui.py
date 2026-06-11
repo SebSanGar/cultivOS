@@ -63,9 +63,9 @@ def test_intel_has_farm_compare_section(client):
 
 
 def test_intel_has_farm_compare_title(client):
-    """Farm comparison section has the correct Spanish title."""
+    """Farm comparison section has the correct title."""
     resp = client.get("/intel")
-    assert "Comparacion de Granjas" in resp.text
+    assert "Farm Comparison" in resp.text
 
 
 def test_intel_has_farm_select_control(client):
