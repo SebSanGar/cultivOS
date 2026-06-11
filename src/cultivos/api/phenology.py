@@ -24,10 +24,12 @@ def get_phenology_calendar():
                 {
                     "name": s["name"],
                     "name_es": s["name_es"],
+                    "name_en": s["name_en"],
                     "start_day": s["start_day"],
                     "end_day": s["end_day"],
                     "water_multiplier": s["water_multiplier"],
                     "nutrient_focus": s["nutrient_focus"],
+                    "nutrient_focus_en": s["nutrient_focus_en"],
                 }
                 for s in stages
             ],

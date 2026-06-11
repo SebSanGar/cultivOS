@@ -21,14 +21,27 @@ def _rain_days(forecast_3day: list[dict]) -> list[int]:
     return [i for i, day in enumerate(forecast_3day) if day.get("rainfall_mm", 0) > 5.0]
 
 
-def _weather_note_for_treatment(forecast_3day: list[dict]) -> str | None:
-    """Generate a weather warning for foliar/spray treatments if rain is forecast."""
+def _weather_note_for_treatment(forecast_3day: list[dict]) -> tuple[str | None, str | None]:
+    """Generate a bilingual weather warning for foliar/spray treatments if rain is forecast.
+
+    Returns (es, en); both None when no rain is forecast.
+    """
     rainy = _rain_days(forecast_3day)
     if not rainy:
-        return None
+        return None, None
     day_labels = {0: "hoy", 1: "manana", 2: "pasado manana"}
+    day_labels_en = {0: "today", 1: "tomorrow", 2: "the day after tomorrow"}
     rain_days_str = ", ".join(day_labels.get(d, f"dia {d+1}") for d in rainy)
-    return f"Precaucion: lluvia pronosticada ({rain_days_str}). Considerar reprogramar aplicaciones foliares."
+    rain_days_str_en = ", ".join(day_labels_en.get(d, f"day {d+1}") for d in rainy)
+    note_es = (
+        f"Precaucion: lluvia pronosticada ({rain_days_str}). "
+        "Considerar reprogramar aplicaciones foliares."
+    )
+    note_en = (
+        f"Caution: rain forecast ({rain_days_str_en}). "
+        "Consider rescheduling foliar applications."
+    )
+    return note_es, note_en
 
 
 def _weather_summary(forecast_3day: list[dict]) -> dict | None:
@@ -93,9 +106,12 @@ def build_action_timeline(
             "crop": alert["crop"],
             "action_type": alert["alert_type"],
             "description": alert["message"],
+            # Upstream-composed Spanish text; filled by a later lazy-translate pass.
+            "description_en": None,
             "season": alert["season"],
             "month_range": alert["month_range"],
             "weather_note": None,
+            "weather_note_en": None,
         })
 
     # 2. Growth stage actions
@@ -108,16 +124,20 @@ def build_action_timeline(
                 "priority": _SOURCE_PRIORITY["growth_stage"],
                 "stage": stage["stage"],
                 "stage_es": stage["stage_es"],
+                # English stage name + nutrient focus from phenology bilingual fields.
+                "stage_en": stage.get("stage_en"),
                 "action_type": "cuidado",
                 "description": stage["nutrient_focus"],
+                "description_en": stage.get("nutrient_focus_en"),
                 "days_in_stage": stage["days_in_stage"],
                 "days_until_next_stage": stage["days_until_next_stage"],
                 "water_multiplier": stage["water_multiplier"],
                 "weather_note": None,
+                "weather_note_en": None,
             })
 
     # 3. Pending treatments with weather awareness
-    weather_note = _weather_note_for_treatment(forecast_3day)
+    weather_note, weather_note_en = _weather_note_for_treatment(forecast_3day)
     for t in pending_treatments:
         urgencia = t.get("urgencia", "media")
         actions.append({
@@ -126,10 +146,14 @@ def build_action_timeline(
             "treatment_id": t.get("id"),
             "action_type": "tratamiento",
             "description": t.get("tratamiento", ""),
+            # DB-sourced treatment text; filled by a later lazy-translate pass.
+            "description_en": t.get("tratamiento_en"),
             "problema": t.get("problema", ""),
+            "problema_en": t.get("problema_en"),
             "urgencia": urgencia,
             "costo_estimado_mxn": t.get("costo_estimado_mxn", 0),
             "weather_note": weather_note,
+            "weather_note_en": weather_note_en,
         })
 
     # Sort by priority (lower = more urgent)

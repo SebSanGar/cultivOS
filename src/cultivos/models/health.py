@@ -42,7 +42,10 @@ class TreatmentLink(BaseModel):
     """A treatment that correlates with a health score change."""
     treatment_id: int
     tratamiento: str
+    # DB-sourced treatment text; filled by a later lazy-translate pass.
+    tratamiento_en: str | None = None
     problema: str
+    problema_en: str | None = None
     applied_at: datetime | None
     health_before: float
     health_after: float

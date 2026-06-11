@@ -15,5 +15,7 @@ class CropTypeOut(BaseModel):
     optimal_temp_min: float | None = None
     optimal_temp_max: float | None = None
     description_es: str
+    description_en: str | None = None
+    growing_season_en: str | None = None
 
     model_config = {"from_attributes": True}

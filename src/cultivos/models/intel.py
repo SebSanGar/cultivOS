@@ -33,10 +33,12 @@ class TreatmentEffectivenessEntry(BaseModel):
     field_name: str
     farm_name: str
     tratamiento: str
+    # DB-sourced treatment name; filled by a later lazy-translate pass.
+    tratamiento_en: Optional[str] = None
     health_before: float
     health_after: Optional[float] = None
     delta: Optional[float] = None
-    urgencia: str
+    urgencia: str  # enum (alta/media/baja); frontend maps to EN labels client-side
     organic: bool
 
 
@@ -46,6 +48,8 @@ class TreatmentEffectivenessOut(BaseModel):
 
 class TreatmentEffectivenessByCropRow(BaseModel):
     tratamiento: str
+    # DB-sourced treatment name; filled by a later lazy-translate pass.
+    tratamiento_en: Optional[str] = None
     mean_health_delta: float
     sample_count: int
     low_confidence: bool
@@ -111,6 +115,8 @@ class TimingOut(BaseModel):
 
 class TreatmentEffectivenessReportEntry(BaseModel):
     tratamiento: str
+    # DB-sourced treatment name; filled by a later lazy-translate pass.
+    tratamiento_en: Optional[str] = None
     total_applications: int
     feedback_count: int
     feedback_success_rate: Optional[float] = None  # % of feedback where worked=True
@@ -406,6 +412,8 @@ class FarmExecutiveSummaryOut(BaseModel):
 
 class TreatmentCostEffectivenessItem(BaseModel):
     tratamiento: str
+    # DB-sourced treatment name; filled by a later lazy-translate pass.
+    tratamiento_en: Optional[str] = None
     cost_mxn: int
     health_before: Optional[float] = None
     health_after: Optional[float] = None

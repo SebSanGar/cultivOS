@@ -64,8 +64,11 @@ STRESS_PCT_THRESHOLD = 30.0  # % NDVI pixels below 0.4
 
 class RiskItem(TypedDict):
     tipo: str
+    tipo_en: str
     descripcion: str
+    descripcion_en: str
     recomendacion: str
+    recomendacion_en: str
     urgencia: str  # alta, media, baja
     organico: bool
 
@@ -73,7 +76,18 @@ class RiskItem(TypedDict):
 class DiseaseRiskResult(TypedDict):
     risk_level: str  # alto, medio, bajo, sin_riesgo
     mensaje: str
+    mensaje_en: str
     risks: list[RiskItem]
+
+
+def _risk_mensaje(count: int) -> tuple[str, str]:
+    """Build the bilingual risk-count summary message (es, en)."""
+    if count:
+        return (
+            f"{count} riesgo(s) detectado(s)",
+            f"{count} risk(s) detected",
+        )
+    return ("Sin riesgo detectado", "No risk detected")
 
 
 def assess_disease_risk(
@@ -103,6 +117,7 @@ def assess_disease_risk(
         return DiseaseRiskResult(
             risk_level="sin_riesgo",
             mensaje="Sin riesgo detectado",
+            mensaje_en="No risk detected",
             risks=[],
         )
 
@@ -110,15 +125,26 @@ def assess_disease_risk(
     if is_ndvi_stressed and is_thermal_stressed:
         risks.append(RiskItem(
             tipo="Enfermedad probable",
+            tipo_en="Probable disease",
             descripcion=(
                 f"NDVI bajo ({ndvi_mean:.2f}) combinado con estres termico alto "
                 f"({thermal_stress_pct:.0f}% pixeles >35C). "
                 "Patron consistente con infeccion fungica o bacteriana agravada por calor."
             ),
+            descripcion_en=(
+                f"Low NDVI ({ndvi_mean:.2f}) combined with high thermal stress "
+                f"({thermal_stress_pct:.0f}% of pixels >35C). "
+                "Pattern consistent with a fungal or bacterial infection aggravated by heat."
+            ),
             recomendacion=(
                 "Inspeccion visual inmediata del follaje. "
                 "Aplicar te de composta foliar como preventivo (100 L/ha). "
                 "Si se confirma hongo, aplicar caldo bordeles organico (sulfato de cobre + cal)."
+            ),
+            recomendacion_en=(
+                "Inspect the foliage visually right away. "
+                "Apply foliar compost tea as a preventive (100 L/ha). "
+                "If a fungus is confirmed, apply organic Bordeaux mixture (copper sulfate + lime)."
             ),
             urgencia="alta",
             organico=True,
@@ -128,14 +154,24 @@ def assess_disease_risk(
     if is_patchy and is_ndvi_stressed:
         risks.append(RiskItem(
             tipo="Plaga probable",
+            tipo_en="Probable pest",
             descripcion=(
                 f"Alta variabilidad NDVI (std={ndvi_std:.2f}) indica dano irregular/parches. "
                 "Patron consistente con ataque de plaga localizado."
+            ),
+            descripcion_en=(
+                f"High NDVI variability (std={ndvi_std:.2f}) points to irregular, patchy damage. "
+                "Pattern consistent with a localized pest attack."
             ),
             recomendacion=(
                 "Inspeccionar zonas con NDVI bajo para identificar plaga especifica. "
                 "Aplicar extracto de neem (5 ml/L) como repelente organico. "
                 "Considerar trampas cromaticas amarillas para monitoreo."
+            ),
+            recomendacion_en=(
+                "Scout the low-NDVI zones to identify the specific pest. "
+                "Apply neem extract (5 ml/L) as an organic repellent. "
+                "Consider yellow sticky traps for monitoring."
             ),
             urgencia="alta" if stress_pct > 50 else "media",
             organico=True,
@@ -145,14 +181,24 @@ def assess_disease_risk(
     if is_ndvi_stressed and not is_thermal_stressed and not is_patchy:
         risks.append(RiskItem(
             tipo="Deficiencia de nutrientes probable",
+            tipo_en="Probable nutrient deficiency",
             descripcion=(
                 f"Declive uniforme de NDVI (media={ndvi_mean:.2f}, std={ndvi_std:.2f}) "
                 "sin estres termico. Patron consistente con deficiencia nutricional o hidrica."
+            ),
+            descripcion_en=(
+                f"Uniform NDVI decline (mean={ndvi_mean:.2f}, std={ndvi_std:.2f}) "
+                "with no thermal stress. Pattern consistent with a nutrient or water deficiency."
             ),
             recomendacion=(
                 "Realizar analisis de suelo para confirmar deficiencias. "
                 "Aplicar composta madura (5-10 ton/ha) como correccion general. "
                 "Verificar sistema de riego y humedad del suelo."
+            ),
+            recomendacion_en=(
+                "Run a soil test to confirm the deficiencies. "
+                "Apply mature compost (5-10 t/ha) as a general correction. "
+                "Check the irrigation system and soil moisture."
             ),
             urgencia="media",
             organico=True,
@@ -166,11 +212,12 @@ def assess_disease_risk(
     else:
         risk_level = "sin_riesgo"
 
-    mensaje = f"{len(risks)} riesgo(s) detectado(s)" if risks else "Sin riesgo detectado"
+    mensaje, mensaje_en = _risk_mensaje(len(risks))
 
     return DiseaseRiskResult(
         risk_level=risk_level,
         mensaje=mensaje,
+        mensaje_en=mensaje_en,
         risks=risks,
     )
 
@@ -192,6 +239,7 @@ class WeatherContext(TypedDict):
 class DiseaseWeatherResult(TypedDict):
     risk_level: str  # alto, medio, bajo, sin_riesgo
     mensaje: str
+    mensaje_en: str
     risks: list[RiskItem]
     weather_context: WeatherContext
 
@@ -250,6 +298,7 @@ def assess_disease_weather_risk(
 
         risks.append(RiskItem(
             tipo="Riesgo fungico por clima",
+            tipo_en="Weather-driven fungal risk",
             descripcion=(
                 f"Condiciones climaticas favorables para hongos: "
                 f"humedad alta ({humidity_pct:.0f}%), "
@@ -258,11 +307,25 @@ def assess_disease_weather_risk(
                 "Ambiente propicio para desarrollo de enfermedades fungicas "
                 "como roya, tizon, y mildiu."
             ),
+            descripcion_en=(
+                f"Weather conditions favor fungal growth: "
+                f"high humidity ({humidity_pct:.0f}%), "
+                f"recent rainfall ({rainfall_mm:.0f}mm), "
+                f"temperature {temp_c:.0f}C. "
+                "An environment conducive to fungal diseases "
+                "such as rust, blight, and mildew."
+            ),
             recomendacion=(
                 "Monitoreo preventivo del follaje cada 2-3 dias. "
                 "Aplicar caldo bordeles organico (sulfato de cobre + cal) como preventivo. "
                 "Mejorar ventilacion entre plantas si es posible. "
                 "Evitar riego por aspersion durante periodo humedo."
+            ),
+            recomendacion_en=(
+                "Scout the foliage preventively every 2-3 days. "
+                "Apply organic Bordeaux mixture (copper sulfate + lime) as a preventive. "
+                "Improve airflow between plants where possible. "
+                "Avoid overhead irrigation during the humid period."
             ),
             urgencia=severity,
             organico=True,
@@ -276,11 +339,12 @@ def assess_disease_weather_risk(
     else:
         risk_level = "sin_riesgo"
 
-    mensaje = f"{len(risks)} riesgo(s) detectado(s)" if risks else "Sin riesgo detectado"
+    mensaje, mensaje_en = _risk_mensaje(len(risks))
 
     return DiseaseWeatherResult(
         risk_level=risk_level,
         mensaje=mensaje,
+        mensaje_en=mensaje_en,
         risks=risks,
         weather_context=WeatherContext(
             humidity_pct=humidity_pct,

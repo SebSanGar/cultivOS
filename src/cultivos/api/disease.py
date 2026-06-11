@@ -102,8 +102,10 @@ def get_disease_risk(
             field_id=field.id,
             risk_level="sin_riesgo",
             mensaje="Sin riesgo detectado",
+            mensaje_en="No risk detected",
             risks=[],
             nota="Sin datos NDVI disponibles para evaluar riesgo",
+            nota_en="No NDVI data available to assess risk",
         )
 
     # Fetch latest weather record for the farm
@@ -129,6 +131,7 @@ def get_disease_risk(
         field_id=field.id,
         risk_level=result["risk_level"],
         mensaje=result["mensaje"],
+        mensaje_en=result["mensaje_en"],
         risks=result["risks"],
         weather_context=result["weather_context"],
     )

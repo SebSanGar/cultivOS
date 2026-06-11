@@ -37,6 +37,21 @@ _MONTH_NAMES_ES = [
     "diciembre",
 ]
 
+_MONTH_NAMES_EN = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
+
 
 def _count_by_month(db: Session, model, timestamp_col, field_id: int, year: int) -> dict[int, int]:
     rows = (
@@ -105,6 +120,7 @@ def compute_field_calendar(field: Field, db: Session, year: int) -> dict:
             {
                 "month": m,
                 "month_name_es": _MONTH_NAMES_ES[m - 1],
+                "month_name_en": _MONTH_NAMES_EN[m - 1],
                 "health_scores": hs,
                 "treatments": tr,
                 "observations": ob,

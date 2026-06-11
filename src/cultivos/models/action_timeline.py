@@ -18,7 +18,11 @@ class TimelineAction(BaseModel):
     priority: int
     action_type: str  # preparacion, siembra, cosecha, mantenimiento, cuidado, tratamiento
     description: str
+    # Upstream/DB-sourced text; filled by a later lazy-translate pass.
+    description_en: Optional[str] = None
     weather_note: Optional[str] = None
+    # Fixed template — populated bilingually by the service.
+    weather_note_en: Optional[str] = None
 
     # Optional fields depending on source
     crop: Optional[str] = None
@@ -26,11 +30,13 @@ class TimelineAction(BaseModel):
     month_range: Optional[str] = None
     stage: Optional[str] = None
     stage_es: Optional[str] = None
+    stage_en: Optional[str] = None
     days_in_stage: Optional[int] = None
     days_until_next_stage: Optional[int] = None
     water_multiplier: Optional[float] = None
     treatment_id: Optional[int] = None
     problema: Optional[str] = None
+    problema_en: Optional[str] = None
     urgencia: Optional[str] = None
     costo_estimado_mxn: Optional[int] = None
 

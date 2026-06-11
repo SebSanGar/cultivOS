@@ -24,44 +24,56 @@ from sqlalchemy.orm import Session
 from cultivos.db.models import Field, NDVIResult, SoilAnalysis, WeatherRecord
 
 
-# Disease list: {trigger → [{name_es, probability, preventive_action}]}
+# Disease list: {trigger → [{name_es, name_en, probability, preventive_action, action_en}]}
 _DISEASES_BY_TRIGGER: dict[str, list[dict]] = {
     "humidity": [
         {
             "name_es": "Tizón tardío (Phytophthora infestans)",
+            "name_en": "Late blight (Phytophthora infestans)",
             "probability": 0.70,
             "preventive_action": "Aplicar caldo bordelés (1%) antes de lluvias; evitar riego por aspersión.",
+            "action_en": "Apply Bordeaux mixture (1%) ahead of rainfall; avoid overhead irrigation.",
         },
         {
             "name_es": "Roya del maíz (Puccinia sorghi)",
+            "name_en": "Common corn rust (Puccinia sorghi)",
             "probability": 0.55,
             "preventive_action": "Mejorar ventilación entre surcos; aplicar azufre micronizado en preventivo.",
+            "action_en": "Improve airflow between rows; apply micronized sulfur as a preventive.",
         },
     ],
     "ndvi_drop": [
         {
             "name_es": "Cogollero del maíz (Spodoptera frugiperda)",
+            "name_en": "Fall armyworm (Spodoptera frugiperda)",
             "probability": 0.65,
             "preventive_action": "Inspección visual del cogollo; aplicar Bacillus thuringiensis si se confirma.",
+            "action_en": "Scout the whorl visually; apply Bacillus thuringiensis if confirmed.",
         },
         {
             "name_es": "Pulgón de la hoja (Rhopalosiphum maidis)",
+            "name_en": "Corn leaf aphid (Rhopalosiphum maidis)",
             "probability": 0.50,
             "preventive_action": "Liberar depredadores naturales (catarinas); evitar exceso de nitrógeno.",
+            "action_en": "Release natural predators (ladybugs); avoid excess nitrogen.",
         },
     ],
     "ph": [
         {
             "name_es": "Marchitez por Fusarium (Fusarium oxysporum)",
+            "name_en": "Fusarium wilt (Fusarium oxysporum)",
             "probability": 0.60,
             "preventive_action": "Encalar el suelo con cal agrícola para elevar pH a 6.0–6.5.",
+            "action_en": "Lime the soil with agricultural lime to raise pH to 6.0–6.5.",
         },
     ],
     "temp": [
         {
             "name_es": "Estrés por calor / golpe de sol",
+            "name_en": "Heat stress / sunscald",
             "probability": 0.75,
             "preventive_action": "Regar en las horas más frescas; aplicar mulch para retener humedad.",
+            "action_en": "Irrigate during the cooler hours; apply mulch to retain moisture.",
         },
     ],
 }

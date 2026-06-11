@@ -35,11 +35,13 @@ def get_growth_stage(
             crop_type=field.crop_type or "desconocido",
             stage="pre_planting",
             stage_es="Pre-siembra",
+            stage_en="Pre-planting",
             days_since_planting=0,
             days_in_stage=0,
             days_until_next_stage=None,
             water_multiplier=1.0,
             nutrient_focus="preparacion de suelo",
+            nutrient_focus_en="Soil preparation",
             all_stages=[],
         )
 
@@ -51,10 +53,12 @@ def get_growth_stage(
         crop_type=crop,
         stage=result["stage"],
         stage_es=result["stage_es"],
+        stage_en=result["stage_en"],
         days_since_planting=result["days_since_planting"],
         days_in_stage=result["days_in_stage"],
         days_until_next_stage=result["days_until_next_stage"],
         water_multiplier=result["water_multiplier"],
         nutrient_focus=result["nutrient_focus"],
+        nutrient_focus_en=result["nutrient_focus_en"],
         all_stages=all_stages,
     )

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 class CalendarMonthEntry(BaseModel):
     month: int
     month_name_es: str
+    month_name_en: str
     health_scores: int
     treatments: int
     observations: int

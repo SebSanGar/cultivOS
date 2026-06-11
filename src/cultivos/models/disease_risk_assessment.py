@@ -5,8 +5,10 @@ from pydantic import BaseModel
 
 class AtRiskDisease(BaseModel):
     name_es: str                # Spanish name
+    name_en: str                # English common name (Latin binomial preserved)
     probability: float          # 0.0-1.0
     preventive_action: str      # Spanish preventive recommendation
+    action_en: str              # English preventive recommendation
 
 
 class DiseaseRiskAssessmentOut(BaseModel):

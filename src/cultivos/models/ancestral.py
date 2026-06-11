@@ -7,11 +7,14 @@ class AncestralMethodOut(BaseModel):
     id: int
     name: str
     description_es: str
+    description_en: str | None = None
     region: str
     practice_type: str
     crops: list[str]
     benefits_es: str
+    benefits_en: str | None = None
     scientific_basis: str | None = None
+    scientific_basis_en: str | None = None
     problems: list[str] = []
 
     model_config = {"from_attributes": True}

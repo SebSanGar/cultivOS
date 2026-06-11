@@ -39,6 +39,7 @@ class DaySchedule(TypedDict):
     day: int
     liters_per_ha: float
     nota: str
+    nota_en: str
 
 
 class IrrigationResult(TypedDict):
@@ -48,6 +49,7 @@ class IrrigationResult(TypedDict):
     liters_total_per_ha: float
     urgencia: str  # alta, media, baja
     recomendacion: str
+    recomendacion_en: str
 
 
 def compute_irrigation_schedule(
@@ -81,7 +83,7 @@ def compute_irrigation_schedule(
     # Step 2.5: Growth stage adjustment
     if growth_stage:
         from cultivos.services.crop.phenology import _STAGE_DEFS
-        stage_multipliers = {s[0]: s[2] for s in _STAGE_DEFS}
+        stage_multipliers = {s[0]: s[3] for s in _STAGE_DEFS}
         stage_mult = stage_multipliers.get(growth_stage, 1.0)
         adjusted *= stage_mult
 
@@ -134,12 +136,15 @@ def compute_irrigation_schedule(
 
         if daily == 0:
             nota = "Sin riego necesario — lluvia reciente suficiente"
+            nota_en = "No irrigation needed — recent rainfall is sufficient"
         elif daily > base * 1.2:
             nota = "Riego incrementado — condiciones de estres"
+            nota_en = "Increased irrigation — stress conditions"
         else:
             nota = "Riego normal"
+            nota_en = "Normal irrigation"
 
-        schedule.append(DaySchedule(day=day_num, liters_per_ha=daily, nota=nota))
+        schedule.append(DaySchedule(day=day_num, liters_per_ha=daily, nota=nota, nota_en=nota_en))
 
     total = sum(d["liters_per_ha"] for d in schedule)
 
@@ -153,22 +158,36 @@ def compute_irrigation_schedule(
     else:
         urgencia = "baja"
 
-    # Step 8: Human-readable recommendation in Spanish
+    # Step 8: Human-readable recommendation (bilingual: es + en)
+    crop_label_en = crop_type or "the crop"
     if urgencia == "alta":
         recomendacion = (
             f"Condiciones de sequia detectadas. Se recomienda riego diario de "
             f"{schedule[0]['liters_per_ha']:.0f} litros/ha para {crop_type or 'cultivo'}. "
             f"Priorizar riego temprano (antes de 8am) para minimizar evaporacion."
         )
+        recomendacion_en = (
+            f"Drought conditions detected. Daily irrigation of "
+            f"{schedule[0]['liters_per_ha']:.0f} liters/ha is recommended for {crop_label_en}. "
+            f"Prioritize early irrigation (before 8am) to minimize evaporation."
+        )
     elif rainfall_mm > 10:
         recomendacion = (
             f"Lluvia reciente ({rainfall_mm:.0f}mm) reduce necesidad de riego. "
             f"Monitorear humedad del suelo antes de regar."
         )
+        recomendacion_en = (
+            f"Recent rainfall ({rainfall_mm:.0f}mm) lowers the irrigation need. "
+            f"Check soil moisture before watering."
+        )
     else:
         recomendacion = (
             f"Condiciones normales. Riego programado de "
             f"{schedule[0]['liters_per_ha']:.0f} litros/ha/dia para {crop_type or 'cultivo'}."
+        )
+        recomendacion_en = (
+            f"Normal conditions. Scheduled irrigation of "
+            f"{schedule[0]['liters_per_ha']:.0f} liters/ha/day for {crop_label_en}."
         )
 
     return IrrigationResult(
@@ -178,4 +197,5 @@ def compute_irrigation_schedule(
         liters_total_per_ha=round(total, 0),
         urgencia=urgencia,
         recomendacion=recomendacion,
+        recomendacion_en=recomendacion_en,
     )

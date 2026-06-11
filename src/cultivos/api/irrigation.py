@@ -102,4 +102,5 @@ def get_irrigation_schedule(
         liters_total_per_ha=result["liters_total_per_ha"],
         urgencia=result["urgencia"],
         recomendacion=result["recomendacion"],
+        recomendacion_en=result["recomendacion_en"],
     )

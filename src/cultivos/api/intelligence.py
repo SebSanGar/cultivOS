@@ -91,11 +91,13 @@ def get_field_intelligence(
             growth_out = IntelGrowthStage(
                 stage=gs["stage"],
                 stage_es=gs["stage_es"],
+                stage_en=gs["stage_en"],
                 days_since_planting=gs["days_since_planting"],
                 days_in_stage=gs["days_in_stage"],
                 days_until_next_stage=gs["days_until_next_stage"],
                 water_multiplier=gs["water_multiplier"],
                 nutrient_focus=gs["nutrient_focus"],
+                nutrient_focus_en=gs["nutrient_focus_en"],
             )
 
     # --- Computed: disease risk (needs NDVI at minimum) ---

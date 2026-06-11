@@ -7,9 +7,12 @@ class FertilizerOut(BaseModel):
     id: int
     name: str
     description_es: str
+    description_en: str | None = None
     application_method: str
+    application_method_en: str | None = None
     cost_per_ha_mxn: int
     nutrient_profile: str
+    nutrient_profile_en: str | None = None
     suitable_crops: list[str]
 
     model_config = {"from_attributes": True}

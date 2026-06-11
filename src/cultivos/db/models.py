@@ -220,11 +220,14 @@ class AncestralMethod(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
     description_es = Column(Text, nullable=False)
+    description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     region = Column(String(100), nullable=False)  # e.g. "Jalisco", "Mesoamerica"
     practice_type = Column(String(50), nullable=False)  # soil_management, intercropping, water_management, etc.
     crops = Column(JSON, nullable=False, default=list)  # ["maiz", "frijol", ...]
     benefits_es = Column(Text, nullable=False)
+    benefits_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     scientific_basis = Column(Text)  # modern scientific validation
+    scientific_basis_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     problems = Column(JSON, nullable=True, default=list)  # ["erosion", "compaction", ...]
     applicable_months = Column(JSON, nullable=True, default=None)  # [1, 2, ..., 12]
     timing_rationale = Column(Text, nullable=True)  # Spanish — why this season
@@ -237,9 +240,12 @@ class Fertilizer(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
     description_es = Column(Text, nullable=False)
+    description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     application_method = Column(Text, nullable=False)
+    application_method_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     cost_per_ha_mxn = Column(Integer, nullable=False, default=0)
     nutrient_profile = Column(String(200), nullable=False)
+    nutrient_profile_en = Column(String(200), nullable=True)  # English variant (static KB, translated)
     suitable_crops = Column(JSON, nullable=False, default=list)  # ["maiz", "agave", ...]
 
 
@@ -262,9 +268,10 @@ class Disease(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
     description_es = Column(Text, nullable=False)
+    description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     symptoms = Column(JSON, nullable=False, default=list)  # ["hojas amarillas", "manchas", ...]
     affected_crops = Column(JSON, nullable=False, default=list)  # ["maiz", "frijol", ...]
-    treatments = Column(JSON, nullable=False, default=list)  # [{"name": ..., "description_es": ..., "organic": True}, ...]
+    treatments = Column(JSON, nullable=False, default=list)  # [{"name": ..., "description_es": ..., "description_en": ..., "organic": True}, ...]
     region = Column(String(100), nullable=False, default="Jalisco")
     severity = Column(String(20), nullable=False, default="media")  # alta, media, baja
 
@@ -276,6 +283,7 @@ class CropType(Base):
     name = Column(String(100), nullable=False, unique=True)
     family = Column(String(100), nullable=False)  # e.g. "Poaceae", "Fabaceae"
     growing_season = Column(String(100), nullable=False)  # e.g. "temporal (Jun-Oct)"
+    growing_season_en = Column(String(100), nullable=True)  # English variant (static KB, translated)
     water_needs = Column(String(50), nullable=False)  # alta, media, baja
     regions = Column(JSON, nullable=False, default=list)  # ["Jalisco", "Ontario"]
     companions = Column(JSON, nullable=False, default=list)  # companion plants for intercropping
@@ -283,6 +291,7 @@ class CropType(Base):
     optimal_temp_min = Column(Float)  # degrees C
     optimal_temp_max = Column(Float)
     description_es = Column(Text, nullable=False)
+    description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
 
 
 class Alert(Base):

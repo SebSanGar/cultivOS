@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class TreatmentInfo(BaseModel):
     name: str
     description_es: str
+    description_en: str | None = None
     organic: bool = True
 
     model_config = {"from_attributes": True}
@@ -15,6 +16,7 @@ class DiseaseOut(BaseModel):
     id: int
     name: str
     description_es: str
+    description_en: str | None = None
     symptoms: list[str]
     affected_crops: list[str]
     treatments: list[TreatmentInfo]
@@ -29,6 +31,7 @@ class DiseaseMatch(BaseModel):
     id: int
     name: str
     description_es: str
+    description_en: str | None = None
     symptoms: list[str]
     affected_crops: list[str]
     treatments: list[TreatmentInfo]
@@ -47,8 +50,11 @@ class IdentifyRequest(BaseModel):
 
 class RiskItemOut(BaseModel):
     tipo: str
+    tipo_en: str | None = None
     descripcion: str
+    descripcion_en: str | None = None
     recomendacion: str
+    recomendacion_en: str | None = None
     urgencia: str
     organico: bool
 
@@ -63,6 +69,8 @@ class DiseaseRiskOut(BaseModel):
     field_id: int
     risk_level: str
     mensaje: str
+    mensaje_en: str | None = None
     risks: list[RiskItemOut]
     nota: str | None = None
+    nota_en: str | None = None
     weather_context: WeatherContextOut | None = None

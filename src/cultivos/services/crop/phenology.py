@@ -12,21 +12,34 @@ from typing import TypedDict
 class GrowthStageResult(TypedDict):
     stage: str  # siembra, vegetativo, floracion, fructificacion, cosecha
     stage_es: str  # display name in Spanish
+    stage_en: str  # display name in English
     days_since_planting: int
     days_in_stage: int
     days_until_next_stage: int | None
     water_multiplier: float  # multiplier for base irrigation need
-    nutrient_focus: str  # what nutrients matter most at this stage
+    nutrient_focus: str  # what nutrients matter most at this stage (Spanish)
+    nutrient_focus_en: str  # what nutrients matter most at this stage (English)
 
 
-# Stage definitions per crop: list of (stage_name, end_day, water_mult, nutrient_focus)
+# Stage definitions per crop: list of (stage_name, name_es, name_en, water_mult,
+# nutrient_focus_es, nutrient_focus_en)
 # end_day is the last day of that stage (inclusive)
 _STAGE_DEFS = [
-    ("siembra", "Siembra", 0.7, "Fosforo para raices, riego suave y frecuente"),
-    ("vegetativo", "Vegetativo", 1.0, "Nitrogeno para crecimiento foliar"),
-    ("floracion", "Floracion", 1.3, "Potasio y fosforo para flores, riego critico"),
-    ("fructificacion", "Fructificacion", 1.1, "Potasio para frutos, calcio para firmeza"),
-    ("cosecha", "Cosecha", 0.5, "Reducir riego, dejar madurar"),
+    ("siembra", "Siembra", "Planting", 0.7,
+     "Fosforo para raices, riego suave y frecuente",
+     "Phosphorus for root development, light and frequent watering"),
+    ("vegetativo", "Vegetativo", "Vegetative", 1.0,
+     "Nitrogeno para crecimiento foliar",
+     "Nitrogen for leaf and canopy growth"),
+    ("floracion", "Floracion", "Flowering", 1.3,
+     "Potasio y fosforo para flores, riego critico",
+     "Potassium and phosphorus for flowering, critical watering window"),
+    ("fructificacion", "Fructificacion", "Fruiting", 1.1,
+     "Potasio para frutos, calcio para firmeza",
+     "Potassium for fruit fill, calcium for firmness"),
+    ("cosecha", "Cosecha", "Harvest", 0.5,
+     "Reducir riego, dejar madurar",
+     "Reduce watering, let the crop ripen"),
 ]
 
 # Days at which each stage ends, per crop (cumulative days from planting)
@@ -51,10 +64,12 @@ _DEFAULT_STAGE_DAYS = [15, 50, 75, 110, 140]
 class StageInfo(TypedDict):
     name: str
     name_es: str
+    name_en: str
     start_day: int
     end_day: int
     water_multiplier: float
     nutrient_focus: str
+    nutrient_focus_en: str
     is_current: bool
 
 
@@ -73,16 +88,18 @@ def get_all_stages_info(
     """
     stage_days = _CROP_STAGE_DAYS.get((crop_type or "").lower(), _DEFAULT_STAGE_DAYS)
     stages: list[StageInfo] = []
-    for i, (name, name_es, water_mult, nutrient_focus) in enumerate(_STAGE_DEFS):
+    for i, (name, name_es, name_en, water_mult, nutrient_focus, nutrient_focus_en) in enumerate(_STAGE_DEFS):
         start = stage_days[i - 1] if i > 0 else 0
         end = stage_days[i]
         stages.append(StageInfo(
             name=name,
             name_es=name_es,
+            name_en=name_en,
             start_day=start,
             end_day=end,
             water_multiplier=water_mult,
             nutrient_focus=nutrient_focus,
+            nutrient_focus_en=nutrient_focus_en,
             is_current=(name == current_stage) if current_stage else False,
         ))
     return stages
@@ -120,7 +137,7 @@ def compute_growth_stage(
     else:
         stage_idx = len(stage_days) - 1  # past all stages = cosecha
 
-    stage_name, stage_es, water_mult, nutrient_focus = _STAGE_DEFS[stage_idx]
+    stage_name, stage_es, stage_en, water_mult, nutrient_focus, nutrient_focus_en = _STAGE_DEFS[stage_idx]
 
     # Days in current stage
     stage_start = stage_days[stage_idx - 1] if stage_idx > 0 else 0
@@ -135,9 +152,11 @@ def compute_growth_stage(
     return GrowthStageResult(
         stage=stage_name,
         stage_es=stage_es,
+        stage_en=stage_en,
         days_since_planting=days_elapsed,
         days_in_stage=days_in_stage,
         days_until_next_stage=days_until_next,
         water_multiplier=water_mult,
         nutrient_focus=nutrient_focus,
+        nutrient_focus_en=nutrient_focus_en,
     )

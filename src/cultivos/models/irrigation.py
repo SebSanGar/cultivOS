@@ -7,6 +7,7 @@ class IrrigationDayOut(BaseModel):
     day: int
     liters_per_ha: float
     nota: str
+    nota_en: str | None = None
 
 
 class IrrigationScheduleOut(BaseModel):
@@ -17,3 +18,4 @@ class IrrigationScheduleOut(BaseModel):
     liters_total_per_ha: float
     urgencia: str
     recomendacion: str
+    recomendacion_en: str | None = None

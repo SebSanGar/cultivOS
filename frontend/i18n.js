@@ -1216,6 +1216,17 @@
         return (dict[lang] && dict[lang][key]) || (dict[DEFAULT_LANG] && dict[DEFAULT_LANG][key]) || key;
     }
 
+    // Pick the current-language variant of a backend DATA field.
+    // Convention: backend returns <base>_en alongside <base>_es. Falls back across
+    // languages (and to a bare <base>) so partial/legacy data never renders blank.
+    function localized(obj, base) {
+        if (!obj) return '';
+        var lang = getLang();
+        var en = obj[base + '_en'];
+        var es = obj[base + '_es'];
+        return (lang === 'en' ? (en || es) : (es || en)) || obj[base] || '';
+    }
+
     function applyAll() {
         var lang = getLang();
         var els = document.querySelectorAll('[data-i18n]');
@@ -1275,5 +1286,5 @@
         init();
     }
 
-    window.cultivOS_i18n = { t: t, switchLang: switchLang, getLang: getLang, applyAll: applyAll };
+    window.cultivOS_i18n = { t: t, localized: localized, switchLang: switchLang, getLang: getLang, applyAll: applyAll };
 })();

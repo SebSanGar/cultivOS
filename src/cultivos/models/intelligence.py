@@ -74,11 +74,13 @@ class IntelWeather(BaseModel):
 class IntelGrowthStage(BaseModel):
     stage: str
     stage_es: str
+    stage_en: str
     days_since_planting: int
     days_in_stage: int
     days_until_next_stage: int | None
     water_multiplier: float
     nutrient_focus: str
+    nutrient_focus_en: str
 
 
 class IntelDiseaseRisk(BaseModel):
