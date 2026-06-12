@@ -33,8 +33,8 @@
 <main class="intel-dashboard">
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Efectividad Global de Tratamientos</h1>
-            <p class="intel-subtitle">Comparacion antes/despues de salud por tratamiento — grafica de barras con delta de salud, filtros por cultivo y region</p>
+            <h1 class="intel-title" data-i18n="effGlobal.title">Efectividad Global de Tratamientos</h1>
+            <p class="intel-subtitle" data-i18n="effGlobal.subtitle">Comparacion antes/despues de salud por tratamiento — grafica de barras con delta de salud, filtros por cultivo y region</p>
         </div>
         <div class="intel-header-actions" style="display:flex;gap:8px;flex-wrap:wrap;">
             <select id="effg-crop-filter" class="intel-select" onchange="filterEffectiveness()">
@@ -48,10 +48,10 @@
 
     <!-- Stats strip -->
     <div class="stats-strip" id="effg-stats">
-        <div class="stat-card"><div class="stat-value" id="effg-stat-treatments">--</div><div class="stat-label">Tratamientos evaluados</div></div>
-        <div class="stat-card"><div class="stat-value" id="effg-stat-applications">--</div><div class="stat-label">Aplicaciones totales</div></div>
-        <div class="stat-card"><div class="stat-value" id="effg-stat-avg-delta">--</div><div class="stat-label">Delta promedio</div></div>
-        <div class="stat-card"><div class="stat-value" id="effg-stat-best">--</div><div class="stat-label">Mejor tratamiento</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-treatments">--</div><div class="stat-label" data-i18n="effGlobal.statTreatments">Tratamientos evaluados</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-applications">--</div><div class="stat-label" data-i18n="effGlobal.statApplications">Aplicaciones totales</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-avg-delta">--</div><div class="stat-label" data-i18n="effGlobal.statDelta">Delta promedio</div></div>
+        <div class="stat-card"><div class="stat-value" id="effg-stat-best">--</div><div class="stat-label" data-i18n="effGlobal.statBest">Mejor tratamiento</div></div>
     </div>
 
     <!-- Empty state -->
@@ -61,7 +61,7 @@
 
     <!-- Chart -->
     <div id="effg-chart-container" class="intel-panel" style="display:none;padding:1.5rem;margin-bottom:1.5rem;">
-        <h2 style="color:#ccc;margin:0 0 1rem 0;font-size:1rem;">Delta de Salud por Tratamiento</h2>
+        <h2 style="color:#ccc;margin:0 0 1rem 0;font-size:1rem;" data-i18n="effGlobal.chartTitle">Delta de Salud por Tratamiento</h2>
         <canvas id="effg-bar-chart" height="300"></canvas>
     </div>
 

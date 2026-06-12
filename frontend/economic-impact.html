@@ -38,14 +38,14 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Economic Impact</h1>
-            <p class="intel-subtitle">Estimated savings per farm — water, fertilizer and yield</p>
+            <h1 class="intel-title" data-i18n="econImpact.title">Economic Impact</h1>
+            <p class="intel-subtitle" data-i18n="econImpact.subtitle">Estimated savings per farm — water, fertilizer and yield</p>
         </div>
         <div class="intel-header-actions">
             <select id="econ-farm-select" class="intel-select" onchange="loadEconomicImpact()">
                 <option value="">Select a farm...</option>
             </select>
-            <button class="intel-btn" onclick="loadEconomicImpact()">Refresh</button>
+            <button class="intel-btn" onclick="loadEconomicImpact()" data-i18n="econImpact.refreshBtn">Refresh</button>
         </div>
     </div>
 
@@ -101,25 +101,25 @@
     <div class="intel-stats-strip" aria-live="polite" aria-atomic="false">
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-total-savings">--</div>
-            <div class="intel-stat-label">Total savings / year
+            <div class="intel-stat-label"><span data-i18n="econImpact.statTotal">Total savings / year</span>
                 <span id="econ-confidence-badge-total" class="estimate-badge">Estimated</span>
             </div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-hectares">--</div>
-            <div class="intel-stat-label">Hectares</div>
+            <div class="intel-stat-label" data-i18n="econImpact.statHectares">Hectares</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-water">--</div>
-            <div class="intel-stat-label">Water savings</div>
+            <div class="intel-stat-label" data-i18n="econImpact.statWater">Water savings</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-fertilizer">--</div>
-            <div class="intel-stat-label">Fertilizer</div>
+            <div class="intel-stat-label" data-i18n="econImpact.statFertilizer">Fertilizer</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="econ-yield">--</div>
-            <div class="intel-stat-label">Yield</div>
+            <div class="intel-stat-label" data-i18n="econImpact.statYield">Yield</div>
         </div>
     </div>
 

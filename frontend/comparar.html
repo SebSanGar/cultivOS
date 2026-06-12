@@ -36,11 +36,11 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Compare Farms</h1>
-            <p class="intel-subtitle">Select 2–3 farms to compare health, yield, soil and treatments</p>
+            <h1 class="intel-title" data-i18n="compareF.title">Compare Farms</h1>
+            <p class="intel-subtitle" data-i18n="compareF.subtitle">Select 2–3 farms to compare health, yield, soil and treatments</p>
         </div>
         <div class="intel-header-actions">
-            <button class="intel-btn" id="comp-btn" onclick="runComparison()">Compare</button>
+            <button class="intel-btn" id="comp-btn" onclick="runComparison()" data-i18n="compareF.compareBtn">Compare</button>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
         <!-- Summary comparison table -->
         <div class="intel-panel" style="margin-top:1.5rem;">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Comparison Summary</h2>
+                <h2 class="intel-panel-title" data-i18n="compareF.headingSummary">Comparison Summary</h2>
             </div>
             <div class="intel-panel-body" style="overflow-x:auto;">
                 <table class="intel-table" style="width:100%;" id="comp-table">
@@ -86,7 +86,7 @@
             <!-- Health bar chart -->
             <div class="intel-panel">
                 <div class="intel-panel-header">
-                    <h2 class="intel-panel-title">Average Health</h2>
+                    <h2 class="intel-panel-title" data-i18n="compareF.headingHealth">Average Health</h2>
                 </div>
                 <div class="intel-panel-body">
                     <canvas id="comp-health-chart" height="300"></canvas>
@@ -96,7 +96,7 @@
             <!-- Yield bar chart -->
             <div class="intel-panel">
                 <div class="intel-panel-header">
-                    <h2 class="intel-panel-title">Total Yield (kg)</h2>
+                    <h2 class="intel-panel-title" data-i18n="compareF.headingYield">Total Yield (kg)</h2>
                 </div>
                 <div class="intel-panel-body">
                     <canvas id="comp-yield-chart" height="300"></canvas>
@@ -106,7 +106,7 @@
             <!-- Health history line chart -->
             <div class="intel-panel" style="grid-column: 1 / -1;">
                 <div class="intel-panel-header">
-                    <h2 class="intel-panel-title">Health History</h2>
+                    <h2 class="intel-panel-title" data-i18n="compareF.headingHistory">Health History</h2>
                 </div>
                 <div class="intel-panel-body">
                     <canvas id="comp-history-chart" height="250"></canvas>

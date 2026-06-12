@@ -29,8 +29,8 @@
 <body>
     <div class="div-container">
         <header class="div-header">
-            <h1>Diversidad de Cultivos — Cooperativa</h1>
-            <p>Indice de diversidad Shannon, principales cultivos y desglose por finca.</p>
+            <h1 data-i18n="cropDiv.title">Diversidad de Cultivos — Cooperativa</h1>
+            <p data-i18n="cropDiv.subtitle">Indice de diversidad Shannon, principales cultivos y desglose por finca.</p>
         </header>
 
         <div class="div-selector">
@@ -43,7 +43,7 @@
         <div id="diversity-content" style="display:none;">
             <div class="div-kpi">
                 <div class="value" id="diversity-shannon">--</div>
-                <div class="label">Indice Shannon (H)</div>
+                <div class="label" data-i18n="cropDiv.kpiShannon">Indice Shannon (H)</div>
             </div>
 
             <div class="div-chart-wrap">
@@ -56,9 +56,9 @@
                 <table class="div-table">
                     <thead>
                         <tr>
-                            <th>Finca</th>
-                            <th>Cultivos Distintos</th>
-                            <th>Tipos</th>
+                            <th data-i18n="cropDiv.colFarm">Finca</th>
+                            <th data-i18n="cropDiv.colDistinct">Cultivos Distintos</th>
+                            <th data-i18n="cropDiv.colTypes">Tipos</th>
                         </tr>
                     </thead>
                     <tbody id="diversity-farm-table"></tbody>

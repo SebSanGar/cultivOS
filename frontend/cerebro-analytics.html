@@ -36,8 +36,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Cerebro AI — Analytics</h1>
-            <p class="intel-subtitle">AI decisions, accuracy and activity trends from the intelligence engine</p>
+            <h1 class="intel-title" data-i18n="cerebro.title">Cerebro AI — Analytics</h1>
+            <p class="intel-subtitle" data-i18n="cerebro.subtitle">AI decisions, accuracy and activity trends from the intelligence engine</p>
         </div>
     </div>
 
@@ -45,23 +45,23 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="cerebro-stat-total">--</div>
-            <div class="intel-stat-label">Total Decisions</div>
+            <div class="intel-stat-label" data-i18n="cerebro.statTotal">Total Decisions</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cerebro-stat-recommendations">--</div>
-            <div class="intel-stat-label">Recommendations</div>
+            <div class="intel-stat-label" data-i18n="cerebro.statRecommendations">Recommendations</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cerebro-stat-analyses">--</div>
-            <div class="intel-stat-label">Analyses (NDVI + Thermal)</div>
+            <div class="intel-stat-label" data-i18n="cerebro.statAnalyses">Analyses (NDVI + Thermal)</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cerebro-stat-farms">--</div>
-            <div class="intel-stat-label">Farms Covered</div>
+            <div class="intel-stat-label" data-i18n="cerebro.statFarms">Farms Covered</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cerebro-stat-accuracy">--</div>
-            <div class="intel-stat-label">Success Rate</div>
+            <div class="intel-stat-label" data-i18n="cerebro.statAccuracy">Success Rate</div>
         </div>
     </div>
 
@@ -74,19 +74,19 @@
     <div id="cerebro-content" style="display:none;">
         <!-- Decisions per day chart -->
         <div id="cerebro-chart" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Decisions per Day</h2>
+            <h2 class="intel-card-title" data-i18n="cerebro.chartDecisions">Decisions per Day</h2>
             <canvas id="cerebro-canvas" width="800" height="300"></canvas>
         </div>
 
         <!-- Decisions by type breakdown -->
         <div id="cerebro-decisions" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Decisions by Type</h2>
+            <h2 class="intel-card-title" data-i18n="cerebro.chartByType">Decisions by Type</h2>
             <div id="cerebro-decisions-content"></div>
         </div>
 
         <!-- Accuracy section -->
         <div id="cerebro-accuracy" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Accuracy and Feedback</h2>
+            <h2 class="intel-card-title" data-i18n="cerebro.chartAccuracy">Accuracy and Feedback</h2>
             <div id="cerebro-accuracy-content"></div>
         </div>
     </div>
