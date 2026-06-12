@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Trayectoria de Salud</h1>
-            <p class="intel-subtitle">Tendencia historica, proyeccion y correlacion de tratamientos con cambios en salud del campo</p>
+            <h1 class="intel-title" data-i18n="trayectoria.title">Health Trajectory</h1>
+            <p class="intel-subtitle" data-i18n="trayectoria.subtitle">Historical trend, projection and correlation of treatments with field health changes</p>
         </div>
         <div class="intel-header-actions">
             <select id="traj-farm-select" class="intel-select" onchange="loadFieldsForTrajectory()">
@@ -47,7 +47,7 @@
             <select id="traj-field-select" class="intel-select" onchange="loadTrajectory()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadTrajectory()">Analizar</button>
+            <button class="intel-btn" onclick="loadTrajectory()" data-i18n="trayectoria.analyzeBtn">Analyze</button>
         </div>
     </div>
 
@@ -55,19 +55,19 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="traj-stat-current">--</div>
-            <div class="intel-stat-label">Puntaje Actual</div>
+            <div class="intel-stat-label" data-i18n="trayectoria.statCurrent">Current Score</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="traj-stat-trend">--</div>
-            <div class="intel-stat-label">Tendencia</div>
+            <div class="intel-stat-label" data-i18n="trayectoria.statTrend">Trend</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="traj-stat-projection">--</div>
-            <div class="intel-stat-label">Proyeccion</div>
+            <div class="intel-stat-label" data-i18n="trayectoria.statProjection">Projection</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="traj-stat-range">--</div>
-            <div class="intel-stat-label">Rango (min — max)</div>
+            <div class="intel-stat-label" data-i18n="trayectoria.statRange">Range (min — max)</div>
         </div>
     </div>
 
@@ -80,25 +80,25 @@
     <div id="traj-content" style="display:none;">
         <!-- Health trajectory chart -->
         <div id="traj-chart" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Linea de Tiempo de Salud</h2>
+            <h2 class="intel-card-title" data-i18n="trayectoria.chartTimeline">Health Timeline</h2>
             <canvas id="traj-canvas" width="800" height="300"></canvas>
         </div>
 
         <!-- Projection card -->
         <div id="traj-projection" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Proyeccion</h2>
+            <h2 class="intel-card-title" data-i18n="trayectoria.chartProjection">Projection</h2>
             <div id="traj-projection-content"></div>
         </div>
 
         <!-- Score range -->
         <div id="traj-range" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Rango de Puntajes</h2>
+            <h2 class="intel-card-title" data-i18n="trayectoria.chartRange">Score Range</h2>
             <div id="traj-range-content"></div>
         </div>
 
         <!-- Treatment correlations -->
         <div id="traj-treatments" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Correlacion de Tratamientos con Cambios de Salud</h2>
+            <h2 class="intel-card-title" data-i18n="trayectoria.chartCorrelation">Treatment Correlation with Health Changes</h2>
             <div id="traj-treatments-content"></div>
         </div>
     </div>

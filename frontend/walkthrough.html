@@ -218,17 +218,17 @@
         </div>
     </div>
     <div style="text-align:center; margin-top:32px;">
-        <button class="nav-btn primary" id="iniciar-tour" onclick="startTour()" style="display:inline-block;">Iniciar Tour Guiado</button>
-        <a href="/" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;">Explorar el Panel de Granjas</a>
-        <a href="/intel" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;">Panel de Inteligencia</a>
+        <button class="nav-btn primary" id="iniciar-tour" onclick="startTour()" style="display:inline-block;" data-i18n="walkthru.startBtn">Start Guided Tour</button>
+        <a href="/" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;" data-i18n="walkthru.exploreFarmsBtn">Explore the Farm Panel</a>
+        <a href="/intel" class="nav-btn secondary" style="text-decoration:none; display:inline-block; margin-left:12px;" data-i18n="walkthru.intelBtn">Intelligence Panel</a>
     </div>
 </div>
 
 <!-- NAVIGATION BAR -->
 <div class="nav-bar">
-    <button class="nav-btn secondary" id="btn-prev" onclick="navigate(-1)">Anterior</button>
+    <button class="nav-btn secondary" id="btn-prev" onclick="navigate(-1)" data-i18n="walkthru.prevBtn">Previous</button>
     <span class="nav-step-text" id="nav-text">Paso 1 de 4</span>
-    <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">Siguiente</button>
+    <button class="nav-btn primary" id="btn-next" onclick="navigate(1)" data-i18n="walkthru.nextBtn">Next</button>
 </div>
 
 <script>

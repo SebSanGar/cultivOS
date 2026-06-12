@@ -38,8 +38,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Inteligencia Ancestral — Validacion</h1>
-            <p class="intel-subtitle">Metodos tradicionales validados con retroalimentacion de agricultores — puntajes de confianza, conteos de uso y efectividad regional</p>
+            <h1 class="intel-title" data-i18n="tekVal.title">Ancestral Intelligence — Validation</h1>
+            <p class="intel-subtitle" data-i18n="tekVal.subtitle">Traditional methods validated with farmer feedback — confidence scores, usage counts and regional effectiveness</p>
         </div>
         <div class="intel-header-actions">
             <select id="tek-filter" class="intel-select" onchange="filterMethods()">
@@ -48,7 +48,7 @@
                 <option value="medium">Media confianza (40-70)</option>
                 <option value="low">Baja confianza (<40)</option>
             </select>
-            <button class="intel-btn" onclick="loadTEKData()">Consultar Metodos</button>
+            <button class="intel-btn" onclick="loadTEKData()" data-i18n="tekVal.queryBtn">Query Methods</button>
         </div>
     </div>
 

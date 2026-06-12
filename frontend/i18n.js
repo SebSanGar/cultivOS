@@ -846,7 +846,60 @@
             // CR5d — coop-evidencia
             'coopEvidencia.title': 'Evidencia FODECIJAL — Cooperativa',
             'coopEvidencia.strength': 'Fortaleza principal',
-            'coopEvidencia.weakness': 'Debilidad principal'
+            'coopEvidencia.weakness': 'Debilidad principal',
+            // CR5e — trayectoria
+            'trayectoria.title': 'Trayectoria de Salud',
+            'trayectoria.subtitle': 'Tendencia historica, proyeccion y correlacion de tratamientos con cambios en salud del campo',
+            'trayectoria.analyzeBtn': 'Analizar',
+            'trayectoria.statCurrent': 'Puntaje Actual',
+            'trayectoria.statTrend': 'Tendencia',
+            'trayectoria.statProjection': 'Proyeccion',
+            'trayectoria.statRange': 'Rango (min — max)',
+            'trayectoria.chartTimeline': 'Linea de Tiempo de Salud',
+            'trayectoria.chartProjection': 'Proyeccion',
+            'trayectoria.chartRange': 'Rango de Puntajes',
+            'trayectoria.chartCorrelation': 'Correlacion de Tratamientos con Cambios de Salud',
+            // CR5e — timeline (historial de salud)
+            'timelineHist.title': 'Historial de Salud',
+            'timelineHist.subtitle': 'Linea de tiempo cronologica — puntuaciones de salud y tratamientos aplicados',
+            'timelineHist.updateBtn': 'Actualizar',
+            // CR5e — tek (inteligencia ancestral validacion)
+            'tekVal.title': 'Inteligencia Ancestral — Validacion',
+            'tekVal.subtitle': 'Metodos tradicionales validados con retroalimentacion de agricultores — puntajes de confianza, conteos de uso y efectividad regional',
+            'tekVal.queryBtn': 'Consultar Metodos',
+            // CR5e — fusion (validacion fusion sensores)
+            'fusionVal.title': 'Validacion de Fusion de Sensores',
+            'fusionVal.subtitle': 'Consistencia cruzada de datos NDVI, termicos, suelo y clima — deteccion de contradicciones y niveles de confianza por campo',
+            'fusionVal.analyzeBtn': 'Analizar Sensores',
+            // CR5e — thermal-dashboard
+            'thermalDash.title': 'Estres Termico',
+            'thermalDash.subtitle': 'Analisis de temperatura, zonas de estres y deficit de riego por campo',
+            'thermalDash.updateBtn': 'Actualizar',
+            'thermalDash.colDate': 'Fecha',
+            'thermalDash.colAvgTemp': 'Temp. Media',
+            'thermalDash.colMinTemp': 'Temp. Min',
+            'thermalDash.colMaxTemp': 'Temp. Max',
+            'thermalDash.colStdDev': 'Desv. Est.',
+            'thermalDash.colStress': 'Estres %',
+            'thermalDash.colPixels': 'Pixeles',
+            'thermalDash.colIrrDef': 'Deficit Riego',
+            // CR5e — seasonal (comparacion estacional)
+            'seasonalCmp.title': 'Comparacion Estacional',
+            'seasonalCmp.subtitle': 'Temporal (Jun-Oct) vs Secas (Nov-May) — salud, NDVI y tratamientos lado a lado',
+            'seasonalCmp.compareBtn': 'Comparar',
+            // CR5e — demo page
+            'demoPage.heroSub': 'Inteligencia Agricola de Precision',
+            'demoPage.heroTagline': 'De la Tierra a la Decision — con datos que validan lo que el agricultor ya sabe',
+            'demoPage.statTests': 'Pruebas Automatizadas',
+            'demoPage.statEndpoints': 'Endpoints API',
+            'demoPage.statFarms': 'Granjas Registradas',
+            'demoPage.statMethods': 'Metodos Organicos',
+            // CR5e — walkthrough
+            'walkthru.startBtn': 'Iniciar Tour Guiado',
+            'walkthru.prevBtn': 'Anterior',
+            'walkthru.nextBtn': 'Siguiente',
+            'walkthru.exploreFarmsBtn': 'Explorar el Panel de Granjas',
+            'walkthru.intelBtn': 'Panel de Inteligencia'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -1708,7 +1761,60 @@
             // CR5d — coop-evidencia
             'coopEvidencia.title': 'FODECIJAL Evidence — Cooperative',
             'coopEvidencia.strength': 'Main strength',
-            'coopEvidencia.weakness': 'Main weakness'
+            'coopEvidencia.weakness': 'Main weakness',
+            // CR5e — trayectoria
+            'trayectoria.title': 'Health Trajectory',
+            'trayectoria.subtitle': 'Historical trend, projection and correlation of treatments with field health changes',
+            'trayectoria.analyzeBtn': 'Analyze',
+            'trayectoria.statCurrent': 'Current Score',
+            'trayectoria.statTrend': 'Trend',
+            'trayectoria.statProjection': 'Projection',
+            'trayectoria.statRange': 'Range (min — max)',
+            'trayectoria.chartTimeline': 'Health Timeline',
+            'trayectoria.chartProjection': 'Projection',
+            'trayectoria.chartRange': 'Score Range',
+            'trayectoria.chartCorrelation': 'Treatment Correlation with Health Changes',
+            // CR5e — timeline (health history)
+            'timelineHist.title': 'Health History',
+            'timelineHist.subtitle': 'Chronological timeline — health scores and applied treatments',
+            'timelineHist.updateBtn': 'Update',
+            // CR5e — tek (ancestral intelligence validation)
+            'tekVal.title': 'Ancestral Intelligence — Validation',
+            'tekVal.subtitle': 'Traditional methods validated with farmer feedback — confidence scores, usage counts and regional effectiveness',
+            'tekVal.queryBtn': 'Query Methods',
+            // CR5e — fusion (sensor fusion validation)
+            'fusionVal.title': 'Sensor Fusion Validation',
+            'fusionVal.subtitle': 'Cross-consistency of NDVI, thermal, soil and weather data — contradiction detection and confidence levels by field',
+            'fusionVal.analyzeBtn': 'Analyze Sensors',
+            // CR5e — thermal-dashboard
+            'thermalDash.title': 'Thermal Stress',
+            'thermalDash.subtitle': 'Temperature analysis, stress zones and irrigation deficit by field',
+            'thermalDash.updateBtn': 'Update',
+            'thermalDash.colDate': 'Date',
+            'thermalDash.colAvgTemp': 'Avg Temp',
+            'thermalDash.colMinTemp': 'Min Temp',
+            'thermalDash.colMaxTemp': 'Max Temp',
+            'thermalDash.colStdDev': 'Std Dev',
+            'thermalDash.colStress': 'Stress %',
+            'thermalDash.colPixels': 'Pixels',
+            'thermalDash.colIrrDef': 'Irrigation Deficit',
+            // CR5e — seasonal (seasonal comparison)
+            'seasonalCmp.title': 'Seasonal Comparison',
+            'seasonalCmp.subtitle': 'Wet season (Jun-Oct) vs Dry season (Nov-May) — health, NDVI and treatments side by side',
+            'seasonalCmp.compareBtn': 'Compare',
+            // CR5e — demo page
+            'demoPage.heroSub': 'Precision Agricultural Intelligence',
+            'demoPage.heroTagline': 'From Field to Decision — with data that validates what the farmer already knows',
+            'demoPage.statTests': 'Automated Tests',
+            'demoPage.statEndpoints': 'API Endpoints',
+            'demoPage.statFarms': 'Registered Farms',
+            'demoPage.statMethods': 'Organic Methods',
+            // CR5e — walkthrough
+            'walkthru.startBtn': 'Start Guided Tour',
+            'walkthru.prevBtn': 'Previous',
+            'walkthru.nextBtn': 'Next',
+            'walkthru.exploreFarmsBtn': 'Explore the Farm Panel',
+            'walkthru.intelBtn': 'Intelligence Panel'
         }
     };
 

@@ -39,8 +39,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Estres Termico</h1>
-            <p class="intel-subtitle">Analisis de temperatura, zonas de estres y deficit de riego por campo</p>
+            <h1 class="intel-title" data-i18n="thermalDash.title">Thermal Stress</h1>
+            <p class="intel-subtitle" data-i18n="thermalDash.subtitle">Temperature analysis, stress zones and irrigation deficit by field</p>
         </div>
         <div class="intel-header-actions">
             <select id="thermal-farm-select" class="intel-select" onchange="loadFieldsForThermal()">
@@ -49,7 +49,7 @@
             <select id="thermal-field-select" class="intel-select" onchange="loadThermalData()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadThermalData()">Actualizar</button>
+            <button class="intel-btn" onclick="loadThermalData()" data-i18n="thermalDash.updateBtn">Update</button>
         </div>
     </div>
 
@@ -104,14 +104,14 @@
         <table class="soil-table">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Temp. Media</th>
-                    <th>Temp. Min</th>
-                    <th>Temp. Max</th>
-                    <th>Desv. Est.</th>
-                    <th>Estres %</th>
-                    <th>Pixeles</th>
-                    <th>Deficit Riego</th>
+                    <th data-i18n="thermalDash.colDate">Date</th>
+                    <th data-i18n="thermalDash.colAvgTemp">Avg Temp</th>
+                    <th data-i18n="thermalDash.colMinTemp">Min Temp</th>
+                    <th data-i18n="thermalDash.colMaxTemp">Max Temp</th>
+                    <th data-i18n="thermalDash.colStdDev">Std Dev</th>
+                    <th data-i18n="thermalDash.colStress">Stress %</th>
+                    <th data-i18n="thermalDash.colPixels">Pixels</th>
+                    <th data-i18n="thermalDash.colIrrDef">Irrigation Deficit</th>
                 </tr>
             </thead>
             <tbody id="thermal-table-body"></tbody>

@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Comparacion Estacional</h1>
-            <p class="intel-subtitle">Temporal (Jun-Oct) vs Secas (Nov-May) — salud, NDVI y tratamientos lado a lado</p>
+            <h1 class="intel-title" data-i18n="seasonalCmp.title">Seasonal Comparison</h1>
+            <p class="intel-subtitle" data-i18n="seasonalCmp.subtitle">Wet season (Jun-Oct) vs Dry season (Nov-May) — health, NDVI and treatments side by side</p>
         </div>
         <div class="intel-header-actions">
             <select id="seasonal-farm-select" class="intel-select" onchange="loadFieldsForSeasonal()">
@@ -50,7 +50,7 @@
             <select id="seasonal-year-select" class="intel-select" onchange="loadSeasonalComparison()">
                 <option value="">Todos los anos</option>
             </select>
-            <button class="intel-btn" onclick="loadSeasonalComparison()">Comparar</button>
+            <button class="intel-btn" onclick="loadSeasonalComparison()" data-i18n="seasonalCmp.compareBtn">Compare</button>
         </div>
     </div>
 

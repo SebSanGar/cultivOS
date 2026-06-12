@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Historial de Salud</h1>
-            <p class="intel-subtitle">Linea de tiempo cronologica — puntuaciones de salud y tratamientos aplicados</p>
+            <h1 class="intel-title" data-i18n="timelineHist.title">Health History</h1>
+            <p class="intel-subtitle" data-i18n="timelineHist.subtitle">Chronological timeline — health scores and applied treatments</p>
         </div>
         <div class="intel-header-actions">
             <select id="tl-farm-select" class="intel-select" onchange="loadFieldsForTimeline()">
@@ -47,7 +47,7 @@
             <select id="tl-field-select" class="intel-select" onchange="loadTimeline()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadTimeline()">Actualizar</button>
+            <button class="intel-btn" onclick="loadTimeline()" data-i18n="timelineHist.updateBtn">Update</button>
         </div>
     </div>
 
