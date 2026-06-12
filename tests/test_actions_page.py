@@ -89,11 +89,12 @@ class TestActionsPageLoad:
         resp = client.get("/acciones")
         assert 'id="actions-empty"' in resp.text
 
-    def test_page_has_spanish_labels(self, client):
+    def test_page_has_select_i18n_wiring(self, client):
+        """Select options must use data-i18n attrs (CR5 wired selects to i18n)."""
         resp = client.get("/acciones")
         html = resp.text
-        assert "Seleccione una granja" in html
-        assert "Seleccione un campo" in html
+        assert 'data-i18n="nav.selectFarm"' in html
+        assert 'data-i18n="nav.selectField"' in html
 
     def test_page_has_js_script(self, client):
         resp = client.get("/acciones")
