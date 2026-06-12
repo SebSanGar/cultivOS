@@ -475,6 +475,13 @@ async function updateTreatmentRoiLeaderboard(farmId) {
     });
 }
 
+function updateOntarioSoonBanner(data) {
+    const banner = document.getElementById('econ-ontario-soon');
+    if (!banner) return;
+    const isOntario = data.nota && data.nota.includes('Ontario');
+    banner.style.display = isOntario ? 'block' : 'none';
+}
+
 function updateRiskAvoided(data) {
     const section = document.getElementById('econ-risk-avoided-section');
     const valueEl = document.getElementById('econ-risk-avoided-value');
