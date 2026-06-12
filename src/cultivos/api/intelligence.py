@@ -134,6 +134,7 @@ def get_field_intelligence(
             max_kg_per_ha=yr["max_kg_per_ha"],
             total_kg=yr["total_kg"],
             nota=yr["nota"],
+            nota_en=yr["nota_en"],
         )
 
     # --- Computed: carbon (needs soil with organic_matter_pct) ---
@@ -183,6 +184,7 @@ def get_field_intelligence(
             contradictions=fusion_result["contradictions"],
             sensors_used=fusion_result["sensors_used"],
             assessment=fusion_result["assessment"],
+            assessment_en=fusion_result["assessment_en"],
         )
 
     return FieldIntelligenceOut(

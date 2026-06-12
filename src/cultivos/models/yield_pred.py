@@ -12,3 +12,4 @@ class YieldPredictionOut(BaseModel):
     max_kg_per_ha: float
     total_kg: float
     nota: str
+    nota_en: str

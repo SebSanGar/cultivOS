@@ -15,3 +15,4 @@ class StressCompositeOut(BaseModel):
     stress_level: str          # none | low | moderate | high | critical
     components: StressComponentsOut
     recommendation_es: str
+    recommendation_en: str

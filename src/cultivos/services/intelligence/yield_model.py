@@ -36,6 +36,7 @@ class YieldResult(TypedDict):
     max_kg_per_ha: float
     total_kg: float
     nota: str
+    nota_en: str
 
 
 def predict_yield(
@@ -70,18 +71,28 @@ def predict_yield(
     max_kg_per_ha = round(kg_per_ha * (1 + UNCERTAINTY_BAND), 1)
     total_kg = round(kg_per_ha * hectares, 1)
 
-    # Generate note in Spanish
+    crop_label_en = crop_type or "crop"
+
     if health_score >= 80:
         nota = f"Rendimiento esperado bueno para {crop_type or 'cultivo'}. Campo en buen estado."
+        nota_en = f"Good expected yield for {crop_label_en}. Field is in good condition."
     elif health_score >= 50:
         nota = (
             f"Rendimiento moderado para {crop_type or 'cultivo'}. "
             f"Mejorar salud del campo puede incrementar produccion."
         )
+        nota_en = (
+            f"Moderate yield expected for {crop_label_en}. "
+            f"Improving field health can increase production."
+        )
     else:
         nota = (
             f"Rendimiento reducido por estres del campo. "
             f"Se recomienda atencion urgente para {crop_type or 'cultivo'}."
+        )
+        nota_en = (
+            f"Reduced yield due to field stress. "
+            f"Urgent attention is recommended for {crop_label_en}."
         )
 
     return YieldResult(
@@ -92,4 +103,5 @@ def predict_yield(
         max_kg_per_ha=max_kg_per_ha,
         total_kg=total_kg,
         nota=nota,
+        nota_en=nota_en,
     )

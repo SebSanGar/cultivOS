@@ -90,6 +90,14 @@ _RECOMMENDATIONS = {
     "critical": "Estres critico. Intervencion inmediata requerida en campo.",
 }
 
+_RECOMMENDATIONS_EN = {
+    "none": "Field is in optimal condition. Maintain routine monitoring.",
+    "low": "Mild stress detected. Check soil moisture and weather conditions.",
+    "moderate": "Moderate stress. Consider preventive irrigation and pest inspection.",
+    "high": "High stress. Apply corrective measures: irrigation and urgent organic treatment.",
+    "critical": "Critical stress. Immediate field intervention required.",
+}
+
 
 def compute_stress_composite(field: Field, db: Session) -> dict:
     """Return composite stress index for the field."""
@@ -110,4 +118,5 @@ def compute_stress_composite(field: Field, db: Session) -> dict:
             "thermal": round(thermal, 1),
         },
         "recommendation_es": _RECOMMENDATIONS[level],
+        "recommendation_en": _RECOMMENDATIONS_EN[level],
     }

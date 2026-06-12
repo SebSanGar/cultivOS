@@ -95,6 +95,7 @@ class IntelYield(BaseModel):
     max_kg_per_ha: float
     total_kg: float
     nota: str
+    nota_en: str
 
 
 class IntelTreatment(BaseModel):
@@ -121,6 +122,7 @@ class IntelFusion(BaseModel):
     contradictions: list[dict]
     sensors_used: list[str]
     assessment: str
+    assessment_en: str
 
 
 class FieldIntelligenceOut(BaseModel):

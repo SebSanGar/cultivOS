@@ -56,6 +56,7 @@ class FusionResponse(BaseModel):
     confidence: float
     sensors_used: list[str]
     assessment: str
+    assessment_en: str
 
 
 @router.post("/fusion", response_model=FusionResponse)

@@ -53,8 +53,10 @@ def get_yield_prediction(
     )
 
     nota = result["nota"]
+    nota_en = result["nota_en"]
     if not health_record:
         nota = "Datos de salud insuficientes — prediccion basada en promedio. " + nota
+        nota_en = "Insufficient health data — prediction based on average. " + nota_en
 
     return YieldPredictionOut(
         field_id=field_id,
@@ -65,4 +67,5 @@ def get_yield_prediction(
         max_kg_per_ha=result["max_kg_per_ha"],
         total_kg=result["total_kg"],
         nota=nota,
+        nota_en=nota_en,
     )

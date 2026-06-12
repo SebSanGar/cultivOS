@@ -26,7 +26,8 @@ class FusionResult(TypedDict):
     contradictions: list[SensorContradiction]
     confidence: float  # 0.0-1.0
     sensors_used: list[str]
-    assessment: str  # Spanish farmer-facing summary
+    assessment: str      # Spanish farmer-facing summary
+    assessment_en: str   # English farmer-facing summary
 
 
 # --- Sensor base reliability weights (sum to 1.0) ---
@@ -236,6 +237,39 @@ def _generate_assessment(
     )
 
 
+def _generate_assessment_en(
+    sensors_used: list[str],
+    classifications: dict[str, str],
+    contradictions: list[SensorContradiction],
+    confidence: float,
+) -> str:
+    """Generate farmer-facing English assessment."""
+    n = len(sensors_used)
+
+    if contradictions:
+        count = len(contradictions)
+        return (
+            f"{count} sensor inconsistenc{'y' if count == 1 else 'ies'} detected. "
+            f"Confidence: {confidence:.0%} (based on {n} sensor(s))."
+        )
+
+    states = [classifications[s] for s in sensors_used if s in classifications]
+    if all(s in ("healthy", "favorable") for s in states):
+        return (
+            f"All {n} sensors agree: field is in good condition. "
+            f"Confidence: {confidence:.0%}."
+        )
+    elif any(s in ("stressed", "harsh") for s in states):
+        return (
+            f"{n} sensors agree on detecting stress. "
+            f"Immediate action is recommended. Confidence: {confidence:.0%}."
+        )
+    return (
+        f"Moderate conditions according to {n} sensor(s). "
+        f"Confidence: {confidence:.0%}."
+    )
+
+
 def validate_sensor_fusion(
     ndvi: NDVIInput | None = None,
     thermal: ThermalInput | None = None,
@@ -278,10 +312,14 @@ def validate_sensor_fusion(
     assessment = _generate_assessment(
         sensors_used, classifications, contradictions, confidence
     )
+    assessment_en = _generate_assessment_en(
+        sensors_used, classifications, contradictions, confidence
+    )
 
     return FusionResult(
         contradictions=contradictions,
         confidence=confidence,
         sensors_used=sensors_used,
         assessment=assessment,
+        assessment_en=assessment_en,
     )
