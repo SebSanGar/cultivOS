@@ -177,7 +177,7 @@
 
 <!-- FARMER VIEW -->
 <main class="campo-farmer">
-    <button class="campo-back" onclick="history.back()"><span data-i18n="field.back">&#8592; Back</span></button>
+    <button class="campo-back" onclick="goBack()"><span data-i18n="field.back">&#8592; Back</span></button>
 
     <h1 class="campo-nombre" id="campo-nombre" data-i18n="field.myPlot">My Plot</h1>
     <p class="campo-granja" id="campo-granja"></p>
@@ -605,6 +605,11 @@
 
 </main>
 
+<script>
+function goBack() {
+  if (history.length > 1) { history.back(); } else { location.href = '/'; }
+}
+</script>
 <script src="/i18n.js"></script>
 <script src="/auth-guard.js"></script>
 <script src="/toggle.js"></script>
