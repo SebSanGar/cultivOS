@@ -168,8 +168,10 @@ def seed_demo_data(session):
     """Seed the database with realistic Jalisco demo data. Idempotent."""
     now = datetime.utcnow()
     if _demo_exists(session):
-        # Heal older seeds that predate the current-season top-up.
+        # Heal older seeds that predate the current-season top-up / the
+        # canonical forecast shape.
         _seed_current_season_topup(session, now)
+        _heal_weather_forecast(session)
         return
 
     # 13 months ensures both Jalisco seasons (temporal Jun-Oct, secas Nov-May)
@@ -874,6 +876,59 @@ def _seed_farmer_feedback(session, all_treatment_ids):
         ))
 
 
+def _forecast_3day(temp, humidity, wind, rainfall, description):
+    """Forecast entries in the canonical ForecastDay shape the API validates
+    (temp_c/humidity_pct/wind_kmh/description/rainfall_mm)."""
+    return [
+        {
+            "temp_c": round(temp + offset, 1),
+            "humidity_pct": round(min(100, max(0, humidity + offset * 2)), 1),
+            "wind_kmh": wind,
+            "description": description,
+            "rainfall_mm": round(max(0, rainfall + rain_off), 1),
+        }
+        for offset, rain_off in ((0.5, -2), (1.0, 3), (-0.5, -1))
+    ]
+
+
+# Older seeds wrote forecast entries as {day, temp_c, rain_mm} and Spanish
+# descriptions — the API's ForecastDay model rejects that shape, so
+# GET /api/farms/{id}/weather 500s on any DB seeded before this fix.
+_WEATHER_DESC_EN = {
+    "Lluvia de verano": "Summer rain",
+    "Parcialmente nublado": "Partly cloudy",
+    "Fresco y variable": "Cool and variable",
+    "Lluvia ligera": "Light rain",
+    "Nieve ligera": "Light snow",
+    "Nublado y frio": "Cloudy and cold",
+    "Lluvia temporal": "Seasonal rain",
+    "Seco y soleado": "Dry and sunny",
+    "Llovizna ligera": "Light drizzle",
+}
+
+
+def _heal_weather_forecast(session) -> int:
+    """Rebuild malformed forecast_3day entries and anglicize descriptions on
+    records from older seeds. Idempotent; returns rows updated."""
+    updated = 0
+    for rec in session.query(WeatherRecord).all():
+        changed = False
+        if rec.description in _WEATHER_DESC_EN:
+            rec.description = _WEATHER_DESC_EN[rec.description]
+            changed = True
+        forecast = rec.forecast_3day or []
+        if any("humidity_pct" not in e or "description" not in e for e in forecast):
+            rec.forecast_3day = _forecast_3day(
+                rec.temp_c, rec.humidity_pct, rec.wind_kmh, rec.rainfall_mm, rec.description
+            )
+            changed = True
+        if changed:
+            updated += 1
+    if updated:
+        session.commit()
+    return updated
+
+
 def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
     """Seed every-other-day weather records for a farm over 6 months."""
     total_days = (now - start_date).days
@@ -888,17 +943,17 @@ def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
                 temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 4, 1)
                 humidity = round(60 + (day % 5) * 2, 1)
                 rainfall = round(max(0, 5 + math.sin(day / 7) * 10), 1)
-                description = "Lluvia de verano" if rainfall > 5 else "Parcialmente nublado"
+                description = "Summer rain" if rainfall > 5 else "Partly cloudy"
             elif month in (3, 4, 10, 11):
                 temp = round(5 + (day % 7) * 0.5 + math.sin(day / 30) * 3, 1)
                 humidity = round(55 + (day % 5) * 2, 1)
                 rainfall = round(max(0, math.sin(day / 10) * 4), 1)
-                description = "Fresco y variable" if rainfall < 2 else "Lluvia ligera"
+                description = "Cool and variable" if rainfall < 2 else "Light rain"
             else:
                 temp = round(-5 + (day % 7) * 0.3 + math.sin(day / 30) * 4, 1)
                 humidity = round(70 + (day % 5) * 2, 1)
                 rainfall = round(max(0, math.sin(day / 12) * 3), 1)
-                description = "Nieve ligera" if temp < -2 else "Nublado y frio"
+                description = "Light snow" if temp < -2 else "Cloudy and cold"
         else:
             is_temporal = month in TEMPORAL_MONTHS
             # Jalisco climate: temporal is warmer/wetter, secas is cooler/drier
@@ -906,12 +961,12 @@ def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
                 temp = round(26 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
                 humidity = round(70 + (day % 5) * 2, 1)
                 rainfall = round(max(0, 8 + math.sin(day / 7) * 12), 1)
-                description = "Lluvia temporal" if rainfall > 5 else "Parcialmente nublado"
+                description = "Seasonal rain" if rainfall > 5 else "Partly cloudy"
             else:
                 temp = round(20 + (day % 7) * 0.5 + math.sin(day / 30) * 2, 1)
                 humidity = round(40 + (day % 5) * 2, 1)
                 rainfall = round(max(0, math.sin(day / 15) * 3), 1)
-                description = "Seco y soleado" if rainfall < 1 else "Llovizna ligera"
+                description = "Dry and sunny" if rainfall < 1 else "Light drizzle"
 
         wind = round(10 + math.sin(day / 10) * 5, 1)
 
@@ -922,11 +977,7 @@ def _seed_weather_history(session, farm, now, start_date, region="jalisco"):
             wind_kmh=wind,
             rainfall_mm=rainfall,
             description=description,
-            forecast_3day=[
-                {"day": 1, "temp_c": round(temp + 0.5, 1), "rain_mm": round(max(0, rainfall - 2), 1)},
-                {"day": 2, "temp_c": round(temp + 1, 1), "rain_mm": round(max(0, rainfall + 3), 1)},
-                {"day": 3, "temp_c": round(temp - 0.5, 1), "rain_mm": round(max(0, rainfall - 1), 1)},
-            ],
+            forecast_3day=_forecast_3day(temp, humidity, wind, rainfall, description),
             recorded_at=ts,
         ))
 
