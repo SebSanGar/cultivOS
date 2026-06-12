@@ -137,3 +137,33 @@ def test_html_ontario_element_contains_coming_soon_text(html):
     assert "coming soon" in lower or "proximamente" in lower, (
         "economic-impact.html must have coming-soon / Proximamente text for Ontario"
     )
+
+
+@pytest.fixture()
+def js():
+    import os
+    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "economic-impact.js")
+    with open(path) as f:
+        return f.read()
+
+
+def test_js_defines_update_ontario_soon_banner(js):
+    """economic-impact.js must define updateOntarioSoonBanner function (called in loadEconomicImpact)."""
+    assert "function updateOntarioSoonBanner" in js, (
+        "economic-impact.js missing updateOntarioSoonBanner function definition — "
+        "it is called on every farm load and will ReferenceError without a definition"
+    )
+
+
+def test_js_ontario_banner_checks_nota(js):
+    """updateOntarioSoonBanner must check data.nota to detect Ontario farms."""
+    assert "data.nota" in js or "nota" in js, (
+        "updateOntarioSoonBanner should read data.nota to detect Ontario/CA farms"
+    )
+
+
+def test_js_ontario_banner_shows_element(js):
+    """updateOntarioSoonBanner must show #econ-ontario-soon for Ontario farms."""
+    assert "econ-ontario-soon" in js, (
+        "updateOntarioSoonBanner must reference econ-ontario-soon element"
+    )
