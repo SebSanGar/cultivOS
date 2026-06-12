@@ -140,7 +140,7 @@
 
     <main class="intel-main" style="max-width: 800px; margin: 0 auto; padding: 32px 20px;">
         <div class="demo-header">
-            <h1>Recorrido FODECIJAL</h1>
+            <h1 data-i18n="demo.title">Recorrido FODECIJAL</h1>
             <p>Recorrido guiado por las 8 capacidades clave de la plataforma de inteligencia agricola cultivOS. Complete cada paso para explorar la tecnologia.</p>
         </div>
 
@@ -148,15 +148,15 @@
         <div class="stats-strip" id="demo-stats">
             <div class="stat-card">
                 <div class="stat-value">8</div>
-                <div class="stat-label">Pasos</div>
+                <div class="stat-label" data-i18n="demo.steps">Pasos</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="completed-count">0</div>
-                <div class="stat-label">Completados</div>
+                <div class="stat-label" data-i18n="demo.completed">Completados</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="remaining-count">8</div>
-                <div class="stat-label">Restantes</div>
+                <div class="stat-label" data-i18n="demo.remaining">Restantes</div>
             </div>
         </div>
 
@@ -177,7 +177,7 @@
                 <div class="step-check" onclick="toggleStep(1)">1</div>
                 <div class="step-content">
                     <div class="step-number">Paso 1 de 8</div>
-                    <h3>Mapa de Fincas Interactivo</h3>
+                    <h3 data-i18n="demo.step1">Mapa de Fincas Interactivo</h3>
                     <p>Visualice la ubicacion geografica de todas las fincas del portafolio con poligonos de campos coloreados por nivel de salud. Demuestra cobertura espacial y monitoreo en tiempo real.</p>
                     <a href="/mapa" class="step-cta">Ir a Mapa</a>
                 </div>
@@ -187,7 +187,7 @@
                 <div class="step-check" onclick="toggleStep(2)">2</div>
                 <div class="step-content">
                     <div class="step-number">Paso 2 de 8</div>
-                    <h3>Salud del Campo — Panel de Inteligencia</h3>
+                    <h3 data-i18n="demo.step2">Salud del Campo — Panel de Inteligencia</h3>
                     <p>Dashboard completo con puntaje de salud 0-100, tendencias historicas, alertas activas y metricas de suelo por campo. El cerebro de la agricultura de precision.</p>
                     <a href="/campo" class="step-cta">Ir a Salud del Campo</a>
                 </div>
@@ -197,7 +197,7 @@
                 <div class="step-check" onclick="toggleStep(3)">3</div>
                 <div class="step-content">
                     <div class="step-number">Paso 3 de 8</div>
-                    <h3>Analisis NDVI — Procesamiento de Imagenes Drone</h3>
+                    <h3 data-i18n="demo.step3">Analisis NDVI — Procesamiento de Imagenes Drone</h3>
                     <p>Procesamiento de imagenes multiespectrales del DJI Mavic 3 para generar mapas de vigor vegetal. Identifica zonas de estres antes de que sean visibles al ojo humano.</p>
                     <a href="/intel" class="step-cta">Ir a Inteligencia NDVI</a>
                 </div>
@@ -207,7 +207,7 @@
                 <div class="step-check" onclick="toggleStep(4)">4</div>
                 <div class="step-content">
                     <div class="step-number">Paso 4 de 8</div>
-                    <h3>Tratamientos Organicos y Recomendaciones</h3>
+                    <h3 data-i18n="demo.step4">Tratamientos Organicos y Recomendaciones</h3>
                     <p>Motor de recomendaciones 100% organicas basado en conocimiento ancestral y datos de sensor. Composta, biofertilizantes, rotacion milpa — tratamientos validados por agricultores.</p>
                     <a href="/recomendaciones" class="step-cta">Ir a Tratamientos</a>
                 </div>
@@ -217,7 +217,7 @@
                 <div class="step-check" onclick="toggleStep(5)">5</div>
                 <div class="step-content">
                     <div class="step-number">Paso 5 de 8</div>
-                    <h3>Planificador de Rotacion Multi-Anual</h3>
+                    <h3 data-i18n="demo.step5">Planificador de Rotacion Multi-Anual</h3>
                     <p>Plan de rotacion a 3 anos con proyecciones de materia organica del suelo, sistema milpa (Tres Hermanas) y recomendaciones por temporada para Jalisco.</p>
                     <a href="/rotacion" class="step-cta">Ir a Rotacion</a>
                 </div>
@@ -227,7 +227,7 @@
                 <div class="step-check" onclick="toggleStep(6)">6</div>
                 <div class="step-content">
                     <div class="step-number">Paso 6 de 8</div>
-                    <h3>Reporte de Carbono y Secuestro</h3>
+                    <h3 data-i18n="demo.step6">Reporte de Carbono y Secuestro</h3>
                     <p>Calculo de CO2 equivalente secuestrado por hectarea usando factor 3.67 (peso molecular CO2/C). Cuantifica el impacto ambiental de la agricultura regenerativa.</p>
                     <a href="/carbono" class="step-cta">Ir a Carbono</a>
                 </div>
@@ -237,7 +237,7 @@
                 <div class="step-check" onclick="toggleStep(7)">7</div>
                 <div class="step-content">
                     <div class="step-number">Paso 7 de 8</div>
-                    <h3>Sistema de Alertas — Comunicacion con Agricultores</h3>
+                    <h3 data-i18n="demo.step7">Sistema de Alertas — Comunicacion con Agricultores</h3>
                     <p>Historial de alertas SMS y del sistema con metricas de entrega, alcance por finca y clasificacion por tipo/severidad. Demuestra comunicacion proactiva.</p>
                     <a href="/historial-alertas" class="step-cta">Ir a Alertas</a>
                 </div>
@@ -247,7 +247,7 @@
                 <div class="step-check" onclick="toggleStep(8)">8</div>
                 <div class="step-content">
                     <div class="step-number">Paso 8 de 8</div>
-                    <h3>WhatsApp — Interfaz Voz-Primero</h3>
+                    <h3 data-i18n="demo.step8">WhatsApp — Interfaz Voz-Primero</h3>
                     <p>Simulador de conversacion WhatsApp entre agricultor e IA cultivOS. Notas de voz, reportes de salud y tratamientos organicos en espanol — la interfaz principal del agricultor.</p>
                     <a href="/whatsapp-demo" class="step-cta">Ir a WhatsApp Demo</a>
                 </div>

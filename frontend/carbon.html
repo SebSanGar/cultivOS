@@ -38,8 +38,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Carbono del Suelo</h1>
-            <p class="intel-subtitle">Secuestro de carbono organico del suelo (SOC) y equivalente de CO2 por campo</p>
+            <h1 class="intel-title" data-i18n="carbon.title">Carbono del Suelo</h1>
+            <p class="intel-subtitle" data-i18n="carbon.subtitle">Secuestro de carbono organico del suelo (SOC) y equivalente de CO2 por campo</p>
         </div>
         <div class="intel-header-actions">
             <select id="carbon-farm-select" class="intel-select" onchange="loadFieldsForCarbon()">
@@ -48,7 +48,7 @@
             <select id="carbon-field-select" class="intel-select" onchange="loadCarbonReport()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadCarbonReport()">Actualizar</button>
+            <button class="intel-btn" onclick="loadCarbonReport()" data-i18n="btn.refresh">Actualizar</button>
         </div>
     </div>
 
@@ -101,7 +101,7 @@
     <div id="carbon-content" style="display:none;">
         <!-- Carbon trend chart -->
         <div class="intel-card" style="margin-bottom:1.5rem;">
-            <h2 class="intel-card-title">Tendencia de Carbono Organico del Suelo</h2>
+            <h2 class="intel-card-title" data-i18n="carbon.socTrend">Tendencia de Carbono Organico del Suelo</h2>
             <div style="position:relative;height:300px;">
                 <canvas id="carbon-chart"></canvas>
             </div>
@@ -109,14 +109,14 @@
 
         <!-- Summary -->
         <div class="intel-card" id="carbon-summary" style="margin-bottom:1.5rem;">
-            <h2 class="intel-card-title">Resumen</h2>
+            <h2 class="intel-card-title" data-i18n="carbon.summary">Resumen</h2>
             <p id="carbon-summary-text" class="intel-card-text" style="line-height:1.6;color:#ccc;"></p>
             <div id="carbon-recommendations" style="margin-top:1rem;"></div>
         </div>
 
         <!-- Farm-level breakdown table -->
         <div class="intel-card">
-            <h2 class="intel-card-title">Desglose por Campo (Nivel Granja)</h2>
+            <h2 class="intel-card-title" data-i18n="carbon.fieldBreakdown">Desglose por Campo (Nivel Granja)</h2>
             <div style="overflow-x:auto;">
                 <table id="carbon-fields-table" class="intel-table" style="width:100%;border-collapse:collapse;">
                     <thead>

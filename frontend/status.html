@@ -35,11 +35,11 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Estado de la Plataforma</h1>
-            <p class="intel-subtitle">Salud del sistema, conectividad y frescura de datos</p>
+            <h1 class="intel-title" data-i18n="status.title">Estado de la Plataforma</h1>
+            <p class="intel-subtitle" data-i18n="status.subtitle">Salud del sistema, conectividad y frescura de datos</p>
         </div>
         <div class="intel-header-actions">
-            <button class="intel-btn" onclick="loadStatus()">Actualizar</button>
+            <button class="intel-btn" onclick="loadStatus()" data-i18n="btn.refresh">Actualizar</button>
         </div>
     </div>
 
@@ -68,7 +68,7 @@
         <!-- DB Health -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Conectividad</h2>
+                <h2 class="intel-panel-title" data-i18n="status.connectivity">Conectividad</h2>
                 <span class="intel-badge" id="status-db-badge">--</span>
             </div>
             <div class="intel-panel-body">
@@ -86,7 +86,7 @@
         <!-- Data freshness -->
         <div class="intel-panel">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Frescura de Datos</h2>
+                <h2 class="intel-panel-title" data-i18n="status.dataFreshness">Frescura de Datos</h2>
             </div>
             <div class="intel-panel-body">
                 <div class="status-check-row">
@@ -111,7 +111,7 @@
         <!-- Endpoint health -->
         <div class="intel-panel intel-panel-wide">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Endpoints Activos</h2>
+                <h2 class="intel-panel-title" data-i18n="status.activeEndpoints">Endpoints Activos</h2>
                 <span class="intel-badge" id="status-endpoints-count">--</span>
             </div>
             <div id="status-endpoints" class="intel-panel-body">

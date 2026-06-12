@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Linea de Acciones</h1>
-            <p class="intel-subtitle">Calendario de acciones recomendadas — irrigacion, tratamientos, monitoreo — ordenadas por prioridad</p>
+            <h1 class="intel-title" data-i18n="actions.title">Linea de Acciones</h1>
+            <p class="intel-subtitle" data-i18n="actions.subtitle">Calendario de acciones recomendadas — irrigacion, tratamientos, monitoreo — ordenadas por prioridad</p>
         </div>
         <div class="intel-header-actions">
             <select id="actions-farm-select" class="intel-select" onchange="loadFieldsForActions()">
@@ -47,7 +47,7 @@
             <select id="actions-field-select" class="intel-select" onchange="loadActionTimeline()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadActionTimeline()">Analizar</button>
+            <button class="intel-btn" onclick="loadActionTimeline()" data-i18n="btn.analyze">Analizar</button>
         </div>
     </div>
 

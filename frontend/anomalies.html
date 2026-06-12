@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Centro de Anomalias</h1>
-            <p class="intel-subtitle">Deteccion proactiva de caidas de salud, NDVI y estres termico por campo</p>
+            <h1 class="intel-title" data-i18n="anomaly.title">Centro de Anomalias</h1>
+            <p class="intel-subtitle" data-i18n="anomaly.subtitle">Deteccion proactiva de caidas de salud, NDVI y estres termico por campo</p>
         </div>
         <div class="intel-header-actions">
             <select id="anom-farm-select" class="intel-select" onchange="loadFieldsForAnom()">
@@ -47,7 +47,7 @@
             <select id="anom-field-select" class="intel-select" onchange="loadAnomalies()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadAnomalies()">Actualizar</button>
+            <button class="intel-btn" onclick="loadAnomalies()" data-i18n="btn.refresh">Actualizar</button>
         </div>
     </div>
 
@@ -55,15 +55,15 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="anom-total-count">--</div>
-            <div class="intel-stat-label">Anomalias Totales</div>
+            <div class="intel-stat-label" data-i18n="anomaly.total">Anomalias Totales</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="anom-health-count">--</div>
-            <div class="intel-stat-label">Caidas de Salud</div>
+            <div class="intel-stat-label" data-i18n="anomaly.healthDrops">Caidas de Salud</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="anom-ndvi-count">--</div>
-            <div class="intel-stat-label">Caidas NDVI</div>
+            <div class="intel-stat-label" data-i18n="anomaly.ndviDrops">Caidas NDVI</div>
         </div>
     </div>
 
@@ -91,8 +91,8 @@
     <div id="anom-content" style="display:none;">
         <!-- Health anomalies section -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Anomalias de Salud</h2>
-            <p class="intel-subtitle">Caidas mayores a 15 puntos entre lecturas consecutivas</p>
+            <h2 class="regen-section-title" data-i18n="anomaly.healthSection">Anomalias de Salud</h2>
+            <p class="intel-subtitle" data-i18n="anomaly.healthDetail">Caidas mayores a 15 puntos entre lecturas consecutivas</p>
             <div id="anom-health-cards" class="regen-recommendations"></div>
             <div id="anom-health-none" class="regen-no-recs" style="display:none;">
                 Sin caidas de salud detectadas.
@@ -101,8 +101,8 @@
 
         <!-- NDVI anomalies section -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Anomalias NDVI</h2>
-            <p class="intel-subtitle">Caidas mayores al 20% respecto al promedio historico</p>
+            <h2 class="regen-section-title" data-i18n="anomaly.ndviSection">Anomalias NDVI</h2>
+            <p class="intel-subtitle" data-i18n="anomaly.ndviDetail">Caidas mayores al 20% respecto al promedio historico</p>
             <div id="anom-ndvi-cards" class="regen-recommendations"></div>
             <div id="anom-ndvi-none" class="regen-no-recs" style="display:none;">
                 Sin caidas de NDVI detectadas.
@@ -111,7 +111,7 @@
 
         <!-- Recommendations summary -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Recomendaciones</h2>
+            <h2 class="regen-section-title" data-i18n="anomaly.recommendations">Recomendaciones</h2>
             <div id="anom-recommendations" class="regen-recommendations"></div>
         </div>
     </div>

@@ -36,8 +36,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Dashboard Ejecutivo</h1>
-            <p class="intel-subtitle">Vision general de toda la plataforma — granjas, salud, tratamientos, carbono y actividad reciente</p>
+            <h1 class="intel-title" data-i18n="exec.title">Dashboard Ejecutivo</h1>
+            <p class="intel-subtitle" data-i18n="exec.subtitle">Vision general de toda la plataforma — granjas, salud, tratamientos, carbono y actividad reciente</p>
         </div>
     </div>
 
@@ -51,37 +51,37 @@
     <div id="exec-stats" class="intel-stats-strip" style="display:none;">
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-farms">--</div>
-            <div class="intel-stat-label">Granjas</div>
+            <div class="intel-stat-label" data-i18n="stat.farms">Granjas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-fields">--</div>
-            <div class="intel-stat-label">Parcelas</div>
+            <div class="intel-stat-label" data-i18n="stat.fields">Parcelas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-hectares">--</div>
-            <div class="intel-stat-label">Hectareas</div>
+            <div class="intel-stat-label" data-i18n="stat.hectares">Hectareas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-health">--</div>
-            <div class="intel-stat-label">Salud Promedio</div>
+            <div class="intel-stat-label" data-i18n="stat.avgHealth">Salud Promedio</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-treatments">--</div>
-            <div class="intel-stat-label">Tratamientos</div>
+            <div class="intel-stat-label" data-i18n="stat.treatments">Tratamientos</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-alerts">--</div>
-            <div class="intel-stat-label">Alertas</div>
+            <div class="intel-stat-label" data-i18n="stat.alerts">Alertas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exec-co2e">--</div>
-            <div class="intel-stat-label">CO2e Secuestrado (t)</div>
+            <div class="intel-stat-label" data-i18n="exec.co2eSeq">CO2e Secuestrado (t)</div>
         </div>
     </div>
 
     <!-- Activity chart -->
     <div id="exec-chart-section" class="intel-card" style="display:none;padding:1.5rem;margin-bottom:1.5rem;">
-        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);">Actividad Ultimos 30 Dias</h3>
+        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);" data-i18n="exec.activity30">Actividad Ultimos 30 Dias</h3>
         <div style="position:relative;height:220px;">
             <canvas id="activity-chart"></canvas>
         </div>
@@ -89,7 +89,7 @@
 
     <!-- Farms table -->
     <div id="exec-table-section" class="intel-card" style="display:none;padding:1.5rem;">
-        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);">Granjas en la Plataforma</h3>
+        <h3 style="margin:0 0 1rem;font-size:1.1rem;color:var(--text-primary);" data-i18n="exec.farmsTable">Granjas en la Plataforma</h3>
         <div style="overflow-x:auto;">
             <table id="farms-table" style="width:100%;border-collapse:collapse;font-size:0.9rem;">
                 <thead>
