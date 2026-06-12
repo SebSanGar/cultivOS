@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Planificador de Mision de Dron</h1>
-            <p class="intel-subtitle">Genera rutas de vuelo optimizadas con waypoints, parametros de vuelo y estimaciones de baterias</p>
+            <h1 class="intel-title" data-i18n="mission.title">Planificador de Mision de Dron</h1>
+            <p class="intel-subtitle" data-i18n="mission.subtitle">Genera rutas de vuelo optimizadas con waypoints, parametros de vuelo y estimaciones de baterias</p>
         </div>
         <div class="intel-header-actions">
             <select id="mission-farm-select" class="intel-select" onchange="loadFieldsForMission()">
@@ -58,7 +58,7 @@
                 <option value="mavic_thermal">DJI Mavic 3 Thermal</option>
                 <option value="agras_t100">DJI Agras T100</option>
             </select>
-            <button class="intel-btn" onclick="generateMission()">Generar Mision</button>
+            <button class="intel-btn" onclick="generateMission()" data-i18n="btn.generateMission">Generar Mision</button>
         </div>
     </div>
 
@@ -66,7 +66,7 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="mission-duration">--</div>
-            <div class="intel-stat-label">Duracion (min)</div>
+            <div class="intel-stat-label" data-i18n="mission.duration">Duracion (min)</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="mission-area">--</div>
@@ -74,7 +74,7 @@
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="mission-batteries">--</div>
-            <div class="intel-stat-label">Baterias</div>
+            <div class="intel-stat-label" data-i18n="mission.batteries">Baterias</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="mission-photos">--</div>

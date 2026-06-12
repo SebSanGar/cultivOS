@@ -37,14 +37,14 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Gestion de Granjas y Parcelas</h1>
-            <p class="intel-subtitle">Crear, editar y eliminar granjas y sus parcelas</p>
+            <h1 class="intel-title" data-i18n="mgmt.title">Gestion de Granjas y Parcelas</h1>
+            <p class="intel-subtitle" data-i18n="mgmt.subtitle">Crear, editar y eliminar granjas y sus parcelas</p>
         </div>
     </div>
 
     <!-- Farm Create Form -->
     <section class="mgmt-section">
-        <h2 class="mgmt-section-title">Nueva Granja</h2>
+        <h2 class="mgmt-section-title" data-i18n="mgmt.newFarm">Nueva Granja</h2>
         <div class="mgmt-form" id="mgmt-farm-form">
             <div class="mgmt-form-row">
                 <div class="mgmt-form-group">
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="mgmt-form-actions">
-                <button class="mgmt-btn mgmt-btn-primary" onclick="createFarm()">Crear Granja</button>
+                <button class="mgmt-btn mgmt-btn-primary" onclick="createFarm()" data-i18n="btn.createFarm">Crear Granja</button>
                 <span id="mgmt-farm-error" class="mgmt-error"></span>
             </div>
         </div>
@@ -86,7 +86,7 @@
 
     <!-- Farms Table -->
     <section class="mgmt-section">
-        <h2 class="mgmt-section-title">Granjas Registradas</h2>
+        <h2 class="mgmt-section-title" data-i18n="mgmt.registeredFarms">Granjas Registradas</h2>
         <div class="mgmt-table-wrap">
             <table class="mgmt-table" id="mgmt-farms-table">
                 <thead>

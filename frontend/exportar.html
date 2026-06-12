@@ -33,8 +33,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Centro de Exportacion</h1>
-            <p class="intel-subtitle">Descarga y exporta datos de tus granjas en formato CSV o PDF</p>
+            <h1 class="intel-title" data-i18n="export.title">Centro de Exportacion</h1>
+            <p class="intel-subtitle" data-i18n="export.subtitle">Descarga y exporta datos de tus granjas en formato CSV o PDF</p>
         </div>
     </div>
 
@@ -42,21 +42,21 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="exportar-stat-farms">--</div>
-            <div class="intel-stat-label">Granjas</div>
+            <div class="intel-stat-label" data-i18n="stat.farms">Granjas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exportar-stat-hectares">--</div>
-            <div class="intel-stat-label">Hectareas</div>
+            <div class="intel-stat-label" data-i18n="stat.hectares">Hectareas</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="exportar-stat-fields">--</div>
-            <div class="intel-stat-label">Parcelas</div>
+            <div class="intel-stat-label" data-i18n="stat.fields">Parcelas</div>
         </div>
     </div>
 
     <!-- Export Configuration -->
     <div class="intel-card" style="padding: 2rem; margin-bottom: 1.5rem;">
-        <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1.5rem;">Configurar Exportacion</h2>
+        <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1.5rem;" data-i18n="export.configTitle">Configurar Exportacion</h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.5rem; align-items: end;">
             <!-- Farm selector -->
@@ -91,7 +91,7 @@
             <!-- Download button -->
             <div>
                 <button id="exportar-download-btn" onclick="downloadExport()" class="intel-btn" style="width: 100%; padding: 0.75rem 1.5rem; background: var(--accent-green, #00c896); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                    Descargar
+                    <span data-i18n="btn.download">Descargar</span>
                 </button>
             </div>
         </div>
@@ -111,7 +111,7 @@
     </div>
 
     <!-- Export Categories Cards -->
-    <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1rem;">Categorias Disponibles</h2>
+    <h2 style="color: var(--text-primary, #e0e0e0); margin-bottom: 1rem;" data-i18n="export.categoriesTitle">Categorias Disponibles</h2>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
         <!-- Health -->
         <div class="intel-card" style="padding: 1.5rem;">

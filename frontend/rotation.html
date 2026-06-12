@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Plan de Rotacion de Cultivos</h1>
-            <p class="intel-subtitle">Calendario de rotacion por temporada con beneficios regenerativos al suelo</p>
+            <h1 class="intel-title" data-i18n="rotation.title">Plan de Rotacion de Cultivos</h1>
+            <p class="intel-subtitle" data-i18n="rotation.subtitle">Calendario de rotacion por temporada con beneficios regenerativos al suelo</p>
         </div>
         <div class="intel-header-actions">
             <select id="rotation-farm-select" class="intel-select" onchange="loadFieldsForRotation()">
@@ -47,7 +47,7 @@
             <select id="rotation-field-select" class="intel-select" onchange="loadRotationPlan()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadRotationPlan()">Generar Plan</button>
+            <button class="intel-btn" onclick="loadRotationPlan()" data-i18n="btn.generatePlan">Generar Plan</button>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="rotation-last-crop">--</div>
-            <div class="intel-stat-label">Ultimo Cultivo</div>
+            <div class="intel-stat-label" data-i18n="rotation.lastCrop">Ultimo Cultivo</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="rotation-region">--</div>
@@ -63,7 +63,7 @@
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="rotation-seasons">--</div>
-            <div class="intel-stat-label">Temporadas</div>
+            <div class="intel-stat-label" data-i18n="rotation.seasons">Temporadas</div>
         </div>
     </div>
 
@@ -80,7 +80,7 @@
     <!-- Multi-year plan section -->
     <div id="multiyear-section" style="display:none;margin-top:2rem;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <h2 style="color:#eee;font-size:1.2rem;margin:0;">Plan a 3 Anos</h2>
+            <h2 style="color:#eee;font-size:1.2rem;margin:0;" data-i18n="rotation.multiYearPlan">Plan a 3 Anos</h2>
             <div id="milpa-badge" style="display:none;background:#22c55e22;color:#22c55e;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;">
                 Sistema Milpa Recomendado
             </div>
