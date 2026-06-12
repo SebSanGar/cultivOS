@@ -82,8 +82,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Calendario Fenologico</h1>
-            <p class="intel-subtitle">Etapas de crecimiento por cultivo — linea de tiempo visual con dias de cada fase</p>
+            <h1 class="intel-title" data-i18n="calendario.title">Calendario Fenologico</h1>
+            <p class="intel-subtitle" data-i18n="calendario.subtitle">Etapas de crecimiento por cultivo — linea de tiempo visual con dias de cada fase</p>
         </div>
         <div class="intel-header-actions">
             <select id="cal-farm-select" class="intel-select" onchange="loadFieldsForCalendario()">
@@ -99,15 +99,15 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="cal-crop-count">--</div>
-            <div class="intel-stat-label">Cultivos</div>
+            <div class="intel-stat-label" data-i18n="calendario.statCrops">Cultivos</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cal-total-days">--</div>
-            <div class="intel-stat-label">Dias Max Ciclo</div>
+            <div class="intel-stat-label" data-i18n="calendario.statDays">Dias Max Ciclo</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="cal-field-stage">--</div>
-            <div class="intel-stat-label">Etapa Actual (campo)</div>
+            <div class="intel-stat-label" data-i18n="calendario.statStage">Etapa Actual (campo)</div>
         </div>
     </div>
 
@@ -118,7 +118,7 @@
 
     <!-- Field growth stage detail (shown when field selected) -->
     <div id="cal-field-detail" class="intel-card" style="display:none; margin-bottom:1.5rem;">
-        <h3>Estado del Campo Seleccionado</h3>
+        <h3 data-i18n="calendario.fieldStatus">Estado del Campo Seleccionado</h3>
         <div id="cal-field-info"></div>
     </div>
 

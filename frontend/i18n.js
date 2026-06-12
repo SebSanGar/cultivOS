@@ -812,7 +812,41 @@
             // CR5c — intervenciones
             'interventions.title': 'Ranking de Intervenciones',
             'interventions.empty': 'Seleccione granja y campo para ver el ranking de intervenciones recomendadas',
-            'btn.viewRanking': 'Ver Ranking'
+            'btn.viewRanking': 'Ver Ranking',
+            // CR5d — shared labels
+            'lbl.farm': 'Finca',
+            'lbl.field': 'Campo',
+            'lbl.cooperative': 'Cooperativa',
+            // CR5d — alertas-clima
+            'alertasClima.title': 'Alertas Clima — Historial',
+            'alertasClima.window': 'Ventana (días)',
+            'alertasClima.byType': 'Alertas por tipo',
+            // CR5d — alineacion-tek
+            'tekAlign.title': 'Alineación TEK — Sensores vs Conocimiento Ancestral',
+            'tekAlign.month': 'Mes',
+            'tekAlign.scoreLabel': 'Alineación %',
+            // CR5d — completitud
+            'completitud.title': 'Completitud de Datos',
+            'completitud.subtitle': 'Cobertura de datos por fuente — el sistema sabe lo que tiene y lo que necesita para mejores recomendaciones',
+            // CR5d — completitud-global
+            'completitudGlobal.title': 'Completitud Global de Datos',
+            'completitudGlobal.subtitle': 'Cobertura de datos en todas las granjas — identifique que fuentes faltan para mejorar las recomendaciones de Cerebro',
+            // CR5d — confianza-tratamientos
+            'confianza.title': 'Confianza en Tratamientos',
+            'confianza.subtitle': 'Ranking de tratamientos por confianza de los agricultores — basado en retroalimentacion real de campo',
+            // CR5d — correlacion-ndvi
+            'correlacionNdvi.title': 'Correlacion NDVI-Salud',
+            // CR5d — calendario
+            'calendario.title': 'Calendario Fenologico',
+            'calendario.subtitle': 'Etapas de crecimiento por cultivo — linea de tiempo visual con dias de cada fase',
+            'calendario.statCrops': 'Cultivos',
+            'calendario.statDays': 'Dias Max Ciclo',
+            'calendario.statStage': 'Etapa Actual (campo)',
+            'calendario.fieldStatus': 'Estado del Campo Seleccionado',
+            // CR5d — coop-evidencia
+            'coopEvidencia.title': 'Evidencia FODECIJAL — Cooperativa',
+            'coopEvidencia.strength': 'Fortaleza principal',
+            'coopEvidencia.weakness': 'Debilidad principal'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -1640,7 +1674,41 @@
             // CR5c — intervenciones
             'interventions.title': 'Intervention Ranking',
             'interventions.empty': 'Select a farm and field to view the recommended intervention ranking',
-            'btn.viewRanking': 'View Ranking'
+            'btn.viewRanking': 'View Ranking',
+            // CR5d — shared labels
+            'lbl.farm': 'Farm',
+            'lbl.field': 'Field',
+            'lbl.cooperative': 'Cooperative',
+            // CR5d — alertas-clima
+            'alertasClima.title': 'Climate Alerts — History',
+            'alertasClima.window': 'Window (days)',
+            'alertasClima.byType': 'Alerts by type',
+            // CR5d — alineacion-tek
+            'tekAlign.title': 'TEK Alignment — Sensors vs Ancestral Knowledge',
+            'tekAlign.month': 'Month',
+            'tekAlign.scoreLabel': 'Alignment %',
+            // CR5d — completitud
+            'completitud.title': 'Data Completeness',
+            'completitud.subtitle': 'Data coverage by source — the system knows what it has and what it needs for better recommendations',
+            // CR5d — completitud-global
+            'completitudGlobal.title': 'Global Data Completeness',
+            'completitudGlobal.subtitle': 'Data coverage across all farms — identify which sources are missing to improve Cerebro recommendations',
+            // CR5d — confianza-tratamientos
+            'confianza.title': 'Treatment Trust',
+            'confianza.subtitle': 'Treatment ranking by farmer confidence — based on real field feedback',
+            // CR5d — correlacion-ndvi
+            'correlacionNdvi.title': 'NDVI-Health Correlation',
+            // CR5d — calendario
+            'calendario.title': 'Phenological Calendar',
+            'calendario.subtitle': 'Growth stages by crop — visual timeline with days per phase',
+            'calendario.statCrops': 'Crops',
+            'calendario.statDays': 'Max Cycle Days',
+            'calendario.statStage': 'Current Stage (field)',
+            'calendario.fieldStatus': 'Selected Field Status',
+            // CR5d — coop-evidencia
+            'coopEvidencia.title': 'FODECIJAL Evidence — Cooperative',
+            'coopEvidencia.strength': 'Main strength',
+            'coopEvidencia.weakness': 'Main weakness'
         }
     };
 

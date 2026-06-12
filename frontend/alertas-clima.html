@@ -44,16 +44,16 @@
     </style>
 </head>
 <body>
-    <h1>Alertas Clima — Historial</h1>
+    <h1 data-i18n="alertasClima.title">Alertas Clima — Historial</h1>
 
     <div class="selectors">
-        <label>Finca
+        <label data-i18n="lbl.farm">Finca
             <select id="ac-farm-select"><option value="" data-i18n="nav.selectFarm">Select a farm...</option></select>
         </label>
-        <label>Campo
+        <label data-i18n="lbl.field">Campo
             <select id="ac-field-select"><option value="" data-i18n="nav.selectField">Select a field...</option></select>
         </label>
-        <label>Ventana (días)
+        <label data-i18n="alertasClima.window">Ventana (días)
             <select id="ac-days-select">
                 <option value="30">30</option>
                 <option value="60">60</option>
@@ -84,7 +84,7 @@
     </div>
 
     <div class="chart-card">
-        <h2>Alertas por tipo</h2>
+        <h2 data-i18n="alertasClima.byType">Alertas por tipo</h2>
         <div class="chart-wrap">
             <canvas id="ac-chart"></canvas>
         </div>
