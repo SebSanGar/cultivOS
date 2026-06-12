@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-    <h1>Escalaciones de Alertas</h1>
+    <h1 data-i18n="escalacionesAlertas.title">Escalaciones de Alertas</h1>
 
     <div class="selector-row">
         <div>
@@ -53,11 +53,11 @@
 
     <div class="kpi-strip" id="escalation-kpi-strip" style="display:none;">
         <div class="kpi-card">
-            <div class="kpi-label">Total Escalaciones</div>
+            <div class="kpi-label" data-i18n="escalacionesAlertas.kpiTotal">Total Escalaciones</div>
             <div class="kpi-value" id="escalation-total">0</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-label">Alertas Criticas</div>
+            <div class="kpi-label" data-i18n="escalacionesAlertas.kpiCritical">Alertas Criticas</div>
             <div class="kpi-value" id="escalation-critical-count" style="color:var(--red);">0</div>
         </div>
     </div>
@@ -66,11 +66,11 @@
         <table id="escalation-table">
             <thead>
                 <tr>
-                    <th>Campo</th>
-                    <th>Tipo de Alerta</th>
-                    <th>Severidad</th>
-                    <th>Dias Pendientes</th>
-                    <th>Accion Recomendada</th>
+                    <th data-i18n="lbl.field">Campo</th>
+                    <th data-i18n="escalacionesAlertas.thAlertType">Tipo de Alerta</th>
+                    <th data-i18n="escalacionesAlertas.thSeverity">Severidad</th>
+                    <th data-i18n="escalacionesAlertas.thDaysPending">Dias Pendientes</th>
+                    <th data-i18n="escalacionesAlertas.thAction">Accion Recomendada</th>
                 </tr>
             </thead>
             <tbody id="escalation-tbody"></tbody>

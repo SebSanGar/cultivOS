@@ -30,8 +30,8 @@
 <body>
     <div class="freshness-container">
         <header class="freshness-header">
-            <h1>Frescura de Sensores</h1>
-            <p>Estado de los datos por campo — identifique sensores desactualizados.</p>
+            <h1 data-i18n="frescuraSensores.title">Frescura de Sensores</h1>
+            <p data-i18n="frescuraSensores.subtitle">Estado de los datos por campo — identifique sensores desactualizados.</p>
         </header>
 
         <div class="freshness-selectors">
@@ -44,20 +44,20 @@
         <div id="freshness-content" style="display:none;">
             <div class="freshness-kpi">
                 <div class="freshness-kpi-card">
-                    <div class="freshness-kpi-label">Sensores desactualizados</div>
+                    <div class="freshness-kpi-label" data-i18n="frescuraSensores.kpiStale">Sensores desactualizados</div>
                     <div class="freshness-kpi-value" id="freshness-stale-count">--</div>
                 </div>
             </div>
             <table class="freshness-table" id="freshness-grid">
                 <thead>
                     <tr>
-                        <th>Campo</th>
-                        <th>Cultivo</th>
+                        <th data-i18n="lbl.field">Campo</th>
+                        <th data-i18n="lbl.crop">Cultivo</th>
                         <th>NDVI</th>
-                        <th>Suelo</th>
-                        <th>Salud</th>
-                        <th>Clima</th>
-                        <th>Desactualizados</th>
+                        <th data-i18n="frescuraSensores.thSoil">Suelo</th>
+                        <th data-i18n="frescuraSensores.thHealth">Salud</th>
+                        <th data-i18n="frescuraSensores.thWeather">Clima</th>
+                        <th data-i18n="frescuraSensores.thStale">Desactualizados</th>
                     </tr>
                 </thead>
                 <tbody id="freshness-grid-body"></tbody>

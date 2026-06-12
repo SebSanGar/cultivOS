@@ -33,8 +33,8 @@
 <body>
     <div class="dh-container">
         <header class="dh-header">
-            <h1>Historial de Enfermedades</h1>
-            <p>Recurrencia mensual de enfermedades por parcela en los últimos 12 meses, identificando patrones para guiar al agrónomo.</p>
+            <h1 data-i18n="historialEnfermedades.title">Historial de Enfermedades</h1>
+            <p data-i18n="historialEnfermedades.subtitle">Recurrencia mensual de enfermedades por parcela en los últimos 12 meses, identificando patrones para guiar al agrónomo.</p>
         </header>
 
         <div class="dh-selectors">
@@ -55,15 +55,15 @@
         <div id="dh-content" style="display:none;">
             <div class="dh-kpi-row">
                 <div class="dh-kpi">
-                    <div class="dh-kpi-label">Meses sin enfermedad</div>
+                    <div class="dh-kpi-label" data-i18n="historialEnfermedades.kpiMonths">Meses sin enfermedad</div>
                     <div class="dh-kpi-value" id="dh-free-counter">--</div>
                 </div>
                 <div class="dh-kpi">
-                    <div class="dh-kpi-label">Enfermedad más común</div>
+                    <div class="dh-kpi-label" data-i18n="historialEnfermedades.kpiTopDisease">Enfermedad más común</div>
                     <div class="dh-kpi-value" id="dh-top-disease" style="font-size:1.15rem;">--</div>
                 </div>
                 <div class="dh-kpi">
-                    <div class="dh-kpi-label">Recurrencia detectada</div>
+                    <div class="dh-kpi-label" data-i18n="historialEnfermedades.kpiRecurrence">Recurrencia detectada</div>
                     <div class="dh-kpi-value" id="dh-recurrence-flag" style="font-size:1.15rem;">--</div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
             </div>
 
             <div class="dh-list-card">
-                <h3>Enfermedades Recurrentes</h3>
+                <h3 data-i18n="historialEnfermedades.recurrentH3">Enfermedades Recurrentes</h3>
                 <ul class="dh-list" id="dh-recurring"></ul>
             </div>
         </div>
