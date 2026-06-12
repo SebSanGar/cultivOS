@@ -87,7 +87,7 @@ class TestChatContainer:
     def test_chat_header_shows_status(self, client):
         """Header shows online/bot status."""
         resp = client.get("/whatsapp-demo")
-        assert "en linea" in resp.text.lower() or "asistente" in resp.text.lower()
+        assert "online" in resp.text.lower() or "assistant" in resp.text.lower()
 
 
 # -- Message Bubble Tests --
@@ -201,7 +201,7 @@ class TestConversationFlow:
     def test_js_mentions_treatment(self, client):
         """Conversation flow includes organic treatment recommendation."""
         resp = client.get("/whatsapp-demo.js")
-        assert "tratamiento" in resp.text.lower() or "organico" in resp.text.lower()
+        assert "treatment" in resp.text.lower() or "organic" in resp.text.lower()
 
     def test_js_has_voice_message_type(self, client):
         """At least one message is typed as voice."""
@@ -212,17 +212,17 @@ class TestConversationFlow:
 # -- Spanish Language Tests --
 
 
-class TestSpanishContent:
-    """All farmer-facing text is in Spanish."""
+class TestEnglishContent:
+    """Farmer-facing text is English-first (founder steering 2026-06-10)."""
 
-    def test_page_title_spanish(self, client):
+    def test_page_title(self, client):
         resp = client.get("/whatsapp-demo")
         assert "Simulador" in resp.text or "Demo" in resp.text
 
-    def test_input_placeholder_spanish(self, client):
+    def test_input_placeholder_english(self, client):
         resp = client.get("/whatsapp-demo")
-        assert "Escribe" in resp.text or "mensaje" in resp.text.lower()
+        assert "Type a message" in resp.text or "message" in resp.text.lower()
 
-    def test_page_subtitle_spanish(self, client):
+    def test_page_subtitle_english(self, client):
         resp = client.get("/whatsapp-demo")
-        assert "agricultor" in resp.text.lower() or "granjero" in resp.text.lower() or "campesino" in resp.text.lower()
+        assert "farmer" in resp.text.lower() or "farm" in resp.text.lower()

@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest>=9.0
+pytest-playwright>=0.8
+playwright>=1.60
+beautifulsoup4>=4.15
+httpx>=0.27
