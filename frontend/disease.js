@@ -168,7 +168,10 @@
     window.identifyDisease = function (e) {
         e.preventDefault();
         var symptomsRaw = document.getElementById("disease-symptoms-input").value.trim();
-        if (!symptomsRaw) return;
+        if (!symptomsRaw) {
+            resultsEl.innerHTML = '<div style="color:#888;">' + _t('dis.emptySymptoms', 'Enter at least one symptom to search.') + '</div>';
+            return;
+        }
         var symptoms = symptomsRaw.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
         var crop = document.getElementById("disease-crop-input").value.trim() || null;
 

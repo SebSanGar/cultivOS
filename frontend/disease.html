@@ -44,7 +44,7 @@
             <select id="disease-farm-select" class="intel-select" onchange="loadFieldsForDisease()">
                 <option value="" data-i18n="nav.selectFarm">Select a farm...</option>
             </select>
-            <select id="disease-field-select" class="intel-select">
+            <select id="disease-field-select" class="intel-select" onchange="loadDiseaseRisk()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
             <button class="intel-btn" onclick="loadDiseaseRisk()" data-i18n="btn.assessRisk">Consultar Riesgo</button>
