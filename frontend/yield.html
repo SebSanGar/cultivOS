@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Prediccion de Rendimiento</h1>
-            <p class="intel-subtitle">Estimacion de cosecha por campo — kg/ha con banda de incertidumbre y factores contribuyentes</p>
+            <h1 class="intel-title" data-i18n="yieldPred.title">Prediccion de Rendimiento</h1>
+            <p class="intel-subtitle" data-i18n="yieldPred.subtitle">Estimacion de cosecha por campo — kg/ha con banda de incertidumbre y factores contribuyentes</p>
         </div>
         <div class="intel-header-actions">
             <select id="yield-farm-select" class="intel-select" onchange="loadFieldsForYield()">
@@ -47,7 +47,7 @@
             <select id="yield-field-select" class="intel-select" onchange="loadYieldPrediction()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadYieldPrediction()">Predecir</button>
+            <button class="intel-btn" onclick="loadYieldPrediction()" data-i18n="yieldPred.predictBtn">Predecir</button>
         </div>
     </div>
 
@@ -55,20 +55,20 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="yield-stat-estimate">--</div>
-            <div class="intel-stat-label">Estimacion (kg/ha)</div>
+            <div class="intel-stat-label" data-i18n="yieldPred.statEstimate">Estimacion (kg/ha)</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="yield-stat-range">--</div>
-            <div class="intel-stat-label">Rango (min — max)</div>
+            <div class="intel-stat-label" data-i18n="yieldPred.statRange">Rango (min — max)</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="yield-stat-total">--</div>
-            <div class="intel-stat-label">Total Estimado (kg)</div>
+            <div class="intel-stat-label" data-i18n="yieldPred.statTotal">Total Estimado (kg)</div>
         </div>
     </div>
 
     <!-- Empty state -->
-    <div id="yield-empty" class="intel-empty" style="display:none;">
+    <div id="yield-empty" class="intel-empty" style="display:none;" data-i18n="yieldPred.empty">
         Seleccione una granja y un campo para ver la prediccion de rendimiento.
     </div>
 

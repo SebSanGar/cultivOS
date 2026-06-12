@@ -32,8 +32,8 @@
 <body>
     <div class="roi-container">
         <header class="roi-header">
-            <h1>ROI de Tratamientos</h1>
-            <p>Costo por punto de salud recuperado — evidencia de efectividad económica por tipo de tratamiento (últimos 90 días).</p>
+            <h1 data-i18n="roiTrat.title">ROI de Tratamientos</h1>
+            <p data-i18n="roiTrat.subtitle">Costo por punto de salud recuperado — evidencia de efectividad económica por tipo de tratamiento (últimos 90 días).</p>
         </header>
 
         <div class="roi-selectors">
@@ -46,15 +46,15 @@
         <div id="roi-content" style="display:none;">
             <div class="roi-kpi-row">
                 <div class="roi-kpi">
-                    <div class="roi-kpi-label">Mejor ROI (tratamiento)</div>
+                    <div class="roi-kpi-label" data-i18n="roiTrat.bestRoi">Mejor ROI (tratamiento)</div>
                     <div class="roi-kpi-value" id="roi-best-treatment">--</div>
                 </div>
                 <div class="roi-kpi">
-                    <div class="roi-kpi-label">Peor ROI (tratamiento)</div>
+                    <div class="roi-kpi-label" data-i18n="roiTrat.worstRoi">Peor ROI (tratamiento)</div>
                     <div class="roi-kpi-value" id="roi-worst-treatment">--</div>
                 </div>
                 <div class="roi-kpi">
-                    <div class="roi-kpi-label">Recomendación</div>
+                    <div class="roi-kpi-label" data-i18n="roiTrat.recommendation">Recomendación</div>
                     <div><span class="roi-pill" id="roi-recommendation-pill">--</span></div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <div id="roi-empty" class="roi-empty">Seleccione una finca para ver el ROI por tratamiento.</div>
+        <div id="roi-empty" class="roi-empty" data-i18n="roiTrat.empty">Seleccione una finca para ver el ROI por tratamiento.</div>
     </div>
 
     <script src="/roi-tratamientos.js"></script>

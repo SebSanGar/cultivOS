@@ -1062,7 +1062,86 @@
             'prioRisk.title': 'Prioridad de Riesgo',
             'prioRisk.subtitle': 'Campos ordenados por puntuacion de riesgo — atienda primero el campo con mayor urgencia.',
 
-            'rankingMiembros.title': 'Ranking de Miembros'
+            'rankingMiembros.title': 'Ranking de Miembros',
+
+            // CR5i — regional
+            'regional.title': 'Inteligencia Regional',
+            'regional.subtitle': 'Agregados por estado — granjas, cultivos, tratamientos, alertas estacionales y metodos ancestrales',
+            'regional.statRegions': 'Regiones',
+            'regional.statFarms': 'Granjas',
+            'regional.statFields': 'Campos',
+            'regional.statHectares': 'Hectareas',
+
+            // CR5i — reporte-anual
+            'reporteAnual.title': 'Reporte Anual',
+            'reporteAnual.subtitle': 'Resumen anual de rendimiento por finca',
+            'reporteAnual.bestField': 'Mejor campo',
+            'reporteAnual.mostImproved': 'Mas mejorado',
+            'reporteAnual.co2e': 'CO2e secuestrado (t)',
+            'reporteAnual.treatments': 'Tratamientos aplicados',
+
+            // CR5i — reportes
+            'reportes.title': 'Reportes de Portafolio',
+            'reportes.subtitle': 'Genera reportes PDF con datos de salud, carbono e impacto economico de tus granjas',
+            'reportes.statFarms': 'Granjas',
+            'reportes.statHectares': 'Hectareas',
+            'reportes.statParcelas': 'Parcelas',
+            'reportes.configH2': 'Configurar Reporte',
+            'reportes.generateBtn': 'Generar Reporte PDF',
+
+            // CR5i — resiliencia
+            'resiliencia.title': 'Resiliencia del Campo',
+            'resiliencia.farmLabel': 'Finca',
+            'resiliencia.fieldLabel': 'Campo',
+            'resiliencia.compHealth': 'Salud',
+            'resiliencia.compSoilPh': 'pH del suelo',
+            'resiliencia.compWaterStress': 'Estres hidrico inv.',
+            'resiliencia.compDiseaseRisk': 'Riesgo enfermedad inv.',
+
+            // CR5i — roi-tratamientos
+            'roiTrat.title': 'ROI de Tratamientos',
+            'roiTrat.subtitle': 'Costo por punto de salud recuperado — evidencia de efectividad economica por tipo de tratamiento (ultimos 90 dias).',
+            'roiTrat.bestRoi': 'Mejor ROI (tratamiento)',
+            'roiTrat.worstRoi': 'Peor ROI (tratamiento)',
+            'roiTrat.recommendation': 'Recomendacion',
+            'roiTrat.empty': 'Seleccione una finca para ver el ROI por tratamiento.',
+
+            // CR5i — soil-history
+            'soilHist.title': 'Historial de Suelo',
+            'soilHist.subtitle': 'Tendencias de pH, materia organica y nutrientes NPK por campo',
+            'soilHist.updateBtn': 'Actualizar',
+            'soilHist.statSamples': 'Muestras',
+            'soilHist.statPh': 'Ultimo pH',
+            'soilHist.statOm': 'Materia Organica %',
+            'soilHist.statN': 'Nitrogeno (ppm)',
+            'soilHist.chartPh': 'pH del Suelo',
+            'soilHist.chartOm': 'Materia Organica (%)',
+            'soilHist.chartNpk': 'Nutrientes NPK (ppm)',
+            'soilHist.tableTitle': 'Registros de Analisis',
+
+            // CR5i — soil-import
+            'soilImport.title': 'Importar Datos de Suelo',
+            'soilImport.subtitle': 'Carga masiva de resultados de laboratorio desde archivos CSV',
+            'soilImport.step1': '1. Seleccionar Granja y Parcela',
+            'soilImport.step2': '2. Archivo CSV',
+            'soilImport.step3': '3. Vista Previa',
+            'soilImport.farmLabel': 'Granja',
+            'soilImport.fieldLabel': 'Parcela',
+            'soilImport.fileBtn': 'Seleccionar archivo .csv',
+            'soilImport.importBtn': 'Importar Datos',
+            'soilImport.resultsTitle': 'Resultado de Importacion',
+            'soilImport.imported': 'Registros importados',
+            'soilImport.skipped': 'Duplicados omitidos',
+            'soilImport.errors': 'Filas con errores',
+
+            // CR5i — yield
+            'yieldPred.title': 'Prediccion de Rendimiento',
+            'yieldPred.subtitle': 'Estimacion de cosecha por campo — kg/ha con banda de incertidumbre y factores contribuyentes',
+            'yieldPred.predictBtn': 'Predecir',
+            'yieldPred.statEstimate': 'Estimacion (kg/ha)',
+            'yieldPred.statRange': 'Rango (min — max)',
+            'yieldPred.statTotal': 'Total Estimado (kg)',
+            'yieldPred.empty': 'Seleccione una granja y un campo para ver la prediccion de rendimiento.'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -2140,7 +2219,86 @@
             'prioRisk.title': 'Risk Priority',
             'prioRisk.subtitle': 'Fields ranked by risk score — address the highest-urgency field first.',
 
-            'rankingMiembros.title': 'Member Ranking'
+            'rankingMiembros.title': 'Member Ranking',
+
+            // CR5i — regional
+            'regional.title': 'Regional Intelligence',
+            'regional.subtitle': 'State aggregates — farms, crops, treatments, seasonal alerts and ancestral methods',
+            'regional.statRegions': 'Regions',
+            'regional.statFarms': 'Farms',
+            'regional.statFields': 'Fields',
+            'regional.statHectares': 'Hectares',
+
+            // CR5i — reporte-anual
+            'reporteAnual.title': 'Annual Report',
+            'reporteAnual.subtitle': 'Annual performance summary by farm',
+            'reporteAnual.bestField': 'Best field',
+            'reporteAnual.mostImproved': 'Most improved',
+            'reporteAnual.co2e': 'CO2e sequestered (t)',
+            'reporteAnual.treatments': 'Treatments applied',
+
+            // CR5i — reportes
+            'reportes.title': 'Portfolio Reports',
+            'reportes.subtitle': 'Generate PDF reports with health, carbon and economic impact data for your farms',
+            'reportes.statFarms': 'Farms',
+            'reportes.statHectares': 'Hectares',
+            'reportes.statParcelas': 'Fields',
+            'reportes.configH2': 'Configure Report',
+            'reportes.generateBtn': 'Generate PDF Report',
+
+            // CR5i — resiliencia
+            'resiliencia.title': 'Field Resilience',
+            'resiliencia.farmLabel': 'Farm',
+            'resiliencia.fieldLabel': 'Field',
+            'resiliencia.compHealth': 'Health',
+            'resiliencia.compSoilPh': 'Soil pH',
+            'resiliencia.compWaterStress': 'Inv. water stress',
+            'resiliencia.compDiseaseRisk': 'Inv. disease risk',
+
+            // CR5i — roi-tratamientos
+            'roiTrat.title': 'Treatment ROI',
+            'roiTrat.subtitle': 'Cost per recovered health point — economic effectiveness evidence by treatment type (last 90 days).',
+            'roiTrat.bestRoi': 'Best ROI (treatment)',
+            'roiTrat.worstRoi': 'Worst ROI (treatment)',
+            'roiTrat.recommendation': 'Recommendation',
+            'roiTrat.empty': 'Select a farm to view ROI by treatment.',
+
+            // CR5i — soil-history
+            'soilHist.title': 'Soil History',
+            'soilHist.subtitle': 'pH, organic matter and NPK nutrient trends by field',
+            'soilHist.updateBtn': 'Update',
+            'soilHist.statSamples': 'Samples',
+            'soilHist.statPh': 'Latest pH',
+            'soilHist.statOm': 'Organic Matter %',
+            'soilHist.statN': 'Nitrogen (ppm)',
+            'soilHist.chartPh': 'Soil pH',
+            'soilHist.chartOm': 'Organic Matter (%)',
+            'soilHist.chartNpk': 'NPK Nutrients (ppm)',
+            'soilHist.tableTitle': 'Analysis Records',
+
+            // CR5i — soil-import
+            'soilImport.title': 'Import Soil Data',
+            'soilImport.subtitle': 'Bulk upload of laboratory results from CSV files',
+            'soilImport.step1': '1. Select Farm and Field',
+            'soilImport.step2': '2. CSV File',
+            'soilImport.step3': '3. Preview',
+            'soilImport.farmLabel': 'Farm',
+            'soilImport.fieldLabel': 'Field',
+            'soilImport.fileBtn': 'Select .csv file',
+            'soilImport.importBtn': 'Import Data',
+            'soilImport.resultsTitle': 'Import Result',
+            'soilImport.imported': 'Records imported',
+            'soilImport.skipped': 'Duplicates skipped',
+            'soilImport.errors': 'Rows with errors',
+
+            // CR5i — yield
+            'yieldPred.title': 'Yield Prediction',
+            'yieldPred.subtitle': 'Crop estimate by field — kg/ha with uncertainty band and contributing factors',
+            'yieldPred.predictBtn': 'Predict',
+            'yieldPred.statEstimate': 'Estimate (kg/ha)',
+            'yieldPred.statRange': 'Range (min — max)',
+            'yieldPred.statTotal': 'Total Estimate (kg)',
+            'yieldPred.empty': 'Select a farm and field to view yield prediction.'
         }
     };
 

@@ -46,15 +46,15 @@
     </style>
 </head>
 <body>
-    <h1>Resiliencia del Campo</h1>
+    <h1 data-i18n="resiliencia.title">Resiliencia del Campo</h1>
 
     <div class="selectors">
         <div>
-            <label>Finca</label>
+            <label data-i18n="resiliencia.farmLabel">Finca</label>
             <select id="res-farm-select"><option value="">Seleccione una finca</option></select>
         </div>
         <div>
-            <label>Campo</label>
+            <label data-i18n="resiliencia.fieldLabel">Campo</label>
             <select id="res-field-select" disabled><option value="">Seleccione un campo</option></select>
         </div>
     </div>
@@ -72,25 +72,25 @@
 
         <div class="components">
             <div class="comp-row">
-                <span class="comp-label">Salud</span>
+                <span class="comp-label" data-i18n="resiliencia.compHealth">Salud</span>
                 <span class="comp-weight">40%</span>
                 <div class="comp-track"><div class="comp-fill" id="res-bar-health" style="width:0%;background:var(--green);"></div></div>
                 <span class="comp-val" id="res-val-health">--</span>
             </div>
             <div class="comp-row">
-                <span class="comp-label">pH del suelo</span>
+                <span class="comp-label" data-i18n="resiliencia.compSoilPh">pH del suelo</span>
                 <span class="comp-weight">20%</span>
                 <div class="comp-track"><div class="comp-fill" id="res-bar-soil-ph" style="width:0%;background:var(--blue);"></div></div>
                 <span class="comp-val" id="res-val-soil-ph">--</span>
             </div>
             <div class="comp-row">
-                <span class="comp-label">Estres hidrico inv.</span>
+                <span class="comp-label" data-i18n="resiliencia.compWaterStress">Estres hidrico inv.</span>
                 <span class="comp-weight">20%</span>
                 <div class="comp-track"><div class="comp-fill" id="res-bar-water-stress" style="width:0%;background:var(--amber);"></div></div>
                 <span class="comp-val" id="res-val-water-stress">--</span>
             </div>
             <div class="comp-row">
-                <span class="comp-label">Riesgo enfermedad inv.</span>
+                <span class="comp-label" data-i18n="resiliencia.compDiseaseRisk">Riesgo enfermedad inv.</span>
                 <span class="comp-weight">20%</span>
                 <div class="comp-track"><div class="comp-fill" id="res-bar-disease-risk" style="width:0%;background:var(--red);"></div></div>
                 <span class="comp-val" id="res-val-disease-risk">--</span>

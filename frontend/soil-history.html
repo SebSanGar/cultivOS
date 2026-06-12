@@ -38,8 +38,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Historial de Suelo</h1>
-            <p class="intel-subtitle">Tendencias de pH, materia organica y nutrientes NPK por campo</p>
+            <h1 class="intel-title" data-i18n="soilHist.title">Historial de Suelo</h1>
+            <p class="intel-subtitle" data-i18n="soilHist.subtitle">Tendencias de pH, materia organica y nutrientes NPK por campo</p>
         </div>
         <div class="intel-header-actions">
             <select id="soil-farm-select" class="intel-select" onchange="loadFieldsForSoil()">
@@ -48,7 +48,7 @@
             <select id="soil-field-select" class="intel-select" onchange="loadSoilData()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadSoilData()">Actualizar</button>
+            <button class="intel-btn" onclick="loadSoilData()" data-i18n="soilHist.updateBtn">Actualizar</button>
         </div>
     </div>
 
@@ -56,19 +56,19 @@
     <div class="intel-stats-strip">
         <div class="intel-stat">
             <div class="intel-stat-value" id="soil-sample-count">--</div>
-            <div class="intel-stat-label">Muestras</div>
+            <div class="intel-stat-label" data-i18n="soilHist.statSamples">Muestras</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="soil-latest-ph">--</div>
-            <div class="intel-stat-label">Ultimo pH</div>
+            <div class="intel-stat-label" data-i18n="soilHist.statPh">Ultimo pH</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="soil-latest-om">--</div>
-            <div class="intel-stat-label">Materia Organica %</div>
+            <div class="intel-stat-label" data-i18n="soilHist.statOm">Materia Organica %</div>
         </div>
         <div class="intel-stat">
             <div class="intel-stat-value" id="soil-latest-n">--</div>
-            <div class="intel-stat-label">Nitrogeno (ppm)</div>
+            <div class="intel-stat-label" data-i18n="soilHist.statN">Nitrogeno (ppm)</div>
         </div>
     </div>
 
@@ -81,17 +81,17 @@
     <div class="soil-charts" id="soil-charts-section" style="display:none;">
         <div class="soil-chart-row">
             <div class="soil-chart-card">
-                <h3 class="soil-chart-title">pH del Suelo</h3>
+                <h3 class="soil-chart-title" data-i18n="soilHist.chartPh">pH del Suelo</h3>
                 <canvas id="soil-ph-chart"></canvas>
             </div>
             <div class="soil-chart-card">
-                <h3 class="soil-chart-title">Materia Organica (%)</h3>
+                <h3 class="soil-chart-title" data-i18n="soilHist.chartOm">Materia Organica (%)</h3>
                 <canvas id="soil-om-chart"></canvas>
             </div>
         </div>
         <div class="soil-chart-row">
             <div class="soil-chart-card soil-chart-wide">
-                <h3 class="soil-chart-title">Nutrientes NPK (ppm)</h3>
+                <h3 class="soil-chart-title" data-i18n="soilHist.chartNpk">Nutrientes NPK (ppm)</h3>
                 <canvas id="soil-npk-chart"></canvas>
             </div>
         </div>
@@ -99,7 +99,7 @@
 
     <!-- Data table -->
     <div id="soil-table" class="soil-table-container" style="display:none;">
-        <h3 class="soil-section-title">Registros de Analisis</h3>
+        <h3 class="soil-section-title" data-i18n="soilHist.tableTitle">Registros de Analisis</h3>
         <table class="soil-table">
             <thead>
                 <tr>

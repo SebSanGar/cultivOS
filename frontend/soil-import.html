@@ -38,23 +38,23 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Importar Datos de Suelo</h1>
-            <p class="intel-subtitle">Carga masiva de resultados de laboratorio desde archivos CSV</p>
+            <h1 class="intel-title" data-i18n="soilImport.title">Importar Datos de Suelo</h1>
+            <p class="intel-subtitle" data-i18n="soilImport.subtitle">Carga masiva de resultados de laboratorio desde archivos CSV</p>
         </div>
     </div>
 
     <!-- Step 1: Select Farm + Field -->
     <section class="mgmt-section">
-        <h2 class="mgmt-section-title">1. Seleccionar Granja y Parcela</h2>
+        <h2 class="mgmt-section-title" data-i18n="soilImport.step1">1. Seleccionar Granja y Parcela</h2>
         <div class="si-selector-row">
             <div class="mgmt-form-group">
-                <label class="mgmt-label" for="si-farm-select">Granja</label>
+                <label class="mgmt-label" for="si-farm-select" data-i18n="soilImport.farmLabel">Granja</label>
                 <select id="si-farm-select" class="mgmt-input">
                     <option value="">-- Seleccionar granja --</option>
                 </select>
             </div>
             <div class="mgmt-form-group">
-                <label class="mgmt-label" for="si-field-select">Parcela</label>
+                <label class="mgmt-label" for="si-field-select" data-i18n="soilImport.fieldLabel">Parcela</label>
                 <select id="si-field-select" class="mgmt-input" disabled>
                     <option value="" data-i18n="nav.selectField">Select a field...</option>
                 </select>
@@ -64,20 +64,20 @@
 
     <!-- Step 2: File Upload -->
     <section class="mgmt-section">
-        <h2 class="mgmt-section-title">2. Archivo CSV</h2>
+        <h2 class="mgmt-section-title" data-i18n="soilImport.step2">2. Archivo CSV</h2>
         <div class="si-upload-area">
             <p class="si-help-text">
                 El archivo debe contener la columna <strong>sampled_at</strong> (fecha de muestreo).
                 Columnas opcionales: ph, organic_matter_pct, nitrogen_ppm, phosphorus_ppm, potassium_ppm, texture, moisture_pct, electrical_conductivity, depth_cm, notes, recommendations.
             </p>
             <input type="file" id="si-file-input" accept=".csv" class="si-file-input">
-            <label for="si-file-input" class="si-file-label">Seleccionar archivo .csv</label>
+            <label for="si-file-input" class="si-file-label" data-i18n="soilImport.fileBtn">Seleccionar archivo .csv</label>
         </div>
     </section>
 
     <!-- Step 3: Preview -->
     <section class="mgmt-section" id="si-preview-section" style="display:none;">
-        <h2 class="mgmt-section-title">3. Vista Previa</h2>
+        <h2 class="mgmt-section-title" data-i18n="soilImport.step3">3. Vista Previa</h2>
         <div class="si-preview-wrapper">
             <table class="mgmt-table" id="si-preview-table">
                 <thead id="si-preview-thead"></thead>
@@ -89,7 +89,7 @@
 
     <!-- Import Button -->
     <section class="mgmt-section" id="si-action-section" style="display:none;">
-        <button id="si-import-btn" class="mgmt-btn mgmt-btn-create" disabled>
+        <button id="si-import-btn" class="mgmt-btn mgmt-btn-create" disabled data-i18n="soilImport.importBtn">
             Importar Datos
         </button>
         <span id="si-import-status" class="si-status-text"></span>
@@ -97,19 +97,19 @@
 
     <!-- Results -->
     <section class="mgmt-section" id="si-results" style="display:none;">
-        <h2 class="mgmt-section-title">Resultado de Importacion</h2>
+        <h2 class="mgmt-section-title" data-i18n="soilImport.resultsTitle">Resultado de Importacion</h2>
         <div class="si-results-grid">
             <div class="si-result-card si-result-imported">
                 <span class="si-result-value" id="si-count-imported">0</span>
-                <span class="si-result-label">Registros importados</span>
+                <span class="si-result-label" data-i18n="soilImport.imported">Registros importados</span>
             </div>
             <div class="si-result-card si-result-skipped">
                 <span class="si-result-value" id="si-count-skipped">0</span>
-                <span class="si-result-label">Duplicados omitidos</span>
+                <span class="si-result-label" data-i18n="soilImport.skipped">Duplicados omitidos</span>
             </div>
             <div class="si-result-card si-result-errors">
                 <span class="si-result-value" id="si-count-errors">0</span>
-                <span class="si-result-label">Filas con errores</span>
+                <span class="si-result-label" data-i18n="soilImport.errors">Filas con errores</span>
             </div>
         </div>
     </section>
