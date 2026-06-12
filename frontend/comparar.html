@@ -17,16 +17,16 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Farms</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab">Intelligence</a></li>
-            <li><a href="/clima" class="nav-tab intel-tab">Weather</a></li>
-            <li><a href="/comparar" class="nav-tab intel-tab active">Compare</a></li>
-            <li><a href="/resumen" class="nav-tab intel-tab">Summary</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Status</a></li>
+            <li><a href="/" class="nav-tab intel-tab" data-i18n="nav.granjas">Farms</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intelligence">Intelligence</a></li>
+            <li><a href="/clima" class="nav-tab intel-tab" data-i18n="nav.weather">Weather</a></li>
+            <li><a href="/comparar" class="nav-tab intel-tab active" data-i18n="nav.compare">Compare</a></li>
+            <li><a href="/resumen" class="nav-tab intel-tab" data-i18n="nav.resumen">Summary</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Status</a></li>
         </ul>
         <div id="nav-user-info" class="nav-user-info">
             <span id="nav-username" class="nav-username"></span>
-            <a href="#" id="nav-logout" class="nav-logout">Log out</a>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
         </div>
     </div>
 </nav>
@@ -133,5 +133,6 @@
     <a href="/walkthrough">Walkthrough</a>
     <br>Transforming agriculture with AI and drone data
 </footer>
+<script src="/i18n.js"></script>
 </body>
 </html>

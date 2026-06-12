@@ -15,14 +15,18 @@
     <div class="nav-inner">
         <a href="/" class="nav-logo intel-logo">cultiv<span>OS</span></a>
         <ul class="nav-tabs">
-            <li><a href="/" class="nav-tab intel-tab">Granjas</a></li>
-            <li><a href="/intel" class="nav-tab intel-tab">Inteligencia</a></li>
-            <li><a href="/acciones" class="nav-tab intel-tab">Acciones</a></li>
-            <li><a href="/intervenciones" class="nav-tab intel-tab active">Intervenciones</a></li>
-            <li><a href="/efectividad" class="nav-tab intel-tab">Efectividad</a></li>
-            <li><a href="/completitud" class="nav-tab intel-tab">Completitud</a></li>
-            <li><a href="/estado" class="nav-tab intel-tab">Estado</a></li>
+            <li><a href="/" class="nav-tab intel-tab" data-i18n="nav.granjas">Farms</a></li>
+            <li><a href="/intel" class="nav-tab intel-tab" data-i18n="nav.intelligence">Intelligence</a></li>
+            <li><a href="/acciones" class="nav-tab intel-tab" data-i18n="nav.actions">Actions</a></li>
+            <li><a href="/intervenciones" class="nav-tab intel-tab active" data-i18n="nav.interventions">Interventions</a></li>
+            <li><a href="/efectividad" class="nav-tab intel-tab" data-i18n="nav.effectiveness">Effectiveness</a></li>
+            <li><a href="/completitud" class="nav-tab intel-tab" data-i18n="nav.completeness">Completeness</a></li>
+            <li><a href="/estado" class="nav-tab intel-tab" data-i18n="nav.status">Status</a></li>
         </ul>
+        <div id="nav-user-info" class="nav-user-info">
+            <span id="nav-username" class="nav-username"></span>
+            <a href="#" id="nav-logout" class="nav-logout" data-i18n="user.logout">Log out</a>
+        </div>
     </div>
 </nav>
 
@@ -34,10 +38,10 @@
         </div>
         <div class="intel-header-actions">
             <select id="interv-farm-select" class="intel-select" onchange="loadFieldsForInterventions()">
-                <option value="">Seleccione una granja...</option>
+                <option value="" data-i18n="nav.selectFarm">Select a farm...</option>
             </select>
             <select id="interv-field-select" class="intel-select">
-                <option value="">Seleccione un campo...</option>
+                <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
             <button class="intel-btn" onclick="loadInterventions()">Ver Ranking</button>
         </div>
@@ -58,10 +62,11 @@
 <footer class="cultivos-footer">
     <span class="cultivos-footer-logo">cultiv<span>OS</span></span>
     <span class="cultivos-footer-sep"></span>
-    Agricultura de precision para Jalisco
+    <span data-i18n="footer.tagline">Precision agriculture for Jalisco</span>
     <span class="cultivos-footer-sep"></span>
-    <a href="/recorrido">Recorrido</a>
-    <br>Transformando la agricultura con inteligencia artificial y datos de drones
+    <a href="/recorrido" data-i18n="footer.tour">Tour</a>
+    <br><span data-i18n="footer.mission">Transforming agriculture with artificial intelligence and drone data</span>
 </footer>
+<script src="/i18n.js"></script>
 </body>
 </html>

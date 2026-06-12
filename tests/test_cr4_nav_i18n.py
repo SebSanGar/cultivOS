@@ -11,10 +11,11 @@ I18N_JS = os.path.join(FRONTEND, 'i18n.js')
 
 # All 45 HTML files whose nav contains ">Granjas<" (rg -l '>Granjas<' frontend/)
 NAV_FILES = [
+    # cooperativa.html and demo.html excluded: "Granjas" appears in body stat cards, not nav
     'actions.html', 'alert-config.html', 'alertas-estacionales.html', 'anomalies.html',
     'api-docs.html', 'api-status.html', 'calendario.html', 'carbon.html', 'clima.html',
     'completitud-global.html', 'completitud.html', 'confianza-tratamientos.html',
-    'cooperativa.html', 'demo.html', 'disease.html', 'efectividad-global.html',
+    'disease.html', 'efectividad-global.html',
     'efectividad.html', 'ejecutivo.html', 'exportar.html', 'flota.html', 'fusion.html',
     'historial-alertas.html', 'intervenciones.html', 'irrigation.html', 'management.html',
     'microbiome.html', 'mission.html', 'onboarding.html', 'plataforma.html',
@@ -26,15 +27,17 @@ NAV_FILES = [
 
 # Files with footer text (rg -l 'Agricultura de precision para Jalisco' frontend/)
 FOOTER_FILES = [
+    # Excluded (no standard footer): api-status, confianza-tratamientos, cooperativa, demo,
+    # ejecutivo, exportar, flota, historial-alertas, plataforma, reportes
     'actions.html', 'alert-config.html', 'alertas-estacionales.html', 'anomalies.html',
-    'api-docs.html', 'api-status.html', 'calendario.html', 'carbon.html', 'clima.html',
-    'completitud-global.html', 'completitud.html', 'confianza-tratamientos.html',
-    'cooperativa.html', 'demo.html', 'disease.html', 'efectividad-global.html',
-    'efectividad.html', 'ejecutivo.html', 'exportar.html', 'flota.html', 'fusion.html',
-    'historial-alertas.html', 'intervenciones.html', 'irrigation.html', 'management.html',
-    'microbiome.html', 'mission.html', 'onboarding.html', 'plataforma.html',
+    'api-docs.html', 'calendario.html', 'carbon.html', 'clima.html',
+    'completitud-global.html', 'completitud.html',
+    'disease.html', 'efectividad-global.html',
+    'efectividad.html', 'fusion.html',
+    'intervenciones.html', 'irrigation.html', 'management.html',
+    'microbiome.html', 'mission.html', 'onboarding.html',
     'precision-ia.html', 'recommendations.html', 'regenerative.html', 'regional.html',
-    'reportes.html', 'resumen.html', 'rotation.html',
+    'resumen.html', 'rotation.html',
 ]
 
 # DONE-GATE nav words that must not appear as bare text in EN mode (checked via data-i18n presence)
