@@ -716,25 +716,25 @@ def _seed_alerts(session, farm, fields, now, start_date, region="jalisco"):
         alert_templates = [
             {
                 "alert_type": "low_health",
-                "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
+                "message": "Field health below threshold (35/100). Immediate inspection recommended.",
                 "severity": "critical",
                 "offset_days": 7,
             },
             {
                 "alert_type": "frost_warning",
-                "message": "Pronostico de helada para manana. Proteger plantulas sensibles y cubrir cultivos vulnerables.",
+                "message": "Frost forecast for tomorrow. Protect sensitive seedlings and cover vulnerable crops.",
                 "severity": "warning",
                 "offset_days": 30,
             },
             {
                 "alert_type": "pest",
-                "message": "Patron de NDVI irregular sugiere posible plaga. Verificar presencia de corn rootworm o soybean aphid.",
+                "message": "Irregular NDVI pattern suggests possible pest. Check for corn rootworm or soybean aphid presence.",
                 "severity": "warning",
                 "offset_days": 55,
             },
             {
                 "alert_type": "recommendation",
-                "message": "Ventana optima para sembrar cultivo de cobertura. Temperatura del suelo favorable esta semana.",
+                "message": "Optimal window to plant cover crop. Favorable soil temperature this week.",
                 "severity": "info",
                 "offset_days": 80,
             },
@@ -743,25 +743,25 @@ def _seed_alerts(session, farm, fields, now, start_date, region="jalisco"):
         alert_templates = [
             {
                 "alert_type": "low_health",
-                "message": "Salud del campo por debajo del umbral (35/100). Se recomienda inspeccion inmediata.",
+                "message": "Field health below threshold (35/100). Immediate inspection recommended.",
                 "severity": "critical",
                 "offset_days": 7,
             },
             {
                 "alert_type": "irrigation",
-                "message": "Deficit hidrico detectado por sensor termico. Programar riego suplementario.",
+                "message": "Water deficit detected by thermal sensor. Schedule supplemental irrigation.",
                 "severity": "warning",
                 "offset_days": 30,
             },
             {
                 "alert_type": "pest",
-                "message": "Patron de NDVI irregular sugiere posible plaga. Verificar zona sur del campo.",
+                "message": "Irregular NDVI pattern suggests possible pest. Check southern zone of field.",
                 "severity": "warning",
                 "offset_days": 55,
             },
             {
                 "alert_type": "recommendation",
-                "message": "Condiciones optimas para aplicar composta. Temperatura y humedad favorables esta semana.",
+                "message": "Optimal conditions to apply compost. Favorable temperature and humidity this week.",
                 "severity": "info",
                 "offset_days": 80,
             },
