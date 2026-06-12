@@ -35,8 +35,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Precision de Predicciones IA</h1>
-            <p class="intel-subtitle">Comparacion de pronosticos del Cerebro vs resultados reales — validacion cientifica</p>
+            <h1 class="intel-title" data-i18n="precisionIA.title">Precision de Predicciones IA</h1>
+            <p class="intel-subtitle" data-i18n="precisionIA.subtitle">Comparacion de pronosticos del Cerebro vs resultados reales — validacion cientifica</p>
         </div>
         <div id="pred-status" class="intel-badge" style="font-size:1rem;padding:0.5rem 1rem;border-radius:8px;">--</div>
     </div>
@@ -70,19 +70,19 @@
     <div id="pred-content" style="display:none;">
         <!-- Accuracy chart -->
         <div id="pred-chart" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Predicciones Recientes — Error por Prediccion</h2>
+            <h2 class="intel-card-title" data-i18n="precisionIA.recentError">Predicciones Recientes — Error por Prediccion</h2>
             <canvas id="pred-canvas" width="800" height="300"></canvas>
         </div>
 
         <!-- By type breakdown -->
         <div id="pred-by-type" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Precision por Tipo de Prediccion</h2>
+            <h2 class="intel-card-title" data-i18n="precisionIA.byType">Precision por Tipo de Prediccion</h2>
             <div id="pred-by-type-content"></div>
         </div>
 
         <!-- Recent predictions table -->
         <div id="pred-recent" class="intel-card" style="margin-bottom:2rem;">
-            <h2 class="intel-card-title">Predicciones Recientes</h2>
+            <h2 class="intel-card-title" data-i18n="precisionIA.recent">Predicciones Recientes</h2>
             <div id="pred-recent-content"></div>
         </div>
     </div>

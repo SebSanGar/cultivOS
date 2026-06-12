@@ -38,8 +38,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Salud del Microbioma</h1>
-            <p class="intel-subtitle">Respiracion del suelo, biomasa microbiana y relacion hongos/bacterias por campo</p>
+            <h1 class="intel-title" data-i18n="microbiome.title">Salud del Microbioma</h1>
+            <p class="intel-subtitle" data-i18n="microbiome.subtitle">Respiracion del suelo, biomasa microbiana y relacion hongos/bacterias por campo</p>
         </div>
         <div class="intel-header-actions">
             <select id="micro-farm-select" class="intel-select" onchange="loadFieldsForMicro()">
@@ -48,7 +48,7 @@
             <select id="micro-field-select" class="intel-select" onchange="loadMicrobiome()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadMicrobiome()">Actualizar</button>
+            <button class="intel-btn" onclick="loadMicrobiome()" data-i18n="microbiome.updateBtn">Actualizar</button>
         </div>
     </div>
 
@@ -95,8 +95,8 @@
     <div id="micro-content" style="display:none;">
         <!-- Respiration trend chart -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Tendencia de Respiracion del Suelo</h2>
-            <p class="intel-subtitle">Tasa de respiracion (mg CO2/kg/dia) — indicador de actividad biologica</p>
+            <h2 class="regen-section-title" data-i18n="microbiome.respiration">Tendencia de Respiracion del Suelo</h2>
+            <p class="intel-subtitle" data-i18n="microbiome.respirationSub">Tasa de respiracion (mg CO2/kg/dia) — indicador de actividad biologica</p>
             <div style="max-width:800px;margin:0 auto;">
                 <canvas id="micro-respiration-chart"></canvas>
             </div>
@@ -104,8 +104,8 @@
 
         <!-- Fungi/Bacteria ratio chart -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Relacion Hongos/Bacterias</h2>
-            <p class="intel-subtitle">Relacion ideal: 1.0-2.0 para suelos agricolas saludables</p>
+            <h2 class="regen-section-title" data-i18n="microbiome.fungiRatio">Relacion Hongos/Bacterias</h2>
+            <p class="intel-subtitle" data-i18n="microbiome.fungiRatioSub">Relacion ideal: 1.0-2.0 para suelos agricolas saludables</p>
             <div style="max-width:800px;margin:0 auto;">
                 <canvas id="micro-ratio-chart"></canvas>
             </div>
@@ -113,8 +113,8 @@
 
         <!-- Biomasa microbiana (carbono) trend -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Carbono de Biomasa Microbiana</h2>
-            <p class="intel-subtitle">mg C/kg suelo — indica la cantidad total de microorganismos</p>
+            <h2 class="regen-section-title" data-i18n="microbiome.biomasC">Carbono de Biomasa Microbiana</h2>
+            <p class="intel-subtitle" data-i18n="microbiome.biomasCsub">mg C/kg suelo — indica la cantidad total de microorganismos</p>
             <div style="max-width:800px;margin:0 auto;">
                 <canvas id="micro-biomass-chart"></canvas>
             </div>
@@ -122,7 +122,7 @@
 
         <!-- Data table -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Historial de Muestras</h2>
+            <h2 class="regen-section-title" data-i18n="microbiome.sampleHistory">Historial de Muestras</h2>
             <div style="overflow-x:auto;">
                 <table class="intel-table" style="width:100%;border-collapse:collapse;">
                     <thead>

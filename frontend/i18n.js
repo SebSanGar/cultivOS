@@ -1023,7 +1023,46 @@
             'indiceEstres.labelEstres': 'Estres',
             'indiceEstres.labelWater': 'Agua (40%)',
             'indiceEstres.labelDisease': 'Enfermedad (35%)',
-            'indiceEstres.labelThermal': 'Termico (25%)'
+            'indiceEstres.labelThermal': 'Termico (25%)',
+
+            'irrigation.title': 'Programacion de Riego',
+            'irrigation.subtitle': 'Calendario de riego optimizado basado en suelo, clima y estres termico — ahorro de agua cuantificable',
+            'irrigation.queryBtn': 'Consultar Riego',
+
+            'microbiome.title': 'Salud del Microbioma',
+            'microbiome.subtitle': 'Respiracion del suelo, biomasa microbiana y relacion hongos/bacterias por campo',
+            'microbiome.updateBtn': 'Actualizar',
+            'microbiome.respiration': 'Tendencia de Respiracion del Suelo',
+            'microbiome.respirationSub': 'Tasa de respiracion (mg CO2/kg/dia) — indicador de actividad biologica',
+            'microbiome.fungiRatio': 'Relacion Hongos/Bacterias',
+            'microbiome.fungiRatioSub': 'Relacion ideal: 1.0-2.0 para suelos agricolas saludables',
+            'microbiome.biomasC': 'Carbono de Biomasa Microbiana',
+            'microbiome.biomasCsub': 'mg C/kg suelo — indica la cantidad total de microorganismos',
+            'microbiome.sampleHistory': 'Historial de Muestras',
+
+            'precisionIA.title': 'Precision de Predicciones IA',
+            'precisionIA.subtitle': 'Comparacion de pronosticos del Cerebro vs resultados reales — validacion cientifica',
+            'precisionIA.recentError': 'Predicciones Recientes — Error por Prediccion',
+            'precisionIA.byType': 'Precision por Tipo de Prediccion',
+            'precisionIA.recent': 'Predicciones Recientes',
+
+            'regenScore.title': 'Scorecard Regenerativo',
+            'regenScore.subtitle': 'Evaluacion de practicas regenerativas, organicas y ancestrales por campo',
+            'regenScore.updateBtn': 'Actualizar',
+            'regenScore.breakdown': 'Desglose de Componentes',
+            'regenScore.improve': 'Recomendaciones para Mejorar',
+
+            'predSalud.title': 'Prediccion de Salud — Campo',
+            'predSalud.subtitle': 'Proyeccion a 30 dias de la salud del campo basada en tendencia lineal de los ultimos 60 dias.',
+
+            'fodecijal.title': 'Preparacion FODECIJAL — Cooperativa',
+            'fodecijal.subtitle': 'Puntaje de preparacion para la convocatoria FODECIJAL 2026 con 5 pilares de evaluacion.',
+            'fodecijal.pillars': 'Pilares de Evaluacion',
+
+            'prioRisk.title': 'Prioridad de Riesgo',
+            'prioRisk.subtitle': 'Campos ordenados por puntuacion de riesgo — atienda primero el campo con mayor urgencia.',
+
+            'rankingMiembros.title': 'Ranking de Miembros'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -2062,7 +2101,46 @@
             'indiceEstres.labelEstres': 'Stress',
             'indiceEstres.labelWater': 'Water (40%)',
             'indiceEstres.labelDisease': 'Disease (35%)',
-            'indiceEstres.labelThermal': 'Thermal (25%)'
+            'indiceEstres.labelThermal': 'Thermal (25%)',
+
+            'irrigation.title': 'Irrigation Schedule',
+            'irrigation.subtitle': 'Optimized irrigation schedule based on soil, weather and thermal stress — quantifiable water savings',
+            'irrigation.queryBtn': 'Get Schedule',
+
+            'microbiome.title': 'Microbiome Health',
+            'microbiome.subtitle': 'Soil respiration, microbial biomass and fungi/bacteria ratio by field',
+            'microbiome.updateBtn': 'Update',
+            'microbiome.respiration': 'Soil Respiration Trend',
+            'microbiome.respirationSub': 'Respiration rate (mg CO2/kg/day) — indicator of biological activity',
+            'microbiome.fungiRatio': 'Fungi/Bacteria Ratio',
+            'microbiome.fungiRatioSub': 'Ideal ratio: 1.0–2.0 for healthy agricultural soils',
+            'microbiome.biomasC': 'Microbial Biomass Carbon',
+            'microbiome.biomasCsub': 'mg C/kg soil — indicates total microbial mass',
+            'microbiome.sampleHistory': 'Sample History',
+
+            'precisionIA.title': 'AI Prediction Accuracy',
+            'precisionIA.subtitle': 'Cerebro forecasts vs actual results — scientific validation',
+            'precisionIA.recentError': 'Recent Predictions — Error per Prediction',
+            'precisionIA.byType': 'Accuracy by Prediction Type',
+            'precisionIA.recent': 'Recent Predictions',
+
+            'regenScore.title': 'Regenerative Scorecard',
+            'regenScore.subtitle': 'Assessment of regenerative, organic and ancestral practices per field',
+            'regenScore.updateBtn': 'Update',
+            'regenScore.breakdown': 'Component Breakdown',
+            'regenScore.improve': 'Improvement Recommendations',
+
+            'predSalud.title': 'Health Prediction — Field',
+            'predSalud.subtitle': '30-day field health projection based on linear trend from the last 60 days.',
+
+            'fodecijal.title': 'FODECIJAL Readiness — Cooperative',
+            'fodecijal.subtitle': 'Readiness score for the FODECIJAL 2026 call with 5 evaluation pillars.',
+            'fodecijal.pillars': 'Evaluation Pillars',
+
+            'prioRisk.title': 'Risk Priority',
+            'prioRisk.subtitle': 'Fields ranked by risk score — address the highest-urgency field first.',
+
+            'rankingMiembros.title': 'Member Ranking'
         }
     };
 

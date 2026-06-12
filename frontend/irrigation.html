@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Programacion de Riego</h1>
-            <p class="intel-subtitle">Calendario de riego optimizado basado en suelo, clima y estres termico — ahorro de agua cuantificable</p>
+            <h1 class="intel-title" data-i18n="irrigation.title">Programacion de Riego</h1>
+            <p class="intel-subtitle" data-i18n="irrigation.subtitle">Calendario de riego optimizado basado en suelo, clima y estres termico — ahorro de agua cuantificable</p>
         </div>
         <div class="intel-header-actions">
             <select id="irrigation-farm-select" class="intel-select" onchange="loadFieldsForIrrigation()">
@@ -47,7 +47,7 @@
             <select id="irrigation-field-select" class="intel-select">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadIrrigation()">Consultar Riego</button>
+            <button class="intel-btn" onclick="loadIrrigation()" data-i18n="irrigation.queryBtn">Consultar Riego</button>
         </div>
     </div>
 

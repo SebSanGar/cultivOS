@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Scorecard Regenerativo</h1>
-            <p class="intel-subtitle">Evaluacion de practicas regenerativas, organicas y ancestrales por campo</p>
+            <h1 class="intel-title" data-i18n="regenScore.title">Scorecard Regenerativo</h1>
+            <p class="intel-subtitle" data-i18n="regenScore.subtitle">Evaluacion de practicas regenerativas, organicas y ancestrales por campo</p>
         </div>
         <div class="intel-header-actions">
             <select id="regen-farm-select" class="intel-select" onchange="loadFieldsForRegen()">
@@ -47,7 +47,7 @@
             <select id="regen-field-select" class="intel-select" onchange="loadRegenScore()">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadRegenScore()">Actualizar</button>
+            <button class="intel-btn" onclick="loadRegenScore()" data-i18n="regenScore.updateBtn">Actualizar</button>
         </div>
     </div>
 
@@ -91,7 +91,7 @@
 
         <!-- Breakdown cards -->
         <div class="regen-breakdown">
-            <h2 class="regen-section-title">Desglose de Componentes</h2>
+            <h2 class="regen-section-title" data-i18n="regenScore.breakdown">Desglose de Componentes</h2>
             <div class="regen-cards">
                 <div class="regen-card" id="regen-organic">
                     <div class="regen-card-icon">&#9752;</div>
@@ -133,7 +133,7 @@
 
         <!-- Recommendations -->
         <div class="regen-recommendations-section">
-            <h2 class="regen-section-title">Recomendaciones para Mejorar</h2>
+            <h2 class="regen-section-title" data-i18n="regenScore.improve">Recomendaciones para Mejorar</h2>
             <div id="regen-recommendations" class="regen-recommendations"></div>
             <div id="regen-no-recs" class="regen-no-recs" style="display:none;">
                 Excelente - no hay recomendaciones pendientes. Sus practicas regenerativas son solidas.
