@@ -66,3 +66,16 @@ Files touched:
 weather_note + irrigation + disease-risk templates are genuine EN (fixed templates). DB free-text (disease descriptions, treatment names, problema, seasonal-alert messages) plumbed as None → needs_lazy_translate=true.
 
 Tests: 96 in-scope pass (disease, irrigation, action_timeline, health_trajectory). 5 test_intel_*frontend failures are PRE-EXISTING stale-Spanish-string asserts from the EN pivot (confirmed via git stash); not caused by this work. App builds, 326 routes.
+
+## 2026-06-11 — Crop-name + KB entity-name bilingual layer (B4 follow-up)
+Founder bug: crop DATA values ('maiz', 'jitomate') and knowledge technique/fertilizer/disease NAMES rendered Spanish in EN mode — only descriptions had _en columns.
+
+- i18n.js: `crops` map (47 tokens, bidirectional es/en, accent-normalized) + `cropName()`; wired via cropLabel()/cropList() shims in app.js, field.js, knowledge.js (crop chips, companions, suitable/affected crops, farmer-voice {crop} sentence).
+- name_en columns on ancestral_methods/fertilizers/diseases (ORM + alembic c8f2a3b4d5e6) + name_en in every disease treatments JSON entry; served via Pydantic Out models; knowledge.js names → loc(x,'name').
+- seeds.py: name_en on all 53 KB entries + 42 treatments; NEW `backfill_kb_english()` — fills NULL _en fields (incl. treatments JSON merge) on DBs seeded before the bilingual layer; runs at app startup. This heals PROD: alembic adds columns on deploy, startup backfills content (53 rows locally).
+- localized() fallback-order fix: ES mode preferred _en over the bare Spanish column (name/growing_season class fields showed English in ES). Now en||es||base / es||base||en.
+- requirements-dev.txt added (clean-clone venvs couldn't run tests: no pytest/playwright/bs4).
+- Stale Spanish asserts in test_whatsapp_demo_page.py updated to English (page was translated in 50bec04).
+- Tests: test_crop_name_i18n.py (13) + test_kb_name_en.py (7). Verified live on :8011 EN+ES.
+
+Why: founder EN-first steering (Canada may ship first) — in EN, everything is English except the brand; data values count.
