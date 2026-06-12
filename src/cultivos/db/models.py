@@ -219,6 +219,7 @@ class AncestralMethod(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
+    name_en = Column(String(150), nullable=True)  # English variant (static KB, translated)
     description_es = Column(Text, nullable=False)
     description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     region = Column(String(100), nullable=False)  # e.g. "Jalisco", "Mesoamerica"
@@ -239,6 +240,7 @@ class Fertilizer(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
+    name_en = Column(String(150), nullable=True)  # English variant (static KB, translated)
     description_es = Column(Text, nullable=False)
     description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     application_method = Column(Text, nullable=False)
@@ -267,6 +269,7 @@ class Disease(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, unique=True)
+    name_en = Column(String(150), nullable=True)  # English variant (static KB, translated)
     description_es = Column(Text, nullable=False)
     description_en = Column(Text, nullable=True)  # English variant (static KB, translated)
     symptoms = Column(JSON, nullable=False, default=list)  # ["hojas amarillas", "manchas", ...]

@@ -6,6 +6,7 @@ from cultivos.db.models import AgronomistTip, AncestralMethod, CropType, CropVar
 FERTILIZER_SEEDS = [
     Fertilizer(
         name="Compost maduro",
+        name_en="Mature compost",
         description_es="Materia organica descompuesta que mejora estructura del suelo, retencion de agua y actividad microbiana. Base de la agricultura regenerativa.",
         description_en="Decomposed organic matter that improves soil structure, water retention and microbial activity. The foundation of regenerative agriculture.",
         application_method="Incorporar 5-10 ton/ha antes de siembra. Aplicar en superficie como acolchado entre hileras.",
@@ -17,6 +18,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Manure (estiercol composteado)",
+        name_en="Composted manure",
         description_es="Estiercol de vaca, caballo o cabra composteado minimo 6 meses. Alto en nitrogeno y materia organica.",
         description_en="Cow, horse or goat manure composted for at least 6 months. High in nitrogen and organic matter.",
         application_method="Aplicar 3-5 ton/ha composteado. Nunca fresco — riesgo de patogenos y quemado de raices.",
@@ -28,6 +30,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Vermicompost (lombricomposta)",
+        name_en="Vermicompost",
         description_es="Composta procesada por lombrices rojas californianas. Concentrado en nutrientes y microorganismos beneficos.",
         description_en="Compost processed by California red worms. Concentrated in nutrients and beneficial microorganisms.",
         application_method="Aplicar 1-3 ton/ha en banda junto a la hilera de siembra. Ideal para viveros y trasplante.",
@@ -39,6 +42,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Biochar (carbon vegetal)",
+        name_en="Biochar",
         description_es="Carbon producido por pirolisis de biomasa. Mejora retencion de agua, CIC del suelo y secuestra carbono por siglos.",
         description_en="Charcoal produced by biomass pyrolysis. Improves water retention and soil CEC, and sequesters carbon for centuries.",
         application_method="Incorporar 2-5 ton/ha mezclado con composta (activar antes de aplicar). Una sola aplicacion dura decadas.",
@@ -50,6 +54,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Aquaculture cycling (acuaponia residual)",
+        name_en="Aquaculture cycling (residual aquaponics)",
         description_es="Agua rica en nutrientes del cultivo de peces (tilapia, carpa) usada para riego. Ciclo cerrado peces-plantas.",
         description_en="Nutrient-rich water from fish farming (tilapia, carp) used for irrigation. A closed fish-plant loop.",
         application_method="Riego por goteo con agua de estanque filtrada. Diluir 1:3 con agua limpia para cultivos sensibles.",
@@ -61,6 +66,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Bocashi",
+        name_en="Bocashi",
         description_es="Composta fermentada japonesa adaptada a Mexico. Fermentacion anaerobia rapida (14 dias) con microorganismos de montana.",
         description_en="Japanese fermented compost adapted to Mexico. Fast anaerobic fermentation (14 days) using mountain microorganisms.",
         application_method="Aplicar 2-4 ton/ha incorporado al suelo 2 semanas antes de siembra. No dejar en superficie.",
@@ -72,6 +78,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Te de composta",
+        name_en="Compost tea",
         description_es="Extracto liquido aerobico de composta. Inocula microorganismos beneficos y aporta nutrientes solubles.",
         description_en="Aerobic liquid compost extract. Inoculates beneficial microorganisms and supplies soluble nutrients.",
         application_method="Aplicar foliar (200 L/ha) o al suelo via riego. Usar dentro de 4 horas de preparacion.",
@@ -83,6 +90,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Harina de hueso",
+        name_en="Bone meal",
         description_es="Huesos molidos esterilizados. Fuente organica de fosforo de liberacion lenta y calcio.",
         description_en="Sterilized ground bone. An organic source of slow-release phosphorus and calcium.",
         application_method="Incorporar 500-1000 kg/ha en la zona de raices antes de siembra. Ideal para suelos acidos.",
@@ -94,6 +102,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Abono verde (cultivo de cobertura)",
+        name_en="Green manure (cover crop)",
         description_es="Siembra de leguminosas (veza, trebol, frijol) que se incorporan al suelo antes de florar. Fija nitrogeno atmosferico.",
         description_en="Sowing of legumes (vetch, clover, bean) that are turned into the soil before flowering. Fixes atmospheric nitrogen.",
         application_method="Sembrar entre ciclos. Incorporar al suelo con rastra 2-3 semanas antes de siembra principal.",
@@ -105,6 +114,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Ceniza de madera",
+        name_en="Wood ash",
         description_es="Residuo de quema de madera no tratada. Fuente de potasio y corrector de pH para suelos acidos.",
         description_en="Residue from burning untreated wood. A source of potassium and a pH corrector for acidic soils.",
         application_method="Aplicar 300-500 kg/ha espolvoreada y rastrillada. No usar en suelos alcalinos (pH > 7).",
@@ -117,6 +127,7 @@ FERTILIZER_SEEDS = [
     # --- Ontario / Canada ---
     Fertilizer(
         name="Composted cattle manure (Ontario)",
+        name_en="Composted cattle manure (Ontario)",
         description_es="Estiercol de ganado lechero composteado de granjas de Ontario. Alto en nitrogeno y materia organica, adaptado a suelos arcillosos glaciales.",
         description_en="Composted dairy cattle manure from Ontario farms. High in nitrogen and organic matter, suited to glacial clay soils.",
         application_method="Incorporar 5-8 ton/ha en otono antes de congelamiento o en primavera 3 semanas antes de siembra. No aplicar sobre suelo congelado.",
@@ -128,6 +139,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Wood ash (hardwood)",
+        name_en="Wood ash (hardwood)",
         description_es="Ceniza de madera dura (arce, roble) comun en Ontario. Corrector de pH y fuente de potasio para suelos acidos del escudo canadiense.",
         description_en="Hardwood ash (maple, oak) common in Ontario. A pH corrector and potassium source for the acidic soils of the Canadian Shield.",
         application_method="Aplicar 500-1000 kg/ha en otono. No mezclar con fertilizantes nitrogenados. Analizar pH del suelo antes de aplicar.",
@@ -139,6 +151,7 @@ FERTILIZER_SEEDS = [
     ),
     Fertilizer(
         name="Cover crop mix (Ontario)",
+        name_en="Cover crop mix (Ontario)",
         description_es="Mezcla de trebol carmin, avena y rabano forrajero como cultivo de cobertura invernal. Fija nitrogeno, rompe compactacion y protege suelo de erosion invernal.",
         description_en="A mix of crimson clover, oats and forage radish as a winter cover crop. Fixes nitrogen, breaks compaction and protects soil from winter erosion.",
         application_method="Sembrar despues de cosecha de grano (Sep-Oct). Incorporar en primavera con cultivador antes de siembra principal.",
@@ -159,6 +172,7 @@ def seed_fertilizers(db_session) -> int:
     for fert in FERTILIZER_SEEDS:
         db_session.add(Fertilizer(
             name=fert.name,
+            name_en=fert.name_en,
             description_es=fert.description_es,
             description_en=fert.description_en,
             application_method=fert.application_method,
@@ -175,6 +189,7 @@ def seed_fertilizers(db_session) -> int:
 ANCESTRAL_METHOD_SEEDS = [
     AncestralMethod(
         name="Milpa",
+        name_en="Milpa (corn-bean-squash polyculture)",
         description_es="Sistema de policultivo mesoamericano que combina maiz, frijol y calabaza (las tres hermanas). El maiz da estructura al frijol, el frijol fija nitrogeno, la calabaza cubre el suelo reduciendo evaporacion y malezas.",
         description_en="A Mesoamerican polyculture combining maize, beans and squash (the three sisters). The maize gives the beans structure, the beans fix nitrogen, and the squash covers the ground, reducing evaporation and weeds.",
         region="Mesoamerica / Jalisco",
@@ -190,6 +205,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Chinampa",
+        name_en="Chinampa (raised-bed wetland farming)",
         description_es="Islas artificiales flotantes construidas en lagos y zonas pantanosas. Capas de vegetacion acuatica, lodo y estacas crean parcelas extremadamente fertiles con riego natural por capilaridad.",
         description_en="Artificial floating islands built in lakes and wetlands. Layers of aquatic vegetation, mud and stakes create extremely fertile plots with natural capillary irrigation.",
         region="Valle de Mexico",
@@ -202,6 +218,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Terrazas de cultivo",
+        name_en="Crop terraces",
         description_es="Plataformas escalonadas en laderas para retener suelo y agua. Usadas desde epocas prehispanicas en zonas montanosas de Mesoamerica para cultivar en pendientes pronunciadas.",
         description_en="Stepped platforms on hillsides to hold back soil and water. Used since pre-Hispanic times in the mountainous regions of Mesoamerica to farm on steep slopes.",
         region="Mesoamerica / Jalisco",
@@ -217,6 +234,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Roza-tumba-quema controlada",
+        name_en="Controlled slash-and-burn",
         description_es="Sistema rotativo donde se tala y quema vegetacion secundaria para liberar nutrientes al suelo. Con periodos de descanso (barbecho) de 5-15 anos permite regeneracion natural del bosque.",
         description_en="A rotational system where secondary growth is cleared and burned to release nutrients into the soil. With fallow periods of 5-15 years, it allows the forest to regenerate naturally.",
         region="Sureste de Mexico / Jalisco",
@@ -229,6 +247,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Abonos verdes ancestrales",
+        name_en="Ancestral green manures",
         description_es="Siembra de leguminosas nativas (frijol terciopelo, canavalia, crotalaria) como cultivo de cobertura entre ciclos para fijar nitrogeno y proteger el suelo.",
         description_en="Sowing native legumes (velvet bean, jack bean, sunn hemp) as a cover crop between cycles to fix nitrogen and protect the soil.",
         region="Mesoamerica / Jalisco",
@@ -244,6 +263,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Cultivo en callejones",
+        name_en="Alley cropping",
         description_es="Hileras de arboles o arbustos leguminosos (leucaena, gliricidia) intercalados con cultivos anuales. Las podas aportan materia organica y nitrogeno al suelo entre las filas.",
         description_en="Rows of leguminous trees or shrubs (leucaena, gliricidia) interplanted with annual crops. Their prunings add organic matter and nitrogen to the soil between the rows.",
         region="Mesoamerica / Jalisco",
@@ -256,6 +276,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Asociacion de cultivos",
+        name_en="Companion planting",
         description_es="Siembra de multiples especies compatibles en la misma parcela basada en conocimiento tradicional de companerismo entre plantas — mas alla de la milpa clasica.",
         description_en="Planting multiple compatible species in the same plot, drawing on traditional knowledge of companion relationships between plants — going beyond the classic milpa.",
         region="Jalisco",
@@ -268,6 +289,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Labranza cero tradicional",
+        name_en="Traditional no-till",
         description_es="Siembra directa sin arar el suelo, usando coa (palo plantador) o espeque. El suelo mantiene su estructura, vida microbiana y cobertura organica intactas.",
         description_en="Direct seeding without plowing, using a coa (planting stick) or dibble. The soil keeps its structure, microbial life and organic cover intact.",
         region="Mesoamerica / Jalisco",
@@ -284,6 +306,7 @@ ANCESTRAL_METHOD_SEEDS = [
     # --- Ontario / Canada ---
     AncestralMethod(
         name="Cover cropping (Ontario)",
+        name_en="Cover cropping (Ontario)",
         description_es="Siembra de cultivos de cobertura invernal (trebol carmin, centeno, rabano forrajero) despues de cosecha de grano para proteger el suelo durante el invierno canadiense y fijar nitrogeno.",
         description_en="Sowing winter cover crops (crimson clover, rye, forage radish) after grain harvest to protect the soil through the Canadian winter and fix nitrogen.",
         region="Ontario",
@@ -296,6 +319,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Rotacion maiz-soya-trigo",
+        name_en="Corn-soy-wheat rotation",
         description_es="Sistema de rotacion trianual clasico del cinturon agricola de Ontario. Maiz aprovecha nitrogeno residual de soya, trigo rompe ciclos de plagas, soya fija nitrogeno para el siguiente ciclo.",
         description_en="The classic three-year rotation of the Ontario farm belt. Corn draws on residual nitrogen from soybeans, wheat breaks pest cycles, and soybeans fix nitrogen for the next cycle.",
         region="Ontario",
@@ -308,6 +332,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Companion planting (Ontario)",
+        name_en="Companion planting (Ontario)",
         description_es="Asociacion de cultivos basada en tradiciones indigenas y conocimiento de agricultores de Ontario. Incluye intercalado de trebol en huertos de manzana y mostaza en vinedos para control biologico.",
         description_en="Companion planting drawing on Indigenous traditions and Ontario farmers' knowledge. It includes interplanting clover in apple orchards and mustard in vineyards for biological control.",
         region="Ontario",
@@ -320,6 +345,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Windbreaks (cortinas rompevientos)",
+        name_en="Windbreaks",
         description_es="Hileras de arboles nativos (arce, cedro, roble) plantadas en bordes de campos para reducir erosion eolica, proteger cultivos del viento frio y crear habitat para fauna benefica.",
         description_en="Rows of native trees (maple, cedar, oak) planted along field edges to reduce wind erosion, shelter crops from cold wind, and create habitat for beneficial wildlife.",
         region="Ontario",
@@ -333,6 +359,7 @@ ANCESTRAL_METHOD_SEEDS = [
     # --- #216 Extended TEK seed pack (Jalisco + Mesoamerica) ---
     AncestralMethod(
         name="Terrazas mayas",
+        name_en="Mayan terraces",
         description_es="Terrazas escalonadas de piedra seca desarrolladas por la civilizacion maya en laderas calizas del sureste mesoamericano, con drenaje interno y retencion de suelo organico para cultivos de ciclo corto.",
         description_en="Stepped dry-stone terraces developed by the Maya civilization on the limestone slopes of southeastern Mesoamerica, with internal drainage and organic-soil retention for short-cycle crops.",
         region="Mesoamerica / Jalisco",
@@ -348,6 +375,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Calendario lunar agricola",
+        name_en="Agricultural lunar calendar",
         description_es="Planificacion de siembra, trasplante, poda y cosecha segun las fases de la luna. Tradicion indigena mesoamericana que coordina labores con gravedad lunar y ciclos de savia en las plantas.",
         description_en="Planning sowing, transplanting, pruning and harvest by the phases of the moon. A Mesoamerican Indigenous tradition that times field work to lunar gravity and the sap cycles in plants.",
         region="Mesoamerica / Jalisco",
@@ -363,6 +391,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Tres hermanas con chile (4-hermanas)",
+        name_en="Three Sisters with chili (four sisters)",
         description_es="Extension del policultivo milpa clasico anadiendo chile como cuarta hermana. El chile repele plagas mediante capsaicina volatil y complementa la nutricion de la dieta campesina con vitaminas y capsaicinoides.",
         description_en="An extension of the classic milpa polyculture adding chili as a fourth sister. The chili repels pests through volatile capsaicin and rounds out the farming diet with vitamins and capsaicinoids.",
         region="Jalisco",
@@ -378,6 +407,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Zanjas de infiltracion",
+        name_en="Infiltration trenches",
         description_es="Zanjas de nivel excavadas a contornos de ladera para interceptar escorrentia, retener sedimentos e infiltrar agua al subsuelo recargando acuiferos locales y humedeciendo el perfil de suelo.",
         description_en="Level ditches dug along the contours of a slope to intercept runoff, hold back sediment and infiltrate water into the subsoil, recharging local aquifers and wetting the soil profile.",
         region="Jalisco",
@@ -393,6 +423,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Cobertura con paja seca",
+        name_en="Dry straw mulching",
         description_es="Aplicacion de una capa de 5-10 cm de rastrojo seco (paja de trigo, tamo de maiz, hojas de platano) sobre el suelo cultivado para conservar humedad, suprimir malezas y aportar materia organica al descomponerse.",
         description_en="Applying a 5-10 cm layer of dry crop residue (wheat straw, corn chaff, banana leaves) over cultivated soil to conserve moisture, suppress weeds and add organic matter as it breaks down.",
         region="Jalisco",
@@ -408,6 +439,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Abonos verdes con Crotalaria",
+        name_en="Green manures with Crotalaria",
         description_es="Siembra de Crotalaria juncea o Crotalaria spectabilis como cultivo de cobertura de rapido crecimiento para fijar nitrogeno atmosferico, romper compactacion con raices pivotantes y suprimir nematodos del suelo.",
         description_en="Sowing Crotalaria juncea or Crotalaria spectabilis as a fast-growing cover crop to fix atmospheric nitrogen, break compaction with taproots, and suppress soil nematodes.",
         region="Mesoamerica / Jalisco",
@@ -423,6 +455,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Control biologico con Trichogramma",
+        name_en="Biological control with Trichogramma",
         description_es="Liberacion de avispas parasitoides Trichogramma spp. en campo para parasitar huevos de lepidopteros plaga (gusano cogollero, palomilla, barrenador) antes de que eclosionen, eliminando la plaga sin insecticidas.",
         description_en="Releasing parasitoid wasps (Trichogramma spp.) in the field to parasitize the eggs of pest moths (fall armyworm, leafroller, stalk borer) before they hatch, eliminating the pest without insecticides.",
         region="Jalisco",
@@ -438,6 +471,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Captura de agua de niebla",
+        name_en="Fog water harvesting",
         description_es="Mallas atrapa-niebla instaladas en laderas altas expuestas a corrientes humedas para condensar gotas de niebla y captar agua para riego y consumo en zonas con baja precipitacion pero alta humedad atmosferica.",
         description_en="Fog-catching mesh installed on high slopes exposed to moist air currents to condense fog droplets and collect water for irrigation and household use in areas with low rainfall but high atmospheric humidity.",
         region="Jalisco",
@@ -453,6 +487,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Biofertilizante Bocashi tradicional",
+        name_en="Traditional Bocashi biofertilizer",
         description_es="Compost aerobico de fermentacion rapida elaborado con estiercol, rastrojo, carbon vegetal, ceniza, cascarilla de arroz y microorganismos nativos. Listo en 15-21 dias con alta poblacion microbiana viva.",
         description_en="A fast-fermenting aerobic compost made with manure, crop residue, charcoal, ash, rice husk and native microorganisms. Ready in 15-21 days with a high population of living microbes.",
         region="Mesoamerica / Jalisco",
@@ -468,6 +503,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Lombricomposta tradicional",
+        name_en="Traditional vermicomposting",
         description_es="Digestion de materia organica (estiercol, residuos vegetales) por lombriz roja californiana (Eisenia fetida) en camas o tinas, produciendo humus de lombriz y lixiviados ricos en nutrientes y microorganismos.",
         description_en="Digestion of organic matter (manure, plant residue) by the California red worm (Eisenia fetida) in beds or bins, producing worm humus and leachates rich in nutrients and microorganisms.",
         region="Jalisco",
@@ -484,6 +520,7 @@ ANCESTRAL_METHOD_SEEDS = [
     # --- #219 Batch 2: Jalisco regenerative TEK extensions ---
     AncestralMethod(
         name="Metepantle con magueyes",
+        name_en="Metepantle agave terracing",
         description_es="Sistema de terrazas vivas delimitadas por hileras de maguey pulquero (Agave salmiana) sembradas en curvas de nivel. Los magueyes retienen suelo en laderas, rompen escorrentia y ofrecen aguamiel, pulque y fibra como productos adicionales entre ciclos de maiz-frijol.",
         description_en="A living-terrace system bounded by rows of pulque maguey (Agave salmiana) planted along the contours. The maguey holds soil on slopes, breaks up runoff, and provides aguamiel, pulque and fiber as extra products between maize-bean cycles.",
         region="Mesoamerica / Jalisco",
@@ -500,6 +537,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Cafe bajo sombra nativa",
+        name_en="Shade-grown coffee under native canopy",
         description_es="Sistema agroforestal tradicional donde el cafe se cultiva bajo un dosel diversificado de arboles nativos (Inga, aguacate, platano, chalahuite, guayaba) que proveen sombra, biomasa para compostaje in situ, habitat para fauna polinizadora y proteccion contra heladas y granizo.",
         description_en="A traditional agroforestry system where coffee is grown under a diverse canopy of native trees (Inga, avocado, banana, chalahuite, guava) that provide shade, biomass for on-site composting, habitat for pollinators, and protection from frost and hail.",
         region="Jalisco",
@@ -516,6 +554,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Curvas a nivel con nopal",
+        name_en="Contour planting with nopal",
         description_es="Hileras de nopal (Opuntia ficus-indica) sembradas en curvas de nivel sobre laderas semiaridas para retener suelo, interceptar escorrentia y producir forraje, fruto y verdura sin riego. Practica mesoamericana validada para rehabilitacion de laderas degradadas.",
         description_en="Rows of prickly pear (Opuntia ficus-indica) planted along the contours of semi-arid slopes to hold soil, intercept runoff, and produce forage, fruit and vegetable pads without irrigation. A Mesoamerican practice validated for rehabilitating degraded hillsides.",
         region="Jalisco",
@@ -532,6 +571,7 @@ ANCESTRAL_METHOD_SEEDS = [
     ),
     AncestralMethod(
         name="Apicultura melipona integrada",
+        name_en="Integrated melipona beekeeping",
         description_es="Crianza de abejas nativas sin aguijon (Melipona beecheii, Scaptotrigona mexicana) integrada con parcelas de milpa y huertos familiares. Las meliponas polinizan cultivos y vegetacion nativa, producen miel medicinal y refuerzan el conocimiento tradicional mesoamericano de manejo apicola.",
         description_en="Keeping native stingless bees (Melipona beecheii, Scaptotrigona mexicana) integrated with milpa plots and family gardens. The meliponas pollinate crops and native vegetation, produce medicinal honey, and strengthen traditional Mesoamerican beekeeping knowledge.",
         region="Mesoamerica / Jalisco",
@@ -557,6 +597,7 @@ def seed_ancestral_methods(db_session) -> int:
     for method in ANCESTRAL_METHOD_SEEDS:
         db_session.add(AncestralMethod(
             name=method.name,
+            name_en=method.name_en,
             description_es=method.description_es,
             description_en=method.description_en,
             region=method.region,
@@ -845,112 +886,120 @@ def seed_crops(db_session) -> int:
 DISEASE_SEEDS = [
     Disease(
         name="Roya del maiz",
+        name_en="Corn rust",
         description_es="Enfermedad fungica causada por Puccinia sorghi. Produce pustulas anaranjadas-rojizas en el enves de las hojas que liberan esporas. Reduce rendimiento 10-40% en ataques severos.",
         description_en="A fungal disease caused by Puccinia sorghi. It produces orange-red pustules on the underside of leaves that release spores. It reduces yield by 10-40% in severe outbreaks.",
         symptoms=["hojas amarillas", "pustulas naranjas", "manchas", "secamiento de hojas"],
         affected_crops=["maiz", "sorgo"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Mezcla de sulfato de cobre y cal hidratada al 1%. Aplicar preventivamente cada 15 dias durante temporada humeda.", "description_en": "A 1% mix of copper sulfate and hydrated lime. Apply preventively every 15 days during the wet season.", "organic": True},
-            {"name": "Extracto de cola de caballo", "description_es": "Decoccion de Equisetum al 10%. Fungicida natural rico en silice. Aplicar foliar cada 7-10 dias.", "description_en": "A 10% Equisetum (horsetail) decoction. A natural fungicide rich in silica. Apply as a foliar spray every 7-10 days.", "organic": True},
-            {"name": "Rotacion de cultivos", "description_es": "Alternar maiz con leguminosas (frijol, garbanzo) para romper ciclo del patogeno en el suelo.", "description_en": "Alternate maize with legumes (beans, chickpeas) to break the pathogen's cycle in the soil.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Mezcla de sulfato de cobre y cal hidratada al 1%. Aplicar preventivamente cada 15 dias durante temporada humeda.", "description_en": "A 1% mix of copper sulfate and hydrated lime. Apply preventively every 15 days during the wet season.", "organic": True},
+            {"name": "Extracto de cola de caballo", "name_en": "Horsetail extract", "description_es": "Decoccion de Equisetum al 10%. Fungicida natural rico en silice. Aplicar foliar cada 7-10 dias.", "description_en": "A 10% Equisetum (horsetail) decoction. A natural fungicide rich in silica. Apply as a foliar spray every 7-10 days.", "organic": True},
+            {"name": "Rotacion de cultivos", "name_en": "Crop rotation", "description_es": "Alternar maiz con leguminosas (frijol, garbanzo) para romper ciclo del patogeno en el suelo.", "description_en": "Alternate maize with legumes (beans, chickpeas) to break the pathogen's cycle in the soil.", "organic": True},
         ],
         region="Jalisco",
         severity="media",
     ),
     Disease(
         name="Tizon tardio",
+        name_en="Late blight",
         description_es="Enfermedad devastadora causada por Phytophthora infestans. Afecta hojas, tallos y frutos con lesiones acuosas oscuras. Puede destruir un cultivo en dias bajo condiciones humedas y frias.",
         description_en="A devastating disease caused by Phytophthora infestans. It attacks leaves, stems and fruit with dark water-soaked lesions. It can destroy a crop in days under cool, wet conditions.",
         symptoms=["manchas oscuras", "lesiones acuosas", "marchitamiento", "pudricion de frutos", "hojas amarillas"],
         affected_crops=["tomate", "chile", "papa"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre + cal al 1-2%. Aplicar cada 7-10 dias en temporada de lluvias como preventivo.", "description_en": "Copper sulfate + lime at 1-2%. Apply every 7-10 days during the rainy season as a preventive.", "organic": True},
-            {"name": "Trichoderma harzianum", "description_es": "Hongo benefico antagonista. Aplicar al suelo y foliar (1x10^8 esporas/ml) cada 15 dias.", "description_en": "A beneficial antagonistic fungus. Apply to the soil and foliage (1x10^8 spores/ml) every 15 days.", "organic": True},
-            {"name": "Eliminacion de material infectado", "description_es": "Retirar y quemar plantas infectadas inmediatamente. No compostar material enfermo.", "description_en": "Remove and burn infected plants immediately. Do not compost diseased material.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre + cal al 1-2%. Aplicar cada 7-10 dias en temporada de lluvias como preventivo.", "description_en": "Copper sulfate + lime at 1-2%. Apply every 7-10 days during the rainy season as a preventive.", "organic": True},
+            {"name": "Trichoderma harzianum", "name_en": "Trichoderma harzianum", "description_es": "Hongo benefico antagonista. Aplicar al suelo y foliar (1x10^8 esporas/ml) cada 15 dias.", "description_en": "A beneficial antagonistic fungus. Apply to the soil and foliage (1x10^8 spores/ml) every 15 days.", "organic": True},
+            {"name": "Eliminacion de material infectado", "name_en": "Removal of infected material", "description_es": "Retirar y quemar plantas infectadas inmediatamente. No compostar material enfermo.", "description_en": "Remove and burn infected plants immediately. Do not compost diseased material.", "organic": True},
         ],
         region="Jalisco",
         severity="alta",
     ),
     Disease(
         name="Fusarium",
+        name_en="Fusarium wilt",
         description_es="Marchitez vascular causada por Fusarium oxysporum. El hongo coloniza el xilema bloqueando el transporte de agua. Sintomas unilaterales — una mitad de la planta se marchita primero.",
         description_en="Vascular wilt caused by Fusarium oxysporum. The fungus colonizes the xylem, blocking water transport. Symptoms are one-sided — half the plant wilts first.",
         symptoms=["marchitamiento", "hojas amarillas", "oscurecimiento vascular", "muerte de planta"],
         affected_crops=["tomate", "chile", "frijol", "calabaza", "agave"],
         treatments=[
-            {"name": "Trichoderma harzianum", "description_es": "Inocular suelo con Trichoderma (2 kg/ha) antes de siembra. Compite con Fusarium por espacio y nutrientes.", "description_en": "Inoculate the soil with Trichoderma (2 kg/ha) before planting. It competes with Fusarium for space and nutrients.", "organic": True},
-            {"name": "Solarizacion del suelo", "description_es": "Cubrir suelo humedo con plastico transparente por 4-6 semanas en temporada caliente. Elimina patogenos por calor.", "description_en": "Cover moist soil with clear plastic for 4-6 weeks in the hot season. It kills pathogens with heat.", "organic": True},
-            {"name": "Bocashi + microorganismos de montana", "description_es": "Enriquecer suelo con bocashi (3 ton/ha) y microorganismos nativos para suprimir patogenos mediante competencia.", "description_en": "Enrich the soil with bocashi (3 t/ha) and native microorganisms to suppress pathogens through competition.", "organic": True},
+            {"name": "Trichoderma harzianum", "name_en": "Trichoderma harzianum", "description_es": "Inocular suelo con Trichoderma (2 kg/ha) antes de siembra. Compite con Fusarium por espacio y nutrientes.", "description_en": "Inoculate the soil with Trichoderma (2 kg/ha) before planting. It competes with Fusarium for space and nutrients.", "organic": True},
+            {"name": "Solarizacion del suelo", "name_en": "Soil solarization", "description_es": "Cubrir suelo humedo con plastico transparente por 4-6 semanas en temporada caliente. Elimina patogenos por calor.", "description_en": "Cover moist soil with clear plastic for 4-6 weeks in the hot season. It kills pathogens with heat.", "organic": True},
+            {"name": "Bocashi + microorganismos de montana", "name_en": "Bocashi + mountain microorganisms", "description_es": "Enriquecer suelo con bocashi (3 ton/ha) y microorganismos nativos para suprimir patogenos mediante competencia.", "description_en": "Enrich the soil with bocashi (3 t/ha) and native microorganisms to suppress pathogens through competition.", "organic": True},
         ],
         region="Jalisco",
         severity="alta",
     ),
     Disease(
         name="Mosca blanca",
+        name_en="Whitefly",
         description_es="Plaga causada por Bemisia tabaci y Trialeurodes vaporariorum. Succiona savia, excreta mielecilla que favorece fumagina, y transmite virus (TYLCV, begomovirus). Vector principal de enfermedades virales.",
         description_en="A pest caused by Bemisia tabaci and Trialeurodes vaporariorum. It sucks sap, excretes honeydew that promotes sooty mold, and transmits viruses (TYLCV, begomoviruses). The main vector of viral diseases.",
         symptoms=["hojas amarillas", "mielecilla", "fumagina", "deformacion de hojas", "moscas blancas en enves"],
         affected_crops=["tomate", "chile", "calabaza", "frijol"],
         treatments=[
-            {"name": "Extracto de neem", "description_es": "Azadiractina al 0.3%. Aplicar foliar cada 7 dias enfocando el enves de las hojas. Repelente e inhibidor de crecimiento.", "description_en": "Azadirachtin at 0.3%. Apply as a foliar spray every 7 days, targeting the underside of the leaves. A repellent and growth inhibitor.", "organic": True},
-            {"name": "Trampas amarillas", "description_es": "Colocar trampas adhesivas amarillas (40x25 cm) a la altura del cultivo, 20-30 trampas/ha para monitoreo y captura masiva.", "description_en": "Place yellow sticky traps (40x25 cm) at crop height, 20-30 traps/ha for monitoring and mass capture.", "organic": True},
-            {"name": "Beauveria bassiana", "description_es": "Hongo entomopatogeno. Aplicar suspension (1x10^8 esporas/ml) foliar en las ultimas horas de la tarde. Parasita adultos y ninfas.", "description_en": "An entomopathogenic fungus. Apply a foliar suspension (1x10^8 spores/ml) in the late afternoon. It parasitizes adults and nymphs.", "organic": True},
+            {"name": "Extracto de neem", "name_en": "Neem extract", "description_es": "Azadiractina al 0.3%. Aplicar foliar cada 7 dias enfocando el enves de las hojas. Repelente e inhibidor de crecimiento.", "description_en": "Azadirachtin at 0.3%. Apply as a foliar spray every 7 days, targeting the underside of the leaves. A repellent and growth inhibitor.", "organic": True},
+            {"name": "Trampas amarillas", "name_en": "Yellow sticky traps", "description_es": "Colocar trampas adhesivas amarillas (40x25 cm) a la altura del cultivo, 20-30 trampas/ha para monitoreo y captura masiva.", "description_en": "Place yellow sticky traps (40x25 cm) at crop height, 20-30 traps/ha for monitoring and mass capture.", "organic": True},
+            {"name": "Beauveria bassiana", "name_en": "Beauveria bassiana", "description_es": "Hongo entomopatogeno. Aplicar suspension (1x10^8 esporas/ml) foliar en las ultimas horas de la tarde. Parasita adultos y ninfas.", "description_en": "An entomopathogenic fungus. Apply a foliar suspension (1x10^8 spores/ml) in the late afternoon. It parasitizes adults and nymphs.", "organic": True},
         ],
         region="Jalisco",
         severity="alta",
     ),
     Disease(
         name="Gusano cogollero",
+        name_en="Fall armyworm",
         description_es="Plaga causada por Spodoptera frugiperda. Larva devora el cogollo (meristemo apical) del maiz causando dano severo al crecimiento. Plaga numero 1 del maiz en Mexico.",
         description_en="A pest caused by Spodoptera frugiperda (fall armyworm). The larva devours the whorl (apical meristem) of the maize, severely damaging growth. The number-one maize pest in Mexico.",
         symptoms=["hojas perforadas", "excremento en cogollo", "dano en cogollo", "larvas visibles"],
         affected_crops=["maiz", "sorgo"],
         treatments=[
-            {"name": "Bacillus thuringiensis (Bt)", "description_es": "Bacteria entomopatogena. Aplicar al cogollo (1-2 L/ha de formulado comercial) cuando larvas son menores a 1.5 cm.", "description_en": "An entomopathogenic bacterium. Apply to the whorl (1-2 L/ha of commercial formulation) when larvae are smaller than 1.5 cm.", "organic": True},
-            {"name": "Liberacion de Trichogramma", "description_es": "Avispa parasitoide que ataca huevos. Liberar 50,000-100,000 avispas/ha en 3-4 liberaciones durante temporada.", "description_en": "A parasitoid wasp that attacks eggs. Release 50,000-100,000 wasps/ha in 3-4 releases over the season.", "organic": True},
-            {"name": "Extracto de neem", "description_es": "Azadiractina inhibe la muda de larvas. Aplicar al cogollo cada 7 dias desde emergencia hasta que la planta cierre.", "description_en": "Azadirachtin inhibits larval molting. Apply to the whorl every 7 days from emergence until the plant closes up.", "organic": True},
+            {"name": "Bacillus thuringiensis (Bt)", "name_en": "Bacillus thuringiensis (Bt)", "description_es": "Bacteria entomopatogena. Aplicar al cogollo (1-2 L/ha de formulado comercial) cuando larvas son menores a 1.5 cm.", "description_en": "An entomopathogenic bacterium. Apply to the whorl (1-2 L/ha of commercial formulation) when larvae are smaller than 1.5 cm.", "organic": True},
+            {"name": "Liberacion de Trichogramma", "name_en": "Trichogramma release", "description_es": "Avispa parasitoide que ataca huevos. Liberar 50,000-100,000 avispas/ha en 3-4 liberaciones durante temporada.", "description_en": "A parasitoid wasp that attacks eggs. Release 50,000-100,000 wasps/ha in 3-4 releases over the season.", "organic": True},
+            {"name": "Extracto de neem", "name_en": "Neem extract", "description_es": "Azadiractina inhibe la muda de larvas. Aplicar al cogollo cada 7 dias desde emergencia hasta que la planta cierre.", "description_en": "Azadirachtin inhibits larval molting. Apply to the whorl every 7 days from emergence until the plant closes up.", "organic": True},
         ],
         region="Jalisco",
         severity="alta",
     ),
     Disease(
         name="Mancha de asfalto",
+        name_en="Tar spot",
         description_es="Complejo fungico (Phyllachora maydis + Monographella maydis + Coniothyrium phyllachorae). Produce manchas negras brillantes en hojas que se expanden rapidamente. Puede causar perdidas de 50-100% en variedades susceptibles.",
         description_en="A fungal complex (Phyllachora maydis + Monographella maydis + Coniothyrium phyllachorae). It produces shiny black spots on leaves that spread rapidly. It can cause 50-100% losses in susceptible varieties.",
         symptoms=["manchas negras", "manchas", "secamiento de hojas", "hojas amarillas"],
         affected_crops=["maiz"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre + cal al 1%. Aplicar preventivamente antes de floracion. 2-3 aplicaciones cada 10 dias.", "description_en": "Copper sulfate + lime at 1%. Apply preventively before flowering. 2-3 applications every 10 days.", "organic": True},
-            {"name": "Extracto de ajo-chile", "description_es": "Macerado de 500g ajo + 500g chile en 20L agua. Colar y aplicar foliar. Fungicida y repelente de amplio espectro.", "description_en": "A macerate of 500 g garlic + 500 g chili in 20 L of water. Strain and apply as a foliar spray. A broad-spectrum fungicide and repellent.", "organic": True},
-            {"name": "Variedades resistentes", "description_es": "Usar semilla criolla local adaptada. Las variedades nativas de Jalisco tienen mejor tolerancia que hibridos comerciales.", "description_en": "Use adapted local landrace seed. Jalisco's native varieties tolerate the disease better than commercial hybrids.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre + cal al 1%. Aplicar preventivamente antes de floracion. 2-3 aplicaciones cada 10 dias.", "description_en": "Copper sulfate + lime at 1%. Apply preventively before flowering. 2-3 applications every 10 days.", "organic": True},
+            {"name": "Extracto de ajo-chile", "name_en": "Garlic-chili extract", "description_es": "Macerado de 500g ajo + 500g chile en 20L agua. Colar y aplicar foliar. Fungicida y repelente de amplio espectro.", "description_en": "A macerate of 500 g garlic + 500 g chili in 20 L of water. Strain and apply as a foliar spray. A broad-spectrum fungicide and repellent.", "organic": True},
+            {"name": "Variedades resistentes", "name_en": "Resistant varieties", "description_es": "Usar semilla criolla local adaptada. Las variedades nativas de Jalisco tienen mejor tolerancia que hibridos comerciales.", "description_en": "Use adapted local landrace seed. Jalisco's native varieties tolerate the disease better than commercial hybrids.", "organic": True},
         ],
         region="Jalisco",
         severity="alta",
     ),
     Disease(
         name="Antracnosis del aguacate",
+        name_en="Avocado anthracnose",
         description_es="Enfermedad fungica causada por Colletotrichum gloeosporioides. Produce manchas hundidas oscuras en frutos y necrosis en hojas. Principal enfermedad postcosecha del aguacate en Jalisco.",
         description_en="A fungal disease caused by Colletotrichum gloeosporioides. It produces sunken dark spots on fruit and necrosis on leaves. The main post-harvest disease of avocado in Jalisco.",
         symptoms=["manchas oscuras", "manchas en frutos", "necrosis de hojas", "pudricion de frutos"],
         affected_crops=["aguacate", "mango"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre al 1%. Aplicar cada 15 dias desde floracion hasta cosecha. Protege frutos en desarrollo.", "description_en": "Copper sulfate at 1%. Apply every 15 days from flowering to harvest. It protects developing fruit.", "organic": True},
-            {"name": "Poda sanitaria", "description_es": "Eliminar ramas infectadas y frutos danados. Desinfectar herramientas con alcohol al 70% entre cortes.", "description_en": "Remove infected branches and damaged fruit. Disinfect tools with 70% alcohol between cuts.", "organic": True},
-            {"name": "Trichoderma + Bacillus subtilis", "description_es": "Mezcla de biocontroladores. Aplicar foliar cada 15 dias (1L/ha de cada formulado). Control preventivo y curativo.", "description_en": "A mix of biocontrol agents. Apply as a foliar spray every 15 days (1 L/ha of each formulation). Preventive and curative control.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre al 1%. Aplicar cada 15 dias desde floracion hasta cosecha. Protege frutos en desarrollo.", "description_en": "Copper sulfate at 1%. Apply every 15 days from flowering to harvest. It protects developing fruit.", "organic": True},
+            {"name": "Poda sanitaria", "name_en": "Sanitation pruning", "description_es": "Eliminar ramas infectadas y frutos danados. Desinfectar herramientas con alcohol al 70% entre cortes.", "description_en": "Remove infected branches and damaged fruit. Disinfect tools with 70% alcohol between cuts.", "organic": True},
+            {"name": "Trichoderma + Bacillus subtilis", "name_en": "Trichoderma + Bacillus subtilis", "description_es": "Mezcla de biocontroladores. Aplicar foliar cada 15 dias (1L/ha de cada formulado). Control preventivo y curativo.", "description_en": "A mix of biocontrol agents. Apply as a foliar spray every 15 days (1 L/ha of each formulation). Preventive and curative control.", "organic": True},
         ],
         region="Jalisco",
         severity="media",
     ),
     Disease(
         name="Trips del chile",
+        name_en="Chili thrips",
         description_es="Plaga causada por Frankliniella occidentalis. Raspa tejido foliar causando plateado de hojas. Transmite virus (TSWV). Plaga clave en produccion de chile en Jalisco.",
         description_en="A pest caused by Frankliniella occidentalis (western flower thrips). It rasps leaf tissue, causing silvering of the leaves. It transmits viruses (TSWV). A key pest in chili production in Jalisco.",
         symptoms=["hojas plateadas", "deformacion de hojas", "puntos negros en hojas", "flores danadas"],
         affected_crops=["chile", "tomate", "calabaza"],
         treatments=[
-            {"name": "Beauveria bassiana", "description_es": "Hongo entomopatogeno. Aplicar al follaje (1x10^8 esporas/ml) en horas frescas. Efectivo contra ninfas y adultos.", "description_en": "An entomopathogenic fungus. Apply to the foliage (1x10^8 spores/ml) during cool hours. Effective against nymphs and adults.", "organic": True},
-            {"name": "Trampas azules", "description_es": "Colocar trampas adhesivas azules (color atractivo para trips) a nivel del cultivo. 20-30 trampas/ha.", "description_en": "Place blue sticky traps (a color that attracts thrips) at crop level. 20-30 traps/ha.", "organic": True},
-            {"name": "Extracto de neem + jabon potasico", "description_es": "Neem al 0.3% + jabon potasico al 1%. Aplicar juntos para efecto sinergico: neem repele, jabon rompe cutícula.", "description_en": "Neem at 0.3% + potassium soap at 1%. Apply together for a synergistic effect: neem repels, the soap breaks down the cuticle.", "organic": True},
+            {"name": "Beauveria bassiana", "name_en": "Beauveria bassiana", "description_es": "Hongo entomopatogeno. Aplicar al follaje (1x10^8 esporas/ml) en horas frescas. Efectivo contra ninfas y adultos.", "description_en": "An entomopathogenic fungus. Apply to the foliage (1x10^8 spores/ml) during cool hours. Effective against nymphs and adults.", "organic": True},
+            {"name": "Trampas azules", "name_en": "Blue sticky traps", "description_es": "Colocar trampas adhesivas azules (color atractivo para trips) a nivel del cultivo. 20-30 trampas/ha.", "description_en": "Place blue sticky traps (a color that attracts thrips) at crop level. 20-30 traps/ha.", "organic": True},
+            {"name": "Extracto de neem + jabon potasico", "name_en": "Neem extract + potassium soap", "description_es": "Neem al 0.3% + jabon potasico al 1%. Aplicar juntos para efecto sinergico: neem repele, jabon rompe cutícula.", "description_en": "Neem at 0.3% + potassium soap at 1%. Apply together for a synergistic effect: neem repels, the soap breaks down the cuticle.", "organic": True},
         ],
         region="Jalisco",
         severity="media",
@@ -958,84 +1007,90 @@ DISEASE_SEEDS = [
     # --- Ontario / Canada ---
     Disease(
         name="Corn rootworm",
+        name_en="Corn rootworm",
         description_es="Plaga causada por Diabrotica virgifera. Las larvas se alimentan de raices del maiz causando volcamiento y reduccion severa de rendimiento. Plaga numero 1 del maiz en Ontario.",
         description_en="A pest caused by Diabrotica virgifera. The larvae feed on maize roots, causing lodging and a severe drop in yield. The number-one maize pest in Ontario.",
         symptoms=["volcamiento de plantas", "raices danadas", "crecimiento irregular", "escarabajos adultos en estigmas"],
         affected_crops=["corn"],
         treatments=[
-            {"name": "Rotacion de cultivos", "description_es": "Rotar maiz con soya o trigo. La larva solo sobrevive en raices de maiz — un ano sin maiz rompe el ciclo.", "description_en": "Rotate maize with soybeans or wheat. The larva only survives on maize roots — one year without maize breaks the cycle.", "organic": True},
-            {"name": "Nematodos entomopatogenos", "description_es": "Aplicar Heterorhabditis bacteriophora al suelo en primavera (2.5 billones/ha). Parasitan larvas en la rizosfera.", "description_en": "Apply Heterorhabditis bacteriophora to the soil in spring (2.5 billion/ha). They parasitize larvae in the rhizosphere.", "organic": True},
-            {"name": "Variedades tolerantes", "description_es": "Usar hibridos con sistema radicular vigoroso que tolera dano moderado sin volcamiento. Consultar listado OMAFRA.", "description_en": "Use hybrids with a vigorous root system that tolerates moderate damage without lodging. Consult the OMAFRA list.", "organic": True},
+            {"name": "Rotacion de cultivos", "name_en": "Crop rotation", "description_es": "Rotar maiz con soya o trigo. La larva solo sobrevive en raices de maiz — un ano sin maiz rompe el ciclo.", "description_en": "Rotate maize with soybeans or wheat. The larva only survives on maize roots — one year without maize breaks the cycle.", "organic": True},
+            {"name": "Nematodos entomopatogenos", "name_en": "Entomopathogenic nematodes", "description_es": "Aplicar Heterorhabditis bacteriophora al suelo en primavera (2.5 billones/ha). Parasitan larvas en la rizosfera.", "description_en": "Apply Heterorhabditis bacteriophora to the soil in spring (2.5 billion/ha). They parasitize larvae in the rhizosphere.", "organic": True},
+            {"name": "Variedades tolerantes", "name_en": "Tolerant varieties", "description_es": "Usar hibridos con sistema radicular vigoroso que tolera dano moderado sin volcamiento. Consultar listado OMAFRA.", "description_en": "Use hybrids with a vigorous root system that tolerates moderate damage without lodging. Consult the OMAFRA list.", "organic": True},
         ],
         region="Ontario",
         severity="alta",
     ),
     Disease(
         name="Soybean aphid",
+        name_en="Soybean aphid",
         description_es="Plaga causada por Aphis glycines. Colonia de afidos en enves de hojas que succiona savia y reduce rendimiento 10-40%. Puede alcanzar miles de individuos por planta.",
         description_en="A pest caused by Aphis glycines. Colonies of aphids on the underside of leaves suck sap and reduce yield by 10-40%. It can reach thousands of individuals per plant.",
         symptoms=["hojas enrolladas", "mielecilla", "fumagina", "colonias de afidos en enves", "reduccion de vainas"],
         affected_crops=["soybean"],
         treatments=[
-            {"name": "Mariquitas (Coccinellidae)", "description_es": "Conservar habitat de depredadores naturales. Una mariquita consume 50-60 afidos/dia. Evitar insecticidas de amplio espectro.", "description_en": "Conserve the habitat of natural predators. One ladybird eats 50-60 aphids per day. Avoid broad-spectrum insecticides.", "organic": True},
-            {"name": "Extracto de neem", "description_es": "Azadiractina al 0.3%. Aplicar foliar cuando poblacion supere umbral economico (250 afidos/planta). Repetir cada 7 dias.", "description_en": "Azadirachtin at 0.3%. Apply as a foliar spray when the population exceeds the economic threshold (250 aphids/plant). Repeat every 7 days.", "organic": True},
-            {"name": "Jabon potasico", "description_es": "Aplicar jabon potasico al 2% foliar. Rompe cutícula del afido por contacto. Aplicar en horas frescas con buena cobertura.", "description_en": "Apply potassium soap at 2% as a foliar spray. It breaks down the aphid's cuticle on contact. Apply during cool hours with good coverage.", "organic": True},
+            {"name": "Mariquitas (Coccinellidae)", "name_en": "Ladybirds (Coccinellidae)", "description_es": "Conservar habitat de depredadores naturales. Una mariquita consume 50-60 afidos/dia. Evitar insecticidas de amplio espectro.", "description_en": "Conserve the habitat of natural predators. One ladybird eats 50-60 aphids per day. Avoid broad-spectrum insecticides.", "organic": True},
+            {"name": "Extracto de neem", "name_en": "Neem extract", "description_es": "Azadiractina al 0.3%. Aplicar foliar cuando poblacion supere umbral economico (250 afidos/planta). Repetir cada 7 dias.", "description_en": "Azadirachtin at 0.3%. Apply as a foliar spray when the population exceeds the economic threshold (250 aphids/plant). Repeat every 7 days.", "organic": True},
+            {"name": "Jabon potasico", "name_en": "Potassium soap", "description_es": "Aplicar jabon potasico al 2% foliar. Rompe cutícula del afido por contacto. Aplicar en horas frescas con buena cobertura.", "description_en": "Apply potassium soap at 2% as a foliar spray. It breaks down the aphid's cuticle on contact. Apply during cool hours with good coverage.", "organic": True},
         ],
         region="Ontario",
         severity="media",
     ),
     Disease(
         name="Apple scab",
+        name_en="Apple scab",
         description_es="Enfermedad fungica causada por Venturia inaequalis. Produce lesiones olivaceas en hojas y frutos de manzana. Enfermedad mas importante de manzana en Ontario — puede destruir cosecha comercial.",
         description_en="A fungal disease caused by Venturia inaequalis. It produces olive lesions on apple leaves and fruit. The most important apple disease in Ontario — it can destroy a commercial crop.",
         symptoms=["manchas olivaceas en hojas", "lesiones en frutos", "defoliacion prematura", "frutos deformes", "costras en piel"],
         affected_crops=["apple"],
         treatments=[
-            {"name": "Azufre mojable", "description_es": "Aplicar azufre micronizado (3-5 kg/ha) preventivamente desde boton rosa. Intervalos de 7-10 dias durante periodo de infeccion primaria (abril-junio).", "description_en": "Apply micronized sulfur (3-5 kg/ha) preventively from pink bud. At 7-10 day intervals during the primary infection period (April-June).", "organic": True},
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre + cal al 1%. Aplicar en dormancia (marzo) y pre-floracion. No aplicar despues de floracion por riesgo de russet en frutos.", "description_en": "Copper sulfate + lime at 1%. Apply during dormancy (March) and pre-bloom. Do not apply after flowering due to the risk of fruit russeting.", "organic": True},
-            {"name": "Sanidad de huerto", "description_es": "Retirar y compostar hojas caidas en otono (fuente de inoculo primario). Aplicar urea 5% foliar en otono para acelerar descomposicion de hojarasca.", "description_en": "Remove and compost fallen leaves in autumn (the source of primary inoculum). Apply 5% urea as a foliar spray in autumn to speed up leaf-litter decomposition.", "organic": True},
+            {"name": "Azufre mojable", "name_en": "Wettable sulfur", "description_es": "Aplicar azufre micronizado (3-5 kg/ha) preventivamente desde boton rosa. Intervalos de 7-10 dias durante periodo de infeccion primaria (abril-junio).", "description_en": "Apply micronized sulfur (3-5 kg/ha) preventively from pink bud. At 7-10 day intervals during the primary infection period (April-June).", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre + cal al 1%. Aplicar en dormancia (marzo) y pre-floracion. No aplicar despues de floracion por riesgo de russet en frutos.", "description_en": "Copper sulfate + lime at 1%. Apply during dormancy (March) and pre-bloom. Do not apply after flowering due to the risk of fruit russeting.", "organic": True},
+            {"name": "Sanidad de huerto", "name_en": "Orchard sanitation", "description_es": "Retirar y compostar hojas caidas en otono (fuente de inoculo primario). Aplicar urea 5% foliar en otono para acelerar descomposicion de hojarasca.", "description_en": "Remove and compost fallen leaves in autumn (the source of primary inoculum). Apply 5% urea as a foliar spray in autumn to speed up leaf-litter decomposition.", "organic": True},
         ],
         region="Ontario",
         severity="alta",
     ),
     Disease(
         name="Powdery mildew (grape)",
+        name_en="Powdery mildew (grape)",
         description_es="Enfermedad fungica causada por Erysiphe necator. Produce polvo blanco en hojas, brotes y racimos de uva. Reduce calidad del vino y rendimiento. Problematica en vinedos de Niagara.",
         description_en="A fungal disease caused by Erysiphe necator. It produces white powder on grape leaves, shoots and clusters. It reduces wine quality and yield. A problem in Niagara vineyards.",
         symptoms=["polvo blanco en hojas", "deformacion de brotes", "racimos cubiertos", "sabor alterado en uva", "hojas amarillas"],
         affected_crops=["grape"],
         treatments=[
-            {"name": "Azufre mojable", "description_es": "Aplicar 3-5 kg/ha cada 10-14 dias desde brote de 15 cm hasta envero. No aplicar a >30C (fitotoxicidad).", "description_en": "Apply 3-5 kg/ha every 10-14 days from 15 cm shoot growth to veraison. Do not apply above 30C (phytotoxicity).", "organic": True},
-            {"name": "Bicarbonato de potasio", "description_es": "Aplicar solucion al 0.5% foliar como curativo. Altera pH de la superficie foliar inhibiendo germinacion de esporas.", "description_en": "Apply a 0.5% solution as a foliar curative. It shifts the leaf-surface pH, inhibiting spore germination.", "organic": True},
-            {"name": "Manejo de canopia", "description_es": "Deshoje de zona de racimos para mejorar circulacion de aire. Reducir densidad de brotes. Exponer racimos al sol.", "description_en": "Leaf-thin the cluster zone to improve air circulation. Reduce shoot density. Expose the clusters to the sun.", "organic": True},
+            {"name": "Azufre mojable", "name_en": "Wettable sulfur", "description_es": "Aplicar 3-5 kg/ha cada 10-14 dias desde brote de 15 cm hasta envero. No aplicar a >30C (fitotoxicidad).", "description_en": "Apply 3-5 kg/ha every 10-14 days from 15 cm shoot growth to veraison. Do not apply above 30C (phytotoxicity).", "organic": True},
+            {"name": "Bicarbonato de potasio", "name_en": "Potassium bicarbonate", "description_es": "Aplicar solucion al 0.5% foliar como curativo. Altera pH de la superficie foliar inhibiendo germinacion de esporas.", "description_en": "Apply a 0.5% solution as a foliar curative. It shifts the leaf-surface pH, inhibiting spore germination.", "organic": True},
+            {"name": "Manejo de canopia", "name_en": "Canopy management", "description_es": "Deshoje de zona de racimos para mejorar circulacion de aire. Reducir densidad de brotes. Exponer racimos al sol.", "description_en": "Leaf-thin the cluster zone to improve air circulation. Reduce shoot density. Expose the clusters to the sun.", "organic": True},
         ],
         region="Ontario",
         severity="media",
     ),
     Disease(
         name="Late blight (Ontario)",
+        name_en="Late blight (Ontario)",
         description_es="Enfermedad causada por Phytophthora infestans — mismo patogeno que en Mexico pero cepas adaptadas al clima templado de Ontario. Afecta tomate de invernadero y papa. Se propaga rapidamente en condiciones frias y humedas.",
         description_en="A disease caused by Phytophthora infestans — the same pathogen as in Mexico, but with strains adapted to Ontario's temperate climate. It affects greenhouse tomatoes and potatoes. It spreads rapidly in cool, wet conditions.",
         symptoms=["manchas oscuras acuosas", "lesiones en tallos", "pudricion de frutos", "micelio blanco en enves", "olor fetido"],
         affected_crops=["tomato", "potato"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre + cal al 1%. Aplicar preventivamente cada 7 dias cuando humedad relativa >90% y temperatura <20C.", "description_en": "Copper sulfate + lime at 1%. Apply preventively every 7 days when relative humidity is above 90% and temperature is below 20C.", "organic": True},
-            {"name": "Bacillus subtilis", "description_es": "Bacteria antagonista. Aplicar foliar (2 L/ha formulado comercial) cada 7-10 dias. Compite con Phytophthora por nicho ecologico.", "description_en": "An antagonistic bacterium. Apply as a foliar spray (2 L/ha commercial formulation) every 7-10 days. It competes with Phytophthora for ecological niche.", "organic": True},
-            {"name": "Ventilacion de invernadero", "description_es": "Mantener humedad <85% en invernadero. Aumentar circulacion de aire. Evitar riego por aspersion — usar goteo.", "description_en": "Keep humidity below 85% in the greenhouse. Increase air circulation. Avoid sprinkler irrigation — use drip.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre + cal al 1%. Aplicar preventivamente cada 7 dias cuando humedad relativa >90% y temperatura <20C.", "description_en": "Copper sulfate + lime at 1%. Apply preventively every 7 days when relative humidity is above 90% and temperature is below 20C.", "organic": True},
+            {"name": "Bacillus subtilis", "name_en": "Bacillus subtilis", "description_es": "Bacteria antagonista. Aplicar foliar (2 L/ha formulado comercial) cada 7-10 dias. Compite con Phytophthora por nicho ecologico.", "description_en": "An antagonistic bacterium. Apply as a foliar spray (2 L/ha commercial formulation) every 7-10 days. It competes with Phytophthora for ecological niche.", "organic": True},
+            {"name": "Ventilacion de invernadero", "name_en": "Greenhouse ventilation", "description_es": "Mantener humedad <85% en invernadero. Aumentar circulacion de aire. Evitar riego por aspersion — usar goteo.", "description_en": "Keep humidity below 85% in the greenhouse. Increase air circulation. Avoid sprinkler irrigation — use drip.", "organic": True},
         ],
         region="Ontario",
         severity="alta",
     ),
     Disease(
         name="Downy mildew (grape)",
+        name_en="Downy mildew (grape)",
         description_es="Enfermedad fungica causada por Plasmopara viticola. Produce manchas aceitosas amarillas en haz de hojas y esporulacion algodonosa blanca en enves. Mas severa que powdery mildew en anos humedos.",
         description_en="A fungal disease caused by Plasmopara viticola. It produces yellow oily spots on the upper leaf surface and cottony white sporulation on the underside. More severe than powdery mildew in wet years.",
         symptoms=["manchas aceitosas amarillas", "esporulacion blanca en enves", "necrosis de hojas", "racimos secos", "defoliacion"],
         affected_crops=["grape"],
         treatments=[
-            {"name": "Caldo bordeles", "description_es": "Sulfato de cobre + cal al 1-2%. Aplicar preventivamente cada 10-14 dias desde brote de 10 cm. Tratamiento clasico de vinedos.", "description_en": "Copper sulfate + lime at 1-2%. Apply preventively every 10-14 days from 10 cm shoot growth. The classic vineyard treatment.", "organic": True},
-            {"name": "Fosfito de potasio", "description_es": "Aplicar foliar (3 L/ha) cada 10 dias. Estimula defensas naturales de la planta (SAR) y tiene efecto fungicida directo.", "description_en": "Apply as a foliar spray (3 L/ha) every 10 days. It triggers the plant's natural defenses (SAR) and has a direct fungicidal effect.", "organic": True},
-            {"name": "Drenaje y circulacion de aire", "description_es": "Mejorar drenaje del suelo. Deshoje y manejo de canopia para reducir humedad en zona de racimos. Orientar hileras N-S.", "description_en": "Improve soil drainage. Leaf-thin and manage the canopy to reduce humidity in the cluster zone. Orient rows north-south.", "organic": True},
+            {"name": "Caldo bordeles", "name_en": "Bordeaux mixture", "description_es": "Sulfato de cobre + cal al 1-2%. Aplicar preventivamente cada 10-14 dias desde brote de 10 cm. Tratamiento clasico de vinedos.", "description_en": "Copper sulfate + lime at 1-2%. Apply preventively every 10-14 days from 10 cm shoot growth. The classic vineyard treatment.", "organic": True},
+            {"name": "Fosfito de potasio", "name_en": "Potassium phosphite", "description_es": "Aplicar foliar (3 L/ha) cada 10 dias. Estimula defensas naturales de la planta (SAR) y tiene efecto fungicida directo.", "description_en": "Apply as a foliar spray (3 L/ha) every 10 days. It triggers the plant's natural defenses (SAR) and has a direct fungicidal effect.", "organic": True},
+            {"name": "Drenaje y circulacion de aire", "name_en": "Drainage and air circulation", "description_es": "Mejorar drenaje del suelo. Deshoje y manejo de canopia para reducir humedad en zona de racimos. Orientar hileras N-S.", "description_en": "Improve soil drainage. Leaf-thin and manage the canopy to reduce humidity in the cluster zone. Orient rows north-south.", "organic": True},
         ],
         region="Ontario",
         severity="alta",
@@ -1051,6 +1106,7 @@ def seed_diseases(db_session) -> int:
     for disease in DISEASE_SEEDS:
         db_session.add(Disease(
             name=disease.name,
+            name_en=disease.name_en,
             description_es=disease.description_es,
             description_en=disease.description_en,
             symptoms=disease.symptoms,
@@ -1526,3 +1582,84 @@ def seed_farmer_vocabulary(db_session) -> int:
         ))
     db_session.commit()
     return len(FARMER_VOCABULARY_SEEDS)
+
+
+def backfill_kb_english(db_session) -> int:
+    """Backfill English (*_en) fields on KB rows seeded before _en content existed.
+
+    Matches existing DB rows to seed entries by name and fills any *_en field that is
+    currently empty when the seed provides a value. Diseases also get their treatments
+    JSON merged by treatment name. Commits once and returns the number of rows updated.
+    Idempotent — a second run on an already-backfilled database returns 0.
+    """
+    updated = 0
+
+    ancestral_seeds = {seed.name: seed for seed in ANCESTRAL_METHOD_SEEDS}
+    for row in db_session.query(AncestralMethod).all():
+        seed = ancestral_seeds.get(row.name)
+        if seed is None:
+            continue
+        changed = False
+        for field in ("name_en", "description_en", "benefits_en", "scientific_basis_en"):
+            if getattr(seed, field) and not getattr(row, field):
+                setattr(row, field, getattr(seed, field))
+                changed = True
+        if changed:
+            updated += 1
+
+    fertilizer_seeds = {seed.name: seed for seed in FERTILIZER_SEEDS}
+    for row in db_session.query(Fertilizer).all():
+        seed = fertilizer_seeds.get(row.name)
+        if seed is None:
+            continue
+        changed = False
+        for field in ("name_en", "description_en", "application_method_en", "nutrient_profile_en"):
+            if getattr(seed, field) and not getattr(row, field):
+                setattr(row, field, getattr(seed, field))
+                changed = True
+        if changed:
+            updated += 1
+
+    crop_seeds = {seed.name: seed for seed in CROP_TYPE_SEEDS}
+    for row in db_session.query(CropType).all():
+        seed = crop_seeds.get(row.name)
+        if seed is None:
+            continue
+        changed = False
+        for field in ("growing_season_en", "description_en"):
+            if getattr(seed, field) and not getattr(row, field):
+                setattr(row, field, getattr(seed, field))
+                changed = True
+        if changed:
+            updated += 1
+
+    disease_seeds = {seed.name: seed for seed in DISEASE_SEEDS}
+    for row in db_session.query(Disease).all():
+        seed = disease_seeds.get(row.name)
+        if seed is None:
+            continue
+        changed = False
+        for field in ("name_en", "description_en"):
+            if getattr(seed, field) and not getattr(row, field):
+                setattr(row, field, getattr(seed, field))
+                changed = True
+        seed_treatments = {t.get("name"): t for t in (seed.treatments or [])}
+        new_treatments = []
+        treatments_changed = False
+        for treatment in (row.treatments or []):
+            merged = dict(treatment)
+            seed_treatment = seed_treatments.get(merged.get("name"))
+            if seed_treatment:
+                for key in ("name_en", "description_en"):
+                    if seed_treatment.get(key) and not merged.get(key):
+                        merged[key] = seed_treatment[key]
+                        treatments_changed = True
+            new_treatments.append(merged)
+        if treatments_changed:
+            row.treatments = new_treatments  # reassign so SQLAlchemy detects the JSON change
+            changed = True
+        if changed:
+            updated += 1
+
+    db_session.commit()
+    return updated

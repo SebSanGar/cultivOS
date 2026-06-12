@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class FertilizerOut(BaseModel):
     id: int
     name: str
+    name_en: str | None = None
     description_es: str
     description_en: str | None = None
     application_method: str

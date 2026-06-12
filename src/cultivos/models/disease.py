@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class TreatmentInfo(BaseModel):
     name: str
+    name_en: str | None = None
     description_es: str
     description_en: str | None = None
     organic: bool = True
@@ -15,6 +16,7 @@ class TreatmentInfo(BaseModel):
 class DiseaseOut(BaseModel):
     id: int
     name: str
+    name_en: str | None = None
     description_es: str
     description_en: str | None = None
     symptoms: list[str]
@@ -30,6 +32,7 @@ class DiseaseMatch(BaseModel):
     """Result of symptom-based disease identification."""
     id: int
     name: str
+    name_en: str | None = None
     description_es: str
     description_en: str | None = None
     symptoms: list[str]
