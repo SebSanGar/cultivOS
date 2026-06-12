@@ -37,8 +37,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Evaluacion de Riesgo de Enfermedades</h1>
-            <p class="intel-subtitle">Riesgos detectados a partir de datos NDVI, termicos y climaticos — identificacion de enfermedades por sintomas</p>
+            <h1 class="intel-title" data-i18n="disease.title">Evaluacion de Riesgo de Enfermedades</h1>
+            <p class="intel-subtitle" data-i18n="disease.subtitle">Riesgos detectados a partir de datos NDVI, termicos y climaticos — identificacion de enfermedades por sintomas</p>
         </div>
         <div class="intel-header-actions">
             <select id="disease-farm-select" class="intel-select" onchange="loadFieldsForDisease()">
@@ -47,7 +47,7 @@
             <select id="disease-field-select" class="intel-select">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadDiseaseRisk()">Consultar Riesgo</button>
+            <button class="intel-btn" onclick="loadDiseaseRisk()" data-i18n="btn.assessRisk">Consultar Riesgo</button>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
 
     <!-- Symptom identification section -->
     <div class="intel-card" style="margin-top:2rem;">
-        <h3 style="color:var(--text);font-size:1.1rem;margin:0 0 1rem 0;">Identificacion por Sintomas</h3>
+        <h3 style="color:var(--text);font-size:1.1rem;margin:0 0 1rem 0;" data-i18n="disease.symptomsTitle">Identificacion por Sintomas</h3>
         <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Ingrese los sintomas observados (separados por coma) para identificar posibles enfermedades.</p>
         <form id="disease-identify-form" onsubmit="identifyDisease(event)">
             <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;">
@@ -106,7 +106,7 @@
                     <label style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:0.3rem;">Cultivo (opcional)</label>
                     <input id="disease-crop-input" type="text" placeholder="maiz, tomate..." style="width:100%;padding:0.5rem 0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;">
                 </div>
-                <button type="submit" class="intel-btn">Identificar</button>
+                <button type="submit" class="intel-btn" data-i18n="disease.identifyButton">Identificar</button>
             </div>
         </form>
         <div id="disease-identify-results" style="margin-top:1rem;"></div>

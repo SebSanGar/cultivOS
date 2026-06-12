@@ -50,7 +50,7 @@
     </style>
 </head>
 <body>
-    <h1>Benchmark Regional</h1>
+    <h1 data-i18n="benchmark.title">Benchmark Regional</h1>
 
     <div class="selectors">
         <label>Finca
@@ -68,12 +68,12 @@
 
         <div class="bars-container">
             <div class="bar-wrapper">
-                <div class="bar-label">Tu finca</div>
+                <div class="bar-label" data-i18n="benchmark.ownFarm">Tu finca</div>
                 <div class="bar-track"><div class="bar-fill" id="bench-own-bar" style="width:0%; background:var(--green);"></div></div>
                 <div class="bar-value" id="bench-own-value">--</div>
             </div>
             <div class="bar-wrapper">
-                <div class="bar-label">Promedio regional</div>
+                <div class="bar-label" data-i18n="benchmark.regionalAvg">Promedio regional</div>
                 <div class="bar-track"><div class="bar-fill" id="bench-regional-bar" style="width:0%; background:var(--blue);"></div></div>
                 <div class="bar-value" id="bench-regional-value">--</div>
             </div>
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <div id="bench-no-data" class="no-data" style="display:none;">Sin datos disponibles para esta finca.</div>
+    <div id="bench-no-data" class="no-data" data-i18n="benchmark.noData" style="display:none;">Sin datos disponibles para esta finca.</div>
 
     <script src="/benchmark-regional.js"></script>
 <script src="/i18n.js"></script>

@@ -33,7 +33,7 @@
 <main class="intel-dashboard">
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Ranking de Intervenciones</h1>
+            <h1 class="intel-title" data-i18n="interventions.title">Ranking de Intervenciones</h1>
             <p class="intel-subtitle">Tratamientos ordenados por impacto predicho y costo-efectividad — prioriza lo que mas ayuda al campo</p>
         </div>
         <div class="intel-header-actions">
@@ -43,13 +43,13 @@
             <select id="interv-field-select" class="intel-select">
                 <option value="" data-i18n="nav.selectField">Select a field...</option>
             </select>
-            <button class="intel-btn" onclick="loadInterventions()">Ver Ranking</button>
+            <button class="intel-btn" onclick="loadInterventions()" data-i18n="btn.viewRanking">Ver Ranking</button>
         </div>
     </div>
 
     <div class="intel-empty" id="interv-empty">
         <div class="intel-empty-icon">🏆</div>
-        <div class="intel-empty-text">Seleccione granja y campo para ver el ranking de intervenciones recomendadas</div>
+        <div class="intel-empty-text" data-i18n="interventions.empty">Seleccione granja y campo para ver el ranking de intervenciones recomendadas</div>
     </div>
 
     <div id="interv-content" style="display:none;">

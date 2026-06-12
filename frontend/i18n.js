@@ -771,7 +771,48 @@
             'rotation.lastCrop': 'Último Cultivo',
             'rotation.seasons': 'Temporadas',
             'rotation.multiYearPlan': 'Plan a 3 Años',
-            'btn.generatePlan': 'Generar Plan'
+            'btn.generatePlan': 'Generar Plan',
+            // CR5c — alert-config
+            'alert.title': 'Configuración de Alertas',
+            'alert.subtitle': 'Umbrales personalizados por granja — reciba alertas cuando los valores caigan debajo del mínimo',
+            'alert.healthMin': 'Salud mínima',
+            'alert.ndviMin': 'NDVI mínimo',
+            'alert.tempMax': 'Temperatura máxima',
+            'btn.save': 'Guardar',
+            // CR5c — alertas-estacionales
+            'seasonal.title': 'Inteligencia Ancestral',
+            'seasonal.subtitle': 'Calendario ancestral conectado a alertas en tiempo real — temporal, secas, preparación, siembra, cosecha',
+            'seasonal.empty': 'Seleccione una granja para ver alertas estacionales basadas en conocimiento ancestral',
+            // CR5c — benchmark-regional
+            'benchmark.title': 'Benchmark Regional',
+            'benchmark.ownFarm': 'Tu finca',
+            'benchmark.regionalAvg': 'Promedio regional',
+            'benchmark.noData': 'Sin datos disponibles para esta finca.',
+            // CR5c — calculadora-suelo
+            'calc.title': 'Calculadora de Enmiendas de Suelo',
+            'calc.subtitle': 'Ingrese los valores actuales de su suelo y los objetivos deseados para recibir prescripciones de enmiendas orgánicas.',
+            'calc.currentLabel': 'Valores Actuales',
+            'calc.targetLabel': 'Valores Objetivo',
+            'btn.calculateAmendments': 'Calcular Enmiendas',
+            // CR5c — clima
+            'climate.title': 'Panel Climático',
+            'climate.subtitle': 'Pronóstico de 7 días, temperatura, lluvia y alertas de sequía por granja',
+            'climate.forecastTitle': 'Pronóstico de 7 Días',
+            'climate.historyTitle': 'Historial Climático',
+            // CR5c — disease
+            'disease.title': 'Evaluación de Riesgo de Enfermedades',
+            'disease.subtitle': 'Riesgos detectados a partir de datos NDVI, térmicos y climáticos — identificación de enfermedades por síntomas',
+            'disease.symptomsTitle': 'Identificación por Síntomas',
+            'disease.identifyButton': 'Identificar',
+            'btn.assessRisk': 'Consultar Riesgo',
+            // CR5c — efectividad
+            'effectiveness.title': 'Efectividad de Tratamientos',
+            'effectiveness.subtitle': 'Análisis cruzado de granjas — cuáles tratamientos funcionan mejor, deltas de salud antes/después, frecuencia de uso',
+            'effectiveness.loadButton': 'Cargar Reporte',
+            // CR5c — intervenciones
+            'interventions.title': 'Ranking de Intervenciones',
+            'interventions.empty': 'Seleccione granja y campo para ver el ranking de intervenciones recomendadas',
+            'btn.viewRanking': 'Ver Ranking'
         },
         en: {
             "dash.acknowledge": "Acknowledge",
@@ -1558,7 +1599,48 @@
             'rotation.lastCrop': 'Last Crop',
             'rotation.seasons': 'Seasons',
             'rotation.multiYearPlan': '3-Year Plan',
-            'btn.generatePlan': 'Generate Plan'
+            'btn.generatePlan': 'Generate Plan',
+            // CR5c — alert-config
+            'alert.title': 'Alert Configuration',
+            'alert.subtitle': 'Custom thresholds per farm — receive alerts when values fall below the minimum',
+            'alert.healthMin': 'Minimum Health',
+            'alert.ndviMin': 'Minimum NDVI',
+            'alert.tempMax': 'Maximum Temperature',
+            'btn.save': 'Save',
+            // CR5c — alertas-estacionales
+            'seasonal.title': 'Ancestral Intelligence',
+            'seasonal.subtitle': 'Ancestral calendar connected to real-time alerts — rainy season, dry season, preparation, planting, harvest',
+            'seasonal.empty': 'Select a farm to view seasonal alerts based on ancestral knowledge',
+            // CR5c — benchmark-regional
+            'benchmark.title': 'Regional Benchmark',
+            'benchmark.ownFarm': 'Your farm',
+            'benchmark.regionalAvg': 'Regional average',
+            'benchmark.noData': 'No data available for this farm.',
+            // CR5c — calculadora-suelo
+            'calc.title': 'Soil Amendment Calculator',
+            'calc.subtitle': 'Enter your current soil values and desired targets to receive organic amendment prescriptions.',
+            'calc.currentLabel': 'Current Values',
+            'calc.targetLabel': 'Target Values',
+            'btn.calculateAmendments': 'Calculate Amendments',
+            // CR5c — clima
+            'climate.title': 'Climate Panel',
+            'climate.subtitle': '7-day forecast, temperature, rainfall and drought alerts by farm',
+            'climate.forecastTitle': '7-Day Forecast',
+            'climate.historyTitle': 'Climate History',
+            // CR5c — disease
+            'disease.title': 'Disease Risk Assessment',
+            'disease.subtitle': 'Risks detected from NDVI, thermal and climate data — symptom-based disease identification',
+            'disease.symptomsTitle': 'Symptom Identification',
+            'disease.identifyButton': 'Identify',
+            'btn.assessRisk': 'Assess Risk',
+            // CR5c — efectividad
+            'effectiveness.title': 'Treatment Effectiveness',
+            'effectiveness.subtitle': 'Cross-farm analysis — which treatments work best, before/after health deltas, usage frequency',
+            'effectiveness.loadButton': 'Load Report',
+            // CR5c — intervenciones
+            'interventions.title': 'Intervention Ranking',
+            'interventions.empty': 'Select a farm and field to view the recommended intervention ranking',
+            'btn.viewRanking': 'View Ranking'
         }
     };
 

@@ -36,8 +36,8 @@
     <!-- Header -->
     <div class="intel-header">
         <div>
-            <h1 class="intel-title">Panel Climatico</h1>
-            <p class="intel-subtitle">Pronostico de 7 dias, temperatura, lluvia y alertas de sequia por granja</p>
+            <h1 class="intel-title" data-i18n="climate.title">Panel Climatico</h1>
+            <p class="intel-subtitle" data-i18n="climate.subtitle">Pronostico de 7 dias, temperatura, lluvia y alertas de sequia por granja</p>
         </div>
         <div class="intel-header-actions">
             <select id="clima-farm-select" class="intel-select" onchange="loadWeather()">
@@ -91,7 +91,7 @@
         <!-- 7-day forecast cards -->
         <div class="intel-panel" style="grid-column: 1 / -1;">
             <div class="intel-panel-header">
-                <h2 class="intel-panel-title">Pronostico de 7 Dias</h2>
+                <h2 class="intel-panel-title" data-i18n="climate.forecastTitle">Pronostico de 7 Dias</h2>
             </div>
             <div class="intel-panel-body">
                 <div id="clima-forecast" style="display:flex; gap:1rem; overflow-x:auto; padding:0.5rem 0;">
@@ -124,7 +124,7 @@
     <!-- Historical records table -->
     <div class="intel-panel" style="margin-top: 1.5rem;">
         <div class="intel-panel-header">
-            <h2 class="intel-panel-title">Historial Climatico</h2>
+            <h2 class="intel-panel-title" data-i18n="climate.historyTitle">Historial Climatico</h2>
         </div>
         <div class="intel-panel-body">
             <div id="clima-history" style="overflow-x:auto;">

@@ -30,13 +30,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>Calculadora de Enmiendas de Suelo</h1>
-            <p>Ingrese los valores actuales de su suelo y los objetivos deseados para recibir prescripciones de enmiendas organicas.</p>
+            <h1 data-i18n="calc.title">Calculadora de Enmiendas de Suelo</h1>
+            <p data-i18n="calc.subtitle">Ingrese los valores actuales de su suelo y los objetivos deseados para recibir prescripciones de enmiendas organicas.</p>
         </header>
 
         <div class="calc-grid">
             <div class="form-section">
-                <h3>Valores Actuales</h3>
+                <h3 data-i18n="calc.currentLabel">Valores Actuales</h3>
                 <div class="form-row"><label>pH</label><input type="number" id="currentPh" step="0.1" min="0" max="14" value="5.5"></div>
                 <div class="form-row"><label>Materia Org. %</label><input type="number" id="currentOm" step="0.1" min="0" max="100" value="2.0"></div>
                 <div class="form-row"><label>Nitrogeno (ppm)</label><input type="number" id="currentN" step="1" min="0" value="20"></div>
@@ -44,7 +44,7 @@
                 <div class="form-row"><label>Potasio (ppm)</label><input type="number" id="currentK" step="1" min="0" value="100"></div>
             </div>
             <div class="form-section">
-                <h3>Valores Objetivo</h3>
+                <h3 data-i18n="calc.targetLabel">Valores Objetivo</h3>
                 <div class="form-row"><label>pH</label><input type="number" id="targetPh" step="0.1" min="0" max="14" value="6.5"></div>
                 <div class="form-row"><label>Materia Org. %</label><input type="number" id="targetOm" step="0.1" min="0" max="100" value="4.0"></div>
                 <div class="form-row"><label>Nitrogeno (ppm)</label><input type="number" id="targetN" step="1" min="0" value="40"></div>
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <button class="btn-calculate" id="btnCalc" onclick="calcular()">Calcular Enmiendas</button>
+        <button class="btn-calculate" id="btnCalc" onclick="calcular()" data-i18n="btn.calculateAmendments">Calcular Enmiendas</button>
 
         <div id="resultados">
             <div class="summary-box" id="summaryBox"></div>
