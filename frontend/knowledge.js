@@ -18,6 +18,18 @@ function loc(obj, base) {
         : (obj[base + '_es'] || obj[base] || '');
 }
 
+/* Display label for a crop DATA value ('maiz' -> 'Corn' in EN). */
+function cropLabel(value) {
+    return (window.cultivOS_i18n && typeof window.cultivOS_i18n.cropName === 'function')
+        ? window.cultivOS_i18n.cropName(value)
+        : (value || '');
+}
+
+/* Localize a list of crop DATA values for display. */
+function cropList(values) {
+    return (values || []).map(cropLabel).join(', ');
+}
+
 /* Re-localize any data-i18n nodes injected after the i18n module's initial pass. */
 function relocalize() {
     if (window.cultivOS_i18n && typeof window.cultivOS_i18n.applyAll === 'function') {
@@ -46,13 +58,13 @@ function renderAncestral(methods) {
     container.innerHTML = methods.map(m => `
         <div class="knowledge-card" data-search="${(m.name + ' ' + m.description_es + ' ' + m.region + ' ' + m.practice_type + ' ' + (m.crops || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
-                <h3 class="knowledge-card-title">${m.name}</h3>
+                <h3 class="knowledge-card-title">${loc(m, 'name')}</h3>
                 <span class="knowledge-badge knowledge-badge-type">${m.practice_type}</span>
             </div>
             <p class="knowledge-card-desc">${loc(m, 'description')}</p>
             <div class="knowledge-card-meta">
                 <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${m.region}</span>
-                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(m.crops || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${cropList(m.crops)}</span>
             </div>
             <p class="knowledge-card-benefits"><strong>${lblBenefits}</strong> ${loc(m, 'benefits')}</p>
             ${m.scientific_basis ? `<p class="knowledge-card-science"><strong>${lblScience}</strong> ${loc(m, 'scientific_basis')}</p>` : ''}
@@ -76,7 +88,7 @@ function renderCrops(crops) {
     container.innerHTML = crops.map(c => `
         <div class="knowledge-card" data-search="${(c.name + ' ' + c.family + ' ' + c.description_es + ' ' + (c.regions || []).join(' ') + ' ' + (c.companions || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
-                <h3 class="knowledge-card-title">${c.name}</h3>
+                <h3 class="knowledge-card-title">${cropLabel(c.name)}</h3>
                 <span class="knowledge-badge knowledge-badge-family">${c.family}</span>
             </div>
             <p class="knowledge-card-desc">${loc(c, 'description')}</p>
@@ -87,7 +99,7 @@ function renderCrops(crops) {
             </div>
             <div class="knowledge-card-meta">
                 <span class="knowledge-meta-item"><strong>${lblRegions}</strong> ${(c.regions || []).join(', ')}</span>
-                <span class="knowledge-meta-item"><strong>${lblCompanions}</strong> ${(c.companions || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblCompanions}</strong> ${cropList(c.companions)}</span>
             </div>
             ${c.optimal_temp_min != null ? `<p class="knowledge-card-temp"><strong>${lblOptimalTemp}</strong> ${c.optimal_temp_min} - ${c.optimal_temp_max} C</p>` : ''}
         </div>
@@ -106,7 +118,7 @@ function renderFertilizers(fertilizers) {
     container.innerHTML = fertilizers.map(f => `
         <div class="knowledge-card" data-search="${(f.name + ' ' + f.description_es + ' ' + f.nutrient_profile + ' ' + (f.suitable_crops || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
-                <h3 class="knowledge-card-title">${f.name}</h3>
+                <h3 class="knowledge-card-title">${loc(f, 'name')}</h3>
                 <span class="knowledge-badge knowledge-badge-cost">$${f.cost_per_ha_mxn.toLocaleString()} MXN/ha</span>
             </div>
             <p class="knowledge-card-desc">${loc(f, 'description')}</p>
@@ -114,7 +126,7 @@ function renderFertilizers(fertilizers) {
                 <span class="knowledge-meta-item"><strong>${lblApplication}</strong> ${loc(f, 'application_method')}</span>
                 <span class="knowledge-meta-item"><strong>${lblNutrients}</strong> ${loc(f, 'nutrient_profile')}</span>
             </div>
-            <p class="knowledge-card-crops"><strong>${lblCrops}</strong> ${(f.suitable_crops || []).join(', ')}</p>
+            <p class="knowledge-card-crops"><strong>${lblCrops}</strong> ${cropList(f.suitable_crops)}</p>
         </div>
     `).join('');
 }
@@ -142,19 +154,19 @@ function renderDiseases(diseases) {
         return `
         <div class="knowledge-card" data-search="${(d.name + ' ' + d.description_es + ' ' + (d.affected_crops || []).join(' ') + ' ' + (d.symptoms || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
-                <h3 class="knowledge-card-title">${d.name}</h3>
+                <h3 class="knowledge-card-title">${loc(d, 'name')}</h3>
                 <span class="knowledge-badge ${severityClass}">${severityLabel(d.severity)}</span>
             </div>
             <p class="knowledge-card-desc">${loc(d, 'description')}</p>
             <div class="knowledge-card-meta">
-                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${(d.affected_crops || []).join(', ')}</span>
+                <span class="knowledge-meta-item"><strong>${lblCrops}</strong> ${cropList(d.affected_crops)}</span>
                 <span class="knowledge-meta-item"><strong>${lblRegion}</strong> ${d.region}</span>
             </div>
             <p class="knowledge-card-symptoms"><strong>${lblSymptoms}</strong> ${(d.symptoms || []).join(', ')}</p>
             <div class="knowledge-card-treatments">
                 <strong>${lblTreatments}</strong>
                 ${(d.treatments || []).map(tr =>
-                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${tr.name}</span>`
+                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${loc(tr, 'name')}</span>`
                 ).join(' ')}
             </div>
         </div>`;
@@ -181,7 +193,7 @@ function renderIdentifyResults(matches) {
             <p><strong>${lblMatchedSymptoms}</strong> ${(m.symptoms_matched || []).join(', ')}</p>
             <div class="knowledge-card-treatments">
                 ${(m.treatments || []).map(tr =>
-                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${tr.name}</span>`
+                    `<span class="treatment-tag${tr.organic ? ' organic' : ''}">${loc(tr, 'name')}</span>`
                 ).join(' ')}
             </div>
         </div>

@@ -18,6 +18,13 @@ function loc(obj, base) {
         : (obj[base + '_es'] || obj[base] || '');
 }
 
+// Display label for a crop DATA value (e.g. 'maiz' -> 'Corn' when lang=en).
+function cropLabel(value) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+        ? window.cultivOS_i18n.cropName(value)
+        : (value || '');
+}
+
 // Localize a health-trend code ('declining' | 'improving' | 'stable') to text.
 function trendText(trend) {
     if (trend === 'declining') return t('dash.trendDeclining');
@@ -208,7 +215,7 @@ function renderFarms() {
             ? scores.reduce((a, b) => a + b, 0) / scores.length
             : null;
         const cls = healthClass(avgScore);
-        const crops = [...new Set(fields.map(f => f.crop_type).filter(Boolean))].join(', ');
+        const crops = [...new Set(fields.map(f => f.crop_type).filter(Boolean))].map(cropLabel).join(', ');
 
         return `
         <div class="farm-card" onclick="selectFarm(${farm.id})">
@@ -388,7 +395,7 @@ function renderFields(farmId) {
         <div class="field-card-expanded" onclick="window.location.href='/campo?farm=${farmId}&field=${f.id}'" style="cursor:pointer" title="Ver detalle completo">
             <div class="field-card-header">
                 <span class="field-name">${esc(f.name)}</span>
-                ${f.crop_type ? `<span class="field-crop">${esc(f.crop_type)}</span>` : ''}
+                ${f.crop_type ? `<span class="field-crop">${esc(cropLabel(f.crop_type))}</span>` : ''}
             </div>
             <div class="field-stats">
                 <div>
@@ -962,7 +969,7 @@ function renderFieldComparison(farmId) {
                     <tr class="comparison-row" onclick="window.location.href='/campo?farm=${farmId}&field=${f.field_id}'" style="cursor:pointer">
                         <td>
                             <div class="comparison-field-name">${esc(f.name)}</div>
-                            <div class="comparison-field-crop">${esc(f.crop_type)}</div>
+                            <div class="comparison-field-crop">${esc(cropLabel(f.crop_type))}</div>
                         </td>
                         <td>
                             <span class="health-badge ${healthClass(f.health_score)}">${healthLabel(f.health_score)}</span>

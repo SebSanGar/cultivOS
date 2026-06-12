@@ -9,6 +9,13 @@ function t(key) {
         : key;
 }
 
+// -- i18n helper: display label for a crop DATA value ('maiz' -> 'Corn' in EN) --
+function cropLabel(value) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+        ? window.cultivOS_i18n.cropName(value)
+        : (value || '');
+}
+
 // -- Parse URL params --
 const params = new URLSearchParams(window.location.search);
 const farmId = params.get('farm');
@@ -51,7 +58,7 @@ let farmerSummaryState = null;
 function renderFarmerSummary() {
     if (!farmerSummaryState) return;
     const { healthScore, cropType, topAction } = farmerSummaryState;
-    const cropName = cropType ? cropType.toLowerCase() : t('field.yourCrop');
+    const cropName = cropType ? cropLabel(cropType).toLowerCase() : t('field.yourCrop');
 
     // Health chip
     const chip = document.getElementById('campo-salud-chip');
@@ -174,7 +181,7 @@ async function loadFieldDetail() {
         // Farm subtitle (crop + hectares)
         const granjaEl = document.getElementById('campo-granja');
         if (granjaEl) {
-            granjaEl.textContent = (field.crop_type ? field.crop_type : '') +
+            granjaEl.textContent = (field.crop_type ? cropLabel(field.crop_type) : '') +
                 (field.hectares ? ' · ' + field.hectares + ' ha' : '');
         }
 
@@ -182,7 +189,7 @@ async function loadFieldDetail() {
         const haEl = document.getElementById('campo-hectares');
         if (haEl) haEl.textContent = field.hectares;
         const cropEl = document.getElementById('campo-crop');
-        if (cropEl) cropEl.textContent = field.crop_type || '--';
+        if (cropEl) cropEl.textContent = field.crop_type ? cropLabel(field.crop_type) : '--';
     }
 
     // Health score — drive farmer summary chip + resumen sentence
@@ -817,7 +824,7 @@ function renderYield(yieldData) {
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">${t('field.crop')}</span>
-                <span class="campo-data-value">${esc(yieldData.crop_type || '--')}</span>
+                <span class="campo-data-value">${esc(yieldData.crop_type ? cropLabel(yieldData.crop_type) : '--')}</span>
             </div>
             <div class="campo-data-item">
                 <span class="campo-data-label">${t('field.siapBaseline')}</span>
@@ -1776,7 +1783,7 @@ function renderGrowthStage(data) {
     const headerHtml = `
         <div class="growth-stage-header">
             <span class="health-badge ${stageCls}">${esc(window.cultivOS_i18n.localized(data, 'stage'))}</span>
-            <span class="growth-crop">${esc(data.crop_type)}</span>
+            <span class="growth-crop">${esc(cropLabel(data.crop_type))}</span>
             <span class="growth-day-count">${t('field.day')} ${data.days_since_planting}</span>
         </div>`;
 

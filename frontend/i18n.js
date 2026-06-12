@@ -1246,15 +1246,82 @@
         return (dict[lang] && dict[lang][key]) || (dict[DEFAULT_LANG] && dict[DEFAULT_LANG][key]) || key;
     }
 
+    // Crop/plant DATA values arrive as raw seed tokens (es or en, accent-free).
+    // Keyed by normalized token; values are display labels per language.
+    var crops = {
+        agave: { es: 'Agave', en: 'Agave' },
+        aguacate: { es: 'Aguacate', en: 'Avocado' },
+        albahaca: { es: 'Albahaca', en: 'Basil' },
+        alfalfa: { es: 'Alfalfa', en: 'Alfalfa' },
+        apple: { es: 'Manzana', en: 'Apple' },
+        arandano: { es: 'Arandano', en: 'Blueberry' },
+        basil: { es: 'Albahaca', en: 'Basil' },
+        cacahuate: { es: 'Cacahuate', en: 'Peanut' },
+        cafe: { es: 'Cafe', en: 'Coffee' },
+        calabaza: { es: 'Calabaza', en: 'Squash' },
+        'cana de azucar': { es: 'Cana de azucar', en: 'Sugarcane' },
+        cebada: { es: 'Cebada', en: 'Barley' },
+        cebolla: { es: 'Cebolla', en: 'Onion' },
+        chile: { es: 'Chile', en: 'Chili pepper' },
+        clover: { es: 'Trebol', en: 'Clover' },
+        comfrey: { es: 'Consuelda', en: 'Comfrey' },
+        corn: { es: 'Maiz', en: 'Corn' },
+        'corn (field)': { es: 'Maiz de grano', en: 'Corn (field)' },
+        fescue: { es: 'Festuca', en: 'Fescue' },
+        frambuesa: { es: 'Frambuesa', en: 'Raspberry' },
+        fresa: { es: 'Fresa', en: 'Strawberry' },
+        frijol: { es: 'Frijol', en: 'Beans' },
+        garbanzo: { es: 'Garbanzo', en: 'Chickpea' },
+        girasol: { es: 'Girasol', en: 'Sunflower' },
+        grape: { es: 'Uva', en: 'Grape' },
+        'greenhouse tomato': { es: 'Jitomate de invernadero', en: 'Greenhouse tomato' },
+        jitomate: { es: 'Jitomate', en: 'Tomato' },
+        macadamia: { es: 'Macadamia', en: 'Macadamia' },
+        maiz: { es: 'Maiz', en: 'Corn' },
+        marigold: { es: 'Cempasuchil', en: 'Marigold' },
+        mustard: { es: 'Mostaza', en: 'Mustard' },
+        nasturtium: { es: 'Mastuerzo', en: 'Nasturtium' },
+        nopal: { es: 'Nopal', en: 'Nopal' },
+        pepper: { es: 'Chile', en: 'Pepper' },
+        platano: { es: 'Platano', en: 'Banana' },
+        sorgo: { es: 'Sorgo', en: 'Sorghum' },
+        soya: { es: 'Soya', en: 'Soybean' },
+        soybean: { es: 'Soya', en: 'Soybean' },
+        tomate: { es: 'Tomate', en: 'Tomato' },
+        tomato: { es: 'Jitomate', en: 'Tomato' },
+        trigo: { es: 'Trigo', en: 'Wheat' },
+        wheat: { es: 'Trigo', en: 'Wheat' },
+        'winter wheat': { es: 'Trigo de invierno', en: 'Winter wheat' },
+        zanahoria: { es: 'Zanahoria', en: 'Carrot' }
+    };
+
+    function normalizeCropToken(value) {
+        return String(value).toLowerCase().trim()
+            .replace(/[áà]/g, 'a').replace(/[éè]/g, 'e').replace(/[íì]/g, 'i')
+            .replace(/[óò]/g, 'o').replace(/[úù]/g, 'u').replace(/ñ/g, 'n');
+    }
+
+    // Display label for a crop DATA value in the current language.
+    // Unknown values fall back to the original, first letter capitalized.
+    function cropName(value) {
+        if (!value) return '';
+        var entry = crops[normalizeCropToken(value)];
+        if (entry) return entry[getLang()] || entry.es;
+        var s = String(value).trim();
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
     // Pick the current-language variant of a backend DATA field.
-    // Convention: backend returns <base>_en alongside <base>_es. Falls back across
-    // languages (and to a bare <base>) so partial/legacy data never renders blank.
+    // Convention: backend returns <base>_en alongside <base>_es; some fields use
+    // a bare <base> column as the Spanish original (e.g. name/name_en). The bare
+    // column therefore outranks the cross-language fallback, which only kicks in
+    // when a variant is missing entirely so the UI never renders blank.
     function localized(obj, base) {
         if (!obj) return '';
         var lang = getLang();
         var en = obj[base + '_en'];
         var es = obj[base + '_es'];
-        return (lang === 'en' ? (en || es) : (es || en)) || obj[base] || '';
+        return (lang === 'en' ? (en || es || obj[base]) : (es || obj[base] || en)) || '';
     }
 
     function applyAll() {
@@ -1316,5 +1383,5 @@
         init();
     }
 
-    window.cultivOS_i18n = { t: t, localized: localized, switchLang: switchLang, getLang: getLang, applyAll: applyAll };
+    window.cultivOS_i18n = { t: t, localized: localized, cropName: cropName, switchLang: switchLang, getLang: getLang, applyAll: applyAll };
 })();
