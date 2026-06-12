@@ -76,10 +76,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
             "img-src 'self' data: https://*.tile.openstreetmap.org; "
             "connect-src 'self'; "
-            "font-src 'self' https://cdn.jsdelivr.net"
+            "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com"
         )
         return response
 
