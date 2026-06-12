@@ -30,6 +30,21 @@ function cropList(values) {
     return (values || []).map(cropLabel).join(', ');
 }
 
+/* Display label for a practice_type slug ('water_management' -> 'Water management' in EN). */
+const _PRACTICE_KEY = {
+    water_management: 'know.practiceWaterMgmt',
+    soil_management:  'know.practiceSoilMgmt',
+    biological_control: 'know.practiceBioControl',
+    knowledge_system: 'know.practiceKnowledgeSys',
+    intercropping:    'know.practiceIntercropping',
+};
+function practiceTypeLabel(slug) {
+    const key = _PRACTICE_KEY[slug];
+    if (key) return t(key, slug);
+    // Fallback: humanize unknown slugs (replace _ with space, title-case first word)
+    return (slug || '').replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
+}
+
 /* Re-localize any data-i18n nodes injected after the i18n module's initial pass. */
 function relocalize() {
     if (window.cultivOS_i18n && typeof window.cultivOS_i18n.applyAll === 'function') {
@@ -59,7 +74,7 @@ function renderAncestral(methods) {
         <div class="knowledge-card" data-search="${(m.name + ' ' + m.description_es + ' ' + m.region + ' ' + m.practice_type + ' ' + (m.crops || []).join(' ')).toLowerCase()}">
             <div class="knowledge-card-header">
                 <h3 class="knowledge-card-title">${loc(m, 'name')}</h3>
-                <span class="knowledge-badge knowledge-badge-type">${m.practice_type}</span>
+                <span class="knowledge-badge knowledge-badge-type">${practiceTypeLabel(m.practice_type)}</span>
             </div>
             <p class="knowledge-card-desc">${loc(m, 'description')}</p>
             <div class="knowledge-card-meta">

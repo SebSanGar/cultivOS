@@ -726,6 +726,7 @@ function levelLabel(value) {
         alto: 'field.levelHigh', alta: 'field.levelHigh',
         medio: 'field.levelMedium', media: 'field.levelMedium', moderado: 'field.levelModerate',
         bajo: 'field.levelLow', baja: 'field.levelLow',
+        sin_riesgo: 'field.levelNoRisk',
     };
     const k = keyMap[(value || '').toLowerCase()];
     return k ? t(k) : (value || '--');
