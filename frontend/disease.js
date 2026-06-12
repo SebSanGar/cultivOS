@@ -26,6 +26,8 @@
         return window.cultivOS_i18n ? window.cultivOS_i18n.localized(obj, base) : (obj[base + '_es'] || obj[base] || '');
     }
 
+    function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
     var severityColors = {
         alta: "#ef4444",
         media: "#eab308",
@@ -62,7 +64,7 @@
 
     /* Load fields for selected farm */
     window.loadFieldsForDisease = function () {
-        fieldSel.innerHTML = '<option value="">Seleccione un campo...</option>';
+        fieldSel.innerHTML = '<option value="">' + _t('nav.selectField', 'Select a field...') + '</option>';
         contentEl.style.display = "none";
         emptyEl.style.display = "";
         resetStats();
@@ -86,7 +88,7 @@
         if (!farmId || !fieldId) {
             contentEl.style.display = "none";
             emptyEl.style.display = "";
-            emptyEl.textContent = "Seleccione una granja y un campo para consultar el riesgo.";
+            emptyEl.textContent = _t('dis.selectPrompt', 'Select a farm and field to view risk.');
             resetStats();
             return;
         }
@@ -99,7 +101,7 @@
             if (!data) {
                 contentEl.style.display = "none";
                 emptyEl.style.display = "";
-                emptyEl.textContent = "No se pudo obtener la evaluacion de riesgo para este campo.";
+                emptyEl.textContent = _t('dis.fetchError', 'Could not fetch risk assessment for this field.');
                 resetStats();
                 return;
             }
@@ -137,7 +139,7 @@
 
         /* Message */
         document.getElementById("disease-mensaje").textContent =
-            loc(data, 'mensaje') || "Sin evaluacion disponible.";
+            loc(data, 'mensaje') || _t('dis.noAssessment', 'No assessment available.');
 
         /* Risk cards */
         cardsEl.innerHTML = "";
@@ -158,7 +160,7 @@
                 cardsEl.appendChild(card);
             });
         } else {
-            cardsEl.innerHTML = '<div class="intel-card" style="color:#888;text-align:center;">Sin riesgos detectados para este campo.</div>';
+            cardsEl.innerHTML = '<div class="intel-card" style="color:#888;text-align:center;">' + _t('dis.noRisks', 'No risks detected for this field.') + '</div>';
         }
     }
 
@@ -173,7 +175,7 @@
         var body = { symptoms: symptoms };
         if (crop) body.crop = crop;
 
-        resultsEl.innerHTML = '<div style="color:#888;">Buscando...</div>';
+        resultsEl.innerHTML = '<div style="color:#888;">' + _t('dis.searching', 'Searching...') + '</div>';
 
         fetchJSON("/api/knowledge/diseases/identify", {
             method: "POST",
@@ -181,7 +183,7 @@
             body: JSON.stringify(body),
         }).then(function (matches) {
             if (!matches || matches.length === 0) {
-                resultsEl.innerHTML = '<div style="color:#888;">Sin coincidencias encontradas.</div>';
+                resultsEl.innerHTML = '<div style="color:#888;">' + _t('dis.noMatches', 'No matches found.') + '</div>';
                 return;
             }
             var html = "";
@@ -194,24 +196,24 @@
                         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">' +
                             '<span style="color:#eee;font-weight:600;">' + esc(m.name) + '</span>' +
                             '<span class="disease-confidence-badge" style="background:' + confColor + '22;color:' + confColor + ';padding:0.15rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">' +
-                                confPct + '% confianza</span>' +
+                                confPct + _t('dis.confidence', '% confidence') + '</span>' +
                         '</div>' +
                         '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;">' + esc(loc(m, 'description')) + '</p>' +
                         '<div style="margin-bottom:0.3rem;">' +
-                            '<span style="color:#888;font-size:0.8rem;">Severidad: </span>' +
+                            '<span style="color:#888;font-size:0.8rem;">' + _t('dis.severity', 'Severity: ') + '</span>' +
                             '<span style="color:' + sevColor + ';font-size:0.8rem;font-weight:600;">' + esc(severityLabels[m.severity] || m.severity) + '</span>' +
                         '</div>' +
                         '<div style="margin-bottom:0.3rem;">' +
-                            '<span style="color:#888;font-size:0.8rem;">Sintomas coincidentes: </span>' +
+                            '<span style="color:#888;font-size:0.8rem;">' + _t('dis.symptoms', 'Matching symptoms: ') + '</span>' +
                             '<span style="color:#ccc;font-size:0.8rem;">' + m.symptoms_matched.map(esc).join(", ") + '</span>' +
                         '</div>' +
                         (m.treatments && m.treatments.length > 0 ?
                             '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid #222;">' +
-                                '<span style="color:#4da6ff;font-size:0.8rem;font-weight:600;">Tratamientos:</span>' +
-                                m.treatments.map(function (t) {
+                                '<span style="color:#4da6ff;font-size:0.8rem;font-weight:600;">' + _t('dis.treatments', 'Treatments:') + '</span>' +
+                                m.treatments.map(function (tr) {
                                     return '<div style="color:#aaa;font-size:0.8rem;margin-top:0.25rem;">&bull; ' +
-                                        esc(t.name) + ' — ' + esc(loc(t, 'description')) +
-                                        (t.organic ? ' <span style="color:#22c55e;font-size:0.7rem;">(organico)</span>' : '') +
+                                        esc(tr.name) + ' — ' + esc(loc(tr, 'description')) +
+                                        (tr.organic ? ' <span style="color:#22c55e;font-size:0.7rem;">' + _t('dis.organic', '(organic)') + '</span>' : '') +
                                     '</div>';
                                 }).join("") +
                             '</div>'

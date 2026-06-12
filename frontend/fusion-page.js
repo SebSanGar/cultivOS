@@ -21,12 +21,16 @@
         return d.innerHTML;
     }
 
-    var sensorLabels = {
-        ndvi: "NDVI",
-        thermal: "Termico",
-        soil: "Suelo",
-        weather: "Clima"
-    };
+    function t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
+    function getSensorLabels() {
+        return {
+            ndvi: "NDVI",
+            thermal: t('fus.sensor.thermal', 'Thermal'),
+            soil: t('fus.sensor.soil', 'Soil'),
+            weather: t('fus.sensor.weather', 'Weather')
+        };
+    }
 
     var sensorColors = {
         ndvi: "#22c55e",
@@ -38,7 +42,7 @@
     window.loadFusionData = function () {
         emptyEl.style.display = "none";
         contentEl.style.display = "";
-        matrixEl.innerHTML = '<div style="color:#888;">Cargando...</div>';
+        matrixEl.innerHTML = '<div style="color:#888;">' + t('dash.loadingGeneric', 'Loading...') + '</div>';
         contradictionsEl.innerHTML = "";
         fieldCardsEl.innerHTML = "";
 
@@ -46,7 +50,7 @@
             if (!data) {
                 contentEl.style.display = "none";
                 emptyEl.style.display = "";
-                emptyEl.textContent = "No se pudo obtener los datos de fusion de sensores.";
+                emptyEl.textContent = t('fus.fetchError', 'Could not fetch sensor fusion data.');
                 resetStats();
                 return;
             }
@@ -84,20 +88,21 @@
 
     function renderMatrix(fields) {
         if (!fields || fields.length === 0) {
-            matrixEl.innerHTML = '<div style="color:#888;text-align:center;">Sin campos con datos de sensores.</div>';
+            matrixEl.innerHTML = '<div style="color:#888;text-align:center;">' + t('fus.noFields', 'No fields with sensor data.') + '</div>';
             return;
         }
 
         var allSensors = ["ndvi", "thermal", "soil", "weather"];
         var html = '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">';
         html += '<thead><tr>';
-        html += '<th style="text-align:left;padding:0.5rem;color:#888;border-bottom:1px solid #333;">Campo</th>';
-        html += '<th style="text-align:left;padding:0.5rem;color:#888;border-bottom:1px solid #333;">Granja</th>';
+        html += '<th style="text-align:left;padding:0.5rem;color:#888;border-bottom:1px solid #333;">' + t('lbl.field', 'Field') + '</th>';
+        html += '<th style="text-align:left;padding:0.5rem;color:#888;border-bottom:1px solid #333;">' + t('lbl.farm', 'Farm') + '</th>';
+        var sL = getSensorLabels();
         allSensors.forEach(function (s) {
-            html += '<th style="text-align:center;padding:0.5rem;color:' + sensorColors[s] + ';border-bottom:1px solid #333;">' + sensorLabels[s] + '</th>';
+            html += '<th style="text-align:center;padding:0.5rem;color:' + sensorColors[s] + ';border-bottom:1px solid #333;">' + sL[s] + '</th>';
         });
-        html += '<th style="text-align:center;padding:0.5rem;color:#888;border-bottom:1px solid #333;">Confianza</th>';
-        html += '<th style="text-align:center;padding:0.5rem;color:#888;border-bottom:1px solid #333;">Estado</th>';
+        html += '<th style="text-align:center;padding:0.5rem;color:#888;border-bottom:1px solid #333;">' + t('fus.col.confidence', 'Confidence') + '</th>';
+        html += '<th style="text-align:center;padding:0.5rem;color:#888;border-bottom:1px solid #333;">' + t('fus.col.status', 'Status') + '</th>';
         html += '</tr></thead><tbody>';
 
         fields.forEach(function (f) {
@@ -116,7 +121,7 @@
             var confPct = (f.confidence * 100).toFixed(0) + "%";
             var confColor = f.confidence >= 0.7 ? "#22c55e" : f.confidence >= 0.4 ? "#eab308" : "#ef4444";
             html += '<td style="text-align:center;padding:0.5rem;border-bottom:1px solid #222;color:' + confColor + ';font-weight:600;">' + confPct + '</td>';
-            var statusLabel = hasContra ? "Inconsistente" : "Consistente";
+            var statusLabel = hasContra ? t('fus.status.inconsistent', 'Inconsistent') : t('fus.status.consistent', 'Consistent');
             var statusColor = hasContra ? "#ef4444" : "#22c55e";
             html += '<td style="text-align:center;padding:0.5rem;border-bottom:1px solid #222;"><span style="background:' + statusColor + '22;color:' + statusColor + ';padding:0.15rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">' + statusLabel + '</span></td>';
             html += '</tr>';
@@ -143,7 +148,7 @@
         });
 
         if (allContras.length === 0) {
-            contradictionsEl.innerHTML = '<div style="color:#22c55e;font-size:0.9rem;">Sin contradicciones detectadas — todos los sensores son consistentes.</div>';
+            contradictionsEl.innerHTML = '<div style="color:#22c55e;font-size:0.9rem;">' + t('fus.noContradictions', 'No contradictions detected — all sensors are consistent.') + '</div>';
             return;
         }
 
@@ -151,7 +156,7 @@
         allContras.forEach(function (c) {
             var sensorBadges = c.sensors.map(function (s) {
                 var color = sensorColors[s] || "#888";
-                return '<span style="background:' + color + '22;color:' + color + ';padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;margin-right:0.3rem;">' + (sensorLabels[s] || s) + '</span>';
+                return '<span style="background:' + color + '22;color:' + color + ';padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;margin-right:0.3rem;">' + (getSensorLabels()[s] || s) + '</span>';
             }).join("");
 
             html +=
@@ -168,7 +173,7 @@
 
     function renderFieldCards(fields) {
         if (!fields || fields.length === 0) {
-            fieldCardsEl.innerHTML = '<div class="intel-card" style="color:#888;text-align:center;">Sin campos con datos de sensores disponibles.</div>';
+            fieldCardsEl.innerHTML = '<div class="intel-card" style="color:#888;text-align:center;">' + t('fus.noFieldCards', 'No fields with sensor data available.') + '</div>';
             return;
         }
 
@@ -180,7 +185,7 @@
 
             var sensorDots = f.sensors_used.map(function (s) {
                 var color = sensorColors[s] || "#888";
-                return '<span style="background:' + color + '22;color:' + color + ';padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;margin-right:0.3rem;">' + (sensorLabels[s] || s) + '</span>';
+                return '<span style="background:' + color + '22;color:' + color + ';padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;margin-right:0.3rem;">' + (getSensorLabels()[s] || s) + '</span>';
             }).join("");
 
             var card = document.createElement("div");
@@ -196,12 +201,12 @@
                 '<p style="color:#aaa;font-size:0.85rem;margin:0 0 0.5rem 0;line-height:1.4;">' + esc(f.assessment) + '</p>' +
                 (hasContra ?
                     '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid #222;">' +
-                        '<span style="color:#ef4444;font-size:0.8rem;font-weight:600;">' + f.contradictions.length + ' contradiccion(es)</span>' +
+                        '<span style="color:#ef4444;font-size:0.8rem;font-weight:600;">' + f.contradictions.length + t('fus.contradictions', ' contradiction(s)') + '</span>' +
                         f.contradictions.map(function (c) {
                             return '<div style="color:#aaa;font-size:0.8rem;margin-top:0.25rem;">&bull; ' + esc(c.description) + '</div>';
                         }).join("") +
                     '</div>'
-                : '<div style="color:#22c55e;font-size:0.8rem;">Sensores consistentes</div>'
+                : '<div style="color:#22c55e;font-size:0.8rem;">' + t('fus.sensorsConsistent', 'Sensors consistent') + '</div>'
                 );
             fieldCardsEl.appendChild(card);
         });

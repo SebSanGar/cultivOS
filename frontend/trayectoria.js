@@ -3,6 +3,8 @@
 const API = window.location.origin;
 let trajChart = null;
 
+function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
 function fetchJSON(url) {
     return fetch(url).then(r => r.ok ? r.json() : null);
 }
@@ -26,7 +28,7 @@ function fetchJSON(url) {
 async function loadFieldsForTrajectory() {
     const farmId = document.getElementById('traj-farm-select').value;
     const fSel = document.getElementById('traj-field-select');
-    fSel.innerHTML = '<option value="">Seleccione un campo...</option>';
+    fSel.innerHTML = '<option value="">' + _t('nav.selectField', 'Select a field...') + '</option>';
     document.getElementById('traj-content').style.display = 'none';
     document.getElementById('traj-empty').style.display = '';
     if (!farmId) return;
@@ -65,18 +67,20 @@ async function loadTrajectory() {
 
 /* ── Stats strip ────────────────────────────────────────────── */
 
-const TREND_LABELS = {
-    improving: 'Mejorando',
-    stable: 'Estable',
-    declining: 'Declinando',
-    insufficient_data: 'Datos insuficientes',
-};
+function getTrendLabels() {
+    return {
+        improving: _t('tl.trend.improving', 'Improving'),
+        stable: _t('tl.trend.stable', 'Stable'),
+        declining: _t('tl.trend.declining', 'Declining'),
+        insufficient_data: _t('tl.trend.insufficient', 'Insufficient data'),
+    };
+}
 
 function renderStats(data) {
     document.getElementById('traj-stat-current').textContent =
         data.current_score != null ? data.current_score.toFixed(1) : '--';
     document.getElementById('traj-stat-trend').textContent =
-        TREND_LABELS[data.trend] || data.trend;
+        getTrendLabels()[data.trend] || data.trend;
     document.getElementById('traj-stat-projection').textContent =
         data.projection != null ? data.projection.toFixed(1) : '--';
     document.getElementById('traj-stat-range').textContent =
@@ -128,7 +132,7 @@ function renderChart(data) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Puntaje de Salud',
+                    label: _t('traj.chart.health', 'Health Score'),
                     data: scores,
                     borderColor: '#22c55e',
                     backgroundColor: 'rgba(34,197,94,0.1)',
@@ -137,7 +141,7 @@ function renderChart(data) {
                     pointRadius: 5,
                 },
                 {
-                    label: 'Tratamientos aplicados',
+                    label: _t('traj.chart.treatments', 'Applied treatments'),
                     data: treatmentPoints.map(p => ({ x: p.x, y: p.y })),
                     pointStyle: 'triangle',
                     pointRadius: 10,
@@ -156,7 +160,7 @@ function renderChart(data) {
                             if (ctx.datasetIndex === 1 && treatmentPoints[ctx.dataIndex]) {
                                 return treatmentPoints[ctx.dataIndex].label;
                             }
-                            return 'Salud: ' + ctx.parsed.y.toFixed(1);
+                            return _t('traj.chart.health', 'Health Score') + ': ' + ctx.parsed.y.toFixed(1);
                         },
                     },
                 },
@@ -173,15 +177,15 @@ function renderChart(data) {
 function renderProjection(data) {
     const el = document.getElementById('traj-projection-content');
     if (data.projection == null) {
-        el.innerHTML = '<p style="color:var(--text-muted)">Datos insuficientes para proyeccion.</p>';
+        el.innerHTML = '<p style="color:var(--text-muted)">' + _t('traj.insufficientData', 'Insufficient data for projection.') + '</p>';
         return;
     }
-    const dir = data.rate_of_change > 0 ? 'positiva' : data.rate_of_change < 0 ? 'negativa' : 'neutra';
+    const dir = data.rate_of_change > 0 ? _t('traj.dir.positive', 'positive') : data.rate_of_change < 0 ? _t('traj.dir.negative', 'negative') : _t('traj.dir.neutral', 'neutral');
     el.innerHTML =
         '<div style="display:flex;gap:2rem;flex-wrap:wrap;">' +
-        '<div><strong>Proyeccion siguiente:</strong> ' + data.projection.toFixed(1) + ' / 100</div>' +
-        '<div><strong>Tasa de cambio:</strong> ' + data.rate_of_change.toFixed(2) + ' por observacion (' + dir + ')</div>' +
-        '<div><strong>Observaciones:</strong> ' + data.data_points + '</div>' +
+        '<div><strong>' + _t('traj.nextProjection', 'Next projection:') + '</strong> ' + data.projection.toFixed(1) + ' / 100</div>' +
+        '<div><strong>' + _t('traj.rateOfChange', 'Rate of change:') + '</strong> ' + data.rate_of_change.toFixed(2) + ' ' + _t('traj.perObservation', 'per observation') + ' (' + dir + ')</div>' +
+        '<div><strong>' + _t('traj.observations', 'Observations:') + '</strong> ' + data.data_points + '</div>' +
         '</div>';
 }
 
@@ -190,7 +194,7 @@ function renderProjection(data) {
 function renderRange(data) {
     const el = document.getElementById('traj-range-content');
     if (!data.score_range) {
-        el.innerHTML = '<p style="color:var(--text-muted)">Sin datos de rango.</p>';
+        el.innerHTML = '<p style="color:var(--text-muted)">' + _t('traj.noRange', 'No range data available.') + '</p>';
         return;
     }
     const min = data.score_range.min;
@@ -198,10 +202,10 @@ function renderRange(data) {
     const spread = max - min;
     el.innerHTML =
         '<div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">' +
-        '<div><strong>Minimo:</strong> ' + min.toFixed(1) + '</div>' +
+        '<div><strong>' + _t('traj.minimum', 'Minimum:') + '</strong> ' + min.toFixed(1) + '</div>' +
         '<div style="flex:1;height:8px;background:linear-gradient(to right,#ef4444,#f59e0b,#22c55e);border-radius:4px;min-width:200px;"></div>' +
-        '<div><strong>Maximo:</strong> ' + max.toFixed(1) + '</div>' +
-        '<div><strong>Variacion:</strong> ' + spread.toFixed(1) + ' puntos</div>' +
+        '<div><strong>' + _t('traj.maximum', 'Maximum:') + '</strong> ' + max.toFixed(1) + '</div>' +
+        '<div><strong>' + _t('traj.variation', 'Variation:') + '</strong> ' + spread.toFixed(1) + ' ' + _t('traj.points', 'points') + '</div>' +
         '</div>';
 }
 
@@ -210,7 +214,7 @@ function renderRange(data) {
 function renderTreatments(data) {
     const el = document.getElementById('traj-treatments-content');
     if (!data.treatment_links || data.treatment_links.length === 0) {
-        el.innerHTML = '<p style="color:var(--text-muted)">No hay tratamientos con correlacion de salud registrados.</p>';
+        el.innerHTML = '<p style="color:var(--text-muted)">' + _t('traj.noTreatments', 'No treatments with health correlation recorded.') + '</p>';
         return;
     }
 
@@ -222,7 +226,7 @@ function renderTreatments(data) {
         const deltaSign = t.delta > 0 ? '+' : '';
         const dateStr = t.applied_at
             ? new Date(t.applied_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
-            : 'Sin fecha';
+            : _t('traj.noDate', 'No date');
         return '<div class="intel-card" style="margin-bottom:1rem;padding:1rem;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">' +
             '<div>' +
@@ -230,8 +234,8 @@ function renderTreatments(data) {
             '<div style="color:var(--text-muted);font-size:0.85rem;">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(t, 'problema') : (t.problema_es || t.problema || '')) + ' — ' + dateStr + '</div>' +
             '</div>' +
             '<div style="display:flex;gap:1.5rem;align-items:center;">' +
-            '<div><span style="color:var(--text-muted)">Antes:</span> ' + t.health_before.toFixed(1) + '</div>' +
-            '<div><span style="color:var(--text-muted)">Despues:</span> ' + t.health_after.toFixed(1) + '</div>' +
+            '<div><span style="color:var(--text-muted)">' + _t('traj.before', 'Before:') + '</span> ' + t.health_before.toFixed(1) + '</div>' +
+            '<div><span style="color:var(--text-muted)">' + _t('traj.after', 'After:') + '</span> ' + t.health_after.toFixed(1) + '</div>' +
             '<div style="font-size:1.2rem;font-weight:700;color:' + deltaColor + ';">' + deltaSign + t.delta.toFixed(1) + '</div>' +
             '</div>' +
             '</div>' +

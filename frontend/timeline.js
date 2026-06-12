@@ -12,12 +12,16 @@
     const treatmentCountEl = document.getElementById('tl-treatment-count');
     const latestScoreEl = document.getElementById('tl-latest-score');
 
-    const TREND_LABELS = {
-        improving: 'Mejorando',
-        stable: 'Estable',
-        declining: 'Declinando',
-        insufficient_data: 'Datos insuficientes'
-    };
+    function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
+    function getTrendLabels() {
+        return {
+            improving: _t('tl.trend.improving', 'Improving'),
+            stable: _t('tl.trend.stable', 'Stable'),
+            declining: _t('tl.trend.declining', 'Declining'),
+            insufficient_data: _t('tl.trend.insufficient', 'Insufficient data')
+        };
+    }
 
     async function fetchJSON(url) {
         try {
@@ -73,7 +77,7 @@
     // Load fields when farm is selected
     window.loadFieldsForTimeline = async function () {
         const farmId = farmSelect.value;
-        fieldSelect.innerHTML = '<option value="">Seleccione un campo...</option>';
+        fieldSelect.innerHTML = '<option value="">' + _t('nav.selectField', 'Select a field...') + '</option>';
         timelineEl.innerHTML = '';
         emptyEl.style.display = 'block';
         resetStats();
@@ -134,7 +138,7 @@
                 });
             });
             scoreCountEl.textContent = healthData.count || 0;
-            trendEl.textContent = TREND_LABELS[healthData.trend] || healthData.trend || '--';
+            trendEl.textContent = getTrendLabels()[healthData.trend] || healthData.trend || '--';
             if (healthData.scores.length > 0) {
                 const latest = healthData.scores[healthData.scores.length - 1];
                 latestScoreEl.textContent = latest.score.toFixed(1);
@@ -173,7 +177,7 @@
         });
 
         if (events.length === 0) {
-            timelineEl.innerHTML = '<p class="tl-no-data">No hay datos de salud ni tratamientos para este campo.</p>';
+            timelineEl.innerHTML = '<p class="tl-no-data">' + _t('tl.noData', 'No health or treatment data for this field.') + '</p>';
             return;
         }
 
@@ -207,8 +211,8 @@
             '<div class="tl-event-marker" style="background:' + color + '"></div>' +
             '<div class="tl-event-content">' +
                 '<div class="tl-event-date">' + formatDate(ev.date) + '</div>' +
-                '<div class="tl-event-title">Puntuacion de Salud: <strong style="color:' + color + '">' + ev.score.toFixed(1) + '</strong></div>' +
-                '<div class="tl-event-detail">Fuentes: ' + esc(sourcesStr) + '</div>' +
+                '<div class="tl-event-title">' + _t('tl.healthScore', 'Health Score: ') + '<strong style="color:' + color + '">' + ev.score.toFixed(1) + '</strong></div>' +
+                '<div class="tl-event-detail">' + _t('tl.sources', 'Sources: ') + esc(sourcesStr) + '</div>' +
                 breakdownHtml +
             '</div>' +
         '</div>';
@@ -216,19 +220,19 @@
 
     function renderTreatmentEvent(ev, idx) {
         var urgClass = urgenciaClass(ev.urgencia);
-        var organicBadge = ev.organic ? '<span class="tl-badge tl-badge-organic">Organico</span>' : '';
-        var notesHtml = ev.applied_notes ? '<div class="tl-event-detail">Notas: ' + esc(ev.applied_notes) + '</div>' : '';
+        var organicBadge = ev.organic ? '<span class="tl-badge tl-badge-organic">' + _t('tl.badge.organic', 'Organic') + '</span>' : '';
+        var notesHtml = ev.applied_notes ? '<div class="tl-event-detail">' + _t('tl.notes', 'Notes: ') + esc(ev.applied_notes) + '</div>' : '';
         return '<div class="tl-event tl-event-treatment" data-idx="' + idx + '">' +
             '<div class="tl-event-marker tl-marker-treatment"></div>' +
             '<div class="tl-event-content">' +
                 '<div class="tl-event-date">' + formatDate(ev.date) + '</div>' +
-                '<div class="tl-event-title">Tratamiento: <strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'tratamiento') : (ev.tratamiento_es || ev.tratamiento || '')) + '</strong></div>' +
-                '<div class="tl-event-detail">Problema: ' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'problema') : (ev.problema_es || ev.problema || '')) + '</div>' +
+                '<div class="tl-event-title">' + _t('tl.treatment', 'Treatment: ') + '<strong>' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'tratamiento') : (ev.tratamiento_es || ev.tratamiento || '')) + '</strong></div>' +
+                '<div class="tl-event-detail">' + _t('tl.problem', 'Problem: ') + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'problema') : (ev.problema_es || ev.problema || '')) + '</div>' +
                 '<div class="tl-event-badges">' +
                     '<span class="tl-badge ' + urgClass + '">' + esc(window.cultivOS_i18n ? window.cultivOS_i18n.localized(ev, 'urgencia') : (ev.urgencia_es || ev.urgencia || '')) + '</span>' +
                     organicBadge +
                 '</div>' +
-                '<div class="tl-event-detail">Salud al momento: ' + (ev.health_score_used != null ? ev.health_score_used.toFixed(1) : '--') + '</div>' +
+                '<div class="tl-event-detail">' + _t('tl.healthAt', 'Health at time: ') + (ev.health_score_used != null ? ev.health_score_used.toFixed(1) : '--') + '</div>' +
                 notesHtml +
             '</div>' +
         '</div>';
