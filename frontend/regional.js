@@ -5,6 +5,12 @@
 
     let allRegions = [];
 
+    function cropLabel(value) {
+        return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+            ? window.cultivOS_i18n.cropName(value)
+            : (value || '');
+    }
+
     async function fetchJSON(url) {
         try {
             const resp = await fetch(url);
@@ -84,7 +90,7 @@
 
         const cropsHtml = region.crop_distribution.length > 0
             ? region.crop_distribution.map(c =>
-                '<span class="intel-badge">' + escapeHtml(c.crop_type) + ' (' + c.field_count + ' campos, ' + c.total_hectares.toFixed(1) + ' ha)</span>'
+                '<span class="intel-badge">' + escapeHtml(cropLabel(c.crop_type)) + ' (' + c.field_count + ' campos, ' + c.total_hectares.toFixed(1) + ' ha)</span>'
             ).join(' ')
             : '<span class="intel-muted">Sin cultivos registrados</span>';
 

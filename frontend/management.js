@@ -7,6 +7,12 @@ function esc(str) {
     return d.innerHTML;
 }
 
+function cropLabel(value) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+        ? window.cultivOS_i18n.cropName(value)
+        : (value || '');
+}
+
 async function fetchJSON(path) {
     try {
         const token = localStorage.getItem('cultivOS_token');
@@ -184,17 +190,11 @@ async function loadFields() {
     }
     empty.style.display = 'none';
 
-    const cropLabels = {
-        maize: 'Maiz', agave: 'Agave', avocado: 'Aguacate', berries: 'Berries',
-        sugarcane: 'Cana', tomato: 'Tomate', chili: 'Chile', beans: 'Frijol',
-        sorghum: 'Sorgo', wheat: 'Trigo', alfalfa: 'Alfalfa',
-    };
-
     tbody.innerHTML = fields.map(f => `
         <tr>
             <td>${f.id}</td>
             <td>${esc(f.name)}</td>
-            <td>${cropLabels[f.crop_type] || esc(f.crop_type || '—')}</td>
+            <td>${esc(cropLabel(f.crop_type)) || '—'}</td>
             <td>${f.hectares || 0}</td>
             <td>${f.created_at ? new Date(f.created_at).toLocaleDateString('es-MX') : '—'}</td>
             <td class="mgmt-actions-cell">

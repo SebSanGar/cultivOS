@@ -11,6 +11,12 @@
     var confidenceEl = document.getElementById("yield-confidence");
     var notaEl = document.getElementById("yield-nota");
 
+    function cropLabel(value) {
+        return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+            ? window.cultivOS_i18n.cropName(value)
+            : (value || '');
+    }
+
     function fetchJSON(url) {
         return fetch(url).then(function (r) {
             if (!r.ok) return null;
@@ -57,7 +63,7 @@
             fields.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;
-                opt.textContent = f.name + (f.crop_type ? " (" + f.crop_type + ")" : "");
+                opt.textContent = f.name + (f.crop_type ? " (" + cropLabel(f.crop_type) + ")" : "");
                 fieldSel.appendChild(opt);
             });
         });
@@ -114,13 +120,13 @@
                 '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">' +
                     '<span style="color:#22c55e;font-weight:700;font-size:0.85rem;text-transform:uppercase;">Estimacion de Cosecha</span>' +
                     '<span style="background:#22c55e22;color:#22c55e;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">' +
-                        esc(data.crop_type) +
+                        esc(cropLabel(data.crop_type)) +
                     '</span>' +
                 '</div>' +
                 '<div style="font-size:2.5rem;font-weight:800;color:#eee;margin-bottom:0.25rem;font-family:monospace;">' +
                     fmtNum(data.kg_per_ha, 0) + ' <span style="font-size:1rem;color:#999;font-weight:400;">kg/ha</span>' +
                 '</div>' +
-                '<div style="color:#999;font-size:0.85rem;margin-bottom:1rem;">Cultivo: ' + esc(data.crop_type) + ' | ' + fmtNum(data.hectares, 1) + ' ha</div>' +
+                '<div style="color:#999;font-size:0.85rem;margin-bottom:1rem;">Cultivo: ' + esc(cropLabel(data.crop_type)) + ' | ' + fmtNum(data.hectares, 1) + ' ha</div>' +
                 /* Uncertainty bar */
                 '<div style="margin-bottom:0.75rem;">' +
                     '<div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;">' +

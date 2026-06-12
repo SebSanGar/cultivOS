@@ -8,6 +8,12 @@
         return fetch(url).then(function (r) { return r.ok ? r.json() : null; });
     }
 
+    function cropLabel(value) {
+        return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+            ? window.cultivOS_i18n.cropName(value)
+            : (value || '');
+    }
+
     // ---- Load all crops phenology on page load ----
     loadAllCrops();
     loadFarmsForCalendario();
@@ -37,7 +43,7 @@
 
                 var label = document.createElement('div');
                 label.className = 'cal-crop-label';
-                label.textContent = crop.crop_type;
+                label.textContent = cropLabel(crop.crop_type);
                 row.appendChild(label);
 
                 var track = document.createElement('div');
@@ -104,7 +110,7 @@
             fields.forEach(function (f) {
                 var opt = document.createElement('option');
                 opt.value = f.id;
-                opt.textContent = f.name + (f.crop_type ? ' (' + f.crop_type + ')' : '');
+                opt.textContent = f.name + (f.crop_type ? ' (' + cropLabel(f.crop_type) + ')' : '');
                 fieldSel.appendChild(opt);
             });
         });
@@ -132,7 +138,7 @@
 
             var info = document.getElementById('cal-field-info');
             info.innerHTML =
-                '<p><strong>Cultivo:</strong> ' + data.crop_type + '</p>' +
+                '<p><strong>Cultivo:</strong> ' + cropLabel(data.crop_type) + '</p>' +
                 '<p><strong>Etapa actual:</strong> <span class="cal-field-stage cal-stage-' + data.stage + '">' + stageVal + '</span></p>' +
                 '<p><strong>Dias desde siembra:</strong> ' + data.days_since_planting + '</p>' +
                 '<p><strong>Dias en etapa:</strong> ' + data.days_in_stage + '</p>' +

@@ -8,6 +8,12 @@
     var contentEl = document.getElementById("irrigation-content");
     var scheduleBody = document.getElementById("irrigation-schedule-body");
 
+    function cropLabel(value) {
+        return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+            ? window.cultivOS_i18n.cropName(value)
+            : (value || '');
+    }
+
     function fetchJSON(url) {
         return fetch(url).then(function (r) {
             if (!r.ok) return null;
@@ -62,7 +68,7 @@
             fields.forEach(function (f) {
                 var opt = document.createElement("option");
                 opt.value = f.id;
-                opt.textContent = f.name + (f.crop_type ? " (" + f.crop_type + ")" : "");
+                opt.textContent = f.name + (f.crop_type ? " (" + cropLabel(f.crop_type) + ")" : "");
                 fieldSel.appendChild(opt);
             });
         });
@@ -115,7 +121,7 @@
         urgEl.textContent = urgencyLabels[data.urgencia] || data.urgencia;
         urgEl.style.color = urgencyColors[data.urgencia] || "#ccc";
 
-        document.getElementById("irrigation-crop").textContent = data.crop_type || "--";
+        document.getElementById("irrigation-crop").textContent = cropLabel(data.crop_type) || "--";
         document.getElementById("irrigation-hectares").textContent =
             data.hectares ? data.hectares.toFixed(1) : "--";
         document.getElementById("irrigation-days").textContent =

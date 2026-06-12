@@ -12,6 +12,12 @@ function esc(str) {
 
 function loc(o, base) { return window.cultivOS_i18n ? window.cultivOS_i18n.localized(o, base) : (o[base + '_es'] || o[base] || ''); }
 
+function cropLabel(value) {
+    return (window.cultivOS_i18n && window.cultivOS_i18n.cropName)
+        ? window.cultivOS_i18n.cropName(value)
+        : (value || '');
+}
+
 function healthClass(score) {
     if (score == null) return 'none';
     if (score > 70) return 'good';
@@ -700,7 +706,7 @@ async function loadCropTypeOptions() {
     types.forEach(ct => {
         const opt = document.createElement('option');
         opt.value = ct;
-        opt.textContent = ct.charAt(0).toUpperCase() + ct.slice(1);
+        opt.textContent = cropLabel(ct);
         filter.appendChild(opt);
     });
 }
