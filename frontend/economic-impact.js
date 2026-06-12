@@ -69,7 +69,8 @@ async function loadEconomicImpact() {
 
     if (!farmId) {
         resetStats();
-        notaEl.style.display = 'none';
+        notaEl.textContent = 'Select a farm to view your economic impact.';
+        notaEl.style.display = 'block';
         destroyChart();
         if (skeleton) skeleton.style.display = 'none';
         return;
