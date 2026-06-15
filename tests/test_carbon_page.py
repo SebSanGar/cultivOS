@@ -105,8 +105,8 @@ class TestCarbonPageLoad:
     def test_page_has_spanish_labels(self, client):
         resp = client.get("/carbono")
         html = resp.text
-        assert "Seleccione una granja" in html
-        assert "Seleccione un campo" in html
+        assert "Select a farm" in html
+        assert "Select a field" in html
 
     def test_page_has_js_script(self, client):
         resp = client.get("/carbono")

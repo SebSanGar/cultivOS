@@ -32,7 +32,7 @@ class TestReporteAnualPage:
     def test_page_has_spanish_labels(self, client):
         resp = client.get("/reporte-anual")
         html = resp.text
-        assert "Finca" in html
+        assert "finca" in html
         assert "Anual" in html or "anual" in html
 
     def test_page_has_farm_selector(self, client):

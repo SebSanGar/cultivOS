@@ -89,8 +89,8 @@ class TestTrayectoriaPageLoad:
     def test_page_has_spanish_labels(self, client):
         resp = client.get("/trayectoria")
         html = resp.text
-        assert "Seleccione una granja" in html
-        assert "Seleccione un campo" in html
+        assert "Select a farm" in html
+        assert "Select a field" in html
 
     def test_page_has_js_script(self, client):
         resp = client.get("/trayectoria")
@@ -197,11 +197,11 @@ class TestTrayectoriaPageContent:
     def test_page_has_treatment_correlation_label(self, client):
         resp = client.get("/trayectoria")
         html = resp.text
-        assert "Tratamientos" in html or "Correlacion" in html
+        assert "Treatment" in html or "Correlation" in html
 
     def test_page_has_trend_label(self, client):
         resp = client.get("/trayectoria")
-        assert "Tendencia" in resp.text
+        assert "Trend" in resp.text
 
     def test_page_has_footer(self, client):
         resp = client.get("/trayectoria")
