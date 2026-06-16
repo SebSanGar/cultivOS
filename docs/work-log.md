@@ -79,3 +79,22 @@ Founder bug: crop DATA values ('maiz', 'jitomate') and knowledge technique/ferti
 - Tests: test_crop_name_i18n.py (13) + test_kb_name_en.py (7). Verified live on :8011 EN+ES.
 
 Why: founder EN-first steering (Canada may ship first) — in EN, everything is English except the brand; data values count.
+
+## 2026-06-15 — Audit: restore green suite after EN-first pivot
+20 page-load tests asserted pre-pivot Spanish strings (farm/field selectors,
+trayectoria labels) that CR5/CR6 anglicized → failing against current HTML.
+Updated all 20 assertions to the EN text actually served (per-page verified,
+no weakening). Test-only change (18 files, ±36 lines). Suite: 5532→5552 pass,
+0 fail excl. 7 browser-Playwright files (hang locally — no headless browser /
+pytest-timeout). App verified: factory builds 326 routes, boots, /, /api/farms,
+/campo, /impacto-economico, /docs all 200; /api/farms returns {data,meta}.
+Commit 780e5b9. Untracked scripts/cr4_wire_i18n.py (spent one-shot) left for
+founder decision.
+
+## 2026-06-15 — #2/#3: timeout-guard suite + verify gate (270f6d8)
+- pytest-timeout (120s default) in pyproject — suite can no longer hang. Full
+  `pytest tests/` now 5643 passed / 3 skipped / 0 failed in 11.5m incl. all 7
+  Playwright files (they pass; earlier "58m hang" was a stale process, misread).
+- scripts/verify.sh — canonical North Star gate (suite green + key pages E2E 200).
+- Deleted spent one-shot scripts/cr4_wire_i18n.py (was untracked; output committed in CR4 c8a9935).
+North Star locked: suite-green + pages-work-E2E. Next: bounded in-session I5/I6 loop.
