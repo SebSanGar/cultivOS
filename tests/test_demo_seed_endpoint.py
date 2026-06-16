@@ -26,13 +26,13 @@ class TestDemoSeedEndpoint:
         resp = client.post("/api/demo/seed")
         assert resp.status_code == 201
         data = resp.json()
-        assert data["farms"] == 8  # 5 Jalisco + 3 Ontario
-        assert data["fields"] >= 18  # 8 farms with 2-3 fields each
+        assert data["farms"] == 6  # Canada-first: 6 Ontario farms by default
+        assert data["fields"] >= 12  # 6 farms, 2-4 fields each (14 total)
 
     def test_seed_creates_farms_in_db(self, client, db):
         client.post("/api/demo/seed")
         farms = db.query(Farm).filter(Farm.name.contains("[DEMO]")).all()
-        assert len(farms) == 8  # 5 Jalisco + 3 Ontario
+        assert len(farms) == 6  # Canada-first: 6 Ontario farms by default
 
     def test_seed_creates_fields_with_data(self, client, db):
         client.post("/api/demo/seed")
@@ -62,7 +62,7 @@ class TestDemoSeedEndpoint:
         resp = client.get("/api/demo/farms")
         assert resp.status_code == 200
         data = resp.json()
-        assert len(data) == 8  # 5 Jalisco + 3 Ontario
+        assert len(data) == 6  # Canada-first: 6 Ontario farms by default
         # Each farm should have fields
         for farm in data:
             assert len(farm["fields"]) >= 2
@@ -153,15 +153,18 @@ class TestDemoSeedFarmerFeedback:
 class TestDemoSeedNewFarms:
     """Verify the 2 new farms (Arandas + Lagos) are present."""
 
-    def test_arandas_farm_exists(self, client, db):
+    def test_default_seed_is_canada_only(self, client, db):
+        # Canada-first: no Jalisco (MX) farms unless SEED_MEXICO is set.
         client.post("/api/demo/seed")
-        farm = db.query(Farm).filter(Farm.municipality == "Arandas").first()
-        assert farm is not None
+        mx = db.query(Farm).filter(Farm.country == "MX").count()
+        assert mx == 0
 
-    def test_lagos_farm_exists(self, client, db):
+    def test_seed_mexico_flag_adds_jalisco(self, client, db, monkeypatch):
+        # With SEED_MEXICO set, the preserved Jalisco farms (Arandas, Lagos) seed too.
+        monkeypatch.setenv("SEED_MEXICO", "1")
         client.post("/api/demo/seed")
-        farm = db.query(Farm).filter(Farm.municipality == "Lagos de Moreno").first()
-        assert farm is not None
+        assert db.query(Farm).filter(Farm.municipality == "Arandas").first() is not None
+        assert db.query(Farm).filter(Farm.municipality == "Lagos de Moreno").first() is not None
 
     def test_new_farms_have_boundary_coordinates(self, client, db):
         """New farms should have fields with boundary coordinates for map page."""

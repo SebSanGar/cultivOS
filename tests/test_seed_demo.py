@@ -41,9 +41,13 @@ class TestSeedDemoRuns:
     def test_runs_without_error(self, seed_db):
         _run_seed(seed_db)
 
-    def test_creates_eight_farms(self, seed_db):
+    def test_creates_six_ontario_farms(self, seed_db):
+        # Canada-first: default seed is 6 Ontario (CA) farms; Jalisco (MX) is
+        # gated behind SEED_MEXICO for the later market expansion.
         _run_seed(seed_db)
-        assert seed_db.query(Farm).count() == 8  # 5 Jalisco + 3 Ontario
+        farms = seed_db.query(Farm).all()
+        assert len(farms) == 6
+        assert all((f.country or "").upper() == "CA" for f in farms)
 
     def test_creates_fields_per_farm(self, seed_db):
         _run_seed(seed_db)

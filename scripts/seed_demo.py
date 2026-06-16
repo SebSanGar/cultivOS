@@ -12,6 +12,7 @@ Idempotent: checks for existing demo data before inserting.
 """
 
 import math
+import os
 import random
 from datetime import datetime, timedelta
 
@@ -333,6 +334,81 @@ def seed_demo_data(session):
             ],
         },
     ]
+
+    # --- Additional Ontario real-case scenarios (crop + region grounded) ---
+    new_ontario_farms = [
+        {
+            # Ontario's #1 agricultural county — classic cash-crop rotation + edible beans
+            "name": f"Huron County Cash Crop {DEMO_MARKER}",
+            "owner_name": "Mark Devries",
+            "location_lat": 43.6500,
+            "location_lon": -81.5500,
+            "total_hectares": 220.0,
+            "municipality": "Huron County",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Corn Home Quarter", "crop_type": "corn", "hectares": 90.0,
+                 "planted_at": now - timedelta(days=120),
+                 "offset_lat": 0.005, "offset_lon": 0.002},
+                {"name": "Soybean East", "crop_type": "soybean", "hectares": 70.0,
+                 "planted_at": now - timedelta(days=110),
+                 "offset_lat": -0.004, "offset_lon": 0.003},
+                {"name": "Winter Wheat North", "crop_type": "wheat", "hectares": 40.0,
+                 "planted_at": now - timedelta(days=210),
+                 "offset_lat": 0.004, "offset_lon": -0.004},
+                {"name": "White Bean Block", "crop_type": "bean", "hectares": 20.0,
+                 "planted_at": now - timedelta(days=95),
+                 "offset_lat": -0.005, "offset_lon": -0.002},
+            ],
+        },
+        {
+            # Leamington — "Greenhouse Capital of North America" (intensive, small footprint)
+            "name": f"Essex Greenhouse — Leamington {DEMO_MARKER}",
+            "owner_name": "Tony Mastronardi",
+            "location_lat": 42.0533,
+            "location_lon": -82.5990,
+            "total_hectares": 8.0,
+            "municipality": "Leamington",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Greenhouse Tomato Range 1", "crop_type": "tomato", "hectares": 5.0,
+                 "planted_at": now - timedelta(days=70),
+                 "offset_lat": 0.001, "offset_lon": 0.001},
+                {"name": "Greenhouse Pepper Range 2", "crop_type": "pepper", "hectares": 3.0,
+                 "planted_at": now - timedelta(days=65),
+                 "offset_lat": -0.001, "offset_lon": 0.001},
+            ],
+        },
+        {
+            # Norfolk County — "Ontario's Garden": apples + grapes on the sand plain
+            "name": f"Norfolk County Orchard {DEMO_MARKER}",
+            "owner_name": "Emily Wall",
+            "location_lat": 42.8500,
+            "location_lon": -80.3000,
+            "total_hectares": 35.0,
+            "municipality": "Norfolk County",
+            "state": "Ontario",
+            "country": "CA",
+            "fields": [
+                {"name": "Gala Apple Orchard", "crop_type": "apple", "hectares": 20.0,
+                 "planted_at": now - timedelta(days=1460),
+                 "offset_lat": 0.003, "offset_lon": 0.002},
+                {"name": "Vidal Vineyard", "crop_type": "grape", "hectares": 15.0,
+                 "planted_at": now - timedelta(days=1095),
+                 "offset_lat": -0.003, "offset_lon": -0.002},
+            ],
+        },
+    ]
+
+    # Canada-first (founder steering 2026-06-15): seed Ontario farms by default;
+    # Jalisco (MX) farms are preserved but only seeded when SEED_MEXICO is set —
+    # the MX market expands after CA features/UI/logic are proven.
+    include_mexico = os.getenv("SEED_MEXICO", "").lower() in ("1", "true", "yes")
+    ontario_farms = [f for f in farms_data if f.get("country") == "CA"] + new_ontario_farms
+    mexico_farms = [f for f in farms_data if f.get("country") != "CA"]
+    farms_data = ontario_farms + (mexico_farms if include_mexico else [])
 
     all_treatment_ids = []  # collect for farmer feedback later
 
