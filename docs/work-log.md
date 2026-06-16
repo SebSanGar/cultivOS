@@ -110,3 +110,9 @@ Impact-page accessibility + visual polish, TDD each (tests/test_i5_i6_impact_a11
   parses styles.css/:root tokens and asserts >=4.5 (regression-proof).
 Loop closed with scripts/verify.sh (North Star gate: full suite + pages E2E).
 Follow-up: ≤480px Playwright overflow coverage for the 2 impact pages (needs backend; low pri).
+
+## 2026-06-15 — Canada-first + real Ontario economics (daebdf0, <econ>)
+- Seed: 6 real Ontario farms (Chatham-Kent, Huron, Essex greenhouse, Niagara, Norfolk, Elgin); Jalisco gated behind SEED_MEXICO. Canada-first.
+- Economics: CA farms now compute real savings (was $0 coming-soon guard). CAD assumptions sourced OMAFRA Pub 60 2025 + StatCan 2024 yields + GFO 2025 prices. Rainfed → water=0; savings = variable-rate fertilizer + yield protection. Country-aware calculator; subscription/ROI null (no CA pricing). Currency-neutral display; obsolete Ontario banner removed.
+- Verified: Huron 220ha → ~$33,709/yr. Full gate green (5647 passed, pages E2E).
+- Known follow-ups: owner page still dark-theme + minor Spanish leaks ("Con cultivOS" chart label, "Confirmado" badge); CA subscription pricing not yet locked (ROI shows once set); greenhouse economics need separate model (energy/water-intensive, not field-crop numbers).
