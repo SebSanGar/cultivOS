@@ -253,14 +253,28 @@ function updateRoiHero(data) {
     }
 }
 
+function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
 function updateConfidenceBadges(data) {
-    const label = data.confidence_label || "Estimado";
+    const raw = data.confidence_label || "Estimado";
+    // API returns Spanish confidence values; map to an i18n key for display.
+    const keyMap = {
+        "Estimado": "econ.confEstimated",
+        "Medido": "econ.confMeasured",
+        "Confirmado": "econ.confConfirmed",
+    };
     const modifierMap = {
         "Estimado": "",
         "Medido": "estimate-badge--measured",
         "Confirmado": "estimate-badge--confirmed",
     };
-    const modifier = modifierMap[label] || "";
+    const fallbackMap = {
+        "Estimado": "Estimated",
+        "Medido": "Measured",
+        "Confirmado": "Confirmed",
+    };
+    const label = _t(keyMap[raw] || "econ.confEstimated", fallbackMap[raw] || "Estimated");
+    const modifier = modifierMap[raw] || "";
     const badgeIds = ["econ-confidence-badge-total", "econ-confidence-badge-hero"];
     badgeIds.forEach(id => {
         const el = document.getElementById(id);

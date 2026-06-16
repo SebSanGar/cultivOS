@@ -120,10 +120,28 @@ document.addEventListener('click', function (e) {
 // -- Load all field data --
 async function loadFieldDetail() {
     if (!farmId || !fieldId) {
+        // Direct load without params: auto-select the first farm and field so the
+        // page is useful, instead of showing a raw error. Fall back to a friendly
+        // message with a link home only when there is genuinely nothing to show.
+        const farmsResp = await fetchJSON('/farms');
+        const farms = Array.isArray(farmsResp) ? farmsResp : (farmsResp && farmsResp.data) || [];
+        if (farms.length) {
+            for (const farm of farms) {
+                const fields = await fetchJSON(`/farms/${farm.id}/fields`);
+                if (fields && fields.length) {
+                    window.location.replace(`/campo?farm=${farm.id}&field=${fields[0].id}`);
+                    return;
+                }
+            }
+        }
+        // Nothing to auto-select — show a friendly prompt with a way back.
         const nombreEl = document.getElementById('campo-nombre');
-        if (nombreEl) { nombreEl.textContent = t('field.errorMissingParams'); nombreEl.setAttribute('data-i18n', 'field.errorMissingParams'); }
+        if (nombreEl) { nombreEl.textContent = t('field.noPlotTitle'); nombreEl.setAttribute('data-i18n', 'field.noPlotTitle'); }
         const granjaEl = document.getElementById('campo-granja');
-        if (granjaEl) { granjaEl.textContent = t('field.errorUrlFormat'); granjaEl.setAttribute('data-i18n', 'field.errorUrlFormat'); }
+        if (granjaEl) {
+            granjaEl.removeAttribute('data-i18n');
+            granjaEl.innerHTML = esc(t('field.noPlotBody')) + ' <a href="/" data-i18n="field.noPlotLink">' + esc(t('field.noPlotLink')) + '</a>';
+        }
         return;
     }
 

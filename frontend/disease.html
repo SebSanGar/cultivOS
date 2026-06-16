@@ -76,7 +76,7 @@
     </div>
 
     <!-- Empty state -->
-    <div id="disease-empty" class="intel-empty">
+    <div id="disease-empty" class="intel-empty" data-i18n="dis.selectPrompt">
         Seleccione una granja y un campo, luego presione "Consultar Riesgo" para evaluar el riesgo de enfermedades.
     </div>
 
@@ -84,7 +84,7 @@
     <div id="disease-risk-content" style="display:none;">
         <!-- Message card -->
         <div class="intel-card" style="margin-bottom:1.5rem;border-left:3px solid #ef4444;">
-            <div style="color:#ef4444;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Evaluacion</div>
+            <div style="color:#ef4444;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;" data-i18n="dis.evaluation">Evaluacion</div>
             <div id="disease-mensaje" style="color:#ccc;font-size:0.95rem;line-height:1.5;"></div>
         </div>
 
@@ -95,15 +95,15 @@
     <!-- Symptom identification section -->
     <div class="intel-card" style="margin-top:2rem;">
         <h3 style="color:var(--text);font-size:1.1rem;margin:0 0 1rem 0;" data-i18n="disease.symptomsTitle">Identificacion por Sintomas</h3>
-        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Ingrese los sintomas observados (separados por coma) para identificar posibles enfermedades.</p>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;" data-i18n="dis.symptomsInfo">Ingrese los sintomas observados (separados por coma) para identificar posibles enfermedades.</p>
         <form id="disease-identify-form" onsubmit="identifyDisease(event)">
             <div style="display:flex;gap:0.75rem;align-items:flex-end;flex-wrap:wrap;">
                 <div style="flex:1;min-width:250px;">
-                    <label style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:0.3rem;">Sintomas</label>
+                    <label style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:0.3rem;" data-i18n="dis.symptomsLabel">Sintomas</label>
                     <input id="disease-symptoms-input" type="text" placeholder="hojas amarillas, manchas, marchitez..." style="width:100%;padding:0.5rem 0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;">
                 </div>
                 <div style="min-width:150px;">
-                    <label style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:0.3rem;">Cultivo (opcional)</label>
+                    <label style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:0.3rem;" data-i18n="dis.cropOptional">Cultivo (opcional)</label>
                     <input id="disease-crop-input" type="text" placeholder="maiz, tomate..." style="width:100%;padding:0.5rem 0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;">
                 </div>
                 <button type="submit" class="intel-btn" data-i18n="disease.identifyButton">Identificar</button>

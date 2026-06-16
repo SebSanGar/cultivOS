@@ -76,7 +76,7 @@
     </div>
 
     <!-- Empty state -->
-    <div id="irrigation-empty" class="intel-empty">
+    <div id="irrigation-empty" class="intel-empty" data-i18n="irrigation.emptyPrompt">
         Seleccione una granja y un campo, luego presione "Consultar Riego" para ver el calendario de riego optimizado.
     </div>
 
@@ -84,13 +84,13 @@
     <div id="irrigation-content" style="display:none;">
         <!-- Recommendation card -->
         <div class="intel-card" style="margin-bottom:1.5rem;border-left:3px solid #4da6ff;">
-            <div style="color:#4da6ff;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;">Recomendacion</div>
+            <div style="color:#4da6ff;font-weight:700;font-size:0.85rem;text-transform:uppercase;margin-bottom:0.5rem;" data-i18n="irrigation.recommendation">Recomendacion</div>
             <div id="irrigation-recommendation" style="color:#ccc;font-size:0.95rem;line-height:1.5;"></div>
         </div>
 
         <!-- Schedule table -->
         <div id="irrigation-schedule" class="intel-card" style="overflow-x:auto;">
-            <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;">Calendario de Riego Semanal</h3>
+            <h3 style="color:#eee;font-size:1.1rem;margin:0 0 1rem 0;" data-i18n="irrigation.weeklyTitle">Calendario de Riego Semanal</h3>
             <table style="width:100%;border-collapse:collapse;">
                 <thead>
                     <tr style="border-bottom:1px solid #333;">

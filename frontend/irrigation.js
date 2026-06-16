@@ -14,6 +14,8 @@
             : (value || '');
     }
 
+    function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
     function fetchJSON(url) {
         return fetch(url).then(function (r) {
             if (!r.ok) return null;
@@ -57,7 +59,7 @@
 
     /* Load fields for selected farm */
     window.loadFieldsForIrrigation = function () {
-        fieldSel.innerHTML = '<option value="">Seleccione un campo...</option>';
+        fieldSel.innerHTML = '<option value="">' + _t('nav.selectField', 'Select a field...') + '</option>';
         contentEl.style.display = "none";
         emptyEl.style.display = "";
         resetStats();
@@ -81,7 +83,7 @@
         if (!farmId || !fieldId) {
             contentEl.style.display = "none";
             emptyEl.style.display = "";
-            emptyEl.textContent = "Seleccione una granja y un campo para consultar el riego.";
+            emptyEl.textContent = _t('irrigation.emptyPrompt', 'Select a farm and field to view the irrigation schedule.');
             resetStats();
             return;
         }

@@ -1,5 +1,7 @@
 /* -- cultivOS Platform Status -- status.js -- */
 
+function _t(key, fallback) { return (window.cultivOS_i18n && window.cultivOS_i18n.t) ? window.cultivOS_i18n.t(key) : fallback; }
+
 async function fetchJSON(path) {
     try {
         const token = localStorage.getItem('cultivOS_token');
@@ -47,11 +49,11 @@ function freshnessClass(iso) {
 
 // Core endpoints to check
 const ENDPOINTS = [
-    { path: '/api/status', name: 'Estado' },
-    { path: '/api/farms', name: 'Granjas' },
-    { path: '/api/knowledge/fertilizers', name: 'Fertilizantes' },
-    { path: '/api/knowledge/crops', name: 'Cultivos' },
-    { path: '/api/knowledge/ancestral', name: 'Metodos Ancestrales' },
+    { path: '/api/status', key: 'status.epStatus', name: 'Estado' },
+    { path: '/api/farms', key: 'status.epFarms', name: 'Granjas' },
+    { path: '/api/knowledge/fertilizers', key: 'status.epFertilizers', name: 'Fertilizantes' },
+    { path: '/api/knowledge/crops', key: 'status.epCrops', name: 'Cultivos' },
+    { path: '/api/knowledge/ancestral', key: 'status.epAncestral', name: 'Metodos Ancestrales' },
 ];
 
 async function checkEndpoint(ep) {
@@ -104,7 +106,7 @@ async function loadStatus() {
     container.innerHTML = results.map(function(r) {
         var cls = r.ok ? 'status-ep-ok' : 'status-ep-err';
         return '<div class="status-check-row">' +
-            '<span class="status-check-label">' + r.name + '</span>' +
+            '<span class="status-check-label">' + _t(r.key, r.name) + '</span>' +
             '<span class="status-ep-badge ' + cls + '">' + (r.ok ? r.status : 'Error') + '</span>' +
             '</div>';
     }).join('');
