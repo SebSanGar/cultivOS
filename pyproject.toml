@@ -7,3 +7,7 @@ requires-python = ">=3.11"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+# Hard cap per test so a hung test (e.g. a Playwright goto waiting on a CDN)
+# fails instead of stalling the whole suite. Browser tests get longer via
+# @pytest.mark.timeout overrides where needed.
+timeout = 120
