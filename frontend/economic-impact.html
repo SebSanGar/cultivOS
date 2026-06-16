@@ -42,7 +42,7 @@
             <p class="intel-subtitle" data-i18n="econImpact.subtitle">Estimated savings per farm — water, fertilizer and yield</p>
         </div>
         <div class="intel-header-actions">
-            <select id="econ-farm-select" class="intel-select" onchange="loadEconomicImpact()">
+            <select id="econ-farm-select" class="intel-select" aria-label="Select a farm" onchange="loadEconomicImpact()">
                 <option value="">Select a farm...</option>
             </select>
             <button class="intel-btn" onclick="loadEconomicImpact()" data-i18n="econImpact.refreshBtn">Refresh</button>
@@ -130,7 +130,7 @@
     <div class="econ-chart-section">
         <h2 class="econ-section-title">Scenario comparison — Baseline vs Con cultivOS</h2>
         <div class="econ-chart-wrapper">
-            <canvas id="econ-chart"></canvas>
+            <canvas id="econ-chart" role="img" aria-label="Estimated savings breakdown, with and without cultivOS"></canvas>
         </div>
     </div>
 
@@ -197,7 +197,7 @@
         <h2 class="econ-section-title">Cumulative savings — breakeven tracker</h2>
         <p class="econ-section-note" id="econ-breakeven-label"></p>
         <div class="econ-chart-wrapper">
-            <canvas id="econ-cumulative-chart"></canvas>
+            <canvas id="econ-cumulative-chart" role="img" aria-label="Cumulative savings over time, with breakeven point"></canvas>
         </div>
     </div>
 

@@ -22,3 +22,30 @@ def test_impacto_agricultor_empty_state_has_svg_icon(client):
     # the empty-state decorative icon must be an inline SVG, not an emoji glyph
     assert "impact-empty-state__icon" in html
     assert "<svg" in html
+
+
+# ── I5d: owner page (economic-impact) screen-reader names ──
+
+import re
+
+
+def _tag(html, tag, id_):
+    m = re.search(r"<%s[^>]*id=\"%s\"[^>]*>" % (tag, re.escape(id_)), html)
+    return m.group(0) if m else ""
+
+
+def test_economic_impact_farm_select_has_accessible_name(client):
+    html = client.get("/impacto-economico").text
+    sel = _tag(html, "select", "econ-farm-select")
+    assert sel, "econ-farm-select not found"
+    assert "aria-label" in sel or 'for="econ-farm-select"' in html, \
+        "farm select needs an accessible name (aria-label or <label for>)"
+
+
+def test_economic_impact_charts_have_aria_label(client):
+    html = client.get("/impacto-economico").text
+    canvases = re.findall(r"<canvas[^>]*>", html)
+    assert len(canvases) >= 2, "expected 2 chart canvases"
+    for c in canvases:
+        assert 'role="img"' in c and "aria-label" in c, \
+            "each chart <canvas> needs role=img + aria-label: %s" % c
