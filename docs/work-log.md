@@ -98,3 +98,15 @@ founder decision.
 - scripts/verify.sh — canonical North Star gate (suite green + key pages E2E 200).
 - Deleted spent one-shot scripts/cr4_wire_i18n.py (was untracked; output committed in CR4 c8a9935).
 North Star locked: suite-green + pages-work-E2E. Next: bounded in-session I5/I6 loop.
+
+## 2026-06-15 — I5/I6 a11y + polish (bounded loop, 3 iterations)
+Impact-page accessibility + visual polish, TDD each (tests/test_i5_i6_impact_a11y.py, 6 tests):
+- f5c4361: impacto-agricultor.html — hero label div→h1 (semantic landmark, identical render);
+  empty-state emoji 🌱 → inline 1.5px-stroke SVG (+ clears no-emoji rule).
+- 01a44fc: economic-impact.html — aria-label on farm <select>; role=img + aria-label on both
+  Chart.js canvases (were announced as nothing).
+- 399c3c5: styles.css — delta pills failed WCAG AA (.up 2.72, .down 4.17); repointed to
+  --color-success-dark #166534 (5.88) + --color-danger-dark #991b1b (7.18). Contrast gate test
+  parses styles.css/:root tokens and asserts >=4.5 (regression-proof).
+Loop closed with scripts/verify.sh (North Star gate: full suite + pages E2E).
+Follow-up: ≤480px Playwright overflow coverage for the 2 impact pages (needs backend; low pri).
