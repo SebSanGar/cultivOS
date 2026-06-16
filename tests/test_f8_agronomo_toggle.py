@@ -3,7 +3,8 @@
 TDD tests written BEFORE implementation.
 Acceptance criteria:
   1. #agronomo-toggle button present on all 4 farmer pages (/, /campo, /notificaciones, /conocimiento)
-  2. #agronomo-toggle absent from analytical pages (/intel, /vuelos, /estado)
+  2. #agronomo-toggle also present on analytical pages (/intel, /vuelos, /estado)
+     via the canonical nav (nav.js) — updated 2026-06-16, founder decision.
   3. Default (farmer) mode: .agronomo-only elements hidden, .nav-agronomo-extras hidden
   4. Agronomist mode (localStorage='agronomist'): .agronomo-only visible, nav-agronomo-extras visible
   5. Toggle click flips mode and persists to localStorage
@@ -119,15 +120,18 @@ class TestF8ToggleButtonPresent:
 
 
 # ---------------------------------------------------------------------------
-# T2 — Toggle absent from analytical pages
+# T2 — Toggle present on analytical pages too (canonical nav, 2026-06-16)
+# Founder decision: the shared canonical nav (nav.js) renders #agronomo-toggle
+# on every app page, so a user landing on an analytical page can flip back to
+# farmer view. Supersedes the original F8 "absent on analytical" rule.
 # ---------------------------------------------------------------------------
 
 
-class TestF8ToggleAbsentAnalytical:
-    """#agronomo-toggle must NOT be present on analytical pages."""
+class TestF8TogglePresentAnalytical:
+    """#agronomo-toggle is present on analytical pages via the canonical nav."""
 
     @pytest.mark.parametrize("filename,route", ANALYTICAL_PAGES)
-    def test_toggle_absent_on_analytical(self, pw_browser, frontend_server, filename, route):
+    def test_toggle_present_on_analytical(self, pw_browser, frontend_server, filename, route):
         ctx, pg = open_page_farmer(pw_browser, frontend_server, filename)
         try:
             exists = pg.evaluate(
@@ -135,8 +139,8 @@ class TestF8ToggleAbsentAnalytical:
             )
         finally:
             ctx.close()
-        assert not exists, (
-            f"{filename} ({route}): #agronomo-toggle should NOT appear on analytical pages"
+        assert exists, (
+            f"{filename} ({route}): #agronomo-toggle should appear via canonical nav"
         )
 
 
