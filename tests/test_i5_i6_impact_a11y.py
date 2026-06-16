@@ -49,3 +49,56 @@ def test_economic_impact_charts_have_aria_label(client):
     for c in canvases:
         assert 'role="img"' in c and "aria-label" in c, \
             "each chart <canvas> needs role=img + aria-label: %s" % c
+
+
+# ── I5c/I6b: WCAG AA contrast on status pills (parsed from styles.css) ──
+
+import os
+
+_CSS = os.path.join(os.path.dirname(__file__), "..", "frontend", "styles.css")
+
+
+def _rel_lum(hx):
+    h = hx.lstrip("#")
+    chans = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    lin = [(c / 12.92) if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in chans]
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+
+
+def _contrast(fg, bg):
+    a, b = sorted((_rel_lum(fg), _rel_lum(bg)), reverse=True)
+    return (a + 0.05) / (b + 0.05)
+
+
+def _root_tokens(css):
+    return dict(re.findall(r"(--[\w-]+)\s*:\s*(#[0-9a-fA-F]{6})", css))
+
+
+def _resolve(value, tokens):
+    """Resolve a CSS color value (hex, or var(--t, #fallback)) to a hex string."""
+    m = re.search(r"var\((--[\w-]+)\s*(?:,\s*(#[0-9a-fA-F]{6}))?\)", value)
+    if m:
+        return tokens.get(m.group(1)) or m.group(2)
+    m = re.search(r"#[0-9a-fA-F]{6}", value)
+    return m.group(0) if m else None
+
+
+def _rule_colors(css, selector):
+    m = re.search(re.escape(selector) + r"\s*\{([^}]*)\}", css)
+    assert m, "rule %s not found in styles.css" % selector
+    body = m.group(1)
+    tokens = _root_tokens(css)
+    fg = re.search(r"(?<!-)color\s*:\s*([^;]+)", body)
+    bg = re.search(r"background\s*:\s*([^;]+)", body)
+    return _resolve(fg.group(1), tokens), _resolve(bg.group(1), tokens)
+
+
+def test_delta_pills_meet_wcag_aa():
+    """Gain/loss pills are small bold text → WCAG AA needs >= 4.5:1."""
+    with open(_CSS, encoding="utf-8") as f:
+        css = f.read()
+    for selector in (".delta-pill.up", ".delta-pill.down", ".delta-pill.flat"):
+        fg, bg = _rule_colors(css, selector)
+        assert fg and bg, "%s missing color/background" % selector
+        ratio = _contrast(fg, bg)
+        assert ratio >= 4.5, "%s contrast %.2f < 4.5 (%s on %s)" % (selector, ratio, fg, bg)

@@ -63,6 +63,7 @@
     --color-info-light: #dbeafe;
     --color-warning-dark: #92400e;
     --color-danger-dark: #991b1b;
+    --color-success-dark: #166534;  /* AA-contrast green on --green-soft pills */
 
     /* ── Colors — Surface (legacy names preserved) ── */
     --bg: #fafaf9;
@@ -4314,8 +4315,8 @@ nav {
 .ba-swatch:first-of-type { opacity: 0.55; }
 .ba-arrow { color: var(--text-secondary, #52525b); font-weight: 700; }
 .delta-pill { margin-left: auto; font-size: 0.85rem; font-weight: 700; padding: 2px 10px; border-radius: var(--radius-full, 999px); }
-.delta-pill.up { color: var(--color-success, #16a34a); background: var(--green-soft, #eaf3ea); }
-.delta-pill.down { color: var(--color-danger, #dc2626); background: #fdeaea; }
+.delta-pill.up { color: var(--color-success-dark, #166534); background: var(--green-soft, #eaf3ea); }
+.delta-pill.down { color: var(--color-danger-dark, #991b1b); background: #fdeaea; }
 .delta-pill.flat { color: var(--text-secondary, #52525b); background: var(--neutral-100, #f4f4f5); }
 
 .impact-muted { color: var(--text-secondary, #52525b); }
