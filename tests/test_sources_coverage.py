@@ -47,8 +47,13 @@ class TestRegistryFormat:
 
     def test_all_entries_have_nonzero_value(self):
         from cultivos.services.intelligence.assumptions import REGISTRY
-        # value=0 is a sentinel for "not set" — every real constant must be non-zero
-        bad = [k for k, v in REGISTRY.items() if v.get("value", 0) == 0]
+        # value=0 is normally a "not set" sentinel — but some constants are
+        # deliberately zero (Ontario field crops are rainfed → no water lever).
+        intentional_zero = {"water_savings_per_ha_ca"}
+        bad = [
+            k for k, v in REGISTRY.items()
+            if v.get("value", 0) == 0 and k not in intentional_zero
+        ]
         assert not bad, f"Zero value (missing?): {bad}"
 
 

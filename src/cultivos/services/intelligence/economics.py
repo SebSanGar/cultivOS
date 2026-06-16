@@ -17,6 +17,12 @@ from cultivos.services.intelligence.assumptions import get_value as _a
 WATER_SAVINGS_PER_HA = _a("water_savings_per_ha")
 FERTILIZER_SAVINGS_PER_HA = _a("fertilizer_savings_per_ha")
 YIELD_BASELINE_PER_HA = _a("yield_baseline_per_ha")
+# Ontario / Canada (CAD) — rainfed field crops: no water lever, smaller per-ha
+# savings than Jalisco. Values are currency-neutral here; the *_mxn field names
+# are retained for back-compat (the UI never prints a currency code).
+WATER_SAVINGS_PER_HA_CA = _a("water_savings_per_ha_ca")
+FERTILIZER_SAVINGS_PER_HA_CA = _a("fertilizer_savings_per_ha_ca")
+YIELD_BASELINE_PER_HA_CA = _a("yield_baseline_per_ha_ca")
 
 # Default irrigation efficiency for farms without sensor data
 DEFAULT_IRRIGATION_EFFICIENCY = _a("default_irrigation_efficiency")
@@ -35,6 +41,7 @@ def calculate_farm_savings(
     hectares: float,
     treatment_count: int,
     irrigation_efficiency: float | None,
+    country: str = "MX",
 ) -> EconomicImpactResult:
     """Calculate estimated annual savings from precision agriculture.
 
@@ -58,6 +65,12 @@ def calculate_farm_savings(
 
     clamped_health = max(0.0, min(100.0, health_score))
 
+    # Region-specific baselines. Ontario (CA) is rainfed → water_per_ha is 0.
+    is_ca = (country or "MX").upper() == "CA"
+    water_per_ha = WATER_SAVINGS_PER_HA_CA if is_ca else WATER_SAVINGS_PER_HA
+    fert_per_ha = FERTILIZER_SAVINGS_PER_HA_CA if is_ca else FERTILIZER_SAVINGS_PER_HA
+    yield_per_ha = YIELD_BASELINE_PER_HA_CA if is_ca else YIELD_BASELINE_PER_HA
+
     # --- Water savings ---
     # Higher improvement when current efficiency is low (more room to optimize)
     eff = irrigation_efficiency if irrigation_efficiency is not None else DEFAULT_IRRIGATION_EFFICIENCY
@@ -66,24 +79,29 @@ def calculate_farm_savings(
     water_improvement_factor = max(0.0, 0.90 - eff)
     # Scale by health: healthier farm = better data = better optimization
     water_multiplier = (clamped_health / 100.0) * (water_improvement_factor / 0.47)  # normalize to CONAGUA gap
-    water_savings = round(WATER_SAVINGS_PER_HA * hectares * water_multiplier)
+    water_savings = round(water_per_ha * hectares * water_multiplier)
 
     # --- Fertilizer savings ---
     # More treatments = more data = better targeting = more savings
     treatment_factor = min(1.0, treatment_count / 6.0)  # 6+ treatments = full benefit
     # Health score indicates soil understanding
     fert_multiplier = (clamped_health / 100.0) * (0.3 + 0.7 * treatment_factor)
-    fertilizer_savings = round(FERTILIZER_SAVINGS_PER_HA * hectares * fert_multiplier)
+    fertilizer_savings = round(fert_per_ha * hectares * fert_multiplier)
 
     # --- Yield improvement ---
     # Higher health = more yield captured vs. potential
     yield_multiplier = clamped_health / 100.0
-    yield_savings = round(YIELD_BASELINE_PER_HA * hectares * yield_multiplier)
+    yield_savings = round(yield_per_ha * hectares * yield_multiplier)
 
     total = water_savings + fertilizer_savings + yield_savings
 
-    # Generate note
-    if total >= 300_000:
+    # Generate note (currency-neutral "$"; English for CA, Spanish for MX)
+    if is_ca:
+        nota = (
+            f"Estimated savings of about ${total:,}/yr from precision agriculture. "
+            "Based on Ontario input-cost and yield data — your real result depends on the season."
+        )
+    elif total >= 300_000:
         nota = f"Impacto economico significativo: ${total:,} MXN/ano estimado. La agricultura de precision esta generando valor real."
     elif total >= 100_000:
         nota = f"Ahorro estimado de ${total:,} MXN/ano. Mejoras en riego y salud del campo pueden incrementar este valor."

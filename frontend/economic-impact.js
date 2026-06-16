@@ -20,8 +20,9 @@ async function fetchJSON(path) {
     }
 }
 
+// Currency-neutral: plain "$" (never print MXN/CAD in user-facing strings).
 function formatMXN(value) {
-    return '$' + (value || 0).toLocaleString() + ' MXN';
+    return '$' + (value || 0).toLocaleString();
 }
 
 let econChart = null;
@@ -102,7 +103,6 @@ async function loadEconomicImpact() {
     updateTreatmentRoiLeaderboard(farmId);
     updateCumulativeChart(farmId);
     updateDownloadReportLink(farmId);
-    updateOntarioSoonBanner(data);
 }
 
 function resetStats() {
@@ -111,9 +111,9 @@ function resetStats() {
     document.getElementById('econ-water').textContent = '--';
     document.getElementById('econ-fertilizer').textContent = '--';
     document.getElementById('econ-yield').textContent = '--';
-    document.getElementById('econ-card-water').textContent = '$0 MXN';
-    document.getElementById('econ-card-fertilizer').textContent = '$0 MXN';
-    document.getElementById('econ-card-yield').textContent = '$0 MXN';
+    document.getElementById('econ-card-water').textContent = '$0';
+    document.getElementById('econ-card-fertilizer').textContent = '$0';
+    document.getElementById('econ-card-yield').textContent = '$0';
 }
 
 function updateStats(data) {
@@ -473,13 +473,6 @@ async function updateTreatmentRoiLeaderboard(farmId) {
         tr.innerHTML = `<td>${idx + 1}</td><td>${name}</td><td>${item.count}</td><td>${delta}</td><td>${cpp}</td>`;
         tbody.appendChild(tr);
     });
-}
-
-function updateOntarioSoonBanner(data) {
-    const banner = document.getElementById('econ-ontario-soon');
-    if (!banner) return;
-    const isOntario = data.nota && data.nota.includes('Ontario');
-    banner.style.display = isOntario ? 'block' : 'none';
 }
 
 function updateRiskAvoided(data) {

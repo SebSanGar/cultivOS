@@ -19,6 +19,10 @@ _TIER_RATES = {
 _WATER_PER_HA = _a("water_savings_per_ha")
 _FERT_PER_HA = _a("fertilizer_savings_per_ha")
 _YIELD_PER_HA = _a("yield_baseline_per_ha")
+# Ontario / Canada (CAD) ceilings — rainfed, so water ceiling is 0
+_WATER_PER_HA_CA = _a("water_savings_per_ha_ca")
+_FERT_PER_HA_CA = _a("fertilizer_savings_per_ha_ca")
+_YIELD_PER_HA_CA = _a("yield_baseline_per_ha_ca")
 
 # T2.5 — risk avoided per treatment (early intervention loss prevention)
 _RISK_PER_TREATMENT = _a("risk_per_treatment_mxn")
@@ -69,18 +73,11 @@ def get_economic_impact(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
 
-    # T2.10 — CAD/Ontario guard: Jalisco MXN assumptions do NOT apply to CA farms
+    # Region: Ontario (CA) uses CAD assumptions (rainfed — no water lever);
+    # Jalisco (MX) uses the original MXN model. Values are currency-neutral in
+    # the UI either way.
     farm_country = getattr(farm, "country", "MX") or "MX"
-    if farm_country.upper() == "CA":
-        return EconomicImpactOut(
-            farm_id=farm_id,
-            nota=(
-                "Ontario / CA baseline: Proximamente. "
-                "Coming soon — Canadian precision agriculture benchmarks are being developed. "
-                "MXN Jalisco assumptions do not apply to this farm."
-            ),
-            **_NO_DATA_OUT,
-        )
+    is_ca = farm_country.upper() == "CA"
 
     fields = db.query(Field).filter(Field.farm_id == farm_id).all()
 
@@ -125,6 +122,7 @@ def get_economic_impact(
         hectares=total_hectares,
         treatment_count=treatment_count,
         irrigation_efficiency=None,
+        country=farm_country,
     )
 
     total = result["total_savings_mxn"]
@@ -147,13 +145,17 @@ def get_economic_impact(
         "Estimacion basada en tus datos actuales; el valor real depende de la temporada.",
     )
 
-    # Subscription cost from tier
+    # Subscription cost from tier. CA pricing is not configured yet (the _TIER_RATES
+    # are MXN), so CA farms report no subscription cost — never apply MX pricing to CA.
     tier = getattr(farm, "tier", None)
-    if tier and tier in _TIER_RATES:
+    if not is_ca and tier and tier in _TIER_RATES:
         subscription_cost_mxn: int | None = round(total_hectares * _TIER_RATES[tier])
     else:
         subscription_cost_mxn = None
-        nota = nota + " Tarifa no configurada para esta granja."
+        nota = nota + (
+            " Subscription pricing not yet configured for this farm."
+            if is_ca else " Tarifa no configurada para esta granja."
+        )
 
     # Net ROI — only when we have real data AND a subscription cost
     has_real_data = len(health_scores) >= 1 and treatment_count >= 1
@@ -171,10 +173,13 @@ def get_economic_impact(
         water_savings_per_ha_mxn: int | None = round(result["water_savings_mxn"] / total_hectares)
         fertilizer_savings_per_ha_mxn: int | None = round(result["fertilizer_savings_mxn"] / total_hectares)
         yield_improvement_per_ha_mxn: int | None = round(result["yield_improvement_mxn"] / total_hectares)
-        # T2.4 — potential ceilings (100% efficiency, no multipliers)
-        water_potential_mxn: int | None = round(_WATER_PER_HA * total_hectares)
-        fertilizer_potential_mxn: int | None = round(_FERT_PER_HA * total_hectares)
-        yield_potential_mxn: int | None = round(_YIELD_PER_HA * total_hectares)
+        # T2.4 — potential ceilings (100% efficiency, no multipliers); region-aware
+        _wph = _WATER_PER_HA_CA if is_ca else _WATER_PER_HA
+        _fph = _FERT_PER_HA_CA if is_ca else _FERT_PER_HA
+        _yph = _YIELD_PER_HA_CA if is_ca else _YIELD_PER_HA
+        water_potential_mxn: int | None = round(_wph * total_hectares)
+        fertilizer_potential_mxn: int | None = round(_fph * total_hectares)
+        yield_potential_mxn: int | None = round(_yph * total_hectares)
     else:
         savings_per_ha_mxn = None
         water_savings_per_ha_mxn = None
