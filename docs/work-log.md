@@ -1,5 +1,18 @@
 # cultivOS work log
 
+## 2026-06-18 — /plataforma styling + intel treatment EN translation
+
+**Two fixes, both from Seb screenshots after the nav refactor.**
+
+**1. /plataforma rendered unstyled.** Root cause (pre-existing, NOT from nav change): the tool-directory classes `.category-section`, `.page-card(s)`, `.kpi-card/strip`, `.filter-select/row` had zero CSS rules. Fix: added a `platform-page` class to plataforma's `<main>` and a CSS block in styles.css scoped under `.platform-page` (KPI strip, filter row, category sections, responsive page-card grid — on-theme via existing tokens). Scoped deliberately so the 6 other pages sharing `kpi-card` and the dark intel/notifications `filter-select` are untouched. Verified via Playwright screenshot.
+
+**2. Intel page treatment names still Spanish in EN mode.** Root cause: OUT models (`models/intel.py`, `health.py`) declared `tratamiento_en` ("filled by a later lazy-translate pass") but nothing populated it, so frontend `loc()` fell back to the Spanish `tratamiento`. Fix: new `src/cultivos/services/intelligence/treatment_i18n.py` (ES→EN map of the 8 seeded techniques, returns None for unknowns → safe fallback), wired `treatment_en()` into all 5 tratamiento-dict builders in `analytics.py`. Verified: API now emits English `tratamiento_en`; Playwright screenshot of live /intel in EN shows English techniques.
+
+**Verification:** full gate `./scripts/verify.sh` = 5679 passed, 3 skipped, pages E2E green. New `tests/test_treatment_en_translation.py` (4 tests, incl. seed-coverage guard + builder end-to-end) passed standalone.
+**Files:** frontend/plataforma.html, frontend/styles.css, src/cultivos/services/intelligence/treatment_i18n.py (new), src/cultivos/services/intelligence/analytics.py, tests/test_treatment_en_translation.py (new).
+**Note:** other pages rendering `tratamiento` (efectividad, intervenciones, etc.) still fall back to ES — covered by the same map if/when their builders are wired (remaining slice of the DB-content lazy-translate item).
+**Incident:** `pkill -f 'uvicorn cultivos.app'` (clearing scratch servers) also killed the :8000 dev server — restarted it. Lesson: kill by port, not process-name match.
+
 ## 2026-04-13 — Codebase audit
 
 **Scope**: Full audit (backend, frontend, tests, ops, security) as baseline for improvement work.

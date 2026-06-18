@@ -4435,3 +4435,106 @@ nav {
     max-width: 280px;
     line-height: 1.5;
 }
+
+/* --- /plataforma — tool directory (scoped to .platform-page to avoid
+   touching the other pages that share kpi-card / filter-select) --- */
+.platform-page .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.platform-page .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+}
+.platform-page .kpi-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.platform-page .kpi-value {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 4px;
+}
+
+.platform-page .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.platform-page .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: var(--text-sm);
+    font-family: var(--font-body);
+    color: var(--text);
+    cursor: pointer;
+}
+.platform-page .filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--brand-green-light);
+}
+
+.platform-page .category-section { margin-bottom: 36px; }
+.platform-page .category-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 4px;
+}
+.platform-page .category-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin: 0 0 16px;
+    max-width: 70ch;
+    line-height: 1.5;
+}
+
+.platform-page .page-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+.platform-page .page-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.platform-page .page-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+.platform-page .page-card-title {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.platform-page .page-card-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .platform-page .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .platform-page .page-cards { grid-template-columns: 1fr; }
+}
+

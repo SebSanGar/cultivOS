@@ -26,6 +26,7 @@ from cultivos.services.crop.health import (
     ThermalInput,
     compute_health_score,
 )
+from cultivos.services.intelligence.treatment_i18n import treatment_en
 
 
 def _classify_season(dt: datetime) -> tuple[str, int]:
@@ -307,6 +308,7 @@ def compute_treatment_effectiveness(db: Session) -> dict:
             "field_name": field.name if field else "Unknown",
             "farm_name": farm.name if farm else "Unknown",
             "tratamiento": tr.tratamiento,
+            "tratamiento_en": treatment_en(tr.tratamiento),
             "health_before": health_before,
             "health_after": health_after,
             "delta": delta,
@@ -430,6 +432,7 @@ def compute_treatment_effectiveness_report(
 
         results.append({
             "tratamiento": name,
+            "tratamiento_en": treatment_en(name),
             "total_applications": total_applications,
             "feedback_count": feedback_count,
             "feedback_success_rate": feedback_success_rate,
@@ -484,6 +487,7 @@ def compute_treatment_effectiveness_by_crop(db: Session, crop: str) -> dict:
         mean_delta = round(sum(deltas) / sample_count, 1)
         results.append({
             "tratamiento": name,
+            "tratamiento_en": treatment_en(name),
             "mean_health_delta": mean_delta,
             "sample_count": sample_count,
             "low_confidence": sample_count < 2,
@@ -1086,6 +1090,7 @@ def compute_regional_summary(db: Session, state: Optional[str] = None) -> dict:
             [
                 {
                     "tratamiento": name,
+                    "tratamiento_en": treatment_en(name),
                     "application_count": len(recs),
                     "organic": all(r.organic for r in recs),
                 }
@@ -1805,6 +1810,7 @@ def compute_field_treatment_cost_effectiveness(field_id: int, db: Session) -> li
 
         results.append({
             "tratamiento": tr.tratamiento,
+            "tratamiento_en": treatment_en(tr.tratamiento),
             "cost_mxn": tr.costo_estimado_mxn,
             "health_before": tr.health_score_used,
             "health_after": health_after,
