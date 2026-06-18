@@ -1,0 +1,4514 @@
+{
+  "tokens": {
+    "typography": {
+      "--font-heading": "'Space Grotesk', system-ui, sans-serif",
+      "--font-body": "'Inter', system-ui, -apple-system, sans-serif",
+      "--font-mono": "'JetBrains Mono', 'SF Mono', monospace",
+      "--text-xs": "0.75rem",
+      "--text-sm": "0.875rem",
+      "--text-base": "1rem",
+      "--text-lg": "1.125rem",
+      "--text-xl": "1.25rem",
+      "--text-2xl": "1.5rem",
+      "--text-3xl": "1.875rem",
+      "--text-4xl": "2.25rem"
+    },
+    "spacing": {
+      "--space-1": "0.25rem",
+      "--space-2": "0.5rem",
+      "--space-3": "0.75rem",
+      "--space-4": "1rem",
+      "--space-5": "1.25rem",
+      "--space-6": "1.5rem",
+      "--space-8": "2rem",
+      "--space-10": "2.5rem",
+      "--space-12": "3rem",
+      "--space-16": "4rem"
+    },
+    "color": {
+      "--brand-green": "#16a34a",
+      "--brand-green-light": "#dcfce7",
+      "--brand-green-dark": "#14532d",
+      "--brand-green-50": "#f0fdf4",
+      "--brand-green-100": "#dcfce7",
+      "--brand-green-600": "#16a34a",
+      "--brand-green-800": "#166534",
+      "--brand-green-900": "#14532d",
+      "--neutral-50": "#fafaf9",
+      "--neutral-100": "#f5f5f4",
+      "--neutral-200": "#e7e5e4",
+      "--neutral-300": "#d6d3d1",
+      "--neutral-400": "#a8a29e",
+      "--neutral-500": "#78716c",
+      "--neutral-600": "#57534e",
+      "--neutral-700": "#44403c",
+      "--neutral-800": "#292524",
+      "--neutral-900": "#1c1917",
+      "--color-success": "#16a34a",
+      "--color-success-light": "#dcfce7",
+      "--color-warning": "#d97706",
+      "--color-warning-light": "#fef3c7",
+      "--color-danger": "#dc2626",
+      "--color-danger-light": "#fee2e2",
+      "--color-info": "#2563eb",
+      "--color-info-light": "#dbeafe",
+      "--color-warning-dark": "#92400e",
+      "--color-danger-dark": "#991b1b",
+      "--color-success-dark": "#166534",
+      "--bg": "#fafaf9",
+      "--surface": "#ffffff",
+      "--text": "#1a1a1a",
+      "--text-muted": "#6b7280",
+      "--border": "#e5e7eb",
+      "--accent": "#16a34a",
+      "--green": "var(--brand-green)",
+      "--green-light": "var(--brand-green-light)",
+      "--green-dark": "var(--brand-green-dark)",
+      "--card-bg": "var(--surface)",
+      "--card-surface": "var(--surface)",
+      "--input-bg": "var(--surface)",
+      "--text-primary": "var(--text)",
+      "--text-secondary": "var(--text-muted)",
+      "--muted": "var(--text-muted)",
+      "--accent-green": "var(--brand-green)",
+      "--purple": "#7c3aed",
+      "--bg-tertiary": "var(--neutral-100)",
+      "--border-color": "var(--border)",
+      "--surface-2": "var(--neutral-50)",
+      "--green-soft": "#bbf7d0",
+      "--green-mid": "#4ade80",
+      "--gold": "#d97706",
+      "--silver": "#9ca3af",
+      "--bronze": "#b45309",
+      "--focus-ring": "0 0 0 2px rgba(22, 163, 74, 0.2)",
+      "--intel-bg": "var(--bg)",
+      "--intel-surface": "var(--surface)",
+      "--intel-border": "var(--border)",
+      "--intel-text": "var(--text)",
+      "--intel-muted": "var(--text-muted)"
+    },
+    "other": {
+      "--yellow": "var(--color-warning)",
+      "--yellow-light": "var(--color-warning-light)",
+      "--red": "var(--color-danger)",
+      "--red-light": "var(--color-danger-light)",
+      "--blue": "var(--color-info)",
+      "--blue-light": "var(--color-info-light)",
+      "--card": "var(--surface)",
+      "--amber": "var(--color-warning)"
+    },
+    "radius": {
+      "--radius-sm": "6px",
+      "--radius": "12px",
+      "--radius-lg": "16px",
+      "--radius-xl": "24px",
+      "--radius-full": "9999px"
+    },
+    "shadow": {
+      "--shadow-sm": "0 1px 2px rgba(0,0,0,0.05)",
+      "--shadow": "0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)",
+      "--shadow-md": "0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06)",
+      "--shadow-lg": "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
+      "--shadow-xl": "0 20px 25px rgba(0,0,0,0.1), 0 8px 10px rgba(0,0,0,0.04)"
+    },
+    "motion": {
+      "--ease-out": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "--ease-in-out": "cubic-bezier(0.65, 0, 0.35, 1)",
+      "--ease-spring": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "--duration-fast": "150ms",
+      "--duration-normal": "250ms",
+      "--duration-slow": "400ms"
+    }
+  },
+  "components": [
+    {
+      "selector": ".platform-page",
+      "rules": 17
+    },
+    {
+      "selector": ".critical",
+      "rules": 14
+    },
+    {
+      "selector": ".alert-check-card",
+      "rules": 13
+    },
+    {
+      "selector": ".warning",
+      "rules": 12
+    },
+    {
+      "selector": ".intel-body",
+      "rules": 11
+    },
+    {
+      "selector": ".good",
+      "rules": 10
+    },
+    {
+      "selector": ".campo-grid",
+      "rules": 9
+    },
+    {
+      "selector": ".flights-table",
+      "rules": 9
+    },
+    {
+      "selector": ".health-badge",
+      "rules": 9
+    },
+    {
+      "selector": ".active",
+      "rules": 8
+    },
+    {
+      "selector": ".campo-section",
+      "rules": 8
+    },
+    {
+      "selector": ".intel-stat",
+      "rules": 8
+    },
+    {
+      "selector": ".mgmt-form-group",
+      "rules": 8
+    },
+    {
+      "selector": ".intel-grid",
+      "rules": 7
+    },
+    {
+      "selector": ".notification-severity",
+      "rules": 7
+    },
+    {
+      "selector": ".soil-form-field",
+      "rules": 7
+    },
+    {
+      "selector": ".ba-swatch",
+      "rules": 6
+    },
+    {
+      "selector": ".compare-sortable",
+      "rules": 6
+    },
+    {
+      "selector": ".comparison-table",
+      "rules": 6
+    },
+    {
+      "selector": ".heatmap-circle",
+      "rules": 6
+    },
+    {
+      "selector": ".intel-panel",
+      "rules": 6
+    },
+    {
+      "selector": ".login-field",
+      "rules": 6
+    },
+    {
+      "selector": ".nav-farmer-tabs",
+      "rules": 6
+    },
+    {
+      "selector": ".nav-inner",
+      "rules": 6
+    },
+    {
+      "selector": ".stat-card",
+      "rules": 6
+    },
+    {
+      "selector": ".wizard-form-group",
+      "rules": 6
+    },
+    {
+      "selector": ".alert-check-card-title",
+      "rules": 5
+    },
+    {
+      "selector": ".alert-check-icon",
+      "rules": 5
+    },
+    {
+      "selector": ".alert-history-dot",
+      "rules": 5
+    },
+    {
+      "selector": ".alert-history-type-badge",
+      "rules": 5
+    },
+    {
+      "selector": ".batch-health-card",
+      "rules": 5
+    },
+    {
+      "selector": ".compare-header-row",
+      "rules": 5
+    },
+    {
+      "selector": ".cultivos-footer",
+      "rules": 5
+    },
+    {
+      "selector": ".heatmap-dot",
+      "rules": 5
+    },
+    {
+      "selector": ".nav-tab",
+      "rules": 5
+    },
+    {
+      "selector": ".notif-card",
+      "rules": 5
+    },
+    {
+      "selector": ".seasonal-alert-card",
+      "rules": 5
+    },
+    {
+      "selector": ".seasonal-type-dot",
+      "rules": 5
+    },
+    {
+      "selector": ".semaforo-dot",
+      "rules": 5
+    },
+    {
+      "selector": ".wizard-progress-step",
+      "rules": 5
+    },
+    {
+      "selector": ".agronomo-toggle-btn",
+      "rules": 4
+    },
+    {
+      "selector": ".api-link-card",
+      "rules": 4
+    },
+    {
+      "selector": ".before-after-field",
+      "rules": 4
+    },
+    {
+      "selector": ".cerebro-insight-item",
+      "rules": 4
+    },
+    {
+      "selector": ".cultivos-footer-logo",
+      "rules": 4
+    },
+    {
+      "selector": ".delta-pill",
+      "rules": 4
+    },
+    {
+      "selector": ".fusion-confidence-fill",
+      "rules": 4
+    },
+    {
+      "selector": ".growth-timeline-detail-water",
+      "rules": 4
+    },
+    {
+      "selector": ".growth-timeline-segment",
+      "rules": 4
+    },
+    {
+      "selector": ".health-bar-fill",
+      "rules": 4
+    },
+    {
+      "selector": ".intel-spark",
+      "rules": 4
+    },
+    {
+      "selector": ".intel-stats-strip",
+      "rules": 4
+    },
+    {
+      "selector": ".intel-treatment-urgency",
+      "rules": 4
+    },
+    {
+      "selector": ".login-logo",
+      "rules": 4
+    },
+    {
+      "selector": ".mgmt-dialog",
+      "rules": 4
+    },
+    {
+      "selector": ".mgmt-table",
+      "rules": 4
+    },
+    {
+      "selector": ".nav-lang-toggle",
+      "rules": 4
+    },
+    {
+      "selector": ".nav-logo",
+      "rules": 4
+    },
+    {
+      "selector": ".nav-tabs",
+      "rules": 4
+    },
+    {
+      "selector": ".nav-user-info",
+      "rules": 4
+    },
+    {
+      "selector": ".notif-severity-badge",
+      "rules": 4
+    },
+    {
+      "selector": ".score-bar-fill",
+      "rules": 4
+    },
+    {
+      "selector": ".seasonal-season-badge",
+      "rules": 4
+    },
+    {
+      "selector": ".si-result-value",
+      "rules": 4
+    },
+    {
+      "selector": ".soil-table",
+      "rules": 4
+    },
+    {
+      "selector": ".sparkline-line",
+      "rules": 4
+    },
+    {
+      "selector": ".stats-strip",
+      "rules": 4
+    },
+    {
+      "selector": ".status-ts",
+      "rules": 4
+    },
+    {
+      "selector": ".summary-stat-value",
+      "rules": 4
+    },
+    {
+      "selector": ".tl-event-content",
+      "rules": 4
+    },
+    {
+      "selector": ".treatment-apply-form",
+      "rules": 4
+    },
+    {
+      "selector": ".weather-day",
+      "rules": 4
+    },
+    {
+      "selector": ".weather-day-desc",
+      "rules": 4
+    },
+    {
+      "selector": ".weather-day-humidity",
+      "rules": 4
+    },
+    {
+      "selector": ".alert-check-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".alert-config-row",
+      "rules": 3
+    },
+    {
+      "selector": ".alert-config-save",
+      "rules": 3
+    },
+    {
+      "selector": ".batch-health-trend",
+      "rules": 3
+    },
+    {
+      "selector": ".btn-ghost",
+      "rules": 3
+    },
+    {
+      "selector": ".btn-primary",
+      "rules": 3
+    },
+    {
+      "selector": ".btn-secondary",
+      "rules": 3
+    },
+    {
+      "selector": ".campo-alert-badge",
+      "rules": 3
+    },
+    {
+      "selector": ".campo-download-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".campo-header",
+      "rules": 3
+    },
+    {
+      "selector": ".campo-treatment-card",
+      "rules": 3
+    },
+    {
+      "selector": ".compare-trend-label",
+      "rules": 3
+    },
+    {
+      "selector": ".completeness-dot",
+      "rules": 3
+    },
+    {
+      "selector": ".cultivos-footer-sep",
+      "rules": 3
+    },
+    {
+      "selector": ".dash-title",
+      "rules": 3
+    },
+    {
+      "selector": ".dashboard",
+      "rules": 3
+    },
+    {
+      "selector": ".export-csv-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".fusion-sensor-badge",
+      "rules": 3
+    },
+    {
+      "selector": ".growth-timeline-detail",
+      "rules": 3
+    },
+    {
+      "selector": ".identify-match",
+      "rules": 3
+    },
+    {
+      "selector": ".info",
+      "rules": 3
+    },
+    {
+      "selector": ".intel-dashboard",
+      "rules": 3
+    },
+    {
+      "selector": ".intel-tab",
+      "rules": 3
+    },
+    {
+      "selector": ".intel-title",
+      "rules": 3
+    },
+    {
+      "selector": ".intel-treatment-delta",
+      "rules": 3
+    },
+    {
+      "selector": ".login-submit",
+      "rules": 3
+    },
+    {
+      "selector": ".login-toggle",
+      "rules": 3
+    },
+    {
+      "selector": ".nav-open",
+      "rules": 3
+    },
+    {
+      "selector": ".nav-user-chip",
+      "rules": 3
+    },
+    {
+      "selector": ".negative",
+      "rules": 3
+    },
+    {
+      "selector": ".none",
+      "rules": 3
+    },
+    {
+      "selector": ".notif-ack-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".ok",
+      "rules": 3
+    },
+    {
+      "selector": ".payback-ring",
+      "rules": 3
+    },
+    {
+      "selector": ".seasonal-card",
+      "rules": 3
+    },
+    {
+      "selector": ".si-selector-row",
+      "rules": 3
+    },
+    {
+      "selector": ".soil-chart-card",
+      "rules": 3
+    },
+    {
+      "selector": ".soil-form-msg",
+      "rules": 3
+    },
+    {
+      "selector": ".soil-submit-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".status-check-indicator",
+      "rules": 3
+    },
+    {
+      "selector": ".tour-btn-prev",
+      "rules": 3
+    },
+    {
+      "selector": ".treatment-confirm-btn",
+      "rules": 3
+    },
+    {
+      "selector": ".treatment-report-metric-value",
+      "rules": 3
+    },
+    {
+      "selector": ".weather-day-bar",
+      "rules": 3
+    },
+    {
+      "selector": ".weather-day-rain",
+      "rules": 3
+    },
+    {
+      "selector": ".weather-day-rain-amt",
+      "rules": 3
+    },
+    {
+      "selector": ".weather-detail",
+      "rules": 3
+    },
+    {
+      "selector": ".wizard-progress-num",
+      "rules": 3
+    },
+    {
+      "selector": ".alert-config-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".alert-history-item",
+      "rules": 2
+    },
+    {
+      "selector": ".alert-type-anomaly",
+      "rules": 2
+    },
+    {
+      "selector": ".alert-type-default",
+      "rules": 2
+    },
+    {
+      "selector": ".alert-type-health",
+      "rules": 2
+    },
+    {
+      "selector": ".alert-type-irrigation",
+      "rules": 2
+    },
+    {
+      "selector": ".anomaly-card",
+      "rules": 2
+    },
+    {
+      "selector": ".anomaly-card-rec",
+      "rules": 2
+    },
+    {
+      "selector": ".anomaly-drop",
+      "rules": 2
+    },
+    {
+      "selector": ".anomaly-ndvi",
+      "rules": 2
+    },
+    {
+      "selector": ".api-category-card",
+      "rules": 2
+    },
+    {
+      "selector": ".campo-data-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".campo-risk-rec",
+      "rules": 2
+    },
+    {
+      "selector": ".campo-schedule-day",
+      "rules": 2
+    },
+    {
+      "selector": ".cerebro-badges",
+      "rules": 2
+    },
+    {
+      "selector": ".cerebro-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".cerebro-insight-label",
+      "rules": 2
+    },
+    {
+      "selector": ".compare-row",
+      "rules": 2
+    },
+    {
+      "selector": ".comparison-sortable",
+      "rules": 2
+    },
+    {
+      "selector": ".completed",
+      "rules": 2
+    },
+    {
+      "selector": ".completeness-missing",
+      "rules": 2
+    },
+    {
+      "selector": ".current",
+      "rules": 2
+    },
+    {
+      "selector": ".dashboard-summary-stats",
+      "rules": 2
+    },
+    {
+      "selector": ".econ-card",
+      "rules": 2
+    },
+    {
+      "selector": ".econ-nota",
+      "rules": 2
+    },
+    {
+      "selector": ".econ-reference",
+      "rules": 2
+    },
+    {
+      "selector": ".econ-stats",
+      "rules": 2
+    },
+    {
+      "selector": ".estimate-range",
+      "rules": 2
+    },
+    {
+      "selector": ".farm-card",
+      "rules": 2
+    },
+    {
+      "selector": ".farm-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".feedback-entry",
+      "rules": 2
+    },
+    {
+      "selector": ".feedback-input",
+      "rules": 2
+    },
+    {
+      "selector": ".feedback-submit",
+      "rules": 2
+    },
+    {
+      "selector": ".fert-card",
+      "rules": 2
+    },
+    {
+      "selector": ".field-card",
+      "rules": 2
+    },
+    {
+      "selector": ".field-card-expanded",
+      "rules": 2
+    },
+    {
+      "selector": ".field-list",
+      "rules": 2
+    },
+    {
+      "selector": ".field-panel-back",
+      "rules": 2
+    },
+    {
+      "selector": ".filter-select",
+      "rules": 2
+    },
+    {
+      "selector": ".flights-field-link",
+      "rules": 2
+    },
+    {
+      "selector": ".fusion-overview-stat-value",
+      "rules": 2
+    },
+    {
+      "selector": ".green",
+      "rules": 2
+    },
+    {
+      "selector": ".growth-timeline-detail-nutrient",
+      "rules": 2
+    },
+    {
+      "selector": ".growth-timeline-label",
+      "rules": 2
+    },
+    {
+      "selector": ".growth-timeline-needle",
+      "rules": 2
+    },
+    {
+      "selector": ".heatmap-critical",
+      "rules": 2
+    },
+    {
+      "selector": ".heatmap-good",
+      "rules": 2
+    },
+    {
+      "selector": ".heatmap-legend",
+      "rules": 2
+    },
+    {
+      "selector": ".heatmap-none",
+      "rules": 2
+    },
+    {
+      "selector": ".heatmap-warning",
+      "rules": 2
+    },
+    {
+      "selector": ".identify-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".identify-field",
+      "rules": 2
+    },
+    {
+      "selector": ".identify-match-header",
+      "rules": 2
+    },
+    {
+      "selector": ".impact-farmbar",
+      "rules": 2
+    },
+    {
+      "selector": ".impact-fields",
+      "rules": 2
+    },
+    {
+      "selector": ".impact-foot",
+      "rules": 2
+    },
+    {
+      "selector": ".impact-hero",
+      "rules": 2
+    },
+    {
+      "selector": ".impact-support-item",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-anomaly-card",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-filter-select",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-header",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-logo",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-panel-body",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-panel-header",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-stat-value",
+      "rules": 2
+    },
+    {
+      "selector": ".intel-treatment-card",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-benefits",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-crops",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-science",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-symptoms",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-temp",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-card-treatments",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-meta-item",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-search-input",
+      "rules": 2
+    },
+    {
+      "selector": ".knowledge-title",
+      "rules": 2
+    },
+    {
+      "selector": ".kpi-strip",
+      "rules": 2
+    },
+    {
+      "selector": ".loading",
+      "rules": 2
+    },
+    {
+      "selector": ".loading-spinner",
+      "rules": 2
+    },
+    {
+      "selector": ".login-card",
+      "rules": 2
+    },
+    {
+      "selector": ".login-error",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-actions-cell",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-danger",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-delete",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-edit",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-primary",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-secondary",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-btn-view",
+      "rules": 2
+    },
+    {
+      "selector": ".mgmt-form-row",
+      "rules": 2
+    },
+    {
+      "selector": ".mission-drone-badge",
+      "rules": 2
+    },
+    {
+      "selector": ".muted",
+      "rules": 2
+    },
+    {
+      "selector": ".nav-agronomo-extras",
+      "rules": 2
+    },
+    {
+      "selector": ".nav-user-dropdown-logout",
+      "rules": 2
+    },
+    {
+      "selector": ".notif-filter-select",
+      "rules": 2
+    },
+    {
+      "selector": ".notif-severity-critical",
+      "rules": 2
+    },
+    {
+      "selector": ".notif-severity-info",
+      "rules": 2
+    },
+    {
+      "selector": ".notif-severity-warning",
+      "rules": 2
+    },
+    {
+      "selector": ".notification-ack-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".notification-item",
+      "rules": 2
+    },
+    {
+      "selector": ".open",
+      "rules": 2
+    },
+    {
+      "selector": ".page-card",
+      "rules": 2
+    },
+    {
+      "selector": ".page-cards",
+      "rules": 2
+    },
+    {
+      "selector": ".positive",
+      "rules": 2
+    },
+    {
+      "selector": ".recs-card",
+      "rules": 2
+    },
+    {
+      "selector": ".recs-card-header",
+      "rules": 2
+    },
+    {
+      "selector": ".recs-card-value",
+      "rules": 2
+    },
+    {
+      "selector": ".recs-cards-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".red",
+      "rules": 2
+    },
+    {
+      "selector": ".regen-rec-item",
+      "rules": 2
+    },
+    {
+      "selector": ".register-fields",
+      "rules": 2
+    },
+    {
+      "selector": ".seasonal-group",
+      "rules": 2
+    },
+    {
+      "selector": ".sensor-timeline-detail",
+      "rules": 2
+    },
+    {
+      "selector": ".sensor-timeline-header",
+      "rules": 2
+    },
+    {
+      "selector": ".sensor-timeline-item",
+      "rules": 2
+    },
+    {
+      "selector": ".si-file-label",
+      "rules": 2
+    },
+    {
+      "selector": ".si-results-grid",
+      "rules": 2
+    },
+    {
+      "selector": ".soil-chart-wide",
+      "rules": 2
+    },
+    {
+      "selector": ".soil-timeline-detail",
+      "rules": 2
+    },
+    {
+      "selector": ".soil-timeline-item",
+      "rules": 2
+    },
+    {
+      "selector": ".sort-asc",
+      "rules": 2
+    },
+    {
+      "selector": ".sort-desc",
+      "rules": 2
+    },
+    {
+      "selector": ".sortable",
+      "rules": 2
+    },
+    {
+      "selector": ".source-cite",
+      "rules": 2
+    },
+    {
+      "selector": ".stat-value",
+      "rules": 2
+    },
+    {
+      "selector": ".status-check-row",
+      "rules": 2
+    },
+    {
+      "selector": ".summary-alert-item",
+      "rules": 2
+    },
+    {
+      "selector": ".timeline-action",
+      "rules": 2
+    },
+    {
+      "selector": ".tl-timeline",
+      "rules": 2
+    },
+    {
+      "selector": ".tour-btn-next",
+      "rules": 2
+    },
+    {
+      "selector": ".tour-tooltip",
+      "rules": 2
+    },
+    {
+      "selector": ".tour-tooltip-close",
+      "rules": 2
+    },
+    {
+      "selector": ".treatment-apply-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".treatment-cancel-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".treatment-row",
+      "rules": 2
+    },
+    {
+      "selector": ".treatment-tag",
+      "rules": 2
+    },
+    {
+      "selector": ".treatment-timeline-item",
+      "rules": 2
+    },
+    {
+      "selector": ".urgency-esta",
+      "rules": 2
+    },
+    {
+      "selector": ".urgency-inmediata",
+      "rules": 2
+    },
+    {
+      "selector": ".visible",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-current",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-current-desc",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-current-details",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-current-temp",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-day-bar-track",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-day-label",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-day-temp",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-forecast",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-forecast-days",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-forecast-title",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-rain",
+      "rules": 2
+    },
+    {
+      "selector": ".weather-temp",
+      "rules": 2
+    },
+    {
+      "selector": ".wizard-btn",
+      "rules": 2
+    },
+    {
+      "selector": ".wizard-btn-finish",
+      "rules": 2
+    },
+    {
+      "selector": ".wizard-btn-remove",
+      "rules": 2
+    },
+    {
+      "selector": ".wizard-summary-card",
+      "rules": 2
+    },
+    {
+      "selector": ".wizard-summary-fields",
+      "rules": 2
+    },
+    {
+      "selector": ".yellow",
+      "rules": 2
+    },
+    {
+      "selector": ".acknowledged",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-body",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-card-msg",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-header",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-results",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-summary",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-check-title",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-config-form",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-content",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-count",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-date",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-header",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-message",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-status",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-title",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-history-top",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-save-section",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-slider",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-slider-group",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-slider-val",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-status-pending",
+      "rules": 1
+    },
+    {
+      "selector": ".alert-status-sent",
+      "rules": 1
+    },
+    {
+      "selector": ".anomaly-card-detail",
+      "rules": 1
+    },
+    {
+      "selector": ".anomaly-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".anomaly-metric",
+      "rules": 1
+    },
+    {
+      "selector": ".anomaly-type",
+      "rules": 1
+    },
+    {
+      "selector": ".api-categories-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".api-categories-section",
+      "rules": 1
+    },
+    {
+      "selector": ".api-category-count",
+      "rules": 1
+    },
+    {
+      "selector": ".api-category-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".api-category-header",
+      "rules": 1
+    },
+    {
+      "selector": ".api-category-icon",
+      "rules": 1
+    },
+    {
+      "selector": ".api-category-name",
+      "rules": 1
+    },
+    {
+      "selector": ".api-link-icon",
+      "rules": 1
+    },
+    {
+      "selector": ".api-links-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".api-loading",
+      "rules": 1
+    },
+    {
+      "selector": ".api-quick-links",
+      "rules": 1
+    },
+    {
+      "selector": ".ba-arrow",
+      "rules": 1
+    },
+    {
+      "selector": ".baf-arrow",
+      "rules": 1
+    },
+    {
+      "selector": ".baf-label",
+      "rules": 1
+    },
+    {
+      "selector": ".baf-swatch",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-farm",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-field",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-score",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-source",
+      "rules": 1
+    },
+    {
+      "selector": ".batch-health-sources",
+      "rules": 1
+    },
+    {
+      "selector": ".before-after",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-chart-container",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-data-item",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-data-label",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-data-value",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-placeholder",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-risk-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-risk-recs",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-schedule",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-schedule-date",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-schedule-liters",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-section-body",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-section-subtitle",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-select",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-treatment-row",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zone-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zone-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zone-label",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zone-pct",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zone-track",
+      "rules": 1
+    },
+    {
+      "selector": ".campo-zones",
+      "rules": 1
+    },
+    {
+      "selector": ".card--estimated",
+      "rules": 1
+    },
+    {
+      "selector": ".card--measured",
+      "rules": 1
+    },
+    {
+      "selector": ".category-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".category-section",
+      "rules": 1
+    },
+    {
+      "selector": ".category-title",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-action",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-badge-label",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-conf-label",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-confidence",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-hero",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-insight-text",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-insights",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-risk",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-score",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-score-label",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-score-wrap",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-trend-down",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-trend-stable",
+      "rules": 1
+    },
+    {
+      "selector": ".cerebro-trend-up",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-cell",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-cell-name",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-cell-trend",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-cell-yield",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-sparkline",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-table",
+      "rules": 1
+    },
+    {
+      "selector": ".compare-yield-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-completeness",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-completeness-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-completeness-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-completeness-pct",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-field-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-field-name",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-header",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-row",
+      "rules": 1
+    },
+    {
+      "selector": ".comparison-title",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-critical",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-good",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-header",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-label",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-present",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-score",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-sensor",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-sensor-label",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-sensors",
+      "rules": 1
+    },
+    {
+      "selector": ".completeness-warning",
+      "rules": 1
+    },
+    {
+      "selector": ".confidence-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".cosecha",
+      "rules": 1
+    },
+    {
+      "selector": ".cost-compare-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".cost-compare-bar-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".cost-compare-bar-fill--cost",
+      "rules": 1
+    },
+    {
+      "selector": ".dash-header",
+      "rules": 1
+    },
+    {
+      "selector": ".dash-subtitle",
+      "rules": 1
+    },
+    {
+      "selector": ".dashboard-summary",
+      "rules": 1
+    },
+    {
+      "selector": ".dashboard-summary-farm-name",
+      "rules": 1
+    },
+    {
+      "selector": ".dashboard-summary-header",
+      "rules": 1
+    },
+    {
+      "selector": ".dashboard-summary-title",
+      "rules": 1
+    },
+    {
+      "selector": ".delta-negative",
+      "rules": 1
+    },
+    {
+      "selector": ".delta-neutral",
+      "rules": 1
+    },
+    {
+      "selector": ".delta-positive",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-nota",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-organic-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-riesgo-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-riesgo-header",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-riesgo-item",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-riesgo-rec",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-riesgo-tipo",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-risks-list",
+      "rules": 1
+    },
+    {
+      "selector": ".disease-weather-ctx",
+      "rules": 1
+    },
+    {
+      "selector": ".down",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-card-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-card-icon",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-card-title",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-card-value",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-cards-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-chart-section",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-chart-wrapper",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-farm-name",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-header",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-skeleton",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-stat",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-stat-value",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-title",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-total",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-total-label",
+      "rules": 1
+    },
+    {
+      "selector": ".econ-total-value",
+      "rules": 1
+    },
+    {
+      "selector": ".economic-impact-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".empty-state",
+      "rules": 1
+    },
+    {
+      "selector": ".empty-state-icon",
+      "rules": 1
+    },
+    {
+      "selector": ".empty-state-text",
+      "rules": 1
+    },
+    {
+      "selector": ".empty-state-title",
+      "rules": 1
+    },
+    {
+      "selector": ".error",
+      "rules": 1
+    },
+    {
+      "selector": ".estimate-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".estimate-badge--confirmed",
+      "rules": 1
+    },
+    {
+      "selector": ".estimate-badge--measured",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-location",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-meta-item",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-name",
+      "rules": 1
+    },
+    {
+      "selector": ".farm-owner",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-alt",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-check",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-date",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-entry-header",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-form",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-form-row",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-label",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-stars",
+      "rules": 1
+    },
+    {
+      "selector": ".feedback-wide",
+      "rules": 1
+    },
+    {
+      "selector": ".fert-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".fert-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".fert-name",
+      "rules": 1
+    },
+    {
+      "selector": ".field-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".field-comparison-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".field-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".field-impact-card",
+      "rules": 1
+    },
+    {
+      "selector": ".field-impact-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".field-impact-head",
+      "rules": 1
+    },
+    {
+      "selector": ".field-impact-name",
+      "rules": 1
+    },
+    {
+      "selector": ".field-impact-status",
+      "rules": 1
+    },
+    {
+      "selector": ".field-name",
+      "rules": 1
+    },
+    {
+      "selector": ".field-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".field-panel-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".field-panel-header",
+      "rules": 1
+    },
+    {
+      "selector": ".field-panel-title",
+      "rules": 1
+    },
+    {
+      "selector": ".field-section",
+      "rules": 1
+    },
+    {
+      "selector": ".field-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".field-stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".field-stat-value",
+      "rules": 1
+    },
+    {
+      "selector": ".field-stats",
+      "rules": 1
+    },
+    {
+      "selector": ".filter-row",
+      "rules": 1
+    },
+    {
+      "selector": ".flat",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-cell-date",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-cell-mono",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-drone-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-loading",
+      "rules": 1
+    },
+    {
+      "selector": ".flights-status",
+      "rules": 1
+    },
+    {
+      "selector": ".forecast-day",
+      "rules": 1
+    },
+    {
+      "selector": ".forecast-day-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".forecast-day-details",
+      "rules": 1
+    },
+    {
+      "selector": ".forecast-day-label",
+      "rules": 1
+    },
+    {
+      "selector": ".forecast-day-temp",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-assessment",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-confidence-header",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-confidence-label",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-confidence-section",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-confidence-track",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-confidence-value",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradiction-card",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradiction-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradiction-header",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradiction-sensors",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradictions",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-contradictions-title",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-contradiction",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-contradiction-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-contradiction-tag",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-field",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-field-farm",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-field-header",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-field-name",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-field-sensors",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-fields",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-stat",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-overview-summary",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-sensors",
+      "rules": 1
+    },
+    {
+      "selector": ".fusion-sensors-label",
+      "rules": 1
+    },
+    {
+      "selector": ".future",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-day-count",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-stage-header",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-timeline",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-timeline-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-timeline-days",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-timeline-detail-name",
+      "rules": 1
+    },
+    {
+      "selector": ".growth-timeline-details",
+      "rules": 1
+    },
+    {
+      "selector": ".health-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".health-critical",
+      "rules": 1
+    },
+    {
+      "selector": ".health-good",
+      "rules": 1
+    },
+    {
+      "selector": ".health-warning",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-canvas",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-container",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-field",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-header",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-label",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-legend-item",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-name",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-svg",
+      "rules": 1
+    },
+    {
+      "selector": ".heatmap-title",
+      "rules": 1
+    },
+    {
+      "selector": ".high",
+      "rules": 1
+    },
+    {
+      "selector": ".identify-form",
+      "rules": 1
+    },
+    {
+      "selector": ".identify-hint",
+      "rules": 1
+    },
+    {
+      "selector": ".identify-results",
+      "rules": 1
+    },
+    {
+      "selector": ".identify-results-title",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-empty-state",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-empty-state__icon",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-empty-state__msg",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-equiv-chip",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-equiv-row",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-hero-amount",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-hero-amount--soft",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-hero-label",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-hero-subline",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-muted",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-page",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-select",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-support",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-support-label",
+      "rules": 1
+    },
+    {
+      "selector": ".impact-support-value",
+      "rules": 1
+    },
+    {
+      "selector": ".inactive",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-admin-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-anomaly-detail",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-anomaly-farm",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-anomaly-field",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-anomaly-header",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-anomaly-history",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-btn-export",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-btn-sm",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-chart-fallback",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-header-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-header-actions-inline",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-map-icon",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-map-placeholder",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-map-text",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-panel-title",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-panel-wide",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-subtitle",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-treatment-field",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-treatment-header",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-treatment-name",
+      "rules": 1
+    },
+    {
+      "selector": ".intel-treatment-scores",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-body",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-card",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-header",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-list",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-metric",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-metric-label",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-metric-value",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-metrics",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-problema",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-rank",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-score-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-score-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".intervention-tratamiento",
+      "rules": 1
+    },
+    {
+      "selector": ".is-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-badge-cost",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-badge-family",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-badge-type",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-body",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-card-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-card-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-card-title",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-dashboard",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-header",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-placeholder",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-search-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-section",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".knowledge-subtitle",
+      "rules": 1
+    },
+    {
+      "selector": ".kpi-card",
+      "rules": 1
+    },
+    {
+      "selector": ".kpi-label",
+      "rules": 1
+    },
+    {
+      "selector": ".kpi-value",
+      "rules": 1
+    },
+    {
+      "selector": ".login-container",
+      "rules": 1
+    },
+    {
+      "selector": ".login-page",
+      "rules": 1
+    },
+    {
+      "selector": ".low",
+      "rules": 1
+    },
+    {
+      "selector": ".mantenimiento",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-btn",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-btn-sm",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-dialog-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-dialog-wide",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-error",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-form",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-form-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-overlay",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-section",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".mgmt-table-wrap",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-date",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-header",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-history",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-sample",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-sample-date",
+      "rules": 1
+    },
+    {
+      "selector": ".microbiome-sample-rate",
+      "rules": 1
+    },
+    {
+      "selector": ".mid",
+      "rules": 1
+    },
+    {
+      "selector": ".mission-card",
+      "rules": 1
+    },
+    {
+      "selector": ".mission-header",
+      "rules": 1
+    },
+    {
+      "selector": ".mission-type-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".mission-waypoints-summary",
+      "rules": 1
+    },
+    {
+      "selector": ".nav-user-dropdown",
+      "rules": 1
+    },
+    {
+      "selector": ".nav-user-dropdown-divider",
+      "rules": 1
+    },
+    {
+      "selector": ".nav-user-dropdown-name",
+      "rules": 1
+    },
+    {
+      "selector": ".nav-user-dropdown-role",
+      "rules": 1
+    },
+    {
+      "selector": ".nav-username",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-ack-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-acknowledged",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-card-footer",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-date",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-farm-name",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-filters",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-list",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-message",
+      "rules": 1
+    },
+    {
+      "selector": ".notif-type-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-body",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-header",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-list",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-message",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-panel",
+      "rules": 1
+    },
+    {
+      "selector": ".notification-title",
+      "rules": 1
+    },
+    {
+      "selector": ".organic",
+      "rules": 1
+    },
+    {
+      "selector": ".organic-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".owner-hero",
+      "rules": 1
+    },
+    {
+      "selector": ".owner-hero-amount",
+      "rules": 1
+    },
+    {
+      "selector": ".owner-hero-label",
+      "rules": 1
+    },
+    {
+      "selector": ".owner-hero-multiple",
+      "rules": 1
+    },
+    {
+      "selector": ".page-card-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".page-card-title",
+      "rules": 1
+    },
+    {
+      "selector": ".past",
+      "rules": 1
+    },
+    {
+      "selector": ".payback-gauge-label",
+      "rules": 1
+    },
+    {
+      "selector": ".payback-gauge-section",
+      "rules": 1
+    },
+    {
+      "selector": ".payback-ring--amber",
+      "rules": 1
+    },
+    {
+      "selector": ".payback-ring--green",
+      "rules": 1
+    },
+    {
+      "selector": ".payback-ring--red",
+      "rules": 1
+    },
+    {
+      "selector": ".preparacion",
+      "rules": 1
+    },
+    {
+      "selector": ".priority-alta",
+      "rules": 1
+    },
+    {
+      "selector": ".priority-baja",
+      "rules": 1
+    },
+    {
+      "selector": ".priority-media",
+      "rules": 1
+    },
+    {
+      "selector": ".range-sep",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-badge-ancestral",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-badge-organic",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-badge-urgencia",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-badges",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-body",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-cost",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-cost-cad",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-field",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-footer",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-label",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-row",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-card-treatment",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-crop-type",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-field-name",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-health-score",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-loading",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-placeholder",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-info",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-item",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-label",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".recs-region-value",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-bar-critical",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-bar-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-bar-good",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-bar-track",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-bar-warning",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-card",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-component-header",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-component-label",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-component-value",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-components",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-hero",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-recs",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-recs-title",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-score",
+      "rules": 1
+    },
+    {
+      "selector": ".regen-score-label",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-item",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-label",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-context",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-cost",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-header",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-item",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-problema",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-treatment",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-rec-urgencia",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-recs",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-recs-title",
+      "rules": 1
+    },
+    {
+      "selector": ".regional-value",
+      "rules": 1
+    },
+    {
+      "selector": ".ring-unit",
+      "rules": 1
+    },
+    {
+      "selector": ".ring-value",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-current",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-label",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-months",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-num",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-purpose",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-reason",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-season",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-season-label",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-timeline",
+      "rules": 1
+    },
+    {
+      "selector": ".rotation-value",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alert-crop",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alert-message",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alert-months",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alert-top",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alert-type",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alerts-header",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-alerts-list",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-bar-fill",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-bar-row",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-bar-track",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-bar-value",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-bars",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-calendar",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-card-body",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-card-header",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-cosecha",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-crop-name",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-date",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-empty",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-group-label",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-header",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-legend",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-legend-item",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-maint",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-message",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-meta-item",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-metric",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-metric-label",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-month-range",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-prep",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-season-label",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-secas",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-siembra",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-temporal",
+      "rules": 1
+    },
+    {
+      "selector": ".seasonal-title",
+      "rules": 1
+    },
+    {
+      "selector": ".secas",
+      "rules": 1
+    },
+    {
+      "selector": ".semana",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-history-label",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-latest-label",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-alert",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-body",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-date",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-expand",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-summary",
+      "rules": 1
+    },
+    {
+      "selector": ".sensor-timeline-zones",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-alta",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-baja",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-critical",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-high",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-info",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-low",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-med",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-media",
+      "rules": 1
+    },
+    {
+      "selector": ".severity-warning",
+      "rules": 1
+    },
+    {
+      "selector": ".si-error-list",
+      "rules": 1
+    },
+    {
+      "selector": ".si-error-row",
+      "rules": 1
+    },
+    {
+      "selector": ".si-file-input",
+      "rules": 1
+    },
+    {
+      "selector": ".si-help-text",
+      "rules": 1
+    },
+    {
+      "selector": ".si-preview-wrapper",
+      "rules": 1
+    },
+    {
+      "selector": ".si-result-card",
+      "rules": 1
+    },
+    {
+      "selector": ".si-result-errors",
+      "rules": 1
+    },
+    {
+      "selector": ".si-result-imported",
+      "rules": 1
+    },
+    {
+      "selector": ".si-result-label",
+      "rules": 1
+    },
+    {
+      "selector": ".si-result-skipped",
+      "rules": 1
+    },
+    {
+      "selector": ".si-status-text",
+      "rules": 1
+    },
+    {
+      "selector": ".si-upload-area",
+      "rules": 1
+    },
+    {
+      "selector": ".siembra",
+      "rules": 1
+    },
+    {
+      "selector": ".skeleton",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-chart-row",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-chart-title",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-charts",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-entry-form",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-form-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-item",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-label",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-section-title",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-sparkline",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-table-container",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-body",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-date",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-expand",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-header",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-om",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-rec",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-timeline-texture",
+      "rules": 1
+    },
+    {
+      "selector": ".soil-value",
+      "rules": 1
+    },
+    {
+      "selector": ".sparkline",
+      "rules": 1
+    },
+    {
+      "selector": ".sparkline-declining",
+      "rules": 1
+    },
+    {
+      "selector": ".sparkline-improving",
+      "rules": 1
+    },
+    {
+      "selector": ".sparkline-stable",
+      "rules": 1
+    },
+    {
+      "selector": ".stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".status-aging",
+      "rules": 1
+    },
+    {
+      "selector": ".status-badge-err",
+      "rules": 1
+    },
+    {
+      "selector": ".status-badge-ok",
+      "rules": 1
+    },
+    {
+      "selector": ".status-check-label",
+      "rules": 1
+    },
+    {
+      "selector": ".status-ep-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".status-ep-err",
+      "rules": 1
+    },
+    {
+      "selector": ".status-ep-ok",
+      "rules": 1
+    },
+    {
+      "selector": ".status-err",
+      "rules": 1
+    },
+    {
+      "selector": ".status-fresh",
+      "rules": 1
+    },
+    {
+      "selector": ".status-ok",
+      "rules": 1
+    },
+    {
+      "selector": ".status-stale",
+      "rules": 1
+    },
+    {
+      "selector": ".success",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-alert-name",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-alert-score",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-alert-trend",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-alerts-title",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-stat",
+      "rules": 1
+    },
+    {
+      "selector": ".summary-stat-label",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-count-negative",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-count-positive",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-card",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-counts",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-feedback",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-header",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-label",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-name",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-rating",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-score-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-score-row",
+      "rules": 1
+    },
+    {
+      "selector": ".tek-method-score-val",
+      "rules": 1
+    },
+    {
+      "selector": ".temporal",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-action-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-action-header",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-action-meta",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-action-type",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-list",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-priority-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-rain",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-weather",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-weather-item",
+      "rules": 1
+    },
+    {
+      "selector": ".timeline-weather-note",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-avoid",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-best-day",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-best-time",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-card",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-card-best",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-card-reason",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-card-treatments",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-card-type",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-forecast",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-forecast-day",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-forecast-label",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-forecast-rain",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-forecast-temp",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-rain-day",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-rain-warning",
+      "rules": 1
+    },
+    {
+      "selector": ".timing-treatment-name",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-badge-organic",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-breakdown",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-breakdown-item",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-dot",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-dot-health",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-dot-treatment",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-badges",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-date",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-detail",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-health",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-marker",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-title",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-event-treatment",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-legend",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-legend-item",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-marker-treatment",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-no-data",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-urgencia-alta",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-urgencia-baja",
+      "rules": 1
+    },
+    {
+      "selector": ".tl-urgencia-media",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-highlight",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-overlay",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-body",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-btn",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-counter",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-header",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-nav",
+      "rules": 1
+    },
+    {
+      "selector": ".tour-tooltip-title",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-applied",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-applied-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-apply-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-apply-section",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-card",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-badge",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-card",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-date",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-delta",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-effective",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-grid",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-header",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-ineffective",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-name",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-neutral",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-problem",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-score-box",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-score-label",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-score-value",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-effectiveness-scores",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-apps",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-card",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-header",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-label",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-metric",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-metric-label",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-metrics",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-name",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-score-bar",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-score-row",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-report-score-val",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline-body",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline-date",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline-detail",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline-header",
+      "rules": 1
+    },
+    {
+      "selector": ".treatment-timeline-notes",
+      "rules": 1
+    },
+    {
+      "selector": ".up",
+      "rules": 1
+    },
+    {
+      "selector": ".urgencia-alta",
+      "rules": 1
+    },
+    {
+      "selector": ".urgencia-baja",
+      "rules": 1
+    },
+    {
+      "selector": ".urgencia-media",
+      "rules": 1
+    },
+    {
+      "selector": ".urgency-esta-semana",
+      "rules": 1
+    },
+    {
+      "selector": ".urgency-preventiva",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-desc",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-detail-label",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-detail-value",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-details",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-farm-name",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-header",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-now",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-title",
+      "rules": 1
+    },
+    {
+      "selector": ".weather-widget",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-btn-next",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-field-row",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-fields-list",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-form",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-form-row",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-progress",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-progress-label",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-progress-line",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-result",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-result-actions",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-result-error",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-result-success",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-step",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-step-active",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-summary-details",
+      "rules": 1
+    },
+    {
+      "selector": ".wizard-summary-note",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-critical",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-critico",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-dead",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-estresado",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-healthy",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-moderado",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-moderate",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-muerto",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-saludable",
+      "rules": 1
+    },
+    {
+      "selector": ".zone-stressed",
+      "rules": 1
+    }
+  ],
+  "drift_hints": [
+    {
+      "prefix": "treatment-*",
+      "variants": 46
+    },
+    {
+      "prefix": "intel-*",
+      "variants": 44
+    },
+    {
+      "prefix": "seasonal-*",
+      "variants": 41
+    },
+    {
+      "prefix": "alert-*",
+      "variants": 38
+    },
+    {
+      "prefix": "campo-*",
+      "variants": 30
+    },
+    {
+      "prefix": "fusion-*",
+      "variants": 30
+    },
+    {
+      "prefix": "soil-*",
+      "variants": 29
+    },
+    {
+      "prefix": "recs-*",
+      "variants": 29
+    },
+    {
+      "prefix": "weather-*",
+      "variants": 28
+    },
+    {
+      "prefix": "knowledge-*",
+      "variants": 28
+    },
+    {
+      "prefix": "wizard-*",
+      "variants": 25
+    },
+    {
+      "prefix": "tl-*",
+      "variants": 24
+    },
+    {
+      "prefix": "mgmt-*",
+      "variants": 23
+    },
+    {
+      "prefix": "field-*",
+      "variants": 22
+    },
+    {
+      "prefix": "econ-*",
+      "variants": 22
+    },
+    {
+      "prefix": "impact-*",
+      "variants": 22
+    },
+    {
+      "prefix": "cerebro-*",
+      "variants": 19
+    },
+    {
+      "prefix": "notif-*",
+      "variants": 18
+    },
+    {
+      "prefix": "heatmap-*",
+      "variants": 17
+    },
+    {
+      "prefix": "nav-*",
+      "variants": 16
+    },
+    {
+      "prefix": "regen-*",
+      "variants": 16
+    },
+    {
+      "prefix": "timing-*",
+      "variants": 16
+    },
+    {
+      "prefix": "si-*",
+      "variants": 16
+    },
+    {
+      "prefix": "regional-*",
+      "variants": 14
+    },
+    {
+      "prefix": "growth-*",
+      "variants": 14
+    },
+    {
+      "prefix": "status-*",
+      "variants": 14
+    },
+    {
+      "prefix": "intervention-*",
+      "variants": 13
+    },
+    {
+      "prefix": "feedback-*",
+      "variants": 13
+    },
+    {
+      "prefix": "api-*",
+      "variants": 13
+    },
+    {
+      "prefix": "rotation-*",
+      "variants": 12
+    },
+    {
+      "prefix": "completeness-*",
+      "variants": 12
+    },
+    {
+      "prefix": "tek-*",
+      "variants": 12
+    },
+    {
+      "prefix": "sensor-*",
+      "variants": 12
+    },
+    {
+      "prefix": "tour-*",
+      "variants": 12
+    },
+    {
+      "prefix": "timeline-*",
+      "variants": 11
+    },
+    {
+      "prefix": "notification-*",
+      "variants": 11
+    },
+    {
+      "prefix": "compare-*",
+      "variants": 11
+    },
+    {
+      "prefix": "comparison-*",
+      "variants": 11
+    },
+    {
+      "prefix": "zone-*",
+      "variants": 10
+    },
+    {
+      "prefix": "disease-*",
+      "variants": 9
+    },
+    {
+      "prefix": "severity-*",
+      "variants": 9
+    },
+    {
+      "prefix": "farm-*",
+      "variants": 8
+    },
+    {
+      "prefix": "anomaly-*",
+      "variants": 8
+    },
+    {
+      "prefix": "batch-*",
+      "variants": 8
+    },
+    {
+      "prefix": "identify-*",
+      "variants": 8
+    },
+    {
+      "prefix": "summary-*",
+      "variants": 8
+    },
+    {
+      "prefix": "flights-*",
+      "variants": 8
+    },
+    {
+      "prefix": "login-*",
+      "variants": 8
+    },
+    {
+      "prefix": "dashboard-*",
+      "variants": 6
+    },
+    {
+      "prefix": "health-*",
+      "variants": 6
+    },
+    {
+      "prefix": "microbiome-*",
+      "variants": 6
+    },
+    {
+      "prefix": "payback-*",
+      "variants": 6
+    },
+    {
+      "prefix": "sparkline-*",
+      "variants": 5
+    },
+    {
+      "prefix": "forecast-*",
+      "variants": 5
+    },
+    {
+      "prefix": "mission-*",
+      "variants": 5
+    },
+    {
+      "prefix": "empty-*",
+      "variants": 4
+    },
+    {
+      "prefix": "urgency-*",
+      "variants": 4
+    },
+    {
+      "prefix": "fert-*",
+      "variants": 4
+    },
+    {
+      "prefix": "delta-*",
+      "variants": 4
+    },
+    {
+      "prefix": "owner-*",
+      "variants": 4
+    },
+    {
+      "prefix": "estimate-*",
+      "variants": 4
+    },
+    {
+      "prefix": "kpi-*",
+      "variants": 4
+    },
+    {
+      "prefix": "page-*",
+      "variants": 4
+    }
+  ],
+  "redefined_tokens": [],
+  "stats": {
+    "token_count": 105,
+    "component_count": 1032
+  },
+  "brand": "cultivOS",
+  "source": "/Users/SebSan/Documents/cultivOS/frontend/styles.css"
+}
