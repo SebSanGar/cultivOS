@@ -59,3 +59,4 @@
 2026-06-16 02:04 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds
 2026-06-17 04:00 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds
 2026-06-18 02:00 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds
+2026-06-19 02:03 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds (57th consecutive block; R0–R7 complete since 2026-04-23; awaiting Seb's go-ahead to merge frontend-v2 → main)
