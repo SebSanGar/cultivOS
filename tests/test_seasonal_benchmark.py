@@ -96,7 +96,7 @@ def test_two_seasons_correct_delta(client, db):
     _make_health(db, field.id, score=80.0, scored_at=datetime(2026, 1, 20))
     _make_health(db, field.id, score=80.0, scored_at=datetime(2026, 3, 5))
 
-    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark")
+    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark?reference_date=2026-04-01")
     assert resp.status_code == 200
     fields = resp.json()["fields"]
     f = next(x for x in fields if x["field_id"] == field.id)
@@ -115,7 +115,7 @@ def test_only_current_season_prior_avg_null(client, db):
     # Only current season data: secas 2025-26
     _make_health(db, field.id, score=75.0, scored_at=datetime(2026, 4, 1))
 
-    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark")
+    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark?reference_date=2026-04-01")
     assert resp.status_code == 200
     fields = resp.json()["fields"]
     f = next(x for x in fields if x["field_id"] == field.id)
@@ -133,7 +133,7 @@ def test_overall_trend_improving(client, db):
     _make_health(db, field.id, score=50.0, scored_at=datetime(2025, 8, 1))
     _make_health(db, field.id, score=80.0, scored_at=datetime(2026, 2, 1))
 
-    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark")
+    resp = client.get(f"/api/farms/{farm.id}/seasonal-benchmark?reference_date=2026-04-01")
     assert resp.json()["overall_trend"] == "improving"
 
 
