@@ -23,8 +23,14 @@ def _make_field(db, farm_id):
 
 
 def _add_ndvi(db, field_id, ndvi_mean, stress_pct, months_ago=0):
-    """Add an NDVIResult record roughly N months ago from now."""
-    analyzed_at = datetime.utcnow() - timedelta(days=months_ago * 30)
+    """Add an NDVIResult record on the 15th of the calendar month N months ago."""
+    now = datetime.utcnow()
+    month = now.month - months_ago
+    year = now.year
+    while month <= 0:
+        month += 12
+        year -= 1
+    analyzed_at = datetime(year, month, 15)
     result = NDVIResult(
         field_id=field_id,
         ndvi_mean=ndvi_mean,
@@ -104,11 +110,10 @@ def test_three_months_sorted_oldest_to_newest(client, db):
 
 
 def test_ndvi_trend_improving(client, db):
-    """NDVI increasing last 2 months vs prior 2 → ndvi_trend=improving."""
+    """NDVI increasing last 2 months vs prior month → ndvi_trend=improving."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    _add_ndvi(db, field.id, ndvi_mean=0.50, stress_pct=30.0, months_ago=3)
-    _add_ndvi(db, field.id, ndvi_mean=0.52, stress_pct=28.0, months_ago=2)
+    _add_ndvi(db, field.id, ndvi_mean=0.50, stress_pct=30.0, months_ago=2)
     _add_ndvi(db, field.id, ndvi_mean=0.65, stress_pct=15.0, months_ago=1)
     _add_ndvi(db, field.id, ndvi_mean=0.70, stress_pct=10.0, months_ago=0)
 
@@ -118,11 +123,10 @@ def test_ndvi_trend_improving(client, db):
 
 
 def test_stress_trend_improving_when_stress_decreasing(client, db):
-    """Stress% decreasing last 2 months vs prior 2 → stress_trend=improving (lower stress is better)."""
+    """Stress% decreasing last 2 months vs prior month → stress_trend=improving (lower stress is better)."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    _add_ndvi(db, field.id, ndvi_mean=0.60, stress_pct=40.0, months_ago=3)
-    _add_ndvi(db, field.id, ndvi_mean=0.60, stress_pct=38.0, months_ago=2)
+    _add_ndvi(db, field.id, ndvi_mean=0.60, stress_pct=40.0, months_ago=2)
     _add_ndvi(db, field.id, ndvi_mean=0.60, stress_pct=20.0, months_ago=1)
     _add_ndvi(db, field.id, ndvi_mean=0.60, stress_pct=15.0, months_ago=0)
 

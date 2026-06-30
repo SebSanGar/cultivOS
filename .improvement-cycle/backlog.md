@@ -70,7 +70,26 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 
 ### ACTIVE — backend + ops (unaffected by rebuild, runs on this branch)
 
-- [ ] **N9 · Alembic migrations**  — needs advisor/human review before ship
+- [ ] **N9 · Alembic migrations**
+  - **What ships**: Alembic wired into the project with a generated initial migration capturing the current schema. Additive only — existing `Base.metadata.create_all()` in `session.py` stays untouched so tests and local dev still work; Alembic becomes the canonical migration path for production deploys.
+  - **Steps** (run all commands from repo root):
+    1. Add `alembic>=1.13` to `requirements.txt`.
+    2. `pip install alembic` (or `uv tool run alembic` as available — just ensure `alembic` CLI is available for the steps below).
+    3. Run `alembic init src/cultivos/db/alembic`. This creates `src/cultivos/db/alembic/` (with `env.py`, `script.py.mako`, `versions/`) and `alembic.ini` in the repo root.
+    4. Edit `alembic.ini`: set `script_location = src/cultivos/db/alembic`. Replace the `sqlalchemy.url = driver://...` line with `sqlalchemy.url =` (leave blank — URL is set in env.py below).
+    5. Edit `src/cultivos/db/alembic/env.py` — make two changes:
+       - At the top, add: `import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../src"))` followed by `from cultivos.db.models import Base; from cultivos.config import get_settings` (adjust path depth to land in `src/`).
+       - Set `target_metadata = Base.metadata`.
+       - In `run_migrations_offline()` and `run_migrations_online()`, replace the `url = config.get_main_option("sqlalchemy.url")` / `connectable = engine_from_config(...)` block so both use `url = get_settings().db_url`. For offline: `url = get_settings().db_url`. For online: `connectable = create_engine(get_settings().db_url, connect_args={"check_same_thread": False} if "sqlite" in get_settings().db_url else {})`.
+    6. Generate the initial migration against a fresh temp database:
+       `DB_URL=sqlite:///cultivos_alembic_init.db PYTHONPATH=src alembic revision --autogenerate -m "initial schema"`
+       Inspect the generated file in `src/cultivos/db/alembic/versions/`. It should contain `op.create_table(...)` calls. If the file is empty (no tables detected), the env.py import path is wrong — fix and retry before proceeding.
+    7. Verify the migration applies cleanly: `DB_URL=sqlite:///cultivos_alembic_init.db PYTHONPATH=src alembic upgrade head`. Must complete without errors.
+    8. Clean up: `rm -f cultivos_alembic_init.db`.
+    9. Append a "Database migrations" section to `docs/DEPLOYMENT.md`: "Run `PYTHONPATH=src alembic upgrade head` before starting the server in any new environment. On existing environments with data, run `alembic stamp head` once to mark the baseline, then apply future revisions with `upgrade head`. The `create_all` fallback in `session.py` remains active for local dev and tests."
+    10. Stage: `alembic.ini`, `src/cultivos/db/alembic/`, `requirements.txt`, `docs/DEPLOYMENT.md`. Do NOT stage any `*.db` files.
+  - **Pytest**: `pytest tests/` must pass unchanged — no test changes needed.
+  - **Commit message**: `ops: wire Alembic migrations with initial schema revision (N9)`
 - [ ] **N10 · Field-level RBAC**  — needs advisor/human review before ship; frontend-v2 will consume `/api/auth/me` role to render role-aware nav, so this unblocks the rebuild side too
 - [ ] **N18 · OpenTelemetry instrumentation**  — optional env-gated
 - [ ] **N20 · Closing snapshot `docs/snapshots/uplifted-YYYY-MM-DD/`**  — runs at the end of the rebuild cycle

@@ -5,7 +5,7 @@ Composes compute_regen_trajectory per member farm, merges monthly regen scores
 across farms into a cooperative-wide longitudinal series.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from cultivos.db.models import (
     Cooperative,
@@ -40,14 +40,24 @@ def _field(db, farm_id, name="Lote"):
     return fld
 
 
+def _month_dt(months_ago: int) -> datetime:
+    now = datetime.utcnow()
+    month = now.month - months_ago
+    year = now.year
+    while month <= 0:
+        month += 12
+        year -= 1
+    return datetime(year, month, 15)
+
+
 def _health(db, field_id, score, months_ago):
-    when = datetime.utcnow() - timedelta(days=30 * months_ago)
+    when = _month_dt(months_ago)
     db.add(HealthScore(field_id=field_id, score=score, scored_at=when))
     db.flush()
 
 
 def _treatment(db, field_id, organic, months_ago):
-    when = datetime.utcnow() - timedelta(days=30 * months_ago)
+    when = _month_dt(months_ago)
     db.add(TreatmentRecord(
         field_id=field_id,
         health_score_used=60.0,

@@ -74,7 +74,7 @@ def test_monthly_avg_calculation(client, db):
     """3 alerts spread across 3 months → monthly_avg = 0.5 (3 alerts / 6 months)."""
     farm = _make_farm(db)
     field = _make_field(db, farm.id)
-    now = datetime(2026, 4, 1)
+    now = datetime.utcnow()
 
     # 3 alerts spread across months 1, 2, 3 ago
     for months_ago in [1, 2, 3]:

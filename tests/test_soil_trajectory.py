@@ -1,7 +1,7 @@
 """Tests for GET /api/farms/{farm_id}/fields/{field_id}/soil-trajectory endpoint."""
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from cultivos.db.models import Farm, Field, SoilAnalysis
 
@@ -23,8 +23,14 @@ def _make_field(db, farm_id):
 
 
 def _add_soil(db, field_id, ph, organic_matter_pct, months_ago=0):
-    """Add a SoilAnalysis record N months ago from now."""
-    sampled_at = datetime.utcnow() - timedelta(days=months_ago * 30)
+    """Add a SoilAnalysis record on the 15th of the calendar month N months ago."""
+    now = datetime.utcnow()
+    month = now.month - months_ago
+    year = now.year
+    while month <= 0:
+        month += 12
+        year -= 1
+    sampled_at = datetime(year, month, 15)
     sa = SoilAnalysis(
         field_id=field_id,
         ph=ph,
