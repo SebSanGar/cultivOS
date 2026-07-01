@@ -186,6 +186,12 @@ For local dev, set `AUTH_ENABLED=false` in `.env` to skip JWT checks. Never do t
 
 ---
 
+## Database migrations
+
+Run `PYTHONPATH=src alembic upgrade head` before starting the server in any new environment. On existing environments with data, run `alembic stamp head` once to mark the baseline, then apply future revisions with `upgrade head`. The `create_all` fallback in `session.py` remains active for local dev and tests.
+
+---
+
 ## Related
 
 - `.improvement-cycle/backlog.md` — improvement queue including Alembic (N9) and RBAC (N10)

@@ -70,7 +70,7 @@ All paths below are **relative to the repo root** (the checkout the remote sandb
 
 ### ACTIVE — backend + ops (unaffected by rebuild, runs on this branch)
 
-- [ ] **N9 · Alembic migrations**
+- [x] **N9 · Alembic migrations**
   - **What ships**: Alembic wired into the project with a generated initial migration capturing the current schema. Additive only — existing `Base.metadata.create_all()` in `session.py` stays untouched so tests and local dev still work; Alembic becomes the canonical migration path for production deploys.
   - **Steps** (run all commands from repo root):
     1. Add `alembic>=1.13` to `requirements.txt`.
