@@ -98,3 +98,4 @@
 2026-07-25 02:09 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds (93rd consecutive block; R0–R7 complete since 2026-04-23; frontend-v2 is production-ready, awaiting Seb's merge approval to ship)
 2026-07-26 02:09 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds (94th consecutive block; R0–R7 complete since 2026-04-23; frontend-v2 is production-ready, awaiting Seb's merge approval to ship)
 2026-07-27 02:11 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds (95th consecutive block; R0–R7 complete since 2026-04-23; frontend-v2 is production-ready, awaiting Seb's merge approval to ship)
+2026-07-28 02:11 Toronto — R8 — BLOCKED — R8 requires human merge approval before agent proceeds (96th consecutive block; R0–R7 complete since 2026-04-23; frontend-v2 is production-ready, awaiting Seb's merge approval to ship)
